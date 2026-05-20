@@ -261,7 +261,7 @@ generated quantities{
 	real<lower=0> c_rep[IntC];    // Replicated catch counts
 	real<lower=0> V_A_rep[IntA];  // Replicated vehicle interview expansions
 	real<lower=0> T_A_rep[IntA];  // Replicated trailer interview expansions
-	real<lower=0> B_A_rep[B_n > 0 ? IntA : 0];  // Replicated boat interview expansions (Drano)
+	real<lower=0> B_A_rep[IntA];  // Replicated boat interview expansions (Drano)
 	
 	Omega_C = multiply_lower_tri_self_transpose(Lcorr_C);
 	Omega_E = multiply_lower_tri_self_transpose(Lcorr_E);
@@ -319,6 +319,13 @@ generated quantities{
 	}
 	
 	// Angler interviews - Angler expansions (with conditional structure matching model block)
+	// Initialize all rep arrays to 0 first to avoid uninitialized NaN when a data type is absent
+  for(a in 1:IntA){
+      V_A_rep[a] = 0;
+      T_A_rep[a] = 0;
+      B_A_rep[a] = 0;
+  }
+  // Overwrite with posterior predictive draws where data exist
 	for(a in 1:IntA){
 		if(max(V_A) > 0) {
 			// Vehicles

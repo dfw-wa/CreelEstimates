@@ -914,7 +914,7 @@ for(ecg in names(inputs_bss)) {
       n_iter = 2000,
       n_warmup = 500,
       n_thin = 1,
-      adapt_delta = 0.8,
+      adapt_delta = 0.9,
       max_treedepth = 10,
       init = "0"
     )
@@ -1202,7 +1202,7 @@ overview_combined <- purrr::imap_dfr(
 # Create a gt table with row groups
 overview_combined |> 
   gt(groupname_col = "catch_group") |>
-  fmt_number(-c(estimate, est_cg, catch_group, Rhat), decimals = 1) |> 
+  fmt_number(-c(estimate, est_cg, catch_group, Rhat), decimals = 2) |> 
   fmt_number(Rhat, decimals = 2) |> 
   tab_style(
     style = cell_fill(),
@@ -1259,11 +1259,17 @@ for (ecg in names(estimates_bss)) {
 - **Prior and Posterior match** →prior dominates. If there is a clear and separate Likelihood distribution, raise scale. If likelihood is flat and data are sparse, ensure that variance is in range of domain experience.
 
 #### Posterior Probability Density Plots
-```{r plot_prob_density, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Posterior probability density plots showing the distribution of estimated catch (number of fish) and effort (angler-hours) for estimated catch groups. Each panel displays a kernel density curve representing the relative likelihood of different parameter values from the Bayesian creel model's posterior distribution. The x-axis shows the estimated quantity (either number of fish caught or angler-hours expended). The y-axis shows the probability density for parameter estimates— higher values indicate parameter values that are more supported by the data and model. The shaded area under each curve represents the full range of plausible values. Vertical dashed lines mark the 2.5th percentile (lower credible limit), 50th percentile (median), and 97.5th percentile (upper credible limit), which together define the 95% credible interval—the range within which the true parameter value lies with 95% probability given the data and model assumptions. Effort was estimated for each individual catch group model run."}
+```{r plot_prob_density, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.width = 10, fig.height = max(8, 3 * length(estimates_bss)), out.width = "100%", fig.cap= "Posterior probability density plots showing the distribution of estimated catch (number of fish) and effort (angler-hours) for estimated catch groups. Each panel displays a kernel density curve representing the relative likelihood of different parameter values from the Bayesian creel model's posterior distribution. The x-axis shows the estimated quantity (either number of fish caught or angler-hours expended). The y-axis shows the probability density for parameter estimates— higher values indicate parameter values that are more supported by the data and model. The shaded area under each curve represents the full range of plausible values. Vertical dashed lines mark the 2.5th percentile (lower credible limit), 50th percentile (median), and 97.5th percentile (upper credible limit), which together define the 95% credible interval—the range within which the true parameter value lies with 95% probability given the data and model assumptions. Effort was estimated for each individual catch group model run."}
 
 # Extract density plots from estimates_bss list
 plots_list <- map(estimates_bss, "density_plot") |>
   compact()  # Remove any NULL plots
+
+# Dynamic sizing
+n_groups <- length(plots_list)
+height_per_group <- 3
+fig_width  <- 10
+fig_height <- max(8, height_per_group * n_groups)
 
 # Combine all plots vertically
 combined_figure <- wrap_plots(plots_list, ncol = 1) +
@@ -1279,8 +1285,8 @@ print(combined_figure)
 save_plot(
   combined_figure,
   "posterior_probability_densities.png",
-  width = 10,
-  height = 12
+  width  = fig_width,
+  height = fig_height
 )
 ```
 
@@ -1433,7 +1439,7 @@ if (nrow(ppc_coverage_combined) == 0) {
 
 Plots show observations versus 95% posterior predictive intervals (PPI) for each likelihood, separated by strata (boat vs. bank anglers, and river sections) to determine if certain strata were associated with better or worse fit to the data.
 
-```{r ppc_plots_display, eval=TRUE, fig.height=8, fig.width=10, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss")}
+```{r ppc_plots_display, eval=TRUE, fig.height=3, fig.width=10, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss")}
 # Display and save all PPC plots for each catch group
 purrr::iwalk(estimates_bss, ~{
   safe_catch_group <- stringr::str_replace_all(.y, "[^[:alnum:]]", "_")

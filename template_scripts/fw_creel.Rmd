@@ -1292,10 +1292,10 @@ save_plot(
 
 #### plot daily catch BSS
 
-```{r plot_bss_catch_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Weekly estimates of catch for catch groups included in the report, with separate plots for each river section. Lines are posterior medians and shading shows 95% credible intervals and are colored by angler type."}
+```{r plot_bss_catch_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Weekly estimates of catch for catch groups included in the report, with separate plots for each river section. Lines represent posterior medians, shading shows 95% credible interval range, bank anglers are red and boat anglers are blue", fig.width=12, fig.height=12}
 
 plot_bss_catch_daily <-
-  map_df(estimates_bss, ~.x$catch_daily) |> 
+  map_df(estimates_bss, ~.x$catch_daily) |>
     ggplot(aes(x = event_date, y = `50%`, fill = angler_final, color = angler_final)) +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2, color = "transparent") +
     geom_line(lwd = 1) +
@@ -1304,13 +1304,20 @@ plot_bss_catch_daily <-
     labs(color = "Angler type", fill = "Angler type") +
     scale_x_date(date_breaks = "1 week", date_labels = "%m-%d") +
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
-    facet_grid(est_cg ~ section_num, scales = "free_y")
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+      strip.placement = "outside",
+      strip.text = element_text(size = 9),
+      strip.text.y = element_text(angle = 0)
+    ) +
+    facet_grid(
+      rows = vars(est_cg),
+      cols = vars(section_num),
+      scales = "free_y"
+    )
 
-# Print with specific dimensions
 print(plot_bss_catch_daily)
 
-# Save with larger dimensions
 save_plot(
   plot_bss_catch_daily,
   "bss_catch_daily.png",
@@ -1349,10 +1356,10 @@ save_plot(
 
 #### plot daily CPUE BSS
 
-```{r plot_bss_cpue_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure","estimates_bss"), fig.cap= "Weekly estimates of catch rate (fish/hour) for catch groups included in the report, with separate plots for each river section. Lines are posterior medians and shading shows 95% credible intervals and are colored by angler type."}
+```{r plot_bss_catch_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Weekly estimates of catch for catch groups included in the report, with separate plots for each river section. Lines represent posterior medians, shading shows 95% credible interval range, bank anglers are red and boat anglers are blue", fig.width=12, fig.height=12}
 
 plot_bss_cpue_daily <-
-  map_df(estimates_bss, ~.x$cpue_daily) |> 
+  map_df(estimates_bss, ~ .x$cpue_daily) |> 
     ggplot(aes(x = event_date, y = `50%`, fill = angler_final, color = angler_final)) +
     geom_ribbon(aes(ymin = `2.5%`, ymax = `97.5%`), alpha = 0.2, color = "transparent") +
     geom_line(lwd = 1) +
@@ -1361,8 +1368,17 @@ plot_bss_cpue_daily <-
     labs(color = "Angler type", fill = "Angler type") +
     scale_x_date(date_breaks = "1 week", date_labels = "%m-%d") +
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
-    facet_grid(est_cg ~ section_num, scales = "free_y")
+    theme(
+      axis.text.x    = element_text(angle = 45, hjust = 1, size = 8),
+      strip.placement = "outside",
+      strip.text      = element_text(size = 9),
+      strip.text.y    = element_text(angle = 0)
+    ) +
+    facet_grid(
+      rows   = vars(est_cg),
+      cols   = vars(section_num),
+      scales = "free_y"
+    )
 
 # Print with specific dimensions
 print(plot_bss_cpue_daily)

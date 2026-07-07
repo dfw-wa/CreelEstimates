@@ -1356,7 +1356,7 @@ save_plot(
 
 #### plot daily CPUE BSS
 
-```{r plot_bss_catch_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Weekly estimates of catch for catch groups included in the report, with separate plots for each river section. Lines represent posterior medians, shading shows 95% credible interval range, bank anglers are red and boat anglers are blue", fig.width=12, fig.height=12}
+```{r plot_bss_cpue_daily, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Weekly estimates of CPUE for catch groups included in the report, with separate plots for each river section. Lines represent posterior medians, shading shows 95% credible interval range, bank anglers are red and boat anglers are blue", fig.width=12, fig.height=12}
 
 plot_bss_cpue_daily <-
   map_df(estimates_bss, ~ .x$cpue_daily) |> 

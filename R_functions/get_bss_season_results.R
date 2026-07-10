@@ -17,7 +17,10 @@ get_bss_season_results <- function(ecg_draws, ecg_name) {
     
     # Check for missing values in catch
     if (any(is.na(catch_results$C_sum)) || any(is.nan(catch_results$C_sum))) {
-      cli::cli_alert_warning("Missing or NaN values detected in C_sum for catch group: {ecg_name}")
+      n_nan_c <- sum(is.na(catch_results$C_sum) | is.nan(catch_results$C_sum))
+      n_total_c <- length(catch_results$C_sum)
+      pct_nan_c <- round(100 * n_nan_c / n_total_c, 1)
+      cli::cli_alert_warning("Missing or NaN values detected in C_sum for catch group: {ecg_name} ({n_nan_c} of {n_total_c} draws, {pct_nan_c}%)")
     }
     
     catch_quantiles <- catch_results |>
@@ -34,7 +37,10 @@ get_bss_season_results <- function(ecg_draws, ecg_name) {
     
     # Check for missing values in effort
     if (any(is.na(effort_results$E_sum)) || any(is.nan(effort_results$E_sum))) {
-      cli::cli_alert_warning("Missing or NaN values detected in E_sum for catch group: {ecg_name}")
+      n_nan_e <- sum(is.na(effort_results$E_sum) | is.nan(effort_results$E_sum))
+      n_total_e <- length(effort_results$E_sum)
+      pct_nan_e <- round(100 * n_nan_e / n_total_e, 1)
+      cli::cli_alert_warning("Missing or NaN values detected in E_sum for catch group: {ecg_name} ({n_nan_e} of {n_total_e} draws, {pct_nan_e}%)")
     }
     
     effort_quantiles <- effort_results |>

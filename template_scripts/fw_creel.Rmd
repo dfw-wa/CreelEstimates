@@ -3,12 +3,16 @@ title: "Freshwater Creel Report <br>`r params$fishery_name`"
 date: "`r Sys.Date()`"
 params:
   project_name: "District 14"
-  fishery_name: "Skagit spring Chinook 2026 upper"
-  est_date_start: ""
-  est_date_end: ""
+  fishery_name: "Skagit summer sockeye 2026"
+  est_date_start: "2026-06-16"
+  est_date_end: "2026-06-24"
   est_catch_groups: !r data.frame(rbind(
-    c(species = 'Chinook', life_stage = 'Adult', fin_mark = 'UM', fate = 'Released'),
-    c(species = 'Chinook', life_stage = 'Adult', fin_mark = 'AD', fate = 'Kept')))
+    c(species = 'Sockeye', life_stage = 'Adult', fin_mark = 'AD', fate = 'Kept'),
+    c(species = 'Sockeye', life_stage = 'Adult', fin_mark = 'UM', fate = 'Kept'),
+    c(species = 'Sockeye', life_stage = 'Adult', fin_mark = 'AD', fate = 'Released'),
+    c(species = 'Chinook', life_stage = 'Adult', fin_mark = 'AD', fate = 'Released'),
+    c(species = 'Bull Trout', life_stage = 'NA', fin_mark = 'NA', fate = 'Released'),
+    c(species = 'Dolly Varden', life_stage = 'NA', fin_mark = 'NA', fate = 'Released')))
   study_design: "Standard"   
   boat_type_collapse: "Yes"
   fish_location_determines_type: "No"
@@ -842,23 +846,23 @@ inputs_bss <-
   # df = 20   → Light tails - close to normal, stronger regularization
   # df ≥ 30  → Nearly normal - lightest tails
   # Catch process error (sigma_eps_C) - CPUE daily fluctuations
-        value_student_t_df_sigma_eps_C = 7,       
-        value_student_t_scale_sigma_eps_C = 0.5,  
+        value_student_t_df_sigma_eps_C = 30,       
+        value_student_t_scale_sigma_eps_C = 0.75,  
    # Effort process error (sigma_eps_E) - effort daily fluctuations
-        value_student_t_df_sigma_eps_E = 4,
-        value_student_t_scale_sigma_eps_E = 0.5,
+        value_student_t_df_sigma_eps_E = 30,
+        value_student_t_scale_sigma_eps_E = 0.75,
    # Effort overdispersion (sigma_r_E) - between-angler effort variation 
-        value_student_t_df_sigma_r_E = 7,         
-        value_student_t_scale_sigma_r_E = 0.7,
+        value_student_t_df_sigma_r_E = 30,         
+        value_student_t_scale_sigma_r_E = 0.75,
    # Catch overdispersion (sigma_r_C) - between-angler CPUE variation
-        value_student_t_df_sigma_r_C = 7,
-        value_student_t_scale_sigma_r_C = 0.7,
+        value_student_t_df_sigma_r_C = 30,
+        value_student_t_scale_sigma_r_C = 0.75,
    # Catch spatial heterogeneity (sigma_mu_C) - between-section CPUE variation 
-        value_student_t_df_sigma_mu_C = 4,
-        value_student_t_scale_sigma_mu_C = 0.5,
+        value_student_t_df_sigma_mu_C = 30,
+        value_student_t_scale_sigma_mu_C = 0.75,
    # Effort spatial heterogeneity (sigma_mu_E) - between-section effort variation
-        value_student_t_df_sigma_mu_E = 4,
-        value_student_t_scale_sigma_mu_E = 0.5, 
+        value_student_t_df_sigma_mu_E = 30,
+        value_student_t_scale_sigma_mu_E = 0.75, 
 # Other priors:
         value_normal_sigma_omega_C_0 = 1, # Initial state uncertainty
         value_normal_sigma_omega_E_0 = 3, # Initial state uncertainty

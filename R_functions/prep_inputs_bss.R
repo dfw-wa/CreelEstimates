@@ -169,17 +169,23 @@ stan_list <- list(
   section_IntA = interview_cg_intA$section_num, # int vec; index for section
   V_A = as.integer(interview_cg_intA$vehicle_count),  # num vec; total number of vehicles an angler group brought
   T_A = as.integer(interview_cg_intA$trailer_count),  # num vec; total number of trailers an angler group brought
-  B_A = as.integer(interview_cg_intA$boat_count),     # num vec; total number of boats an angler group brought
+  B_A = if(nrow(interview_cg_boat) > 0) as.integer(interview_cg_boat$boat_count) else integer(0), # num vec; total number of boats an angler group brought 
   A_A = as.integer(interview_cg_intA$person_count_final),  # num vec; total number of anglers in the groups interviewed
 
   #priors
-  #hyperhyper scale (degrees of freedom) parameters
-  value_cauchyDF_sigma_eps_C = priors["value_cauchyDF_sigma_eps_C"] , #for the hyperprior distribution sigma_eps_C; default = 1  
-  value_cauchyDF_sigma_eps_E = priors["value_cauchyDF_sigma_eps_E"], #for the hyperprior distribution sigma_eps_E; default = 1  
-  value_cauchyDF_sigma_r_E = priors["value_cauchyDF_sigma_r_E"],   #for the hyperprior distribution sigma_r_E; default = 1  
-  value_cauchyDF_sigma_r_C = priors["value_cauchyDF_sigma_r_C"],   #for the hyperprior distribution sigma_r_C; default = 1 
-  value_cauchyDF_sigma_mu_C = priors["value_cauchyDF_sigma_mu_C"],  #the hyperhyper SD parameter in the hyperprior distribution sigma_mu_C
-  value_cauchyDF_sigma_mu_E = priors["value_cauchyDF_sigma_mu_E"],   #the hyperhyper SD parameter in the hyperprior distribution sigma_mu_E
+  #hyperhyper scale half-t (JK 1/15/2026)
+  value_student_t_df_sigma_eps_C = priors["value_student_t_df_sigma_eps_C"],
+  value_student_t_scale_sigma_eps_C = priors["value_student_t_scale_sigma_eps_C"],
+  value_student_t_df_sigma_eps_E = priors["value_student_t_df_sigma_eps_E"],
+  value_student_t_scale_sigma_eps_E = priors["value_student_t_scale_sigma_eps_E"],
+  value_student_t_df_sigma_r_E = priors["value_student_t_df_sigma_r_E"],
+  value_student_t_scale_sigma_r_E = priors["value_student_t_scale_sigma_r_E"],
+  value_student_t_df_sigma_r_C = priors["value_student_t_df_sigma_r_C"],
+  value_student_t_scale_sigma_r_C = priors["value_student_t_scale_sigma_r_C"],
+  value_student_t_df_sigma_mu_C = priors["value_student_t_df_sigma_mu_C"],
+  value_student_t_scale_sigma_mu_C = priors["value_student_t_scale_sigma_mu_C"],
+  value_student_t_df_sigma_mu_E = priors["value_student_t_df_sigma_mu_E"],
+  value_student_t_scale_sigma_mu_E = priors["value_student_t_scale_sigma_mu_E"],
   
   value_normal_sigma_omega_C_0 = priors["value_normal_sigma_omega_C_0"], #the SD hyperparameter in the prior distribution omega_C_0; normal sd (log-space); default = 1   
   value_normal_sigma_omega_E_0 = priors["value_normal_sigma_omega_E_0"], #the SD hyperparameter in the prior distribution omega_E_0; normal sd (log-space);; default = 3  

@@ -19,7 +19,7 @@ params:
   days_wkend: !r c('Saturday', 'Sunday')
   day_length_expansion: "night closure"
   min_fishing_time: 0.5
-  bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
+  bss_model_file_name: "BSS_creel_model_02_2026-01-15.stan"
   model_used: "Both models"
   data_grade: "provisional"
   export: "local"
@@ -835,22 +835,43 @@ inputs_bss <-
       census_expan = dwg_summ$census_expan, 
       study_design = params$study_design, 
       priors = c(
-        value_cauchyDF_sigma_eps_C = 0.5,
-        value_cauchyDF_sigma_eps_E = 0.5,
-        value_cauchyDF_sigma_r_E = 0.5,  
-        value_cauchyDF_sigma_r_C = 0.5,  
-        value_cauchyDF_sigma_mu_C = 0.5, 
-        value_cauchyDF_sigma_mu_E = 0.5, 
-        value_normal_sigma_omega_C_0 = 1,
-        value_normal_sigma_omega_E_0 = 3,
-        value_lognormal_sigma_b = 1,
-        value_normal_sigma_B1 = 5,  
-        value_normal_mu_mu_C = log(0.02),
-        value_normal_sigma_mu_C = 1.5,  
-        value_normal_mu_mu_E = log(5),
-        value_normal_sigma_mu_E = 2,  
-        value_betashape_phi_E_scaled = 1, 
-        value_betashape_phi_C_scaled = 1 
+# Half-Student-t regularizing priors. Adjust degrees of freedom (df) to control tail geometry and adjust scale to change SD. Larger scale settings (>0.5) keep priors mildly informative and mostly affect data-poor strata. Larger DF settings shrink tails:
+  # df = 1   → Cauchy (very heavy tails) - extreme robustness, weaker regularization needs small scale when data are sparse
+  # df = 3   → Heavy tails - strong robustness
+  # df = 4   → Moderate tails - recommended for variance parameters
+  # df = 20   → Light tails - close to normal, stronger regularization
+  # df ≥ 30  → Nearly normal - lightest tails
+  # Catch process error (sigma_eps_C) - CPUE daily fluctuations
+        value_student_t_df_sigma_eps_C = 7,       
+        value_student_t_scale_sigma_eps_C = 0.5,  
+   # Effort process error (sigma_eps_E) - effort daily fluctuations
+        value_student_t_df_sigma_eps_E = 4,
+        value_student_t_scale_sigma_eps_E = 0.5,
+   # Effort overdispersion (sigma_r_E) - between-angler effort variation 
+        value_student_t_df_sigma_r_E = 7,         
+        value_student_t_scale_sigma_r_E = 0.7,
+   # Catch overdispersion (sigma_r_C) - between-angler CPUE variation
+        value_student_t_df_sigma_r_C = 7,
+        value_student_t_scale_sigma_r_C = 0.7,
+   # Catch spatial heterogeneity (sigma_mu_C) - between-section CPUE variation 
+        value_student_t_df_sigma_mu_C = 4,
+        value_student_t_scale_sigma_mu_C = 0.5,
+   # Effort spatial heterogeneity (sigma_mu_E) - between-section effort variation
+        value_student_t_df_sigma_mu_E = 4,
+        value_student_t_scale_sigma_mu_E = 0.5, 
+# Other priors:
+        value_normal_sigma_omega_C_0 = 1, # Initial state uncertainty
+        value_normal_sigma_omega_E_0 = 3, # Initial state uncertainty
+        value_lognormal_sigma_b = 1, # Overdispersion 
+        value_normal_sigma_B1 = 5, # Overdispersion
+        value_normal_mu_mu_C = log(
+          sum(dwg_summ$interview$fish_count)/sum(dwg_summ$interview$fishing_time_total)
+        ), # Mean CPUE location. Empirical Bayes. Set from raw data
+        value_normal_sigma_mu_C = 1.5, # Mean CPUE SD
+        value_normal_mu_mu_E = log(5), # Median anglers/hr per gear type
+        value_normal_sigma_mu_E = 2, # Median effort SD
+        value_betashape_phi_E_scaled = 1, # Autocorrelation coefficient for effort
+        value_betashape_phi_C_scaled = 1 # Autocorrelation coefficient for catch
     )
     )
   )
@@ -884,13 +905,13 @@ for(ecg in names(inputs_bss)) {
     fit_bss(
       model_file_name = params$bss_model_file_name,
       bss_inputs_list = inputs_bss[[ecg]],
-      n_chain = 2,  
-      n_cores = 2,
-      n_iter = 50,
-      n_warmup = 25,
+      n_chain = 4,  
+      n_cores = 4,
+      n_iter = 2000,
+      n_warmup = 500,
       n_thin = 1,
-      adapt_delta = 0.7,
-      max_treedepth = 12,
+      adapt_delta = 0.8,
+      max_treedepth = 10,
       init = "0"
     )
     
@@ -953,6 +974,14 @@ for(ecg in names(inputs_bss)) {
     draws_df, 
     measures = list(mean, sd, mad, posterior::quantile2, rhat, ess_bulk, ess_tail)
   )
+  
+  # create prior-posterior plot inputs
+  ecg_keep$priorposteriorplots <- create_prior_posterior_plots(
+    draws_df = draws_df,
+    stan_data = inputs_bss[[ecg]],
+    ecg = ecg
+  )
+  estimates_bss[[ecg]] <- ecg_keep
   
   colnames(summary_df) <- c("variable", "mean", "sd", "mad", "q5", "q95", "rhat", "ess_bulk", "ess_tail")
   
@@ -1186,6 +1215,45 @@ overview_combined |>
   ) 
 ```
 
+#### Prior-Posterior Plots for Variance Priors
+
+```{r priorposteriorplots, eval=TRUE, echo=FALSE, fig.keep='all', dependson=c("estimates_bss")}
+for (ecg in names(estimates_bss)) {
+  
+  pp <- estimates_bss[[ecg]]$priorposteriorplots
+  if (is.null(pp) || is.null(pp$plots_list) || length(pp$plots_list) == 0) next
+  
+  combined_figure <-
+    wrap_plots(pp$plots_list, ncol = 2) +
+    plot_annotation(
+      title    = "Prior vs Posterior vs Likelihood — Variance Parameters",
+      subtitle = glue::glue("Catch group: {ecg}"),
+      theme    = theme(
+        plot.title    = element_text(size = 13, face = "bold"),
+        plot.subtitle = element_text(size = 10)
+      )
+    )
+  
+  # Show in knitted HTML
+  print(combined_figure)
+  
+  # Save to figures folder
+  save_plot(
+    combined_figure,
+    paste0("prior_posterior_likelihood_variance_", pp$safe_name, ".png"),
+    width = 12,
+    height = 10
+  )
+}
+```
+
+##### How to read the plots
+
+- **Posterior sits inside the prior, narrower** → data are informative, prior has mild influence
+- **Posterior peak shifts away from prior peak** → data are pulling the posterior away from the prior
+- **Likelihood is very wide/flat** → data are sparse for this parameter; the prior is doing most of the work. Likelihood may not be identifiable
+- **Prior and Posterior match** →prior dominates. If there is a clear and separate Likelihood distribution, raise scale. If likelihood is flat and data are sparse, ensure that variance is in range of domain experience.
+
 #### Posterior Probability Density Plots
 ```{r plot_prob_density, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.cap= "Posterior probability density plots showing the distribution of estimated catch (number of fish) and effort (angler-hours) for estimated catch groups. Each panel displays a kernel density curve representing the relative likelihood of different parameter values from the Bayesian creel model's posterior distribution. The x-axis shows the estimated quantity (either number of fish caught or angler-hours expended). The y-axis shows the probability density for parameter estimates— higher values indicate parameter values that are more supported by the data and model. The shaded area under each curve represents the full range of plausible values. Vertical dashed lines mark the 2.5th percentile (lower credible limit), 50th percentile (median), and 97.5th percentile (upper credible limit), which together define the 95% credible interval—the range within which the true parameter value lies with 95% probability given the data and model assumptions. Effort was estimated for each individual catch group model run."}
 
@@ -1404,7 +1472,7 @@ purrr::iwalk(estimates_bss, ~{
 ```
 
 ## Combined summary of effort and catch estimates
-```{r estimates_combo_overview, dependson=c("estimates_bss, estimates_pe")}
+```{r estimates_combo_overview, dependson=c("estimates_bss", "estimates_pe")}
 
 #per-est_cg summary of total effort hours and catch/encounters, showing results of both PE and BSS estimation methods
 

@@ -847,30 +847,29 @@ inputs_bss <-
   # df ≥ 30  → Nearly normal - lightest tails
   # Catch process error (sigma_eps_C) - CPUE daily fluctuations
         value_student_t_df_sigma_eps_C = 30,       
-        value_student_t_scale_sigma_eps_C = 0.75,  
+        value_student_t_scale_sigma_eps_C = 0.5,  
    # Effort process error (sigma_eps_E) - effort daily fluctuations
         value_student_t_df_sigma_eps_E = 30,
-        value_student_t_scale_sigma_eps_E = 0.75,
+        value_student_t_scale_sigma_eps_E = 0.5,
    # Effort overdispersion (sigma_r_E) - between-angler effort variation 
         value_student_t_df_sigma_r_E = 30,         
-        value_student_t_scale_sigma_r_E = 0.75,
+        value_student_t_scale_sigma_r_E = 0.5,
    # Catch overdispersion (sigma_r_C) - between-angler CPUE variation
         value_student_t_df_sigma_r_C = 30,
-        value_student_t_scale_sigma_r_C = 0.75,
+        value_student_t_scale_sigma_r_C = 0.5,
    # Catch spatial heterogeneity (sigma_mu_C) - between-section CPUE variation 
         value_student_t_df_sigma_mu_C = 30,
-        value_student_t_scale_sigma_mu_C = 0.75,
+        value_student_t_scale_sigma_mu_C = 0.5,
    # Effort spatial heterogeneity (sigma_mu_E) - between-section effort variation
         value_student_t_df_sigma_mu_E = 30,
-        value_student_t_scale_sigma_mu_E = 0.75, 
+        value_student_t_scale_sigma_mu_E = 0.5, 
 # Other priors:
         value_normal_sigma_omega_C_0 = 1, # Initial state uncertainty
         value_normal_sigma_omega_E_0 = 3, # Initial state uncertainty
         value_lognormal_sigma_b = 1, # Overdispersion 
         value_normal_sigma_B1 = 5, # Overdispersion
-        value_normal_mu_mu_C = log(
-          sum(dwg_summ$interview$fish_count)/sum(dwg_summ$interview$fishing_time_total)
-        ), # Mean CPUE location. Empirical Bayes. Set from raw data
+        value_normal_mu_mu_C = log(sum(dwg_summ$interview$fish_count)/sum(dwg_summ$interview$fishing_time_total)),
+          # Mean CPUE location. Empirical Bayes. Set from raw data
         value_normal_sigma_mu_C = 1.5, # Mean CPUE SD
         value_normal_mu_mu_E = log(5), # Median anglers/hr per gear type
         value_normal_sigma_mu_E = 2, # Median effort SD
@@ -914,7 +913,7 @@ for(ecg in names(inputs_bss)) {
       n_iter = 2000,
       n_warmup = 500,
       n_thin = 1,
-      adapt_delta = 0.9,
+      adapt_delta = 0.7,
       max_treedepth = 10,
       init = "0"
     )

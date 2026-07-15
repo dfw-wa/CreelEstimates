@@ -1432,43 +1432,60 @@ Plots show observations versus 95% posterior predictive intervals (PPI) for each
 ```{r ppc_plots_display, eval=TRUE, fig.height=8, fig.width=10, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss")}
 # Display and save all PPC plots for each catch group
 purrr::iwalk(estimates_bss, ~{
-  # cat("\n### Catch Group:", .y, "\n\n")
-
-  # Create safe filename version of catch group name
   safe_catch_group <- stringr::str_replace_all(.y, "[^[:alnum:]]", "_")
-
-  # Skip NULL plots (e.g. catch group had no valid PPC results due to NaN
-  # generated quantities on low-catch data) instead of erroring in save_plot()
-  show_and_save_ppc <- function(plot_obj, filename) {
-    if (is.null(plot_obj)) return(invisible(NULL))
-    print(plot_obj)
-    save_plot(plot_obj, filename, width = 10, height = 8)
-  }
-
-  # V_I_PPC
-  show_and_save_ppc(.x$ppc_results$plots$V_I_PPC_plt,
-                     paste0("ppc_V_I_", safe_catch_group, ".png"))
-
-  # T_I_PPC
-  show_and_save_ppc(.x$ppc_results$plots$T_I_PPC_plt,
-                     paste0("ppc_T_I_", safe_catch_group, ".png"))
-
-  # E_s_PPC
-  show_and_save_ppc(.x$ppc_results$plots$E_s_PPC_plt,
-                     paste0("ppc_E_s_", safe_catch_group, ".png"))
-
-  # c_PPC
-  show_and_save_ppc(.x$ppc_results$plots$c_PPC_plt,
-                     paste0("ppc_c_", safe_catch_group, ".png"))
-
-  # V_A_PPC
-  show_and_save_ppc(.x$ppc_results$plots$V_A_PPC_plt,
-                     paste0("ppc_V_A_", safe_catch_group, ".png"))
-
-  # T_A_PPC
-  show_and_save_ppc(.x$ppc_results$plots$T_A_PPC_plt,
-                     paste0("ppc_T_A_", safe_catch_group, ".png"))
+  
+  purrr::iwalk(.x$ppc_results$plots, \(plt, plt_name) {
+    if (!is.null(plt)) {
+      print(plt)
+      save_plot(plt,
+                paste0("ppc_", stringr::str_remove(plt_name, "_plt$"), 
+                       "_", safe_catch_group, ".png"),
+                width = 10, height = 8)
+    }
+  })
 })
+# purrr::iwalk(estimates_bss, ~{
+#   # cat("\n### Catch Group:", .y, "\n\n")
+#   
+#   # Create safe filename version of catch group name
+#   safe_catch_group <- stringr::str_replace_all(.y, "[^[:alnum:]]", "_")
+#   
+#   # V_I_PPC
+#   print(.x$ppc_results$plots$V_I_PPC_plt)
+#   save_plot(.x$ppc_results$plots$V_I_PPC_plt, 
+#             paste0("ppc_V_I_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+#   
+#   # T_I_PPC
+#   print(.x$ppc_results$plots$T_I_PPC_plt)
+#   save_plot(.x$ppc_results$plots$T_I_PPC_plt, 
+#             paste0("ppc_T_I_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+#   
+#   # E_s_PPC
+#   print(.x$ppc_results$plots$E_s_PPC_plt)
+#   save_plot(.x$ppc_results$plots$E_s_PPC_plt, 
+#             paste0("ppc_E_s_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+#   
+#   # c_PPC
+#   print(.x$ppc_results$plots$c_PPC_plt)
+#   save_plot(.x$ppc_results$plots$c_PPC_plt, 
+#             paste0("ppc_c_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+#   
+#   # V_A_PPC
+#   print(.x$ppc_results$plots$V_A_PPC_plt)
+#   save_plot(.x$ppc_results$plots$V_A_PPC_plt, 
+#             paste0("ppc_V_A_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+#   
+#   # T_A_PPC
+#   print(.x$ppc_results$plots$T_A_PPC_plt)
+#   save_plot(.x$ppc_results$plots$T_A_PPC_plt, 
+#             paste0("ppc_T_A_", safe_catch_group, ".png"), 
+#             width = 10, height = 8)
+# })
 ```
 
 ## Combined summary of effort and catch estimates

@@ -25,7 +25,7 @@
 #   - boat_type_collapse           = "Yes"
 #   - fish_location_determines_type = "No"
 #   - angler_type_kayak_pontoon    = "bank"
-#   - period_pe                    = "week"
+#   - period_pe                    = "week" and "month" (sensitivity run)
 #   - day_length                   = "night closure"
 #   - min_fishing_time             = 0.5  (hours; trips shorter than this excluded)
 # ==============================================================================
@@ -77,6 +77,22 @@ cli::cli_alert_success(
   "Retained {length(fisheries)} fisheries with a year in 2022\u20132025."
 )
 
+# Known DB failures; only salmon fisheries retained for PST scope
+KNOWN_FAILED <- c(
+  "2024 Potholes Reservoir",
+  "2025 Banks Lake",
+  "Baker summer sockeye 2022",
+  "Baker summer sockeye 2023"
+)
+
+fisheries <- fisheries[
+  !fisheries %in% KNOWN_FAILED &
+  stringr::str_detect(fisheries, stringr::regex("salmon", ignore_case = TRUE))
+]
+cli::cli_alert_info(
+  "After excluding known failures and non-salmon: {length(fisheries)} fisheries retained."
+)
+
 
 # 2. Cross-check public vs. internal (DB) name lists -------------------------
 #
@@ -124,7 +140,7 @@ if (length(public_not_in_db) > 0) {
 
 # 3–6. Per-fishery processing function --------------------------------------
 
-process_fishery <- function(fishery_name) {
+process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
 
   cli::cli_alert_info("Processing: {.val {fishery_name}}")
 
@@ -166,7 +182,7 @@ process_fishery <- function(fishery_name) {
     weekends          = c("Saturday", "Sunday"),
     lat               = mean(dwg$ll$centroid_lat, na.rm = TRUE),
     long              = mean(dwg$ll$centroid_lon, na.rm = TRUE),
-    period_pe         = PERIOD_PE,
+    period_pe         = period_pe,
     sections          = sort(unique(dwg$interview$section_num)),
     closures          = dwg$closures,
     day_length        = DAY_LENGTH,
@@ -294,43 +310,51 @@ process_fishery <- function(fishery_name) {
   #
   # GRAIN NOTE: est_pe_effort() returns at grain:
   #   section_num × period × day_type × angler_final
-  # where `period` is a calendar-week number (with PERIOD_PE = "week").
+  # where `period` is a calendar-week or calendar-month number depending on period_pe.
   #
   # mean_trip_length_monthly is at grain: year × month × crc_area × angler_final.
   #
   # These grains do not directly align because:
-  #   1. Effort is weekly; trip length is monthly (finer vs. coarser time grain).
+  #   1. Effort periods may span month boundaries (week case); trip length is monthly.
   #   2. Effort is split by day_type (weekday / weekend); trip length is not.
   #   3. Effort is split by section_num; trip length uses crc_area.
   #
-  # RECONCILIATION: crc_area is joined to est_effort via a section_num → crc_area
-  # lookup derived from the interview data (assumes crc_area maps consistently to
-  # section_num; flag for review if a section spans multiple CRC areas).
-  # We then derive year + month from each stratum's min_event_date and sum `est`
-  # across all section_num, period, and day_type strata within the same
-  # year × month × crc_area × angler_final cell, yielding a monthly total effort
-  # estimate per crc_area and angler type. Dividing by mean trip length produces
-  # estimated total completed trips.
+  # RECONCILIATION: each stratum's effort is prorated across calendar months by the
+  # fraction of that stratum's open days falling in each month (n_days_in_month /
+  # N_days_open). This correctly splits cross-month weeks and is a no-op for
+  # monthly strata. crc_area is joined via a section_num lookup derived from
+  # interviews (flag if a section spans multiple CRC areas).
   #
-  # Consequence: section-level trip-count breakdowns are not retained. If
-  # per-section trip estimates are needed, trip length would also need to be
-  # computed at the section × month grain using section_num from the interview
-  # data — revisit if that resolution is required.
+  # Consequence: section-level trip-count breakdowns are not retained.
 
   # crc_area is an interview-level attribute; derive a section_num → crc_area
   # lookup and join it onto est_effort so it can flow through to the final output.
   section_crc_area <- interview_angler_types |>
     dplyr::distinct(section_num, crc_area)
 
+  # Count open days per stratum × calendar month for prorating weights
+  stratum_by_month <- dwg$days |>
+    dplyr::select(event_date, period, day_type, dplyr::starts_with("open_section")) |>
+    tidyr::pivot_longer(
+      cols      = dplyr::starts_with("open_section"),
+      names_to  = "section_temp",
+      values_to = "is_open"
+    ) |>
+    dplyr::filter(is_open) |>
+    dplyr::mutate(
+      section_num = as.numeric(gsub("^.*_", "", section_temp)),
+      year        = as.integer(format(event_date, "%Y")),
+      month       = as.integer(format(event_date, "%m"))
+    ) |>
+    dplyr::count(section_num, period, day_type, year, month, name = "n_days_in_month")
+
   total_effort_monthly <- est_effort |>
     dplyr::left_join(section_crc_area, by = "section_num") |>
-    dplyr::mutate(
-      year  = as.integer(format(min_event_date, "%Y")),
-      month = as.integer(format(min_event_date, "%m"))
-    ) |>
+    dplyr::left_join(stratum_by_month, by = c("section_num", "period", "day_type")) |>
+    dplyr::mutate(effort_prorated = est * (n_days_in_month / N_days_open)) |>
     dplyr::group_by(fishery_name, year, month, crc_area, angler_final) |>
     dplyr::summarize(
-      total_effort_hrs = sum(est, na.rm = TRUE),
+      total_effort_hrs = sum(effort_prorated, na.rm = TRUE),
       .groups          = "drop"
     )
 
@@ -341,42 +365,58 @@ process_fishery <- function(fishery_name) {
     ) |>
     dplyr::mutate(
       total_trips_est = total_effort_hrs / mean_trip_length
-    )
+    ) |>
+    dplyr::rename(catch_area_code = crc_area)
 
   cli::cli_alert_success("Done: {.val {fishery_name}}")
   total_trips
 }
 
 
-# 6. Error-isolated batch run -----------------------------------------------
+# 6. Error-isolated batch run (weekly PE + monthly PE sensitivity) -----------
 
-results <- purrr::map(
-  fisheries,
-  function(fn) {
+run_batch <- function(fisheries, period_pe) {
+  cli::cli_alert_info("Running batch with period_pe = {.val {period_pe}} ...")
+  purrr::map(fisheries, function(fn) {
     tryCatch(
-      process_fishery(fn),
+      process_fishery(fn, period_pe = period_pe),
       error = function(e) {
-        cli::cli_alert_danger(
-          "Failed [{.val {fn}}]: {conditionMessage(e)}"
-        )
+        cli::cli_alert_danger("Failed [{.val {fn}}]: {conditionMessage(e)}")
         NULL
       }
     )
-  }
-)
+  })
+}
+
+results_week  <- run_batch(fisheries, "week")
+results_month <- run_batch(fisheries, "month")
+
+# Capture failures from the weekly run for fast exclusion on re-runs;
+# paste into KNOWN_FAILED above to skip them without re-hitting the DB.
+failed_fisheries <- fisheries[purrr::map_lgl(results_week, is.null)]
+if (length(failed_fisheries) > 0) {
+  cli::cli_alert_warning("Failed fisheries (add to KNOWN_FAILED to skip on re-run):")
+  purrr::walk(failed_fisheries, ~ cli::cli_bullets(c("x" = .x)))
+}
 
 
 # 7. Combine results ---------------------------------------------------------
 
-n_success <- sum(!purrr::map_lgl(results, is.null))
-n_fail    <- length(results) - n_success
-cli::cli_alert_info(
-  "{n_success}/{length(fisheries)} fisheries processed successfully \\
-   ({n_fail} failed)."
-)
+summarise_batch <- function(results, label, n_fisheries) {
+  n_success <- sum(!purrr::map_lgl(results, is.null))
+  cli::cli_alert_info(
+    "pe_period={.val {label}}: {n_success}/{n_fisheries} succeeded \\
+     ({n_fisheries - n_success} failed)."
+  )
+  purrr::keep(results, Negate(is.null)) |>
+    dplyr::bind_rows() |>
+    dplyr::mutate(pe_period = label)
+}
 
-combined <- purrr::keep(results, Negate(is.null)) |>
-  dplyr::bind_rows()
+combined <- dplyr::bind_rows(
+  summarise_batch(results_week,  "week",  length(fisheries)),
+  summarise_batch(results_month, "month", length(fisheries))
+)
 
 
 # 8. Save output (checkpoint before any downstream analysis) ----------------
@@ -391,3 +431,4 @@ cli::cli_alert_success(
   "Saved {nrow(combined)} rows across \\
    {dplyr::n_distinct(combined$fishery_name)} fisheries to {.path {out_path}}"
 )
+

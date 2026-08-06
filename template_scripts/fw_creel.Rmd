@@ -110,6 +110,9 @@ est_catch_groups <- resolve_catch_groups(
   observed_only = TRUE,
   conn = con
 )
+```
+
+```{r build_resolved_params, message=FALSE}
 
 # Snapshot of resolved parameters: YAML params overlaid with resolver
 # outputs. Single source for params_json, generate_analysis_lut(), and

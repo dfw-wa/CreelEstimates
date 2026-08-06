@@ -1,0 +1,107 @@
+fishery_name,pe_period,study_design,status,stage,reason
+Cascade fall salmon 2022,week,Standard,ok,NA,NA
+Cascade fall salmon 2023,week,Standard,ok,NA,NA
+Cascade fall salmon 2024,week,Standard,ok,NA,NA
+Chehalis salmon 2022,week,Standard,ok,NA,NA
+Chehalis salmon 2024,week,Standard,ok,NA,NA
+Chehalis salmon 2025,week,Standard,ok,NA,NA
+Drano Lake salmon and steelhead 2022,week,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2023,week,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2024,week,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2025,week,Drano,ok,NA,NA
+Hoh fall salmon 2023,week,Standard,ok,NA,NA
+Hoh fall salmon 2025,week,Standard,ok,NA,NA
+Humptulips salmon 2022,week,Standard,ok,NA,NA
+Humptulips salmon 2023,week,Standard,ok,NA,NA
+Humptulips salmon 2024,week,Standard,ok,NA,NA
+Humptulips salmon 2025,week,Standard,ok,NA,NA
+Lower Chehalis salmon 2023,week,Standard,ok,NA,NA
+Lower Cowlitz salmon and steelhead 2022-23,week,Standard,error,catch_groups,"[38;5;255mCategory value(s) contain regex metacharacters and cannot be safely assembled into a catch-group pattern.
+[31m✖[38;5;255m [34m""AD+LV""[38;5;255m
+[36mℹ[38;5;255m Handle these explicitly before re-running.[39m"
+Lower Cowlitz salmon and steelhead 2023-24,week,Standard,error,validate_days,period_pe='week': period value(s) 31 occur in more than one calendar year. Downstream joins key on period alone and would pool these strata across years. Needs a year-qualified period before this fishery can be estimated.
+Nisqually salmon 2022,week,Standard,ok,NA,NA
+Nisqually salmon 2023,week,Standard,ok,NA,NA
+Nooksack fall salmon 2023,week,Standard,ok,NA,NA
+Nooksack fall salmon 2024,week,Standard,ok,NA,NA
+Puyallup Carbon salmon 2024,week,Standard,ok,NA,NA
+Puyallup Carbon salmon 2025,week,Standard,ok,NA,NA
+Puyallup_Carbon salmon 2022,week,Standard,ok,NA,NA
+Puyallup_Carbon salmon 2023,week,Standard,ok,NA,NA
+Quillayute fall salmon 2022,week,Standard,ok,NA,NA
+Quillayute fall salmon 2023,week,Standard,ok,NA,NA
+Quillayute fall salmon 2024,week,Standard,ok,NA,NA
+Quillayute fall salmon 2025,week,Standard,ok,NA,NA
+Satsop salmon 2022,week,Standard,ok,NA,NA
+Satsop salmon 2023,week,Standard,ok,NA,NA
+Satsop salmon 2024,week,Standard,ok,NA,NA
+Satsop salmon 2025,week,Standard,ok,NA,NA
+Skagit fall salmon 2022,week,Standard,ok,NA,NA
+Skagit fall salmon 2023,week,Standard,ok,NA,NA
+Skagit fall salmon 2024,week,Standard,ok,NA,NA
+Skagit fall salmon 2025,week,Standard,ok,NA,NA
+Snohomish fall salmon 2022,week,Standard,ok,NA,NA
+Snohomish fall salmon 2023,week,Standard,ok,NA,NA
+Snohomish fall salmon 2024,week,Standard,ok,NA,NA
+Snohomish fall salmon 2025,week,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2022-23,week,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2023-24,week,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2024-25,week,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2025-26,week,Standard,ok,NA,NA
+Upper Chehalis salmon 2023,week,Standard,ok,NA,NA
+Wallace salmon and gamefish 2022-23,week,Standard,ok,NA,NA
+Wallace salmon and gamefish 2023-24,week,Standard,ok,NA,NA
+Wallace salmon and gamefish 2024-25,week,Standard,ok,NA,NA
+Cascade fall salmon 2022,month,Standard,ok,NA,NA
+Cascade fall salmon 2023,month,Standard,ok,NA,NA
+Cascade fall salmon 2024,month,Standard,ok,NA,NA
+Chehalis salmon 2022,month,Standard,ok,NA,NA
+Chehalis salmon 2024,month,Standard,ok,NA,NA
+Chehalis salmon 2025,month,Standard,ok,NA,NA
+Drano Lake salmon and steelhead 2022,month,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2023,month,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2024,month,Drano,ok,NA,NA
+Drano Lake salmon and steelhead 2025,month,Drano,ok,NA,NA
+Hoh fall salmon 2023,month,Standard,ok,NA,NA
+Hoh fall salmon 2025,month,Standard,ok,NA,NA
+Humptulips salmon 2022,month,Standard,ok,NA,NA
+Humptulips salmon 2023,month,Standard,ok,NA,NA
+Humptulips salmon 2024,month,Standard,ok,NA,NA
+Humptulips salmon 2025,month,Standard,ok,NA,NA
+Lower Chehalis salmon 2023,month,Standard,ok,NA,NA
+Lower Cowlitz salmon and steelhead 2022-23,month,Standard,error,catch_groups,"[38;5;255mCategory value(s) contain regex metacharacters and cannot be safely assembled into a catch-group pattern.
+[31m✖[38;5;255m [34m""AD+LV""[38;5;255m
+[36mℹ[38;5;255m Handle these explicitly before re-running.[39m"
+Lower Cowlitz salmon and steelhead 2023-24,month,Standard,skipped,pe_ang_hrs,No daily angler-hour estimates produced.
+Nisqually salmon 2022,month,Standard,ok,NA,NA
+Nisqually salmon 2023,month,Standard,ok,NA,NA
+Nooksack fall salmon 2023,month,Standard,ok,NA,NA
+Nooksack fall salmon 2024,month,Standard,ok,NA,NA
+Puyallup Carbon salmon 2024,month,Standard,ok,NA,NA
+Puyallup Carbon salmon 2025,month,Standard,ok,NA,NA
+Puyallup_Carbon salmon 2022,month,Standard,ok,NA,NA
+Puyallup_Carbon salmon 2023,month,Standard,ok,NA,NA
+Quillayute fall salmon 2022,month,Standard,ok,NA,NA
+Quillayute fall salmon 2023,month,Standard,ok,NA,NA
+Quillayute fall salmon 2024,month,Standard,ok,NA,NA
+Quillayute fall salmon 2025,month,Standard,ok,NA,NA
+Satsop salmon 2022,month,Standard,ok,NA,NA
+Satsop salmon 2023,month,Standard,ok,NA,NA
+Satsop salmon 2024,month,Standard,ok,NA,NA
+Satsop salmon 2025,month,Standard,ok,NA,NA
+Skagit fall salmon 2022,month,Standard,ok,NA,NA
+Skagit fall salmon 2023,month,Standard,ok,NA,NA
+Skagit fall salmon 2024,month,Standard,ok,NA,NA
+Skagit fall salmon 2025,month,Standard,ok,NA,NA
+Snohomish fall salmon 2022,month,Standard,ok,NA,NA
+Snohomish fall salmon 2023,month,Standard,ok,NA,NA
+Snohomish fall salmon 2024,month,Standard,ok,NA,NA
+Snohomish fall salmon 2025,month,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2022-23,month,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2023-24,month,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2024-25,month,Standard,ok,NA,NA
+Stillaguamish salmon and gamefish 2025-26,month,Standard,ok,NA,NA
+Upper Chehalis salmon 2023,month,Standard,ok,NA,NA
+Wallace salmon and gamefish 2022-23,month,Standard,ok,NA,NA
+Wallace salmon and gamefish 2023-24,month,Standard,ok,NA,NA
+Wallace salmon and gamefish 2024-25,month,Standard,ok,NA,NA

@@ -17,11 +17,18 @@
 #
 #   Output: analysis/outputs/multi_fishery_trip_summary.rds
 #
-# Study-design assumptions (applied uniformly to all fisheries):
+# Study-design assumptions:
 #   These come from the fw_creel.Rmd YAML defaults and are used because
-#   per-fishery configuration is not stored in the DB. Review any fishery whose
-#   results look suspect — it may require a non-default study design.
-#   - study_design                 = "Standard"
+#   per-fishery configuration is not stored in the DB.
+#
+#   study_design is resolved PER FISHERY from the fishery name (see section 2b),
+#   NOT applied uniformly. Fisheries matching DESIGN_RULES (currently
+#   "Drano Lake") run under the "Drano" branches of the PE functions; all others
+#   use "Standard". This matters because the two designs read different
+#   interview columns and interpret effort counts differently, and a mismatch
+#   does not error — it produces a plausible-looking but wrong number.
+#
+#   The remaining parameters are shared across designs:
 #   - boat_type_collapse           = "Yes"
 #   - fish_location_determines_type = "No"
 #   - angler_type_kayak_pontoon    = "bank"
@@ -39,12 +46,14 @@ library(creelutils)
 library(timeDate)   # holiday calendar functions called inside prep_days()
 library(suncalc)    # getSunlightTimes() called inside prep_days()
 library(lubridate)  # days() called inside prep_days()
+library(rlang)      # .env pronoun used to pin study_design inside mutate()
 
 # Source all PE pipeline functions
 walk(list.files(here("R_functions"), full.names = TRUE), source)
 
-# Study-design constants — see header for rationale
-STUDY_DESIGN              <- "Standard"
+# Shared design constants — see header. study_design is resolved per fishery
+# in section 2b. Note fish_location_determines_type is consumed only by the
+# "Standard" branches; the "Drano" branches ignore it.
 BOAT_TYPE_COLLAPSE        <- "Yes"
 FISH_LOC_DETERMINES_TYPE  <- "No"
 ANGLER_TYPE_KAYAK_PONTOON <- "bank"
@@ -138,11 +147,108 @@ if (length(public_not_in_db) > 0) {
 }
 
 
+# 2b. Per-fishery study design ------------------------------------------------
+#
+# The PE functions branch internally on study_design. "Standard" and "Drano" are
+# not cosmetic variants — they consume different interview columns and assign
+# angler_final from different sources:
+#
+#                          Standard                    Drano
+#   person_count_final     total_group_count           angler_count
+#   index count meaning    vehicles ("total") and      direct counts of bank
+#                          trailers ("boat"), with     anglers and boats;
+#                          bank derived as total-boat  angler_final is already
+#                                                      bank/boat
+#   ang_per_object         anglers per vehicle /       anglers per interviewed
+#                          per trailer                 group (1 boat assumed)
+#   census / tie-in        paired census:index ratio   every count treated as a
+#                                                      census, TI_expan = 1
+#
+# Running a Drano fishery under the Standard branch does not error. It computes
+# bank effort as (vehicle-derived total − trailer-derived boat) from counts that
+# are actually direct angler and boat counts, and expands by an anglers-per-
+# vehicle ratio that does not describe the data. The result is a plausible-
+# looking number that is wrong.
+#
+# PRIOR OUTPUT WARNING: earlier runs of this script hard-coded "Standard" for
+# every fishery, including the Drano Lake fisheries. Any trip estimates for
+# those fisheries produced before this change should be discarded and re-run.
+
+DESIGN_RULES <- tibble::tribble(
+  ~pattern,      ~study_design,
+  "Drano Lake",  "Drano"
+)
+
+DEFAULT_STUDY_DESIGN <- "Standard"
+SUPPORTED_DESIGNS    <- c("Standard", "Drano")
+
+resolve_study_design <- function(fishery_name) {
+  hits <- DESIGN_RULES[
+    stringr::str_detect(
+      fishery_name,
+      stringr::regex(DESIGN_RULES$pattern, ignore_case = TRUE)
+    ), ,
+    drop = FALSE
+  ]
+
+  design <- if (nrow(hits) == 0) {
+    DEFAULT_STUDY_DESIGN
+  } else if (dplyr::n_distinct(hits$study_design) == 1) {
+    hits$study_design[1]
+  } else {
+    # Two rules disagreeing is a config error, not a data problem: silently
+    # picking one would apply an unpredictable design.
+    cli::cli_abort(
+      c("Ambiguous study design for {.val {fishery_name}}.",
+        "x" = "Matching rules resolve to: {.val {unique(hits$study_design)}}",
+        "i" = "Fix DESIGN_RULES before re-running.")
+    )
+  }
+
+  if (!design %in% SUPPORTED_DESIGNS) {
+    cli::cli_abort(
+      c("Unsupported study design {.val {design}} for {.val {fishery_name}}.",
+        "i" = "The PE functions branch only on: {.val {SUPPORTED_DESIGNS}}.")
+    )
+  }
+  design
+}
+
+# Interview columns each design depends on. Checked per fishery so a design
+# applied to data that cannot support it fails with a clear message instead of
+# an opaque error several functions downstream.
+REQUIRED_INTERVIEW_COLS <- list(
+  common   = c("interview_id", "event_date", "section_num", "crc_area",
+               "trip_status", "previously_interviewed", "fishing_start_time",
+               "interview_time", "vehicle_count", "boat_used", "boat_type"),
+  Standard = c("total_group_count", "trailer_count", "fish_from_boat"),
+  Drano    = c("angler_count")
+)
+
+# Report resolved designs up front so an unexpected assignment is visible
+# before a long batch run starts.
+design_assignment <- tibble::tibble(
+  fishery_name = fisheries,
+  study_design = purrr::map_chr(fisheries, resolve_study_design)
+)
+
+cli::cli_h3("Resolved study designs")
+design_assignment |> dplyr::count(study_design) |> print()
+if (any(design_assignment$study_design != DEFAULT_STUDY_DESIGN)) {
+  design_assignment |>
+    dplyr::filter(study_design != DEFAULT_STUDY_DESIGN) |>
+    print(n = 30)
+}
+
+
 # 3–6. Per-fishery processing function --------------------------------------
 
 process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
 
-  cli::cli_alert_info("Processing: {.val {fishery_name}}")
+  study_design <- resolve_study_design(fishery_name)
+  cli::cli_alert_info(
+    "Processing: {.val {fishery_name}} [design: {.val {study_design}}]"
+  )
 
   # Resolve estimation window from internal DB
   est_dates  <- resolve_dates(fishery_name, "", "")
@@ -156,10 +262,26 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     data_source  = "internal"
   )
 
+  # Interview schema must support the resolved design. Missing angler_count
+  # under "Drano", or missing total_group_count under "Standard", otherwise
+  # surfaces as an opaque error inside prep_dwg_interview_fishing_time().
+  missing_cols <- setdiff(
+    c(REQUIRED_INTERVIEW_COLS$common, REQUIRED_INTERVIEW_COLS[[study_design]]),
+    names(dwg$interview)
+  )
+  if (length(missing_cols) > 0) {
+    cli::cli_abort(
+      c("Interview table is missing column(s) required by the \
+         {.val {study_design}} design.",
+        "x" = "{.val {missing_cols}}")
+    )
+  }
+
   # Minimal params list required by prep_* and est_pe_effort() functions
   params <- list(
     fishery_name = fishery_name,
-    project_name = "multi_fishery_analysis"
+    project_name = "multi_fishery_analysis",
+    study_design = study_design
   )
 
   # Patch p_census values from fishery_manager into the effort table
@@ -200,12 +322,12 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
   interview_fishing_time <- prep_dwg_interview_fishing_time(
     dwg_interview    = int_filt,
     min_fishing_time = MIN_FISHING_TIME,
-    study_design     = STUDY_DESIGN
+    study_design     = study_design
   )
 
   interview_angler_types <- prep_dwg_interview_angler_types(
     interview_fishing_time        = interview_fishing_time,
-    study_design                  = STUDY_DESIGN,
+    study_design                  = study_design,
     boat_type_collapse            = BOAT_TYPE_COLLAPSE,
     fish_location_determines_type = FISH_LOC_DETERMINES_TYPE,
     angler_type_kayak_pontoon     = ANGLER_TYPE_KAYAK_PONTOON
@@ -216,7 +338,7 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
   effort_index_summ <- prep_dwg_effort_index(
     params                        = params,
     eff                           = eff_filt,
-    study_design                  = STUDY_DESIGN,
+    study_design                  = study_design,
     boat_type_collapse            = BOAT_TYPE_COLLAPSE,
     fish_location_determines_type = FISH_LOC_DETERMINES_TYPE,
     angler_type_kayak_pontoon     = ANGLER_TYPE_KAYAK_PONTOON
@@ -225,7 +347,7 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
   effort_census_summ <- prep_dwg_effort_census(
     params                        = params,
     eff                           = eff_filt,
-    study_design                  = STUDY_DESIGN,
+    study_design                  = study_design,
     boat_type_collapse            = BOAT_TYPE_COLLAPSE,
     fish_location_determines_type = FISH_LOC_DETERMINES_TYPE,
     angler_type_kayak_pontoon     = ANGLER_TYPE_KAYAK_PONTOON
@@ -247,7 +369,7 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
 
   inputs_pe$interview_ang_per_object <- prep_inputs_pe_int_ang_per_object(
     dwg_summarized = dwg_summ,
-    study_design   = STUDY_DESIGN
+    study_design   = study_design
   )
 
   inputs_pe$paired_census_index_counts <- prep_inputs_pe_paired_census_index_counts(
@@ -255,7 +377,7 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     dwg_summarized           = dwg_summ,
     interview_ang_per_object = inputs_pe$interview_ang_per_object,
     census_expan             = dwg_summ$census_expan,
-    study_design             = STUDY_DESIGN
+    study_design             = study_design
   )
 
   inputs_pe$ang_hrs_daily_mean <- prep_inputs_pe_ang_hrs(
@@ -263,7 +385,7 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     dwg_summarized             = dwg_summ,
     interview_ang_per_object   = inputs_pe$interview_ang_per_object,
     paired_census_index_counts = inputs_pe$paired_census_index_counts,
-    study_design               = STUDY_DESIGN
+    study_design               = study_design
   )
 
   inputs_pe$df <- prep_inputs_pe_df(
@@ -299,7 +421,14 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     dplyr::summarize(
       n_completed_angler_trips = dplyr::n(),
       mean_trip_length         = mean(fishing_time),
-      mean_group_size          = mean(total_group_count),
+      # person_count_final, NOT total_group_count. prep_dwg_interview_fishing_time()
+      # sets person_count_final = total_group_count under "Standard" and
+      # angler_count under "Drano", and it is the count every downstream effort
+      # calculation uses. Reading total_group_count directly would report a
+      # group size inconsistent with the effort math for Drano fisheries, and
+      # would return NA wherever that column is unpopulated. This is a no-op for
+      # Standard fisheries.
+      mean_group_size          = mean(person_count_final, na.rm = TRUE),
       sd                       = sd(fishing_time),
       .groups                  = "drop"
     ) |>
@@ -364,11 +493,17 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
       by = c("year", "month", "crc_area", "angler_final" = "angler_type")
     ) |>
     dplyr::mutate(
-      total_trips_est = total_effort_hrs / mean_trip_length
+      total_trips_est = total_effort_hrs / mean_trip_length,
+      # .env$ pin: without it dplyr resolves against the data mask first, and
+      # would silently pick up a same-named column if one is added upstream.
+      study_design    = .env$study_design
     ) |>
-    dplyr::rename(catch_area_code = crc_area)
+    dplyr::rename(catch_area_code = crc_area) |>
+    dplyr::relocate(study_design, .after = fishery_name)
 
-  cli::cli_alert_success("Done: {.val {fishery_name}}")
+  cli::cli_alert_success(
+    "Done: {.val {fishery_name}} [design: {.val {study_design}}]"
+  )
   total_trips
 }
 

@@ -53,7 +53,25 @@ resolve_catch_groups <- function(
         " " = "!r data.frame(rbind(c(species = '', life_stage = '', fin_mark = '', fate = '')))"
       ))
     }
-    return(catch_groups)
+    
+    # Add cols to match fishery_catchgroups() output
+    if (!"fishery_name" %in% names(catch_groups)) {
+      catch_groups$fishery_name <- fishery
+    }
+    if (!"combined_catch_group" %in% names(catch_groups)) { # combined created from components
+      catch_groups$combined_catch_group <- creelutils::combine_catch_group(catch_groups)
+    }
+    if (!"model_catch_group_id" %in% names(catch_groups)) { # uuid col as NA, unknown with manual entry
+      catch_groups$model_catch_group_id <- NA_character_
+    }
+    
+    catch_groups <- dplyr::relocate(
+      catch_groups,
+      dplyr::any_of(c("fishery_name", "combined_catch_group", "model_catch_group_id")),
+      .before = 1
+    )
+    
+    return(as.data.frame(catch_groups))
   }
   
   # If catch groups are not entered (param as NULL, NA, length-0, or empty quotes "") -> normalize to ""
@@ -63,7 +81,7 @@ resolve_catch_groups <- function(
       "{.arg catch_groups} must be blank (\"\") to query the database, or a data frame with columns {.field {components}}."
     )
   }
-  
+
   # Source fishery catch groups from the database
   cg_rows <- tryCatch(
     creelutils::fishery_catchgroups(conn = conn, fishery_name = fishery, observed_only = observed_only),
@@ -91,5 +109,5 @@ resolve_catch_groups <- function(
     ))
   }
   
-  as.data.frame(cg_rows)
+  return(as.data.frame(cg_rows))
 }

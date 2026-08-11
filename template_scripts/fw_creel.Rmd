@@ -1559,7 +1559,7 @@ if (resolved_params$export %in% c("database", "local") && !resolved_params$model
   # Process PE estimates to common format
   if (exists("estimates_pe") && resolved_params$model_used == "PE only") {
     cat("Performing 'PE only' transformation.")
-    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params)
+    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params, days = dwg$days)
   }
   
   # Process BSS estimates to common format
@@ -1571,7 +1571,7 @@ if (resolved_params$export %in% c("database", "local") && !resolved_params$model
   # Process PE and BSS model estimates to common format
   if (exists("estimates_pe") && exists("estimates_bss") && resolved_params$model_used == "Both models") {
     cat("Performing 'Both models' transformation.")
-    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params)
+    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params, days = dwg$days)
     transformed_bss_data <- creelutils::process_estimates_bss(params = resolved_params, analysis_lut, estimates_bss)
   }
   

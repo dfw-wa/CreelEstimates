@@ -42,15 +42,6 @@ This report is intended to communicate preliminary results of freshwater salmon 
 Please note that the data provided has not yet undergone complete Quality Assurance/Quality Control (QA/QC) procedures and may be subject to revision.
 
 # Setup code chunks
-#### Report parameters
-```{r display_params, results='asis', echo=FALSE}
-cat('<details class="params-section">\n')
-cat("<summary>Click to view report parameters</summary>\n\n")
-cat("```yaml\n")
-cat(yaml::as.yaml(params))
-cat("```\n\n")
-cat("</details>\n")
-```
 
 #### Load packages
 ```{r packages, results='hide', message=FALSE, warning=FALSE}
@@ -126,6 +117,16 @@ resolved_params <- utils::modifyList(
     ])
   )
 )
+```
+
+#### Report parameters
+```{r display_params, results='asis', echo=FALSE}
+cat('<details class="params-section">\n')
+cat("<summary>Click to view report parameters</summary>\n\n")
+cat("```yaml\n")
+cat(yaml::as.yaml(resolved_params))
+cat("```\n\n")
+cat("</details>\n")
 ```
 
 #### Selected catch groups

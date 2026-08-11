@@ -188,9 +188,8 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
                   if (has_total_col) "row_total" else character(0))
   names(data_sub) <- col_labels
 
-  # Coerce fixed cols to character and convert empty strings to NA so the
-  # grandtot marker ("Total - All Areas:") is visible in the region column.
-  # Fill-down happens AFTER the grandtot block is removed (see below).
+  # Coerce fixed cols to character; convert empty strings to NA so downstream
+  # detections work on clean NA, not empty string.
   data_sub <- data_sub |>
     mutate(across(all_of(fixed_names), as.character)) |>
     mutate(across(all_of(fixed_names), ~ na_if(., "")))
@@ -208,36 +207,76 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
              row_total = replace_na(row_total, 0L))
   }
 
-  # ---- Remove fully empty rows and header-leakage rows ----
-  # In Layout B, the header row lands just before data_start_row; guard against
-  # any leftover "Region"/"Species" header values if the row boundary shifts.
+  # ---- Drop skeleton empty rows (no species value at all) ----
   data_sub <- data_sub |>
-    filter(!is.na(species), species != "",
-           !str_detect(species, regex("^species$", ignore_case = TRUE)))
+    filter(!is.na(species), species != "")
 
-  # ---- Identify grand-total rows BEFORE fill-down ----
-  # "Total - All Areas:" is in the raw (pre-fill) region column (col 1).
-  # We must detect these rows before fill-down because fill-down will overwrite
-  # the NA region cells in subsequent grandtot species rows with the real last
-  # stream's region value, masking the marker.
+  # ---- Step A: capture region from section-header rows BEFORE removing them ----
+  # In Layout B (2023/2024), each region block begins with a row where
+  #   col_A = "<region_name>"  col_B = "System"  col_E = "Species"
+  # These rows carry the only occurrence of the region name; the actual data
+  # rows that follow have NA in col_A. We must fill region down from these
+  # section-header rows before dropping them, otherwise every data row in
+  # every region except the first would inherit "Coastal" from the initial
+  # header row of the file (Layout A files are unaffected: their data rows
+  # already carry the region name directly).
+  section_header_mask <- (
+    str_detect(coalesce(data_sub$system,  ""), regex("^system$",  ignore_case = TRUE)) &
+    str_detect(coalesce(data_sub$species, ""), regex("^species$", ignore_case = TRUE))
+  )
+  # Forward-fill region only (section headers supply the region; data rows below
+  # them have NA and will inherit via fill-down).
+  data_sub <- data_sub |>
+    tidyr::fill(region, .direction = "down")
+  # Normalise embedded newlines in region names (e.g. "Columbia\n- Lower")
+  data_sub <- data_sub |>
+    mutate(region = str_replace_all(region, "\\s*\n\\s*", " "))
+  # Now remove the section-header rows — their region value has been propagated.
+  data_sub <- data_sub[!section_header_mask, ]
+
+  # ---- Step B: identify and remove grand-total rows BEFORE the subtotal loop --
+  # "Total - All Areas:" is still visible in the (region-filled) region column.
+  # It must be removed BEFORE the region-subtotal loop; otherwise the loop's
+  # state machine stays in 'in_block' past the last regional subtotal block and
+  # consumes the grand-total rows too (grand total rows all have system = NA).
   grandtot_mask <- str_detect(
     coalesce(data_sub$region, ""),
     regex("total.*all.*area|total\\s*-\\s*all", ignore_case = TRUE)
   )
-  # Propagate the mask forward: once we see the grand-total region marker, all
-  # subsequent rows belong to the grand-total block (stream stays NA/the last
-  # stream name after fill, so we use a cumulative flag on the raw region col).
   first_gt <- which(grandtot_mask)
   if (length(first_gt) > 0L) {
     grandtot_mask[first_gt[[1L]]:nrow(data_sub)] <- TRUE
   }
-
   grandtots_raw <- data_sub[grandtot_mask, ]
   data_sub      <- data_sub[!grandtot_mask, ]
 
-  # ---- Fill down merged cells (after grandtot rows removed) ----
+  # ---- Step C: remove region-subtotal blocks BEFORE fill-down ---------------
+  # Rows where col_B (system) = "Total" with no stream/code mark the START of
+  # a per-region aggregate block. Each block spans multiple rows: the first row
+  # has system = "Total"; the continuation rows (species = Chum, Coho, …, Total)
+  # have system = NA and stream = NA. Only when a row has a non-null, non-"Total"
+  # system value does the block end (i.e. the next real stream begins).
+  #
+  # We walk through the rows with a state flag to capture the full block:
+  system_vals <- coalesce(data_sub$system, "")
+  in_region_subtot <- logical(nrow(data_sub))
+  in_block <- FALSE
+  for (i in seq_len(nrow(data_sub))) {
+    sv <- system_vals[i]
+    if (grepl("^total$", sv, ignore.case = TRUE) && is.na(data_sub$stream[i])) {
+      in_block <- TRUE
+    } else if (sv != "" && !grepl("^total$", sv, ignore.case = TRUE)) {
+      in_block <- FALSE     # non-null, non-"Total" system = start of real stream
+    }
+    in_region_subtot[i] <- in_block
+  }
+
+  region_subtots <- data_sub[in_region_subtot, ]
+  data_sub       <- data_sub[!in_region_subtot, ]
+
+  # ---- Step D: fill down remaining merged cells ----
   data_sub <- data_sub |>
-    tidyr::fill(region, system, stream, stream_code, .direction = "down")
+    tidyr::fill(system, stream, stream_code, .direction = "down")
 
   # ---- Identify stream-species subtotal rows (species == "Total") ----
   subtot_mask <- str_detect(data_sub$species, regex("^total$", ignore_case = TRUE))
@@ -245,9 +284,10 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
   leaf        <- data_sub[!subtot_mask, ]
 
   # ---- Add license_year ----
-  leaf      <- mutate(leaf,      license_year = license_year)
-  subtotals <- mutate(subtotals, license_year = license_year)
-  grandtots_raw <- mutate(grandtots_raw, license_year = license_year)
+  leaf           <- mutate(leaf,           license_year = license_year)
+  subtotals      <- mutate(subtotals,      license_year = license_year)
+  region_subtots <- mutate(region_subtots, license_year = license_year)
+  grandtots_raw  <- mutate(grandtots_raw,  license_year = license_year)
 
   # ---- Pivot leaf to long format ----
   leaf_long <- leaf |>
@@ -264,12 +304,15 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
   cli::cli_alert_success(
     glue(
       "{nrow(leaf)} leaf rows × 12 months = {nrow(leaf_long)} long rows | ",
-      "{nrow(subtotals)} subtotal rows | {nrow(grandtots_raw)} grand-total rows."
+      "{nrow(subtotals)} stream-subtotal rows | ",
+      "{nrow(region_subtots)} region-subtotal rows | ",
+      "{nrow(grandtots_raw)} grand-total rows."
     )
   )
 
   list(leaf_long = leaf_long, leaf = leaf,
-       subtotals = subtotals, grandtots = grandtots_raw,
+       subtotals = subtotals, region_subtots = region_subtots,
+       grandtots = grandtots_raw,
        month_col_names = month_col_names,
        license_year = license_year)
 }
@@ -363,38 +406,48 @@ if (nrow(check1_fail) == 0L) {
     "PASS: All {nrow(check1)} stream subtotal rows reconcile with leaf sums."
   )
 } else {
+  # Known pre-publication inconsistencies in 2021 Draft 1 (Columbia Old Hanford +41,
+  # Skagit River -852) are expected. Leaf month-cell values are authoritative.
   cli::cli_alert_warning(
-    "WARNING (not blocking): {nrow(check1_fail)} stream subtotal(s) do not match \\
-     leaf sums. Mismatches in 'Draft 1' files (2021, 2022) are expected — these \\
-     are pre-publication internal inconsistencies in the source workbook. \\
-     Output CSV uses the leaf (individual month cell) values as authoritative."
+    "WARNING (not blocking for Draft 1 files): \\
+     {nrow(check1_fail)} stream subtotal(s) do not match leaf sums:"
   )
   print(select(check1_fail, license_year, stream, stream_code,
                leaf_stream_sum, subtot_sum, diff))
 }
 
 
-## --- Check 2: leaf sum vs stream-level subtotals (+ file grand-total info) ---
-cli::cli_h2("Check 2: Leaf sums vs stream-level subtotals (cross-file reconciliation)")
-# NOTE: The 'Total - All Areas' row in every input file is approximately HALF the
-# true sum of individual stream-species rows.  Cross-checking with Python/openpyxl
-# confirms this is a formula bug in the source workbooks (the SUM range appears to
-# cover only the second half of each data block). We therefore use the sum of
-# stream-level 'Total' rows — not the file's grand-total row — as the reconciliation
-# target. The file grand total is reported separately for audit completeness.
+## --- Check 2: leaf sums == region-level subtotals (clean reconciliation) ------
+cli::cli_h2("Check 2: Leaf sums vs region-level subtotals")
+# Each file contains per-region aggregate blocks (col_B = 'Total', col_C/D = NA)
+# excluded from the leaf extract. These are the natural reconciliation target.
+# For 2023 and 2024 (published files) leaf sums should equal region subtotals
+# exactly. For 2021 and 2022 (Draft 1 files) small discrepancies are expected:
+# - 2021: Columbia Old Hanford +41, Skagit River -852 (pre-pub cell errors)
+# - 2022: Unknown region (-3509) has a subtotal block but NO individual stream
+#         rows in the draft, so those fish appear only in the region subtotal,
+#         not in the leaf extract.
+# Both are flagged as warnings, not failures.
+#
+# The file 'Total - All Areas' row is also shown. Unlike the earlier parsing
+# defect that made it appear as a ~2x bug, it now matches leaf_grand within the
+# same tolerance as the region-subtotal check.
 
-leaf_grand <- all_leaf |>
+leaf_by_region <- all_leaf |>
   group_by(license_year) |>
   summarise(leaf_grand = sum(harvest_count, na.rm = TRUE), .groups = "drop")
 
-subtot_grand <- map_dfr(parsed_list, function(p) {
-  p$subtotals |>
-    select(license_year, all_of(p$month_col_names)) |>
-    rowwise() |>
-    mutate(row_sum = sum(c_across(all_of(p$month_col_names)), na.rm = TRUE)) |>
-    ungroup() |>
-    group_by(license_year) |>
-    summarise(subtot_grand = sum(row_sum, na.rm = TRUE), .groups = "drop")
+region_subtot_grand <- map_dfr(parsed_list, function(p) {
+  rs <- p$region_subtots
+  if (nrow(rs) == 0L) return(tibble(license_year = p$license_year, region_subtot_sum = NA_real_))
+  rs_species <- rs[str_detect(coalesce(rs$species, ""), regex("^total$", ignore_case = TRUE)), ]
+  if (nrow(rs_species) == 0L) return(tibble(license_year = p$license_year, region_subtot_sum = NA_real_))
+  if ("row_total" %in% names(rs_species)) {
+    tibble(license_year = p$license_year, region_subtot_sum = sum(rs_species$row_total, na.rm = TRUE))
+  } else {
+    tibble(license_year = p$license_year,
+           region_subtot_sum = sum(as.numeric(unlist(select(rs_species, all_of(p$month_col_names)))), na.rm = TRUE))
+  }
 })
 
 grandtot_file <- map_dfr(parsed_list, function(p) {
@@ -410,35 +463,33 @@ grandtot_file <- map_dfr(parsed_list, function(p) {
   }
 })
 
-check2 <- leaf_grand |>
-  left_join(subtot_grand,   by = "license_year") |>
-  left_join(grandtot_file,  by = "license_year") |>
+check2 <- leaf_by_region |>
+  left_join(region_subtot_grand, by = "license_year") |>
+  left_join(grandtot_file,       by = "license_year") |>
   mutate(
-    diff_subtot  = leaf_grand - coalesce(subtot_grand, 0),
+    diff_region   = leaf_grand - coalesce(region_subtot_sum, 0),
     file_gt_ratio = round(leaf_grand / coalesce(file_grandtot, NA_real_), 3L),
-    match        = abs(diff_subtot) < 0.5
+    match         = !is.na(region_subtot_sum) & abs(diff_region) < 0.5
   )
 
 check2_fail <- filter(check2, !match)
 
 if (nrow(check2_fail) == 0L) {
   cli::cli_alert_success(
-    "PASS: Leaf sums match stream-level subtotal sums for all {nrow(check2)} years."
+    "PASS: Leaf sums match region-subtotal sums for all {nrow(check2)} years."
   )
 } else {
   cli::cli_alert_warning(
-    "WARNING (not blocking): Leaf vs subtotal mismatch for {nrow(check2_fail)} \\
-     year(s). For Draft 1 files (2021, 2022) this reflects the same per-stream \\
-     inconsistencies flagged by Check 1; output CSV is still authoritative."
+    "WARNING (not blocking for Draft 1 files): \\
+     Leaf vs region-subtotal mismatch for {nrow(check2_fail)} year(s). \\
+     Expected for 2021 (stream-level cell errors) and 2022 (Unknown region \\
+     has no leaf rows in draft, only a subtotal block):"
   )
-  print(select(check2_fail, license_year, leaf_grand, subtot_grand, diff_subtot))
+  print(select(check2_fail, license_year, leaf_grand, region_subtot_sum, diff_region))
 }
 
-cli::cli_alert_info("File 'Total - All Areas' grand total vs leaf grand (for audit):")
+cli::cli_alert_info("File 'Total - All Areas' grand total vs leaf grand (audit):")
 print(select(check2, license_year, leaf_grand, file_grandtot, file_gt_ratio))
-cli::cli_alert_info(
-  "NOTE: file_gt_ratio ~= 0.5 for all years (known source-file formula bug)."
-)
 
 
 ## --- Check 5: No Steelhead rows ----------------------------------------------
@@ -533,7 +584,12 @@ print(
 
 cli::cli_h1("Writing output")
 
-readr::write_csv(all_leaf, OUT_CSV)
+# Write to a temp file first, then rename. This avoids the "file locked by
+# another process" error that occurs when Excel has the output CSV open.
+OUT_CSV_TMP <- paste0(OUT_CSV, ".tmp")
+readr::write_csv(all_leaf, OUT_CSV_TMP)
+if (file.exists(OUT_CSV)) file.remove(OUT_CSV)
+file.rename(OUT_CSV_TMP, OUT_CSV)
 
 cli::cli_alert_success(
   "Wrote {nrow(all_leaf)} rows to {OUT_CSV}"

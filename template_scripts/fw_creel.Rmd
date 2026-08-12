@@ -63,6 +63,7 @@ library("digest")
 # Load packages from source
 # devtools::install_github("dfw-wa/creelutils")
 # library(creelutils)
+devtools::load_all("C:/Repos/creelutils")
 ```
 
 ```{r database_con, message=FALSE}
@@ -109,16 +110,13 @@ est_catch_groups <- resolve_catch_groups(
 # 'resolved_params' used everywhere downstream as full replacement of stock 'params'.
 resolved_params <- utils::modifyList(
   unclass(params),
-  c(
     # Append resolved fishery dates and model run type (In-season, Post-season)
-    est_dates[c("est_date_start", "est_date_end", "model_run_type")],
-    # Append resolved catch groups, retaining combined catch group (i.e., est_cg) 
-    # crosswalk to associated database uuid (unavailable when manually entered in YAML)
-    list(est_catch_groups = est_catch_groups[
-      c("combined_catch_group", "model_catch_group_id") 
-    ])
+    est_dates[c("est_date_start", "est_date_end", "model_run_type")]
   )
-)
+
+# Append resolved catch groups, retaining combined catch group (i.e., est_cg) 
+# crosswalk to associated database uuid (unavailable when manually entered in YAML)
+resolved_params$est_catch_groups = est_catch_groups[c("combined_catch_group", "model_catch_group_id")]
 ```
 
 #### Report parameters

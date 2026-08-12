@@ -1593,7 +1593,9 @@ if (resolved_params$export %in% c("database", "local") && !resolved_params$model
 ```{r export_estimates, results='hide', eval= TRUE}
 
 if (resolved_params$export == "database") {
-  
+# Note for interactive/by-chunk runs: resolved_params (and therefore analysis_lut$params_json)
+# is snapshot in build_resolved_params. Editing params$export after that chunk is not 
+# reflected here or in params_json unless build_resolved_params chunk is re-run.
   creelutils::export_estimates(
     resolved_params,
     est_catch_groups, 

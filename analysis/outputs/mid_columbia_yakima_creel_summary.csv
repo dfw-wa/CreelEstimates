@@ -1,0 +1,41 @@
+fishery_name,year,month,crc_area,angler_final,total_effort_hrs,n_completed_angler_trips,mean_trip_length,mean_group_size,sd,total_trips_est,pe_period,data_provider
+Hanford Reach fall Chinook 2022,2022,8,NA,boat,8255.900387079924,649.7142857142857,3.9180013737479835,2.20494077231074,NA,2107.1713865128845,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2022,2022,9,NA,boat,95975.47341154887,5260.285714285715,5.802023468602631,2.800877240713294,NA,16541.724439915746,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2022,2022,10,NA,boat,53467.69921877725,3083.1428571428573,5.779833315773608,2.911171667028316,NA,9250.733766466898,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2022,2022,11,NA,boat,1044.8000160417828,140.85714285714286,2.8292185798844733,11.2201168638889,NA,369.2892530362378,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2022,2022,9,690,bank,7493.393452380953,437.14285714285717,2.1741686485114244,NA,NA,3446.5557478769697,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2022,2022,10,690,bank,9558.696547619047,571.8571428571429,2.144994477828168,NA,NA,4456.280259190848,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2023,2023,8,NA,boat,3558.37558072898,222.57142857142856,4.325741264509746,2.545770360814969,NA,822.6048122488123,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2023,2023,9,NA,boat,79132.65964630416,5124.714285714285,5.0867448051107305,2.899726922984167,NA,15556.640381644145,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2023,2023,10,NA,boat,44114.82779711313,3629,4.289688701619243,3.4284726778121635,NA,10283.922882436893,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2023,2023,11,NA,boat,2188.150298467391,334.57142857142856,3.066022889272049,14.234147108934733,NA,713.677091623707,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2023,2023,12,NA,boat,639.9202269464682,200.14285714285714,2.3414995020026774,15.455666348460047,NA,273.29505148267015,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2023,2023,9,690,bank,1826.7457142857145,854.5714285714286,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2023,2023,10,690,bank,2566.3942857142856,1271.4285714285713,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2023,2023,8,533,combined,112.43984166666668,11.428571428571427,2.6310118356943732,5,NA,42.73634962078827,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2023,2023,9,533,combined,3270.9735334508546,356.85714285714283,3.895626655112795,2.6557983433147485,NA,839.6527242049445,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2023,2023,10,533,combined,1539.8801171608131,289.14285714285717,2.618317363489688,5.76212088704131,NA,588.1182085232266,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2023,2023,11,533,combined,189.84227380952385,8.571428571428571,2.068977392063996,12,NA,91.7565723713098,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2024,2024,8,NA,boat,4061.679288472285,171.14285714285714,5.307723171257573,3.551760592425477,NA,765.2394741434755,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2024,2024,9,NA,boat,82005.51657454434,5025,6.207145165982142,2.9838340442954676,NA,13211.470713456207,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2024,2024,10,NA,boat,42430.154395810096,3217.5714285714284,5.009192228289301,3.2816827337312793,NA,8470.45840169334,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2024,2024,11,NA,boat,1621.5199646228107,225.14285714285714,4.059495802026776,11.36351763366998,NA,399.4387588264626,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2024,2024,12,NA,boat,325.5183465738772,75.14285714285714,1.4548430089962279,20.77154570117827,NA,223.74809141672907,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2024,2024,9,690,bank,1942.9199999999998,650,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2024,2024,10,690,bank,3102.925714285714,1213.4285714285713,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2024,2024,11,690,bank,180.6342857142857,98.57142857142857,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2024,NA,NA,690,bank,302.7,54,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2024,2024,9,533,combined,2958.0426843661926,347.14285714285717,2.9855507476040337,2.747777774018148,NA,990.7862684096336,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2024,2024,10,533,combined,1920.427845418188,242.71428571428572,2.9131762901577556,4.07221459815263,NA,659.2212946076779,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2024,2024,11,533,combined,3069.009334487216,185.14285714285714,3.4579992393260994,3.649806013680646,NA,887.510124231638,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2024,NA,NA,533,combined,1193.171354736842,57,5.195320056480559,3,NA,229.66272371391233,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2025,2024,8,NA,boat,2152.9897247548975,143.71428571428572,5.627214862800011,2.6027619310102517,NA,382.6030775877651,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2025,2024,9,NA,boat,56985.10669786116,2534.285714285714,6.488167645547862,3.117975032001079,NA,8782.927601595493,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2025,2024,10,NA,boat,53250.344195102225,2943.714285714286,5.730447276060119,3.3811246314161596,NA,9292.528424013995,week,Todd Miller / R-district weekly summary
+Hanford Reach fall Chinook 2025,2024,11,NA,boat,249.46714383504803,40.285714285714285,5.569097169905369,4.086956521739131,NA,44.79489874644924,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2025,2025,9,690,bank,658.1571428571428,324,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2025,2025,10,690,bank,2754.4514285714286,1190.5714285714287,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+Yakima fall salmon 2025,2025,11,690,bank,120.09142857142858,63.42857142857142,NA,NA,NA,NA,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2025,2025,9,533,combined,1659.3985908882785,269.57142857142856,3.0450664840068313,3.699859214979646,NA,544.9465880642348,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2025,2025,10,533,combined,2044.3528623696145,316.42857142857144,1.467697423107214,13.317633292002016,NA,1392.8980389170285,week,Todd Miller / R-district weekly summary
+McNary Reservoir fall salmon 2025,2025,11,533,combined,118.52306040816329,24,3.126219109144325,8,NA,37.91258906372821,week,Todd Miller / R-district weekly summary

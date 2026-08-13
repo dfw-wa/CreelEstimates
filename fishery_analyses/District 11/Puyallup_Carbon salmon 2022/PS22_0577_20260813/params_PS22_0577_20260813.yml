@@ -1,0 +1,35 @@
+project_name: District 11
+fishery_name: Puyallup_Carbon salmon 2022
+est_date_start: ''
+est_date_end: ''
+est_catch_groups:
+  species:
+  - Chinook
+  - Chinook
+  life_stage:
+  - Adult
+  - Adult
+  fin_mark:
+  - UM
+  - AD
+  fate:
+  - Released
+  - Kept
+study_design: Standard
+boat_type_collapse: 'Yes'
+fish_location_determines_type: 'No'
+angler_type_kayak_pontoon: bank
+person_count_type: group
+period_pe: week
+period_bss: day
+days_wkend:
+- Saturday
+- Sunday
+day_length_expansion: night closure
+min_fishing_time: 0.5
+bss_model_file_name: BSS_creel_model_02_2021-01-22_ppc.stan
+model_used: Both models
+data_grade: provisional
+export: local
+export_tables: both
+enable_cache: no

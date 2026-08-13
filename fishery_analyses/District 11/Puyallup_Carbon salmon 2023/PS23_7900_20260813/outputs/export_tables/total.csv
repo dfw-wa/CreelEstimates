@@ -1,0 +1,5 @@
+analysis_id,project_name,fishery_name,model_type,estimate_category,est_cg,estimate_type,estimate_value,min_event_date,max_event_date,estimate_time_period
+46E6F83F-56E7-4254-9D3A-D92D24D97900,District 11,Puyallup_Carbon salmon 2023,PE,catch,Chinook|Chum|Coho|Pink_Adult|Jack|NA|Smolt_AD|NA|UM|UNK_Kept,total_catch,102900.86183333333,NA,NA,week
+46E6F83F-56E7-4254-9D3A-D92D24D97900,District 11,Puyallup_Carbon salmon 2023,PE,catch,Chinook|Chum|Coho|Pink_Adult|Jack|NA|Smolt_AD|NA|UM|UNK_Kept,days_open,69,NA,NA,week
+46E6F83F-56E7-4254-9D3A-D92D24D97900,District 11,Puyallup_Carbon salmon 2023,PE,catch,Chinook|Chum|Coho|Pink_Adult|Jack|NA|Smolt_AD|NA|UM|UNK_Kept,number_observations,57,NA,NA,week
+46E6F83F-56E7-4254-9D3A-D92D24D97900,District 11,Puyallup_Carbon salmon 2023,PE,effort,NA,total_effort,319310.61809576023,NA,NA,week

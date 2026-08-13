@@ -1,0 +1,5 @@
+analysis_id,project_name,fishery_name,model_type,estimate_category,est_cg,estimate_type,estimate_value,min_event_date,max_event_date,estimate_time_period
+D17D3D9D-3402-4182-B30A-91C97DE82353,CRM - Roving Creel Project,Drano Lake salmon and steelhead 2025,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,total_catch,10163.4615,NA,NA,week
+D17D3D9D-3402-4182-B30A-91C97DE82353,CRM - Roving Creel Project,Drano Lake salmon and steelhead 2025,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,days_open,136,NA,NA,week
+D17D3D9D-3402-4182-B30A-91C97DE82353,CRM - Roving Creel Project,Drano Lake salmon and steelhead 2025,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,number_observations,57,NA,NA,week
+D17D3D9D-3402-4182-B30A-91C97DE82353,CRM - Roving Creel Project,Drano Lake salmon and steelhead 2025,PE,effort,NA,total_effort,92240.59515585544,NA,NA,week

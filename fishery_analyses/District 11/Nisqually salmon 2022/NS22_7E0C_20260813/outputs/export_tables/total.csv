@@ -1,0 +1,5 @@
+analysis_id,project_name,fishery_name,model_type,estimate_category,est_cg,estimate_type,estimate_value,min_event_date,max_event_date,estimate_time_period
+3DCA7252-D6C4-468B-A69E-5A97CA4F7E0C,District 11,Nisqually salmon 2022,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,total_catch,2332.092,2022-07-01,2022-11-15,week
+3DCA7252-D6C4-468B-A69E-5A97CA4F7E0C,District 11,Nisqually salmon 2022,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,days_open,146,2022-07-01,2022-11-15,week
+3DCA7252-D6C4-468B-A69E-5A97CA4F7E0C,District 11,Nisqually salmon 2022,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,number_observations,87,2022-07-01,2022-11-15,week
+3DCA7252-D6C4-468B-A69E-5A97CA4F7E0C,District 11,Nisqually salmon 2022,PE,effort,NA,total_effort,52791.51608882736,2022-07-01,2022-11-15,week

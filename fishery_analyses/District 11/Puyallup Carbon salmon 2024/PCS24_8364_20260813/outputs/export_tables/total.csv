@@ -1,0 +1,5 @@
+analysis_id,project_name,fishery_name,model_type,estimate_category,est_cg,estimate_type,estimate_value,min_event_date,max_event_date,estimate_time_period
+32521F0C-57B8-4578-96E1-13FA05E98364,District 11,Puyallup Carbon salmon 2024,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,total_catch,14212.043166666666,NA,NA,week
+32521F0C-57B8-4578-96E1-13FA05E98364,District 11,Puyallup Carbon salmon 2024,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,days_open,66,NA,NA,week
+32521F0C-57B8-4578-96E1-13FA05E98364,District 11,Puyallup Carbon salmon 2024,PE,catch,Chinook|Coho_Adult|Jack_AD|UM|UNK_Kept,number_observations,44,NA,NA,week
+32521F0C-57B8-4578-96E1-13FA05E98364,District 11,Puyallup Carbon salmon 2024,PE,effort,NA,total_effort,137943.80623643362,NA,NA,week

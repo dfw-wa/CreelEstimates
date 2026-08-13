@@ -1,0 +1,353 @@
+/* ============================================
+   WDFW R Markdown CSS Styles
+   Based on WDFW Style Guide Version 2.1, March 2025
+   ============================================ */
+
+/* ============================================
+   WDFW Agency Colors
+   ============================================ */
+:root {
+  /* Primary WDFW Colors */
+  --wdfw-green: #007b55;
+  --wdfw-navy: #0f426b;
+  --wdfw-light-blue: #92d2d8;
+  --wdfw-yellow: #ffd12e;
+  --wdfw-gray: #d1d3d4;
+  
+  /* Complementary Colors */
+  --dark-gray: #5a594d;
+  --blue-gray: #7286a0;
+  --light-brown: #cdbcae;
+  --brown: #be6e46;
+  --dark-pink: #bb406a;
+  --red: #aa1f2e;
+  --orange: #f15d44;
+  --light-green: #c2d836;
+  --medium-green: #009d7d;
+  --medium-blue: #0779aa;
+  
+  /* Text Colors */
+  --text-dark: #222222;
+  --text-heading: #59594a;
+  
+  /* Fonts */
+  --font-body: 'Roboto', 'Calibri', 'Segoe UI', sans-serif;
+  --font-heading: 'Roboto Slab', 'Calibri', 'Segoe UI', serif;
+}
+
+/* ============================================
+   Document Title with Logo
+   ============================================ */
+h1.title {
+  background-image: url(https://wdfw.wa.gov/sites/default/files/wdfw_logo_horizontal_fullcolor.svg);
+  background-size: 300px auto;
+  background-position: right top;
+  background-repeat: no-repeat;
+  margin-right: 90px;
+  min-height: 95px;
+  background-origin: content-box;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--text-dark);
+  line-height: 1.15;
+}
+
+/* ============================================
+   Typography - Body Text
+   ============================================ */
+body {
+  font-family: var(--font-body);
+  font-size: 11pt;
+  line-height: 1.15;
+  color: var(--text-dark);
+}
+
+p {
+  margin-bottom: 10pt;
+}
+
+/* ============================================
+   Headings
+   Per WDFW Style Guide Web Font Guide (page 40)
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  margin-top: 12pt;
+  margin-bottom: 6pt;
+}
+
+h1 {
+  font-size: 36px;
+  color: var(--text-dark);
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 30px;
+  color: var(--text-heading);
+  font-weight: normal;
+}
+
+h3 {
+  font-size: 24px;
+  color: var(--text-heading);
+  font-weight: normal;
+}
+
+h4 {
+  font-size: 22px;
+  color: var(--text-heading);
+  font-weight: normal;
+}
+
+h5 {
+  font-size: 20px;
+  color: var(--text-heading);
+  font-weight: normal;
+}
+
+h6 {
+  font-size: 16px;
+  color: var(--text-heading);
+  font-weight: normal;
+}
+
+/* ============================================
+   Links
+   Per WDFW Style Guide Web Color Guide (page 41)
+   ============================================ */
+a {
+  color: #18459a;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: #551a8b;
+}
+
+a:hover {
+  color: var(--wdfw-green);
+}
+
+/* ============================================
+   Tables
+   Per WDFW Style Guide (page 56-57)
+   ============================================ */
+table {
+  border-collapse: collapse;
+  margin: 12pt 0;
+  width: 100%;
+  font-size: 10pt;
+}
+
+th {
+  background-color: var(--text-heading);
+  color: white;
+  font-weight: bold;
+  padding: 6pt;
+  text-align: left;
+  border: 0.5pt solid var(--wdfw-gray);
+}
+
+td {
+  padding: 6pt;
+  border: 0.5pt solid var(--wdfw-gray);
+}
+
+/* Alternating row colors for readability */
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* ============================================
+   Code Blocks
+   ============================================ */
+pre {
+  background-color: #f5f5f5;
+  border: 1px solid var(--wdfw-gray);
+  border-radius: 3px;
+  padding: 10pt;
+  overflow-x: auto;
+  font-size: 10pt;
+}
+
+code {
+  font-family: 'Courier New', monospace;
+  background-color: #f5f5f5;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* ============================================
+   Figures and Captions
+   ============================================ */
+.figure {
+  margin: 12pt 0;
+}
+
+p.caption {
+  font-size: 14.4px;
+  color: var(--text-dark);
+  margin-top: 6pt;
+  font-style: italic;
+}
+
+/* ============================================
+   Block Quotes
+   ============================================ */
+blockquote {
+  border-left: 4px solid var(--wdfw-green);
+  padding-left: 12pt;
+  margin-left: 0;
+  color: #666;
+  font-style: italic;
+}
+
+/* ============================================
+   Lists
+   ============================================ */
+ul, ol {
+  margin-left: 0.25in;
+  margin-bottom: 10pt;
+}
+
+li {
+  margin-bottom: 3pt;
+}
+
+/* ============================================
+   Horizontal Rules
+   ============================================ */
+hr {
+  border: none;
+  border-top: 2px solid var(--wdfw-green);
+  margin: 18pt 0;
+}
+
+/* ============================================
+   Table of Contents
+   ============================================ */
+#TOC {
+  border: 1px solid var(--wdfw-gray);
+  padding: 12pt;
+  margin-bottom: 18pt;
+  background-color: #fafafa;
+}
+
+#TOC ul {
+  margin-left: 12pt;
+}
+
+/* ============================================
+   Alert/Callout Boxes
+   Based on WDFW web callout styles (page 41)
+   ============================================ */
+.alert {
+  padding: 12pt;
+  margin: 12pt 0;
+  border-left: 4px solid;
+  border-radius: 3px;
+}
+
+.alert-info {
+  background-color: #ccedff;
+  border-color: var(--medium-blue);
+}
+
+.alert-warning {
+  background-color: #fffbed;
+  border-color: var(--wdfw-yellow);
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  border-color: var(--wdfw-green);
+}
+
+.alert-danger {
+  background-color: #ffebee;
+  border-color: var(--red);
+}
+
+/* ============================================
+   Footer/Citation Information
+   ============================================ */
+.footer {
+  font-size: 10pt;
+  color: #666;
+  margin-top: 24pt;
+  padding-top: 12pt;
+  border-top: 1px solid var(--wdfw-gray);
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+  body {
+    font-size: 11pt;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  table, figure {
+    page-break-inside: avoid;
+  }
+  
+  a {
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+  
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+  }
+}
+
+/* ============================================
+   Accessibility Enhancements
+   ============================================ */
+/* Ensure sufficient color contrast */
+::selection {
+  background-color: var(--wdfw-light-blue);
+  color: var(--text-dark);
+}
+
+/* Focus indicators for keyboard navigation */
+a:focus, button:focus {
+  outline: 2px solid var(--wdfw-green);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Table of Contents - Fix text wrapping alignment
+   ============================================ */
+#TOC ul li {
+  padding-left: 0.5em;
+  text-indent: 0;
+  /* Prevent awkward wrapping */
+  overflow-wrap: break-word;
+}
+
+#TOC ul li a {
+  display: block;
+  padding-left: 1em;
+  text-indent: -1em;
+  /* This creates a hanging indent so wrapped text aligns properly */
+}
+
+/* Add a header above the TOC using a pseudo-element */
+#TOC::before {
+  content: "Table of Contents";
+  display: block;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}

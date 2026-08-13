@@ -115,7 +115,6 @@ library(readxl)
 library(lubridate)
 library(cli)
 library(here)
-
 # Input directory holding all mid-Columbia workbooks
 MID_COL_DIR <- here("input_files", "mid-Columbia")
 
@@ -283,6 +282,14 @@ ingest_hanford_boat <- function(path, year) {
   COL_SMP_ANG   <- 3L
   COL_EST_ANG   <- 6L   # total_trips_est
   COL_EST_HRS   <- 7L   # total_effort_hrs
+  # Harvest: expanded kept salmon (steelhead excluded per PST scope).
+  # Header layout confirmed from 2022 workbook:
+  #   col 18 = Exp. Chinook Adult Harvest
+  #   col 19 = Exp. Chinook Jacks Harvest
+  #   col 20 = Exp. Sockeye Adult Harvest
+  #   col 21 = Exp. Coho Adult Harvest
+  #   col 22 = Exp. Coho Jacks Harvest
+  HARVEST_COLS  <- 18L:22L
 
   # Data rows: col 1 is numeric and > 40000 (valid Excel date range covers
   # years 2009+; header/title rows have NA or character in this column).
@@ -313,7 +320,13 @@ ingest_hanford_boat <- function(path, year) {
     sampled_boats   = safe_num(COL_SMP_BOATS),
     sampled_anglers = safe_num(COL_SMP_ANG),
     est_anglers     = safe_num(COL_EST_ANG),
-    est_hours       = safe_num(COL_EST_HRS)
+    est_hours       = safe_num(COL_EST_HRS),
+    # Row-wise sum across all expanded kept salmon harvest columns.
+    # na.rm = TRUE so a single NA species (e.g. no sockeye) doesn't zero the row.
+    salmon_harvest  = purrr::pmap_dbl(
+      purrr::map(HARVEST_COLS, safe_num) |> purrr::set_names(paste0("h", HARVEST_COLS)),
+      ~ sum(c(...), na.rm = TRUE)
+    )
   ) |>
     dplyr::filter(!is.na(week_end), !is.na(est_hours)) |>
     dplyr::mutate(
@@ -335,7 +348,7 @@ ingest_hanford_boat <- function(path, year) {
     )
 
   # Prorate across calendar months for cross-month weeks
-  effort_cols <- c("est_hours", "est_anglers", "sampled_anglers")
+  effort_cols <- c("est_hours", "est_anglers", "sampled_anglers", "salmon_harvest")
 
   monthly <- purrr::pmap_dfr(weekly, function(...) {
     row <- list(...)
@@ -346,6 +359,7 @@ ingest_hanford_boat <- function(path, year) {
       total_effort_hrs         = sum(est_hours,       na.rm = TRUE),
       total_trips_est          = sum(est_anglers,     na.rm = TRUE),
       n_completed_angler_trips = sum(sampled_anglers, na.rm = TRUE),
+      total_salmon_harvest     = sum(salmon_harvest,  na.rm = TRUE),
       mean_trip_length         = dplyr::if_else(
         sum(est_anglers, na.rm = TRUE) > 0,
         sum(est_hours,   na.rm = TRUE) / sum(est_anglers, na.rm = TRUE),
@@ -362,8 +376,9 @@ ingest_hanford_boat <- function(path, year) {
       fishery_name             = fishery_label,
       crc_area                 = CRC_AREA_LUT[["hanford"]],
       angler_final             = "boat",
-      sd                       = NA_real_,   # not derivable from weekly totals
+      sd                       = NA_real_,
       pe_period                = "week",
+      harvest_expansion        = "expanded",
       data_provider            = "Todd Miller / R-district weekly summary"
     )
 
@@ -449,6 +464,10 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
   COL_SMP_ANG <- 7L
   COL_EFF_HRS <- 9L   # Total Effort (pole hrs) = total_effort_hrs
   COL_TRIPS   <- 12L  # Total Angler Trips       = total_trips_est
+  # Harvest: expanded kept salmon (cols 2–5 confirmed from 2022 workbook header):
+  #   col 2 = Chinook Adult, col 3 = Chinook Jacks,
+  #   col 4 = Coho Adult,    col 5 = Coho Jacks  (col 6 = C&R steelhead, excluded)
+  HARVEST_COLS <- 2L:5L
 
   # Data rows: col 1 is a string with a month name AND digit, not a header
   lbl_col <- as.character(unlist(raw[[COL_LABEL]]))
@@ -467,10 +486,14 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
   }
 
   weekly <- tibble::tibble(
-    week_label  = lbl_col[is_data_row],
-    sampled_ang = safe_num(COL_SMP_ANG),
-    effort_hrs  = safe_num(COL_EFF_HRS),
-    total_trips = safe_num(COL_TRIPS)
+    week_label     = lbl_col[is_data_row],
+    sampled_ang    = safe_num(COL_SMP_ANG),
+    effort_hrs     = safe_num(COL_EFF_HRS),
+    total_trips    = safe_num(COL_TRIPS),
+    salmon_harvest = purrr::pmap_dbl(
+      purrr::map(HARVEST_COLS, safe_num) |> purrr::set_names(paste0("h", HARVEST_COLS)),
+      ~ sum(c(...), na.rm = TRUE)
+    )
   ) |>
     dplyr::filter(!is.na(effort_hrs))
 
@@ -492,7 +515,7 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
       )
     )
 
-  effort_cols <- c("effort_hrs", "total_trips", "sampled_ang")
+  effort_cols <- c("effort_hrs", "total_trips", "sampled_ang", "salmon_harvest")
 
   monthly <- purrr::pmap_dfr(weekly, function(...) {
     row <- list(...)
@@ -500,9 +523,10 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
   }) |>
     dplyr::group_by(year, month) |>
     dplyr::summarize(
-      total_effort_hrs         = sum(effort_hrs,   na.rm = TRUE),
-      total_trips_est          = sum(total_trips,  na.rm = TRUE),
-      n_completed_angler_trips = sum(sampled_ang,  na.rm = TRUE),
+      total_effort_hrs         = sum(effort_hrs,      na.rm = TRUE),
+      total_trips_est          = sum(total_trips,     na.rm = TRUE),
+      n_completed_angler_trips = sum(sampled_ang,     na.rm = TRUE),
+      total_salmon_harvest     = sum(salmon_harvest,  na.rm = TRUE),
       mean_trip_length         = dplyr::if_else(
         sum(total_trips, na.rm = TRUE) > 0,
         sum(effort_hrs,  na.rm = TRUE) / sum(total_trips, na.rm = TRUE),
@@ -511,13 +535,14 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
       .groups = "drop"
     ) |>
     dplyr::mutate(
-      fishery_name  = fishery_label,
-      crc_area      = CRC_AREA_LUT[["yakima"]],
-      angler_final  = "bank",
-      mean_group_size = NA_real_,   # not reported in Yakima workbook
-      sd            = NA_real_,
-      pe_period     = "week",
-      data_provider = "Todd Miller / R-district weekly summary"
+      fishery_name      = fishery_label,
+      crc_area          = CRC_AREA_LUT[["yakima"]],
+      angler_final      = "bank",
+      mean_group_size   = NA_real_,
+      sd                = NA_real_,
+      pe_period         = "week",
+      harvest_expansion = "expanded",
+      data_provider     = "Todd Miller / R-district weekly summary"
     )
 
   build_target_schema(monthly)
@@ -544,6 +569,12 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
   COL_LABEL   <- 1L
   COL_SMP_ANG <- 4L
   COL_SMP_HRS <- 5L
+  # Sampled kept harvest (not expanded). Column layout confirmed from 2023 workbook:
+  #   R6-R9   = Chinook Adults NM/AD + Jacks NM/AD (Kept)
+  #   R12-R15 = Coho Adults NM/AD + Jacks NM/AD (Kept)
+  #   R10-R11 = Chinook C&R (excluded); R16-R17 = Coho C&R (excluded)
+  #   R18-R20 = Steelhead + incidental (excluded per PST scope)
+  HARVEST_COLS_KEPT <- c(6L, 7L, 8L, 9L, 12L, 13L, 14L, 15L)
 
   # Data rows: col 1 is a string matching a month name (week label pattern).
   # Skip header rows ("Combined", "Bank Summary", "Boat Summary", title).
@@ -564,9 +595,14 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
   }
 
   weekly <- tibble::tibble(
-    week_label  = lbl_col[is_data_row],
-    sampled_ang = safe_num(COL_SMP_ANG),
-    sampled_hrs = safe_num(COL_SMP_HRS)
+    week_label        = lbl_col[is_data_row],
+    sampled_ang       = safe_num(COL_SMP_ANG),
+    sampled_hrs       = safe_num(COL_SMP_HRS),
+    salmon_harvest_smp = purrr::pmap_dbl(
+      purrr::map(HARVEST_COLS_KEPT, safe_num) |>
+        purrr::set_names(paste0("h", HARVEST_COLS_KEPT)),
+      ~ sum(c(...), na.rm = TRUE)
+    )
   ) |>
     dplyr::filter(!is.na(sampled_hrs))
 
@@ -582,7 +618,7 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
                                   .ptype = as.Date(NA))
     )
 
-  effort_cols <- c("sampled_hrs", "sampled_ang")
+  effort_cols <- c("sampled_hrs", "sampled_ang", "salmon_harvest_smp")
 
   monthly <- purrr::pmap_dfr(weekly, function(...) {
     row <- list(...)
@@ -590,20 +626,23 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
   }) |>
     dplyr::group_by(year, month) |>
     dplyr::summarize(
-      total_effort_hrs         = sum(sampled_hrs, na.rm = TRUE),
-      n_completed_angler_trips = sum(sampled_ang, na.rm = TRUE),
+      total_effort_hrs         = sum(sampled_hrs,        na.rm = TRUE),
+      n_completed_angler_trips = sum(sampled_ang,        na.rm = TRUE),
+      total_salmon_harvest     = sum(salmon_harvest_smp, na.rm = TRUE),
       .groups = "drop"
     ) |>
     dplyr::mutate(
-      fishery_name    = fishery_label,
-      crc_area        = CRC_AREA_LUT[["yakima"]],
-      angler_final    = "bank",
-      total_trips_est = NA_real_,   # expansion not available — see OQ4
-      mean_trip_length = NA_real_,
-      mean_group_size  = NA_real_,
-      sd               = NA_real_,
-      pe_period        = "week",
-      data_provider    = "Todd Miller / R-district weekly summary"
+      fishery_name      = fishery_label,
+      crc_area          = CRC_AREA_LUT[["yakima"]],
+      angler_final      = "bank",
+      total_trips_est   = NA_real_,   # expansion not available — see OQ4
+      mean_trip_length  = NA_real_,
+      mean_group_size   = NA_real_,
+      sd                = NA_real_,
+      pe_period         = "week",
+      # Harvest is sampled (not expanded) — same limitation as trips for 2023+.
+      harvest_expansion = "sampled",
+      data_provider     = "Todd Miller / R-district weekly summary"
     )
 
   build_target_schema(monthly)
@@ -650,6 +689,14 @@ ingest_mcnary <- function(path, year) {
   COL_SMP_ANG   <- 3L
   COL_EST_ANG   <- 7L   # total_trips_est
   COL_EST_HRS   <- 8L   # total_effort_hrs
+  # Harvest: expanded kept salmon (steelhead excluded per PST scope).
+  # Column layout confirmed from 2023 workbook Print sheet header:
+  #   col 11-16 = Steelhead (excluded)
+  #   col 17 = Coho Harvest NM,  col 18 = Coho Harvest AD
+  #   col 19-20 = Coho C&R (excluded)
+  #   col 21 = Chinook Adult Harvest NM, col 22 = Chinook Adult Harvest AD
+  #   col 23 = Chinook Jack Harvest NM,  col 24 = Chinook Jack Harvest AD
+  HARVEST_COLS  <- c(17L, 18L, 21L, 22L, 23L, 24L)
 
   MONTH_RE  <- "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Sep|Oct|Nov|Dec)"
   lbl_col   <- as.character(unlist(raw[[COL_LABEL]]))
@@ -669,7 +716,11 @@ ingest_mcnary <- function(path, year) {
     sampled_boats = safe_num(COL_SMP_BOATS),
     sampled_ang   = safe_num(COL_SMP_ANG),
     est_ang       = safe_num(COL_EST_ANG),
-    est_hrs       = safe_num(COL_EST_HRS)
+    est_hrs       = safe_num(COL_EST_HRS),
+    salmon_harvest = purrr::pmap_dbl(
+      purrr::map(HARVEST_COLS, safe_num) |> purrr::set_names(paste0("h", HARVEST_COLS)),
+      ~ sum(c(...), na.rm = TRUE)
+    )
   ) |>
     dplyr::filter(!is.na(est_hrs), !is.na(est_ang))
 
@@ -702,7 +753,7 @@ ingest_mcnary <- function(path, year) {
       )
     )
 
-  effort_cols <- c("est_hrs", "est_ang", "sampled_ang")
+  effort_cols <- c("est_hrs", "est_ang", "sampled_ang", "salmon_harvest")
 
   monthly <- purrr::pmap_dfr(weekly, function(...) {
     row <- list(...)
@@ -710,9 +761,10 @@ ingest_mcnary <- function(path, year) {
   }) |>
     dplyr::group_by(year, month) |>
     dplyr::summarize(
-      total_effort_hrs         = sum(est_hrs,    na.rm = TRUE),
-      total_trips_est          = sum(est_ang,    na.rm = TRUE),
-      n_completed_angler_trips = sum(sampled_ang, na.rm = TRUE),
+      total_effort_hrs         = sum(est_hrs,       na.rm = TRUE),
+      total_trips_est          = sum(est_ang,       na.rm = TRUE),
+      n_completed_angler_trips = sum(sampled_ang,   na.rm = TRUE),
+      total_salmon_harvest     = sum(salmon_harvest, na.rm = TRUE),
       mean_trip_length         = dplyr::if_else(
         sum(est_ang,  na.rm = TRUE) > 0,
         sum(est_hrs,  na.rm = TRUE) / sum(est_ang, na.rm = TRUE),
@@ -724,13 +776,14 @@ ingest_mcnary <- function(path, year) {
       .groups = "drop"
     ) |>
     dplyr::mutate(
-      fishery_name  = fishery_label,
-      crc_area      = CRC_AREA_LUT[["mcnary"]],
+      fishery_name      = fishery_label,
+      crc_area          = CRC_AREA_LUT[["mcnary"]],
       # Combined bank+boat — no mode split in Print sheet (OQ5)
-      angler_final  = "combined",
-      sd            = NA_real_,
-      pe_period     = "week",
-      data_provider = "Todd Miller / R-district weekly summary"
+      angler_final      = "combined",
+      sd                = NA_real_,
+      pe_period         = "week",
+      harvest_expansion = "expanded",
+      data_provider     = "Todd Miller / R-district weekly summary"
     )
 
   build_target_schema(monthly)
@@ -745,7 +798,7 @@ TARGET_COLS <- c(
   "fishery_name", "year", "month", "crc_area", "angler_final",
   "total_effort_hrs", "n_completed_angler_trips", "mean_trip_length",
   "mean_group_size", "sd", "total_trips_est", "pe_period",
-  "data_provider"
+  "total_salmon_harvest", "harvest_expansion", "data_provider"
 )
 
 build_target_schema <- function(df) {
@@ -900,7 +953,7 @@ out_dir  <- here("analysis", "outputs")
 out_path <- file.path(out_dir, "mid_columbia_yakima_creel_summary.csv")
 
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-readr::write_csv(columbia_creel, out_path)
+utils::write.csv(columbia_creel, out_path, row.names = FALSE)
 
 cli::cli_alert_success(
   "Saved {nrow(columbia_creel)} rows to {.path {out_path}}"

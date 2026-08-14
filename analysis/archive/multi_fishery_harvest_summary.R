@@ -841,40 +841,6 @@ process_fishery_harvest <- function(fishery_name, period_pe = PERIOD_PE) {
                  stage = "effort_index")
   }
 
-  # Effort-side preflight [A-i]. prep_dwg_effort_index() assigns "fail" to any
-  # count_type its branch does not recognise. Under a wrong study design EVERY
-  # count becomes "fail"; ang_per_object then joins to NA, drop_na() empties
-  # ang_hrs_daily_mean, and the right_join(days_total) at the end of
-  # est_pe_effort() emits one row per stratum with angler_final = NA and
-  # est = NA -- an entire fishery unestimated but looking like output. This is
-  # how four Drano years were published under the hard-coded "Standard" design.
-  # The check above only catches a fully EMPTY index table; an all-"fail" table
-  # is non-empty and slips past it.
-  fail_counts <- effort_index_summ$index_angler_groups |>
-    dplyr::filter(angler_final == "fail")
-
-  if (nrow(fail_counts) > 0) {
-    bad_types <- sort(unique(fail_counts$count_type))
-    frac_fail <- nrow(fail_counts) / nrow(effort_index_summ$index_angler_groups)
-
-    if (frac_fail > 0.5) {
-      skip_fishery(
-        paste0(
-          round(100 * frac_fail), "% of index effort counts map to ",
-          "angler_final = 'fail' under the '", study_design, "' design ",
-          "(unrecognised count_type(s): ", paste(bad_types, collapse = ", "),
-          "). Almost certainly the wrong study design -- check DESIGN_RULES."
-        ),
-        stage = "effort_index_design"
-      )
-    }
-    cli::cli_alert_warning(
-      "  {.val {fishery_name}}: {nrow(fail_counts)} index count{?s} \\
-       ({round(100 * frac_fail, 1)}%) map to 'fail' \\
-       (count_type{?s} {.val {bad_types}}); their effort is excluded."
-    )
-  }
-
   dwg_summ <- list(
     interview     = interview_plus_catch,   # replicated; required for CPUE
     effort_index  = effort_index_summ$index_angler_final,

@@ -75,11 +75,11 @@ if (is.null(p2_ratios)) {
 } else {
   p2_ratios |>
     filter(ratio_basis == "block_year") |>
-    select(block, year, n_donor_rivers, donor_harvest, ratio, donor_ratio_cv, usable, fail_reason) |>
+    select(block, year, n_donor_areas, donor_crc, ratio, donor_ratio_cv, usable, fail_reason) |>
     arrange(block, year) |>
     gt() |>
     fmt_number(columns = c(ratio, donor_ratio_cv), decimals = 3) |>
-    fmt_number(columns = donor_harvest, decimals = 0) |>
+    fmt_number(columns = donor_crc, decimals = 0) |>
     tab_header(
       title = "Block-year trips-per-salmon ratios",
       subtitle = "Estimated from creel-covered donor rivers; applied to uncovered CRC rivers in the same block"

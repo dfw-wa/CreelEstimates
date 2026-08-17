@@ -1,0 +1,519 @@
+# ==============================================================================
+# pst_p2_block_ratio.R
+# Location: R_scripts/pst_p2_block_ratio.R
+#
+# Tier P2: expand CRC harvest to angler trips for CRC areas with NO creel
+# coverage, using a within-block ratio estimated from the areas that have both.
+#
+# ------------------------------------------------------------------------------
+# WHY THIS REPLACES THE EARLIER DRAFT
+#
+# The first version keyed on a `river` column that does not exist, and used a
+# denominator inconsistent with the assembly script's build_block_ratios().
+# Both were wrong, in different ways:
+#
+#   - Wrong key. The join key to CRC is catch_area_code, not river. Rivers span
+#     several areas (Quillayute = 398|400|402|404|406), so a river-keyed ratio
+#     cannot be applied to a CRC row at all. Everything below works at
+#     catch_area_code and rolls up to river_label at the end.
+#
+#   - Basis mismatch. build_block_ratios() computes trips/salmon with CREEL
+#     harvest underneath. Applying that ratio to CRC harvest assumes the two
+#     harvest measures agree. The run's own bias check says they don't:
+#     median CRC/creel = 0.77 over 62 comparable area-years, IQR 0.52-1.93.
+#     A creel-denominated ratio on a CRC numerator understates uncovered areas
+#     by roughly a quarter at the median, with an IQR wide enough that the
+#     direction isn't stable per area.
+#
+#     Fix: denominate the DONOR ratio the way the TARGET is measured -- creel
+#     trips over CRC harvest. The CRC reporting bias then sits inside the ratio,
+#     where it cancels, instead of between the ratio and its application, where
+#     it doesn't. Both ratios are computed and written side by side so the
+#     difference stays visible rather than assumed away.
+#
+# ------------------------------------------------------------------------------
+# THE CROSSWALK BLOCKER IS RESOLVED
+#
+# The gap register currently carries:
+#   [blocker] p2_expansion: ... needs a validated CRC-stream-to-river crosswalk
+#
+# That crosswalk exists. crc_vs_creel already joins CRC stream_code to creel
+# catch_area_code and returns 62 comparable area-years, so the two share a
+# coding scheme. pst_river_block_crosswalk.csv's crc_areas column (pipe-
+# delimited, already expanded in the `coverage` step) supplies
+# area -> river_label -> block. This module consumes that expansion.
+#
+# What remains unresolved is narrower and is re-logged as such: CRC stream_codes
+# present in the harvest file but in NO crosswalk row. Those are unassignable
+# and are logged, not guessed.
+#
+# ------------------------------------------------------------------------------
+# Design rules: R1 tier+source_id on every row; R2 gaps logged not fatal;
+# R3 mode/location "unknown" not zero; R4 no cross-block ratios; R5 basis labeled.
+# ==============================================================================
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(glue)
+
+
+# --- Tunables -----------------------------------------------------------------
+# Exposed rather than buried: these are the judgment calls to move if Jim or
+# Melissa want them moved.
+
+P2_CONTROL <- list(
+  min_donor_areas       = 2,     # a block-year ratio from one area is that
+                                 # area's ratio wearing a block's name
+  min_donor_harvest     = 100,   # CRC salmon; below this the denominator is noise
+  ratio_plausible_range = c(0.3, 60),
+  max_donor_cv          = 1.5,   # CV of per-area ratios within block-year.
+                                 # Loosened from 1.0: the observed CRC/creel IQR
+                                 # (0.52-1.93) shows real area-level scatter is
+                                 # wide, and 1.0 rejected coherent blocks.
+  allow_pooled_fallback = TRUE
+)
+
+
+# --- 1. Area-level crosswalk --------------------------------------------------
+#' Expand the pipe-delimited crc_areas column into one row per catch_area_code.
+#' Same expansion the assembly script's `coverage` step performs -- kept as a
+#' function so both use identical logic instead of drifting.
+#'
+#' GUARD: a catch_area_code must map to exactly one river_label. If the source
+#' crosswalk gives it two (e.g. a CRC area shared between "Chehalis" and
+#' "Upper Chehalis" reporting boundaries), a plain left_join in apply_p2()
+#' fans out -- the same CRC harvest figure gets attached to both rivers and
+#' expanded twice, full value each time, with no split. That is silent
+#' double-counting, not an edge case to shrug at. Ambiguous areas are
+#' collapsed to a single combined-name row instead, so the harvest is
+#' expanded once under a name that says it's shared, and the ambiguity is
+#' printed so it can be resolved in the crosswalk rather than papered over
+#' here every run.
+expand_crosswalk_areas <- function(crosswalk) {
+
+  raw <- crosswalk |>
+    separate_longer_delim(crc_areas, delim = "|") |>
+    filter(!is.na(crc_areas), crc_areas != "") |>
+    transmute(
+      catch_area_code = as.character(crc_areas),
+      river_label,
+      block,
+      area_coverage = if ("area_coverage" %in% names(crosswalk)) {
+        coalesce(area_coverage, "standard")
+      } else "standard"
+    ) |>
+    distinct()
+
+  dupe_areas <- raw |>
+    group_by(catch_area_code) |>
+    filter(n_distinct(river_label) > 1) |>
+    ungroup()
+
+  if (nrow(dupe_areas) > 0) {
+    affected <- dupe_areas |>
+      group_by(catch_area_code) |>
+      summarise(rivers = paste(sort(unique(river_label)), collapse = " + "),
+                blocks = paste(sort(unique(block)), collapse = "|"),
+                .groups = "drop")
+
+    message(glue(
+      "[defect] p2_crosswalk: {nrow(affected)} CRC area(s) map to more than ",
+      "one river in the crosswalk -- collapsed to a combined row so CRC ",
+      "harvest is expanded ONCE, not duplicated per river. Affected: ",
+      "{paste(glue('{affected$catch_area_code} [{affected$rivers}]'), collapse = '; ')}. ",
+      "Resolve in pst_river_block_crosswalk.csv if these areas should be ",
+      "split rather than combined."
+    ))
+
+    if (any(affected$blocks |> str_detect("\\|"))) {
+      cross_block <- affected |> filter(str_detect(blocks, "\\|"))
+      message(glue(
+        "[blocker] p2_crosswalk: area(s) {paste(cross_block$catch_area_code, collapse = ', ')} ",
+        "map to river_labels in DIFFERENT blocks ({cross_block$blocks}). A ",
+        "combined row cannot pick a single block; these area(s) are dropped ",
+        "from P2 entirely rather than guessed. Resolve manually."
+      ))
+    }
+  }
+
+  raw |>
+    group_by(catch_area_code) |>
+    summarise(
+      river_label   = paste(sort(unique(river_label)), collapse = " + "),
+      block         = if (n_distinct(block) == 1) block[1] else NA_character_,
+      area_coverage = if (n_distinct(area_coverage) == 1) area_coverage[1] else "standard",
+      .groups = "drop"
+    ) |>
+    filter(!is.na(block))
+}
+
+
+# --- 2. Donor set -------------------------------------------------------------
+#' Area-years with BOTH design-based creel trips and a CRC harvest figure.
+#'
+#' @param effort_long  assembly output: block, river_label, catch_area_code,
+#'                     year, angler_trips, total_salmon_harvest, tier
+#' @param crc_yr       p2$crc: stream_code (chr), calendar_year, harvest
+#' @param xw_area      output of expand_crosswalk_areas()
+#'
+#' Two ratios are carried. ratio_crc_denom is the estimator; ratio_creel_denom
+#' exists only so the gap between the two is inspectable per area-year.
+build_p2_donors <- function(effort_long, crc_yr, xw_area,
+                            deliver_blocks, control = P2_CONTROL) {
+
+  creel_area <- effort_long |>
+    filter(block %in% deliver_blocks, tier == "P1", !is.na(catch_area_code)) |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    group_by(block, catch_area_code, year) |>
+    summarise(
+      creel_trips   = sum(angler_trips,         na.rm = TRUE),
+      creel_harvest = sum(total_salmon_harvest, na.rm = TRUE),
+      fisheries     = paste(sort(unique(fishery_name)), collapse = "|"),
+      .groups = "drop"
+    )
+
+  donors <- creel_area |>
+    inner_join(
+      crc_yr |> transmute(catch_area_code = as.character(stream_code),
+                          year            = calendar_year,
+                          crc_harvest     = harvest),
+      by = c("catch_area_code", "year")
+    ) |>
+    filter(crc_harvest > 0, creel_trips > 0) |>
+    mutate(
+      ratio_crc_denom   = creel_trips / crc_harvest,
+      ratio_creel_denom = if_else(creel_harvest > 0,
+                                  creel_trips / creel_harvest, NA_real_),
+      crc_over_creel    = if_else(creel_harvest > 0,
+                                  crc_harvest / creel_harvest, NA_real_)
+    )
+
+  attr(donors, "n_creel_areas") <- nrow(creel_area)
+  donors
+}
+
+
+# --- 3. Block ratios ----------------------------------------------------------
+#' Ratio of sums within block, not mean of area ratios: the sum form weights
+#' donors by harvest so a small area with a thin denominator can't swing the
+#' block. Per-area ratios survive only as a coherence diagnostic.
+estimate_block_ratios <- function(donors, control = P2_CONTROL) {
+
+  summarise_ratios <- function(d, basis) {
+    d |>
+      summarise(
+        n_donor_areas  = n_distinct(catch_area_code),
+        n_donor_years  = n_distinct(year),
+        donor_trips    = sum(creel_trips,   na.rm = TRUE),
+        donor_crc      = sum(crc_harvest,   na.rm = TRUE),
+        donor_creel    = sum(creel_harvest, na.rm = TRUE),
+        donor_areas    = paste(sort(unique(catch_area_code)), collapse = "|"),
+        donor_ratio_cv = if (n() > 1) {
+          sd(ratio_crc_denom) / mean(ratio_crc_denom)
+        } else NA_real_,
+        .groups = "drop"
+      ) |>
+      mutate(
+        ratio             = donor_trips / donor_crc,   # THE estimator
+        ratio_creel_denom = if_else(donor_creel > 0,
+                                    donor_trips / donor_creel, NA_real_),
+        crc_over_creel    = if_else(donor_creel > 0,
+                                    donor_crc / donor_creel, NA_real_),
+        ratio_basis       = basis
+      )
+  }
+
+  list(
+    block_year   = donors |> group_by(block, year) |>
+                     summarise_ratios("block_year")   |> validate_ratios(control),
+    block_pooled = donors |> group_by(block) |>
+                     summarise_ratios("block_pooled") |> validate_ratios(control)
+  )
+}
+
+#' Guardrails. Failures are marked, not dropped -- the reason must reach the
+#' gap register.
+validate_ratios <- function(x, control = P2_CONTROL) {
+  x |>
+    mutate(
+      fail_reason = case_when(
+        n_donor_areas < control$min_donor_areas ~
+          glue("only {n_donor_areas} donor area(s); need {control$min_donor_areas}"),
+        donor_crc < control$min_donor_harvest ~
+          glue("donor CRC harvest {round(donor_crc)} below floor {control$min_donor_harvest}"),
+        !is.na(donor_ratio_cv) & donor_ratio_cv > control$max_donor_cv ~
+          glue("donor ratios incoherent within block (CV {round(donor_ratio_cv, 2)})"),
+        ratio < control$ratio_plausible_range[1] |
+          ratio > control$ratio_plausible_range[2] ~
+          glue("ratio {round(ratio, 2)} outside plausible range"),
+        TRUE ~ NA_character_
+      ),
+      usable = is.na(fail_reason)
+    )
+}
+
+
+# --- 4. Apply to uncovered areas ----------------------------------------------
+#' Returns list(trips, gaps). Both always returned; an empty gap tibble is a
+#' real result and should be written as one.
+apply_p2 <- function(crc_yr, donors, ratios, xw_area,
+                     deliver_blocks, years_scope, control = P2_CONTROL) {
+
+  covered <- donors |> distinct(catch_area_code, year) |> mutate(is_covered = TRUE)
+
+  targets <- crc_yr |>
+    transmute(catch_area_code = as.character(stream_code),
+              year            = calendar_year,
+              crc_harvest     = harvest) |>
+    filter(year %in% years_scope, crc_harvest > 0) |>
+    left_join(xw_area, by = "catch_area_code") |>
+    left_join(covered, by = c("catch_area_code", "year")) |>
+    filter(is.na(is_covered)) |>
+    select(-is_covered)
+
+  # CRC areas absent from the crosswalk are unassignable, not zero.
+  unmapped <- targets |> filter(is.na(block))
+  targets  <- targets |> filter(block %in% deliver_blocks)
+
+  # Covered-but-unpartitioned areas (Hanford Reach 534|535|536): trips are
+  # ALREADY in the deliverable via R3_external, but at fishery grain with
+  # catch_area_code = NA, so the donor test above cannot see them and would
+  # class these as uncovered. Expanding them would double-count ~26k Hanford
+  # boat trips. Excluded here and reported, not silently dropped.
+  unpartitioned <- xw_area |>
+    filter(area_coverage == "covered_unpartitioned") |>
+    distinct(catch_area_code)
+
+  excluded_unpart <- targets |> semi_join(unpartitioned, by = "catch_area_code")
+  targets <- targets |> anti_join(unpartitioned, by = "catch_area_code")
+
+  if (nrow(excluded_unpart) > 0) {
+    message(glue(
+      "[note] p2_expansion: {nrow(excluded_unpart)} area-year(s) in areas ",
+      "{paste(sort(unique(excluded_unpart$catch_area_code)), collapse = '|')} ",
+      "excluded from P2 -- effort is already in the deliverable via a source ",
+      "that cannot attribute it to a single CRC area. Expanding would ",
+      "double-count."
+    ))
+  }
+
+  ry <- ratios$block_year |> filter(usable) |>
+    select(block, year, ratio, ratio_basis, n_donor_areas, donor_areas,
+           donor_ratio_cv)
+  rp <- ratios$block_pooled |> filter(usable) |>
+    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv)
+
+  resolved <- targets |> left_join(ry, by = c("block", "year"))
+
+  if (control$allow_pooled_fallback) {
+    resolved <- resolved |>
+      left_join(rp, by = "block", suffix = c("", "_pooled")) |>
+      mutate(
+        ratio          = coalesce(ratio, ratio_pooled),
+        ratio_basis    = coalesce(ratio_basis, ratio_basis_pooled),
+        n_donor_areas  = coalesce(n_donor_areas, n_donor_areas_pooled),
+        donor_areas    = coalesce(donor_areas, donor_areas_pooled),
+        donor_ratio_cv = coalesce(donor_ratio_cv, donor_ratio_cv_pooled)
+      ) |>
+      select(-ends_with("_pooled"))
+  }
+
+  p2_trips <- resolved |>
+    filter(!is.na(ratio)) |>
+    mutate(
+      angler_trips         = crc_harvest * ratio,
+      total_salmon_harvest = crc_harvest,   # CRC-reported, not creel-estimated
+      tier                 = "P2",
+      source_id            = "p2_block_ratio",
+      method = glue(
+        "P2 block ratio {round(ratio, 3)} creel-trips per CRC-salmon ",
+        "({ratio_basis}, {n_donor_areas} donor area(s) [{donor_areas}]) ",
+        "x CRC harvest {round(crc_harvest)}. CRC-denominated: the CRC ",
+        "reporting bias is inside the ratio, not applied on top of it."
+      ),
+      mode           = "unknown",   # R3
+      location       = "unknown",   # R3 -- CRC carries no bank/boat field
+      location_basis = "crc_no_split",
+      mode_basis     = "not_collected",
+      fishery_name   = NA_character_,
+      month          = NA_integer_
+    )
+
+  p2_gaps <- bind_rows(
+    unmapped |> transmute(
+      block = NA_character_, catch_area_code, year, crc_harvest,
+      reason = "CRC stream_code not present in pst_river_block_crosswalk crc_areas"
+    ),
+    resolved |> filter(is.na(ratio)) |> transmute(
+      block, catch_area_code, year, crc_harvest,
+      reason = "no usable block ratio (block-year and pooled both failed guardrails)"
+    ),
+    excluded_unpart |> transmute(
+      block, catch_area_code, year, crc_harvest,
+      reason = paste("area covered by an unpartitioned source (trips already in",
+                     "deliverable, no per-area split) -- excluded to avoid",
+                     "double-counting")
+    )
+  ) |>
+    mutate(tier_attempted = "P2")
+
+  list(trips = p2_trips, gaps = p2_gaps)
+}
+
+
+# --- 5. Leave-one-out check ---------------------------------------------------
+#' Hold out each donor area, rebuild the block ratio without it, predict its
+#' trips as if uncovered. This is the empirical error band on the extrapolation
+#' -- the table worth showing Jim, because it answers "how wrong is this likely
+#' to be?" with a number instead of an argument.
+p2_loo_check <- function(donors, control = P2_CONTROL) {
+  donors |>
+    group_by(block, year) |>
+    filter(n_distinct(catch_area_code) > control$min_donor_areas) |>
+    group_modify(function(.x, .y) {
+      map_dfr(unique(.x$catch_area_code), function(held) {
+        rest <- .x |> filter(catch_area_code != held)
+        obs  <- .x |> filter(catch_area_code == held)
+        r    <- sum(rest$creel_trips) / sum(rest$crc_harvest)
+        tibble(
+          catch_area_code = held,
+          observed  = obs$creel_trips,
+          predicted = obs$crc_harvest * r,
+          loo_ratio = r,
+          n_donors  = nrow(rest)
+        )
+      })
+    }) |>
+    ungroup() |>
+    mutate(
+      abs_error = predicted - observed,
+      pct_error = 100 * (predicted - observed) / observed
+    )
+}
+
+p2_loo_summary <- function(loo) {
+  loo |>
+    group_by(block) |>
+    summarise(
+      n_tests    = n(),
+      median_ape = median(abs(pct_error), na.rm = TRUE),
+      p90_ape    = quantile(abs(pct_error), 0.9, na.rm = TRUE),
+      bias_pct   = median(pct_error, na.rm = TRUE),  # sign matters
+      .groups = "drop"
+    ) |>
+    arrange(desc(median_ape))
+}
+
+
+# --- 6. Driver ----------------------------------------------------------------
+#' @return list(trips, gaps, ratios, donors, loo, loo_summary) or NULL
+run_p2_extrapolation <- function(effort_long, crc_yr, crosswalk,
+                                 deliver_blocks, years_scope,
+                                 control = P2_CONTROL) {
+
+  if (is.null(crc_yr)) {
+    message("[gap] p2_expansion: no CRC harvest table; P2 skipped entirely.")
+    return(NULL)
+  }
+
+  xw_area <- expand_crosswalk_areas(crosswalk)
+  donors  <- build_p2_donors(effort_long, crc_yr, xw_area, deliver_blocks, control)
+
+  if (nrow(donors) == 0) {
+    message("[blocker] p2_expansion: no donor area-years -- no CRC/creel overlap.")
+    return(NULL)
+  }
+
+  message(glue(
+    "[note] p2_donors: {nrow(donors)} donor area-years across ",
+    "{n_distinct(donors$block)} blocks (of {attr(donors, 'n_creel_areas')} ",
+    "creel area-years; the remainder have no CRC counterpart)."
+  ))
+
+  ratios  <- estimate_block_ratios(donors, control)
+  applied <- apply_p2(crc_yr, donors, ratios, xw_area,
+                      deliver_blocks, years_scope, control)
+  loo     <- p2_loo_check(donors, control)
+
+  message(glue(
+    "[note] p2_expansion: {nrow(applied$trips)} uncovered CRC area-years ",
+    "expanded; {nrow(applied$gaps)} unresolved."
+  ))
+
+  list(
+    trips       = applied$trips,
+    gaps        = applied$gaps,
+    ratios      = bind_rows(ratios$block_year, ratios$block_pooled),
+    donors      = donors,
+    loo         = loo,
+    loo_summary = if (nrow(loo) > 0) p2_loo_summary(loo) else tibble()
+  )
+}
+
+
+# ==============================================================================
+# DROP-IN FOR pst_fw_effort_assembly.R
+# ==============================================================================
+# Keep build_block_ratios() as it stands -- it produces the creel-denominated
+# diagnostic ratios and the CRC denominator table (p2$crc), both consumed here.
+# Replace only its closing "P2 EXPANSION IS NOT WIRED IN" blocker with the call
+# below, placed AFTER apply_track_b(): P2 rows carry no fishery_name and no
+# location, so running them through Track B would do nothing but risk a fan-out.
+#
+#   source(here::here("R_scripts", "pst_p2_block_ratio.R"))
+#
+#   p2x <- run_p2_extrapolation(
+#     effort_long    = effort_long,
+#     crc_yr         = p2$crc,
+#     crosswalk      = crosswalk,
+#     deliver_blocks = DELIVER_BLOCKS,
+#     years_scope    = YEARS_SCOPE
+#   )
+#
+#   if (!is.null(p2x)) {
+#     effort_long <- bind_rows(effort_long, canon(p2x$trips))
+#     purrr::walk(seq_len(nrow(p2x$gaps)), \(i) {
+#       g <- p2x$gaps[i, ]
+#       log_gap("p2_expansion", g$block, "gap",
+#               glue("area {g$catch_area_code} {g$year}: {g$reason}"))
+#     })
+#     write_csv(p2x$ratios,      file.path(OUT_DIR, "pst_fw_p2_area_ratios.csv"))
+#     write_csv(p2x$donors,      file.path(OUT_DIR, "pst_fw_p2_donors.csv"))
+#     write_csv(p2x$loo,         file.path(OUT_DIR, "pst_fw_p2_loo_detail.csv"))
+#     write_csv(p2x$loo_summary, file.path(OUT_DIR, "pst_fw_p2_loo_summary.csv"))
+#   }
+#
+# canon() supplies river_label from xw_area and NA-fills anything absent, so the
+# P2 rows slot into the existing schema. Build effort_by_mode_location and
+# effort_by_area AFTER this bind, so P2 lands in both roll-ups. The tier column
+# will start showing "P1|P2" on rivers where some areas were covered and others
+# expanded -- correct, and exactly what R1 is for.
+#
+# ------------------------------------------------------------------------------
+# STANDING CAVEATS -- carry into PST_FW_Effort.qmd, don't lose them here
+# ------------------------------------------------------------------------------
+# 1. SEASON ALIGNMENT. Numerator is creel trips for a surveyed season;
+#    denominator is CRC harvest for the whole license year. Where the creel
+#    season is materially shorter than the CRC window the ratio is biased LOW
+#    and P2 understates. LOO will NOT catch this -- every donor shares the bias.
+#
+# 2. 2025 IS NOT EXPANDABLE. CRC publishes through license year 2024, so
+#    calendar 2025 has only Jan-Mar coverage -- the same population as the 16
+#    area-years already flagged comparable = FALSE in crc_vs_creel. P2 will
+#    produce almost nothing for 2025, and that must not be read as saying
+#    effort was near zero.
+#
+# 3. SPECIES MIX. A block ratio built on coho-dominated donors applied to a
+#    Chinook-dominated area transports the wrong catch rate. Holding species mix
+#    roughly constant is much of what the block definition does, and why R4
+#    forbids crossing blocks.
+#
+# 4. P2 IS TOTAL-ONLY. mode and location are "unknown" (R3). CRC has no
+#    bank/boat field, so unlike P1 these rows cannot be split by Track B at all.
+#    Expect pct_mode_unknown to RISE when P2 is switched on. That is the honest
+#    number, not a regression.
+#
+# 5. NOT A SUBSTITUTE FOR P1. Where a creel program could be run, run it. P2
+#    exists so the absence of a survey does not become an implicit zero in an
+#    economic valuation.

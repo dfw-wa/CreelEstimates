@@ -184,7 +184,7 @@ if (is.null(gaps)) {
   cat("Gap ledger not found.\n")
 } else {
   gaps |>
-    arrange(block, river, year) |>
+    arrange(block, severity, source_id) |>
     gt() |>
     tab_header(title = "Logged gaps (R2)")
 }

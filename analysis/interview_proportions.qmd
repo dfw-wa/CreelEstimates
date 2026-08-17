@@ -252,11 +252,51 @@ if (file.exists(cache_file)) {
 }
 
 cat(glue("{nrow(all_interviews)} total interview records across {n_distinct(all_interviews$fishery_name)} fisheries\n"))
+
+# Persist alongside the pipeline's other outputs, not just .cache/. The cache
+# exists purely to skip a slow DB pull on re-render and is expected to be
+# deleted/ignored; analysis/outputs/ is where every other script in this repo
+# (multi_fishery_trip_summary.R, the CRC parser, etc.) writes what it actually
+# produces, and downstream users shouldn't have to know this document has its
+# own separate cache directory to find the underlying interview data.
+persist_dir <- here::here("analysis", "outputs")
+if (!dir.exists(persist_dir)) dir.create(persist_dir, recursive = TRUE)
+
+saveRDS(all_interviews, file.path(persist_dir, "all_interviews.rds"))
+write_csv(all_interviews, file.path(persist_dir, "all_interviews.csv"))
+cat(glue("Persisted {nrow(all_interviews)} rows to ",
+         "{file.path(persist_dir, 'all_interviews.{rds,csv}')}\n"))
 ```
 
 ::: {.callout-tip}
 To force a fresh pull from the database, delete `.cache/all_interviews.rds`
 and re-render.
+:::
+
+::: {.callout-note}
+**Hanford Reach / Yakima / McNary are not pulled through this document.**
+Tried folding them into the standard pull above via `fishery_lut()` +
+`fetch_data()`; a diagnostic sweep across `fishery_name`, `project_name`, and
+`water_body` found zero matching rows anywhere, including a direct
+`fishery_lut()` re-query, so these three rivers aren't reachable through the
+per-fishery loop under any field this document checked. Not worth chasing
+further, because neither Track A nor Track B in the assembly script actually
+depends on it:
+
+- **Location (bank/boat)** for these rivers already comes from `angler_final`
+  in R3's own trip data (`mid_columbia_yakima_creel_summary.csv`, source_id
+  `R3_external`) — `pst_fw_effort_assembly.R` reads it directly as
+  `location_basis = "design_stratum"`. This document's interview pull was
+  never the source for that.
+- **Mode (guided/unguided)** can't be resolved from interviews regardless of
+  whether the pull works — R3's programs don't collect a `trip_guided` field
+  at all, a structural gap independent of how the data gets pulled. It's
+  already coded `mode_basis = "not_collected"` in the assembly script, not an
+  unstated zero.
+
+So this document's proportions apply only to Puget Sound and WA Coast, and
+`R3_external` rivers deliver with `mode = "unknown"` by design. See
+`pst_input_manifest.csv` for the record of what was attempted.
 :::
 
 ## Derive Classification Fields
@@ -1291,146 +1331,325 @@ ggplot(compare_type, aes(x = prop_counts, y = prop_hours)) +
   theme_minimal()
 ```
 
-## Worked Example: Applying Proportions to CRC Trip Estimates
+## Export: Mode × Location Proportions for Assembly
 
-This section demonstrates the proposed approach by applying creel-derived
-proportions to the 2026 freshwater trip projections from the NEPA analysis
-spreadsheet. This is the format the consultant has requested — total trips
-broken out by river, mode (guided/private), and location (bank/boat).
+This is the hand-off to `analysis/pst_fw_effort_assembly.R`. Everything above
+describes and diagnoses the proportions; this section writes the one table the
+assembly script consumes.
 
-### Read NEPA Trip Estimates
+### Grain and normalization
+
+The export is at **`fishery_name × year × location × mode`**, and `prop` sums to
+1.0 *within each `fishery_name × year × location`* — not across all four
+combined categories. That is deliberate and it matters:
+
+- **Location (bank/boat) is a design stratum.** It arrives from
+  `est_pe_effort()` with its own effort estimate. The proportions must not
+  re-derive it from interviews, because interview counts are not effort-weighted
+  and would overwrite a design-based quantity with a convenience sample.
+- **Mode (guided/unguided) is post-stratification *within* the location
+  stratum.** So the quantity the assembly needs is
+  $\hat{p}(\text{guided} \mid \text{boat}, \text{fishery}, \text{year})$,
+  not $\hat{p}(\text{guided-boat})$.
+
+Multiplying a design-based bank/boat effort split by an unconditional
+four-category proportion would double-count the location dimension. The
+conditional form is the only one that composes correctly.
+
+Case is normalized to lowercase on both fields, because `angler_final` is
+`"Bank"`/`"Boat"` in the interview data and `"bank"`/`"boat"` in
+`multi_fishery_trip_summary.csv`. An unnormalized join silently drops every row.
 
 ```{r}
-#| label: read-nepa-estimates
+#| label: export-assembly-props
 
-nepa_file <- here::here(
-  "docs",
-  "NEPA PS_Recreational Effort Estimates 2025_2026_for 2026_2027 Projections_4_21_2026.xlsx"
-)
+assembly_dir <- here::here("analysis", "outputs")
+if (!dir.exists(assembly_dir)) dir.create(assembly_dir, recursive = TRUE)
 
-# Read the FW Effort Projection sheet — structure is:
-# Col 1 = river name (fill-down), Col 2 = month (1-12 or TOTAL)
-# Col 59 = 2026 estimate, Col 61 = 2027 estimate
-nepa_raw <- read_excel(
-  nepa_file,
-  sheet = "2026 FW Effort Projection",
-  skip = 1,
-  col_names = FALSE,
-  .name_repair = "minimal"
-)
-names(nepa_raw) <- paste0("V", seq_len(ncol(nepa_raw)))
-
-# Fill river names down and extract TOTAL rows (annual trip estimate per river)
-nepa_raw <- nepa_raw |> fill(V1)
-nepa_totals <- nepa_raw |>
-  filter(V2 == "TOTAL") |>
-  transmute(
-    river = V1,
-    trips_2026 = as.numeric(V59),
-    trips_2027 = as.numeric(V61)
+mode_location_props <- interviews |>
+  filter(!is.na(guided_status), !is.na(angler_final), !is.na(year)) |>
+  mutate(
+    location = str_to_lower(angler_final),
+    mode     = str_to_lower(guided_status)
   ) |>
-  filter(!is.na(river), !is.na(trips_2026) | !is.na(trips_2027))
+  count(fishery_name, year, location, mode, name = "n_interviews") |>
+  # Both modes must exist in every fishery-year-location cell so that a
+  # structural zero (a fishery with no guided effort) is an explicit 0 rather
+  # than an absent row the assembly would read as "no proportion available".
+  complete(
+    nesting(fishery_name, year, location), mode = c("guided", "unguided"),
+    fill = list(n_interviews = 0L)
+  ) |>
+  group_by(fishery_name, year, location) |>
+  mutate(
+    n_location = sum(n_interviews),
+    prop       = if_else(n_location > 0, n_interviews / n_location, NA_real_)
+  ) |>
+  ungroup()
 
-cat(glue("{nrow(nepa_totals)} rivers with NEPA trip estimates\n"))
-nepa_totals |> summarise(
-  total_2026 = sum(trips_2026, na.rm = TRUE),
-  total_2027 = sum(trips_2027, na.rm = TRUE)
-) |> print()
+# Hours-weighted companion, carried as a diagnostic rather than the primary.
+# Counts are the primary because the assembly multiplies a *trip* total; an
+# hours-weighted proportion answers a different question (share of angler-hours,
+# not share of trips) and would bias toward whichever mode fishes longer.
+mode_location_props_hrs <- interviews |>
+  filter(!is.na(guided_status), !is.na(angler_final), !is.na(year),
+         !is.na(fishing_time_total)) |>
+  mutate(location = str_to_lower(angler_final),
+         mode     = str_to_lower(guided_status)) |>
+  group_by(fishery_name, year, location, mode) |>
+  summarise(hrs = sum(fishing_time_total), .groups = "drop_last") |>
+  group_by(fishery_name, year, location) |>
+  mutate(prop_hrs = hrs / sum(hrs)) |>
+  ungroup() |>
+  select(fishery_name, year, location, mode, prop_hrs)
+
+mode_location_props <- mode_location_props |>
+  left_join(mode_location_props_hrs, by = c("fishery_name", "year", "location", "mode")) |>
+  mutate(prop_delta = prop - prop_hrs) |>
+  arrange(fishery_name, year, location, mode)
+
+write_csv(mode_location_props,
+          file.path(assembly_dir, "interview_mode_location_props.csv"))
+
+cat(glue("Wrote {nrow(mode_location_props)} rows covering ",
+         "{n_distinct(mode_location_props$fishery_name)} fisheries × ",
+         "{n_distinct(mode_location_props$year)} years\n\n"))
+
+# Sanity: every cell with support must sum to 1
+chk <- mode_location_props |>
+  filter(n_location > 0) |>
+  group_by(fishery_name, year, location) |>
+  summarise(s = sum(prop), .groups = "drop") |>
+  filter(abs(s - 1) > 1e-8)
+if (nrow(chk) > 0) {
+  warning(glue("{nrow(chk)} fishery-year-location cells do not sum to 1"))
+} else {
+  cat("All supported cells sum to 1.0\n")
+}
 ```
 
-### Apply Global Proportions to Trip Estimates
+### Cells resting on thin support
 
-As a first pass, we apply the **overall creel-derived proportions** (pooled
-across all fisheries) uniformly to the total freshwater trip estimates.
-Matching river-specific creel proportions to individual CRC rivers is a
-logical refinement but is deferred as a follow-on step.
+`pst_fw_effort_assembly.R` falls back to block-pooled proportions below
+`MIN_INTERVIEWS = 30`. This table is where that threshold actually bites, so it
+should be read before accepting the deliverable — a fishery appearing here is
+one whose mode split is borrowed, not measured.
 
 ```{r}
-#| label: apply-proportions
+#| label: tbl-thin-support
 
-# Calculate overall (all-fisheries) proportions from creel interviews
-overall_props <- interviews |>
-  filter(!is.na(combined_type)) |>
-  count(combined_type) |>
-  mutate(prop = n / sum(n))
-
-cat("Overall creel proportions (pooled across all fisheries):\n")
-overall_props |>
-  mutate(pct = round(100 * prop, 1)) |>
-  select(combined_type, n, prop, pct) |>
-  print()
-
-cat(glue("\nTotal classifiable interviews: {scales::comma(sum(overall_props$n))}\n"))
-cat(glue("Proportions sum to: {round(sum(overall_props$prop), 4)}\n"))
-
-# Apply to total 2026 FW trip estimate
-total_trips_2026 <- sum(nepa_totals$trips_2026, na.rm = TRUE)
-
-expanded_2026 <- overall_props |>
+thin_support <- mode_location_props |>
+  distinct(fishery_name, year, location, n_location) |>
   mutate(
-    total_trips = total_trips_2026,
-    estimated_trips = total_trips_2026 * prop
+    support = case_when(
+      n_location == 0  ~ "none — no proportion available",
+      n_location < 30  ~ "thin — assembly falls back to block pooled",
+      n_location < 100 ~ "moderate",
+      TRUE             ~ "adequate"
+    )
   )
 
-cat(glue("\nTotal 2026 FW trips: {scales::comma(round(total_trips_2026))}\n"))
-```
+thin_support |> count(support) |> print()
 
-### Summary: Overall Mode × Location Split (2026)
-
-```{r}
-#| label: tbl-summary-by-mode
-
-expanded_2026 |>
-  separate(combined_type, into = c("mode", "location"), sep = "-", remove = FALSE) |>
-  mutate(mode = if_else(mode == "Guided", "Guided", "Private")) |>
-  select(mode, location, n_interviews = n, proportion = prop, estimated_trips) |>
-  mutate(
-    estimated_trips = round(estimated_trips, 0),
-    proportion = round(proportion, 4)
-  ) |>
-  gt() |>
-  fmt_number(columns = c(estimated_trips, n_interviews), use_seps = TRUE, decimals = 0) |>
-  fmt_number(columns = proportion, decimals = 3) |>
-  cols_label(
-    mode = "Mode",
-    location = "Location",
-    n_interviews = "Interviews (n)",
-    proportion = "Proportion",
-    estimated_trips = "Estimated Trips (2026)"
-  ) |>
-  tab_header(
-    title = "2026 FW Trip Estimates by Mode × Location",
-    subtitle = glue("Global creel proportions applied to {scales::comma(round(total_trips_2026))} total projected trips")
-  ) |>
-  grand_summary_rows(
-    fns = list(Total = ~ sum(.)),
-    columns = c(n_interviews, estimated_trips),
-    fmt = ~ fmt_number(., decimals = 0, use_seps = TRUE)
+thin_support |>
+  filter(n_location < 30) |>
+  arrange(n_location) |>
+  datatable(
+    caption = "Fishery-year-location cells below the fallback threshold",
+    filter = "top", rownames = FALSE,
+    options = list(pageLength = 15, scrollX = TRUE)
   )
 ```
 
-::: {.callout-important}
-**This is a demonstration using 2026 projections.** The consultant needs
-2022–2025 actuals. The same methodology can be applied once we locate or
-reconstruct the historical CRC-based trip estimates for those years.
-:::
+## Cross-Check: Interviews vs. Batch Creel Estimates
+
+The interview pull and `multi_fishery_trip_summary.R` draw on the same creel
+database but travel different paths — the batch script runs interviews through
+`prep_dwg_interview_fishing_time()` and the PE estimators, while this document
+reads them directly. Where the two disagree, one of them is wrong, and it is
+worth knowing which before either feeds the deliverable.
+
+Three checks, in increasing order of what they'd cost us if they failed.
+
+```{r}
+#| label: crosscheck-load
+
+batch_path <- here::here("analysis", "outputs", "multi_fishery_trip_summary.csv")
+if (!file.exists(batch_path)) {
+  batch_path <- here::here("multi_fishery_trip_summary.csv")
+}
+
+batch <- if (file.exists(batch_path)) {
+  read_csv(batch_path, show_col_types = FALSE) |>
+    mutate(location = str_to_lower(angler_final))
+} else {
+  cat("Batch creel output not found — cross-check skipped.\n")
+  NULL
+}
+
+int_monthly <- interviews |>
+  filter(!is.na(angler_final), !is.na(year)) |>
+  mutate(location  = str_to_lower(angler_final),
+         month_num = month(event_date)) |>
+  group_by(fishery_name, year, month = month_num, location) |>
+  summarise(
+    n_int          = n(),
+    n_int_complete = sum(trip_status == "Complete", na.rm = TRUE),
+    mean_hrs_int   = mean(fishing_time, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+### Check 1 — Coverage: which side is missing strata
+
+A fishery-year-location with creel effort but no interviews gets a borrowed mode
+split. One with interviews but no effort estimate is either a batch failure or a
+fishery outside the trip-summary scope. Both are worth naming explicitly.
+
+```{r}
+#| label: crosscheck-coverage
+
+if (!is.null(batch)) {
+  batch_cells <- batch |>
+    filter(!is.na(total_trips_est)) |>
+    distinct(fishery_name, year, location)
+  int_cells <- int_monthly |> distinct(fishery_name, year, location)
+
+  coverage_cmp <- full_join(
+    batch_cells |> mutate(in_batch = TRUE),
+    int_cells   |> mutate(in_interviews = TRUE),
+    by = c("fishery_name", "year", "location")
+  ) |>
+    replace_na(list(in_batch = FALSE, in_interviews = FALSE)) |>
+    mutate(status = case_when(
+      in_batch & in_interviews  ~ "both",
+      in_batch & !in_interviews ~ "effort, no interviews — mode will be borrowed",
+      TRUE                      ~ "interviews, no effort — batch gap or out of scope"
+    ))
+
+  coverage_cmp |> count(status) |> print()
+
+  coverage_cmp |>
+    filter(status != "both") |>
+    arrange(status, fishery_name, year) |>
+    datatable(caption = "Strata present on only one side",
+              filter = "top", rownames = FALSE,
+              options = list(pageLength = 15, scrollX = TRUE))
+}
+```
+
+### Check 2 — Interview counts
+
+`n_completed_angler_trips` in the batch output is the interview support behind
+each month's `mean_trip_length`. It should track the completed-trip count here.
+A large gap means the two paths are filtering interviews differently — most
+likely on `trip_status` or on a fishing-time validity rule — and the batch
+filter is the one that governs the effort estimate.
+
+```{r}
+#| label: crosscheck-counts
+
+if (!is.null(batch)) {
+  count_cmp <- batch |>
+    select(fishery_name, year, month, location, n_batch = n_completed_angler_trips) |>
+    inner_join(int_monthly, by = c("fishery_name", "year", "month", "location")) |>
+    mutate(
+      diff     = n_batch - n_int_complete,
+      pct_diff = if_else(n_int_complete > 0, 100 * diff / n_int_complete, NA_real_)
+    )
+
+  cat(glue("{nrow(count_cmp)} matched fishery-year-month-location cells\n"))
+  cat(glue("Median absolute % difference: ",
+           "{round(median(abs(count_cmp$pct_diff), na.rm = TRUE), 1)}%\n"))
+  cat(glue("Cells differing by more than 20%: ",
+           "{sum(abs(count_cmp$pct_diff) > 20, na.rm = TRUE)}\n\n"))
+
+  count_cmp |>
+    filter(abs(pct_diff) > 20) |>
+    arrange(desc(abs(pct_diff))) |>
+    datatable(caption = "Interview count disagreements over 20%",
+              filter = "top", rownames = FALSE,
+              options = list(pageLength = 10, scrollX = TRUE))
+}
+```
+
+### Check 3 — Mean trip length, and the units question
+
+This is the one that matters most. `total_trips_est = total_effort_hrs ÷
+mean_trip_length` presumes effort is in **angler-hours** and trip length is
+**elapsed hours per trip, independent of party size**. If effort were in
+boat-hours or party-hours, the division would return boats rather than anglers
+and every downstream number would be wrong by roughly the mean group size.
+
+`mean_trip_length` from the batch and `mean(fishing_time)` here are computed
+from the same interviews by different code, and neither multiplies by
+`angler_count`. So they should agree closely. If instead the batch value runs
+near a *multiple* of the interview value — and that multiple tracks
+`mean_group_size` — the elapsed-vs-angler-hour distinction has collapsed
+somewhere in the pipeline.
+
+```{r}
+#| label: crosscheck-trip-length
+
+if (!is.null(batch)) {
+  tl_cmp <- batch |>
+    select(fishery_name, year, month, location,
+           mean_trip_length, mean_group_size, total_effort_hrs) |>
+    inner_join(int_monthly, by = c("fishery_name", "year", "month", "location")) |>
+    filter(!is.na(mean_trip_length), !is.na(mean_hrs_int), mean_hrs_int > 0) |>
+    mutate(
+      ratio          = mean_trip_length / mean_hrs_int,
+      ratio_vs_group = ratio / mean_group_size
+    )
+
+  cat(glue("Median batch/interview trip-length ratio: ",
+           "{round(median(tl_cmp$ratio, na.rm = TRUE), 3)}  (expect ~1.00)\n"))
+  cat(glue("Median ratio ÷ mean_group_size: ",
+           "{round(median(tl_cmp$ratio_vs_group, na.rm = TRUE), 3)}  ",
+           "(a value near 1.00 here instead would indicate party-hour contamination)\n\n"))
+
+  ggplot(tl_cmp, aes(mean_hrs_int, mean_trip_length)) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey40") +
+    geom_point(aes(colour = location), alpha = 0.6) +
+    labs(
+      title    = "Mean trip length: batch PE vs. direct interview calculation",
+      subtitle = "Dashed line is 1:1. Systematic departure indicates a units or filtering difference.",
+      x = "Interview mean fishing_time (hrs)",
+      y = "Batch mean_trip_length (hrs)",
+      colour = "Location"
+    ) +
+    theme_minimal()
+}
+```
+
+```{r}
+#| label: crosscheck-export
+
+if (!is.null(batch)) {
+  crosscheck <- coverage_cmp |>
+    left_join(
+      count_cmp |> select(fishery_name, year, month, location, n_batch,
+                          n_int_complete, pct_diff),
+      by = c("fishery_name", "year", "location"),
+      relationship = "many-to-many"
+    ) |>
+    left_join(
+      tl_cmp |> select(fishery_name, year, month, location, mean_trip_length,
+                       mean_hrs_int, ratio),
+      by = c("fishery_name", "year", "month", "location")
+    )
+
+  write_csv(crosscheck,
+            file.path(assembly_dir, "interview_batch_crosscheck.csv"))
+  cat(glue("Wrote crosscheck: {nrow(crosscheck)} rows\n"))
+}
+```
 
 ::: {.callout-note}
-**Follow-on refinements:**
-
-1. **River-specific proportions** — Match individual creel-surveyed rivers
-   to CRC rivers and apply river-level proportions where sample sizes are
-   adequate. Use the global average as a fallback for unsampled rivers.
-2. **Regional (Catch Area) proportions** — As an intermediate step between
-   global and river-specific, pool creel interviews by Catch Area to
-   produce area-level proportions.
-3. **Year-specific proportions** — If interview sample sizes support it,
-   derive proportions for each year (2022–2025) rather than pooling all
-   years.
-4. Marine areas (Areas 5-12) have trip estimates reported in the NEPA
-   workbook through an existing process, but how those figures are produced
-   is not documented in the spreadsheet and is outside our scope. For
-   freshwater, no equivalent reporting process currently exists — the
-   approach described in this document is intended to fill that gap and
-   meet the consultant's data request.
+**Deferred to the parent document.** The analytical framework — the P1/P2/P3
+tier hierarchy, Track A vs. Track B, assumptions A1–A4, and the rule that ratios
+do not travel between blocks — is described here only as far as it explains what
+this document produces. A parent Quarto document covering methods across all
+four regional blocks would be the right home for it, with this file reduced to
+the Track B derivation it actually performs.
 :::

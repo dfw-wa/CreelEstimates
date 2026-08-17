@@ -1,0 +1,39 @@
+catch_area_code,block,river_label,source_id,tier
+826,PugetSound,Cascade,creel_pe,P1
+317,WACoast,Chehalis,creel_pe,P1
+315,WACoast,Chehalis,creel_pe,P1
+618,ColumbiaTrib,Drano Lake,creel_pe,P1
+348,WACoast,Hoh,creel_pe,P1
+350,WACoast,Hoh,creel_pe,P1
+358,WACoast,Humptulips,creel_pe,P1
+317,WACoast,Lower Chehalis,creel_pe,P1
+507,ColumbiaTrib,Lower Cowlitz,creel_pe,NO_DATA
+561,ColumbiaTrib,Lower Cowlitz,creel_pe,NO_DATA
+786,PugetSound,Nisqually,creel_pe,P1
+794,PugetSound,Nooksack,creel_pe,P1
+802,PugetSound,Puyallup Carbon,creel_pe,P1
+804,PugetSound,Puyallup Carbon,creel_pe,P1
+802,PugetSound,Puyallup/Carbon,creel_pe,P1
+804,PugetSound,Puyallup/Carbon,creel_pe,P1
+398,WACoast,Quillayute,creel_pe,P1
+400,WACoast,Quillayute,creel_pe,P1
+402,WACoast,Quillayute,creel_pe,P1
+404,WACoast,Quillayute,creel_pe,P1
+406,WACoast,Quillayute,creel_pe,P1
+329,WACoast,Satsop,creel_pe,P1
+830,PugetSound,Skagit,creel_pe,P1
+826,PugetSound,Skagit,creel_pe,P1
+850,PugetSound,Snohomish,creel_pe,P1
+852,PugetSound,Snohomish,creel_pe,P1
+844,PugetSound,Snohomish,creel_pe,P1
+872,PugetSound,Stillaguamish,creel_pe,P1
+874,PugetSound,Stillaguamish,creel_pe,P1
+876,PugetSound,Stillaguamish,creel_pe,P1
+315,WACoast,Upper Chehalis,creel_pe,P1
+317,WACoast,Upper Chehalis,creel_pe,P1
+860,PugetSound,Wallace,creel_pe,P1
+534,ColumbiaTrib,Hanford Reach,R3_external,P1
+535,ColumbiaTrib,Hanford Reach,R3_external,P1
+536,ColumbiaTrib,Hanford Reach,R3_external,P1
+533,ColumbiaTrib,McNary Reservoir,R3_external,P1
+690,ColumbiaTrib,Yakima,R3_external,P1

@@ -1,0 +1,63 @@
+source_id,fishery_name,river_label,block,crc_areas,tier,mode_source,location_source,notes
+creel_pe,Cascade fall salmon 2022,Cascade,PugetSound,826,P1,interview_prop,design_stratum,
+creel_pe,Cascade fall salmon 2023,Cascade,PugetSound,826,P1,interview_prop,design_stratum,
+creel_pe,Cascade fall salmon 2024,Cascade,PugetSound,826,P1,interview_prop,design_stratum,
+creel_pe,Chehalis salmon 2022,Chehalis,WACoast,317,P1,interview_prop,design_stratum,
+creel_pe,Chehalis salmon 2024,Chehalis,WACoast,315|317,P1,interview_prop,design_stratum,
+creel_pe,Chehalis salmon 2025,Chehalis,WACoast,315|317,P1,interview_prop,design_stratum,
+creel_pe,Drano Lake salmon and steelhead 2022,Drano Lake,ColumbiaTrib,618,P1,interview_prop,design_stratum,
+creel_pe,Drano Lake salmon and steelhead 2023,Drano Lake,ColumbiaTrib,618,P1,interview_prop,design_stratum,
+creel_pe,Drano Lake salmon and steelhead 2024,Drano Lake,ColumbiaTrib,618,P1,interview_prop,design_stratum,
+creel_pe,Drano Lake salmon and steelhead 2025,Drano Lake,ColumbiaTrib,618,P1,interview_prop,design_stratum,
+creel_pe,Hoh fall salmon 2023,Hoh,WACoast,348|350,P1,interview_prop,design_stratum,
+creel_pe,Hoh fall salmon 2025,Hoh,WACoast,348|350,P1,interview_prop,design_stratum,
+creel_pe,Humptulips salmon 2022,Humptulips,WACoast,358,P1,interview_prop,design_stratum,
+creel_pe,Humptulips salmon 2023,Humptulips,WACoast,358,P1,interview_prop,design_stratum,
+creel_pe,Humptulips salmon 2024,Humptulips,WACoast,358,P1,interview_prop,design_stratum,
+creel_pe,Humptulips salmon 2025,Humptulips,WACoast,358,P1,interview_prop,design_stratum,
+creel_pe,Lower Chehalis salmon 2023,Lower Chehalis,WACoast,317,P1,interview_prop,design_stratum,
+creel_pe,Lower Cowlitz salmon and steelhead 2022-23,Lower Cowlitz,ColumbiaTrib,507|561,NO_DATA,interview_prop,design_stratum,"absent from multi_fishery_creel_trips.csv - lacks data needed for effort estimation (confirmed genuine gap, not a pipeline bug)"
+creel_pe,Lower Cowlitz salmon and steelhead 2023-24,Lower Cowlitz,ColumbiaTrib,507|561,NO_DATA,interview_prop,design_stratum,"absent from multi_fishery_creel_trips.csv - lacks data needed for effort estimation (confirmed genuine gap, not a pipeline bug)"
+creel_pe,Nisqually salmon 2022,Nisqually,PugetSound,786,P1,interview_prop,design_stratum,
+creel_pe,Nisqually salmon 2023,Nisqually,PugetSound,786,P1,interview_prop,design_stratum,recovered in multi_fishery_creel_trips.csv (2026-08-14 run); no longer pending manual integration
+creel_pe,Nooksack fall salmon 2023,Nooksack,PugetSound,794,P1,interview_prop,design_stratum,
+creel_pe,Nooksack fall salmon 2024,Nooksack,PugetSound,794,P1,interview_prop,design_stratum,
+creel_pe,Puyallup Carbon salmon 2024,Puyallup Carbon,PugetSound,802|804,P1,interview_prop,design_stratum,
+creel_pe,Puyallup Carbon salmon 2025,Puyallup Carbon,PugetSound,802|804,P1,interview_prop,design_stratum,
+creel_pe,Puyallup_Carbon salmon 2022,Puyallup/Carbon,PugetSound,802|804,P1,interview_prop,design_stratum,
+creel_pe,Puyallup_Carbon salmon 2023,Puyallup/Carbon,PugetSound,802|804,P1,interview_prop,design_stratum,
+creel_pe,Quillayute fall salmon 2022,Quillayute,WACoast,398|400|402|404|406,P1,interview_prop,design_stratum,
+creel_pe,Quillayute fall salmon 2023,Quillayute,WACoast,398|400|402|404|406,P1,interview_prop,design_stratum,
+creel_pe,Quillayute fall salmon 2024,Quillayute,WACoast,398|400|402|404|406,P1,interview_prop,design_stratum,
+creel_pe,Quillayute fall salmon 2025,Quillayute,WACoast,398|400|402|404|406,P1,interview_prop,design_stratum,
+creel_pe,Satsop salmon 2022,Satsop,WACoast,329,P1,interview_prop,design_stratum,
+creel_pe,Satsop salmon 2023,Satsop,WACoast,329,P1,interview_prop,design_stratum,
+creel_pe,Satsop salmon 2024,Satsop,WACoast,329,P1,interview_prop,design_stratum,
+creel_pe,Satsop salmon 2025,Satsop,WACoast,329,P1,interview_prop,design_stratum,
+creel_pe,Skagit fall salmon 2022,Skagit,PugetSound,830,P1,interview_prop,design_stratum,
+creel_pe,Skagit fall salmon 2023,Skagit,PugetSound,830,P1,interview_prop,design_stratum,
+creel_pe,Skagit fall salmon 2024,Skagit,PugetSound,830,P1,interview_prop,design_stratum,
+creel_pe,Skagit fall salmon 2025,Skagit,PugetSound,826|830,P1,interview_prop,design_stratum,
+creel_pe,Snohomish fall salmon 2022,Snohomish,PugetSound,850|852,P1,interview_prop,design_stratum,
+creel_pe,Snohomish fall salmon 2023,Snohomish,PugetSound,844|850,P1,interview_prop,design_stratum,
+creel_pe,Snohomish fall salmon 2024,Snohomish,PugetSound,844|850|852,P1,interview_prop,design_stratum,
+creel_pe,Snohomish fall salmon 2025,Snohomish,PugetSound,844|850,P1,interview_prop,design_stratum,
+creel_pe,Stillaguamish salmon and gamefish 2022-23,Stillaguamish,PugetSound,872|874|876,P1,interview_prop,design_stratum,
+creel_pe,Stillaguamish salmon and gamefish 2023-24,Stillaguamish,PugetSound,872|876,P1,interview_prop,design_stratum,
+creel_pe,Stillaguamish salmon and gamefish 2024-25,Stillaguamish,PugetSound,872|874|876,P1,interview_prop,design_stratum,
+creel_pe,Stillaguamish salmon and gamefish 2025-26,Stillaguamish,PugetSound,872|876,P1,interview_prop,design_stratum,
+creel_pe,Upper Chehalis salmon 2023,Upper Chehalis,WACoast,315|317,P1,interview_prop,design_stratum,
+creel_pe,Wallace salmon and gamefish 2022-23,Wallace,PugetSound,860,P1,interview_prop,design_stratum,
+creel_pe,Wallace salmon and gamefish 2023-24,Wallace,PugetSound,860,P1,interview_prop,design_stratum,
+creel_pe,Wallace salmon and gamefish 2024-25,Wallace,PugetSound,860,P1,interview_prop,design_stratum,
+R3_external,Hanford Reach fall Chinook 2022,Hanford Reach,ColumbiaTrib,534|535|536,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Hanford Reach fall Chinook 2023,Hanford Reach,ColumbiaTrib,534|535|536,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Hanford Reach fall Chinook 2024,Hanford Reach,ColumbiaTrib,534|535|536,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Hanford Reach fall Chinook 2025,Hanford Reach,ColumbiaTrib,534|535|536,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,McNary Reservoir fall salmon 2023,McNary Reservoir,ColumbiaTrib,533,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,McNary Reservoir fall salmon 2024,McNary Reservoir,ColumbiaTrib,533,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,McNary Reservoir fall salmon 2025,McNary Reservoir,ColumbiaTrib,533,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Yakima fall salmon 2022,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Yakima fall salmon 2023,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Yakima fall salmon 2024,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap
+R3_external,Yakima fall salmon 2025,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap

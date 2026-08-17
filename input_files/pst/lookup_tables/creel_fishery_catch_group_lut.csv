@@ -1,0 +1,86 @@
+project_name,fishery_name ,species,life_stage,mark_status,fate
+District 11,Nisqually salmon 2022,Chinook,Adult,AD,Kept
+District 11,Nisqually salmon 2022,Chinook,Adult,AD,Released
+District 11,Nisqually salmon 2022,Chinook,Adult,UM,Kept
+District 11,Nisqually salmon 2022,Chinook,Adult,UM,Released
+District 11,Nisqually salmon 2022,Chinook,Adult,UNK,Released
+District 11,Nisqually salmon 2022,Chinook,Jack,AD,Kept
+District 11,Nisqually salmon 2022,Chinook,Jack,AD,Released
+District 11,Nisqually salmon 2022,Chinook,Jack,UM,Kept
+District 11,Nisqually salmon 2022,Chinook,Jack,UM,Released
+District 11,Nisqually salmon 2022,Chinook,Jack,UM,Released
+District 11,Nisqually salmon 2022,Chinook,Jack,UNK,Kept
+District 11,Nisqually salmon 2022,Chinook,Jack,UNK,Released
+District 11,Nisqually salmon 2023,Chinook,Adult,AD,Kept
+District 11,Nisqually salmon 2023,Chinook,Adult,AD,Released
+District 11,Nisqually salmon 2023,Chinook,Adult,UM,Kept
+District 11,Nisqually salmon 2023,Chinook,Adult,UM,Released
+District 11,Nisqually salmon 2023,Chinook,Adult,UNK,Released
+District 11,Nisqually salmon 2023,Chinook,Jack,AD,Kept
+District 11,Nisqually salmon 2023,Chinook,Jack,AD,Released
+District 11,Nisqually salmon 2023,Chinook,Jack,UM,Released
+District 11,Nisqually salmon 2023,Chinook,Jack,UNK,Kept
+District 11,Nisqually salmon 2023,Chinook,Jack,UNK,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Adult,AD,Kept
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Adult,AD,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Adult,UM,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Adult,UNK,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Jack,AD,Kept
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Jack,AD,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Jack,UM,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Chinook,Jack,UNK,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Steelhead,Adult,AD,Kept
+District 13,Skykomish summer Chinook and gamefish 2025,Steelhead,Adult,AD,Released
+District 13,Skykomish summer Chinook and gamefish 2025,Steelhead,Adult,UM,Released
+District 14,Skagit fall salmon 2023,Chinook,Adult,AD,Released
+District 14,Skagit fall salmon 2023,Chinook,Adult,UM,Released
+District 14,Skagit fall salmon 2023,Chinook,Adult,UNK,Released
+District 14,Skagit fall salmon 2023,Coho,Adult,AD,Kept
+District 14,Skagit fall salmon 2023,Coho,Adult,AD,Released
+District 14,Skagit fall salmon 2023,Coho,Adult,UM,Kept
+District 14,Skagit fall salmon 2023,Coho,Adult,UM,Released
+District 14,Skagit fall salmon 2023,Coho,Jack,AD,Kept
+District 14,Skagit fall salmon 2023,Coho,Jack,UM,Kept
+District 14,Skagit winter steelhead 2024,Bull Trout,Adult,UM,Released
+District 14,Skagit winter steelhead 2024,Steelhead,Adult,UM,Released
+District 16,Hoh winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Humptulips salmon 2022,Chinook,Adult,AD,Kept
+District 17 North,Humptulips salmon 2022,Chinook,Adult,AD,Released
+District 17 North,Humptulips salmon 2022,Chinook,Adult,UM,Kept
+District 17 North,Humptulips salmon 2022,Chinook,Adult,UM,Released
+District 17 North,Humptulips salmon 2022,Chinook,Adult,UNK,Released
+District 17 North,Humptulips salmon 2022,Coho,Adult,AD,Kept
+District 17 North,Humptulips salmon 2022,Coho,Adult,AD,Released
+District 17 North,Humptulips salmon 2022,Coho,Adult,UM,Kept
+District 17 North,Humptulips salmon 2022,Coho,Adult,UM,Released
+District 17 North,Humptulips salmon 2022,Coho,Adult,UNK,Released
+District 17 North,Humptulips salmon 2023,Chinook,Adult,AD,Kept
+District 17 North,Humptulips salmon 2023,Chinook,Adult,AD,Released
+District 17 North,Humptulips salmon 2023,Chinook,Adult,UM,Kept
+District 17 North,Humptulips salmon 2023,Chinook,Adult,UM,Released
+District 17 North,Humptulips salmon 2023,Chinook,Adult,UNK,Released
+District 17 North,Humptulips salmon 2023,Coho,Adult,AD,Kept
+District 17 North,Humptulips salmon 2023,Coho,Adult,AD,Released
+District 17 North,Humptulips salmon 2023,Coho,Adult,UM,Kept
+District 17 North,Humptulips salmon 2023,Coho,Adult,UM,Released
+District 17 North,Humptulips salmon 2023,Coho,Adult,UNK,Released
+District 17 North,Chehalis winter steelhead 2024-25,Steelhead,Adult,AD,Kept
+District 17 North,Chehalis winter steelhead 2024-25,Steelhead,Adult,AD,Released
+District 17 North,Chehalis winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Chehalis winter steelhead 2024-25,Steelhead,Adult,UNK,Released
+District 17 North,Humptulips winter steelhead 2024-25,Steelhead,Adult,AD,Kept
+District 17 North,Humptulips winter steelhead 2024-25,Steelhead,Adult,AD,Released
+District 17 North,Humptulips winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Humptulips winter steelhead 2024-25,Steelhead,Adult,UNK,Released
+District 17 North,Satsop winter steelhead 2024-25,Steelhead,Adult,AD,Kept
+District 17 North,Satsop winter steelhead 2024-25,Steelhead,Adult,AD,Released
+District 17 North,Satsop winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Satsop winter steelhead 2024-25,Steelhead,Adult,UNK,Released
+District 17 North,Skookumchuck winter steelhead 2024-25,Steelhead,Adult,AD,Kept
+District 17 North,Skookumchuck winter steelhead 2024-25,Steelhead,Adult,AD,Released
+District 17 North,Skookumchuck winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Skookumchuck winter steelhead 2024-25,Steelhead,Adult,UNK,Released
+District 17 North,Wynoochee winter steelhead 2024-25,Steelhead,Adult,AD,Kept
+District 17 North,Wynoochee winter steelhead 2024-25,Steelhead,Adult,AD,Released
+District 17 North,Wynoochee winter steelhead 2024-25,Steelhead,Adult,UM,Released
+District 17 North,Wynoochee winter steelhead 2024-25,Steelhead,Adult,UNK,Released

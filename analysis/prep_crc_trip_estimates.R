@@ -7,6 +7,10 @@
 #   joinable to analysis/outputs/multi_fishery_trip_summary.rds on the keys
 #   year × month × crc_area.
 #
+#   Rivers with no correct entry in crc_area_lut.csv are excluded from the
+#   joinable output rather than fuzzy-matched to a wrong same-named river —
+#   see KNOWN_LUT_GAPS below.
+#
 #   NOTE: The data with rivers in column A is in the "2026 FW Effort Projection"
 #   tab, not the "2026 Marine Effort Projection" tab (which contains marine
 #   areas 5-13 with no river-level identifiers). The note here is flagged in
@@ -189,6 +193,28 @@ match_table <- tibble::tibble(
                            lut_search$catch_area_region[best_idx] != "Puget Sound")
 )
 
+# Known LUT gaps: rivers with no correct entry in crc_area_lut.csv. Left
+# unmatched here rather than silently assigned to a same-named river in the
+# wrong region — add the correct entry to crc_area_lut.csv to resolve.
+KNOWN_LUT_GAPS <- c(
+  "HAMMA HAMMA R." = "no Hamma Hamma River entry; fuzzy match falls through to Walla Walla River (Columbia region)",
+  "CEDAR R."       = "crc_area_lut.csv only has Cedar River (Pacific Co.) and (Jefferson Co.), both Coastal; the Puget Sound Cedar River (King Co.) is absent"
+)
+
+match_table <- match_table |>
+  dplyr::mutate(
+    lut_gap        = river_name_crc %in% names(KNOWN_LUT_GAPS),
+    lut_gap_reason = dplyr::if_else(lut_gap, KNOWN_LUT_GAPS[river_name_crc], NA_character_),
+    review_needed  = review_needed | lut_gap
+  )
+
+if (any(match_table$lut_gap)) {
+  cli::cli_alert_warning(
+    "{sum(match_table$lut_gap)} river{?s} excluded from output -- no correct \\
+     entry in crc_area_lut.csv: {.val {match_table$river_name_crc[match_table$lut_gap]}}"
+  )
+}
+
 n_flagged <- sum(match_table$review_needed)
 cli::cli_alert_info(
   "Fuzzy match complete. {n_flagged}/{nrow(match_table)} rivers flagged \\
@@ -207,6 +233,7 @@ if (n_flagged > 0) {
 
 crc_trips <- salmon_effort_long |>
   dplyr::left_join(match_table, by = c("river_raw" = "river_name_crc")) |>
+  dplyr::filter(!lut_gap) |>
   dplyr::transmute(
     river_name_crc      = river_raw,
     crc_area            = matched_description,   # aligns with crc_area in creel output

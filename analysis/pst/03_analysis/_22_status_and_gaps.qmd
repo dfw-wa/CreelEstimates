@@ -1,0 +1,246 @@
+<!-- _22_status_and_gaps.qmd — where the work actually stands: rows-by-block status, known blockers/defects, the coverage map placeholder, the open-gap ledger, documented deviations, and the delivery plan. Folds in PST_ANALYSIS.md §6-8 (minus §8.2/8.4/8.6, owned by the Track A/B children). -->
+
+# Status
+
+```{r}
+#| label: status-summary
+
+if (is.null(effort)) {
+  cat("No assembly output found. Run analysis/pst_fw_effort_assembly.R.\n")
+} else {
+  effort |>
+    count(block, year, name = "rows") |>
+    pivot_wider(names_from = year, values_from = rows, values_fill = 0) |>
+    gt() |>
+    tab_header(title = "Rows by block and year",
+               subtitle = "Deliverable blocks only; ColumbiaMainstem is out of scope")
+}
+```
+
+```{r}
+#| label: status-mode-unknown
+
+# The single number that gates delivery: share of trips still carrying
+# mode = "unknown". Track B cannot resolve R3_external (field not collected)
+# or P2 (CRC has no mode field), so this will not reach zero by itself.
+if (!is.null(effort)) {
+  effort |>
+    group_by(block) |>
+    summarise(
+      angler_trips     = sum(angler_trips, na.rm = TRUE),
+      pct_mode_unknown = round(100 * sum(angler_trips[mode == "unknown"]) /
+                                 sum(angler_trips), 1),
+      pct_tier_p2      = round(100 * sum(angler_trips[grepl("P2", tier)]) /
+                                 sum(angler_trips), 1),
+      .groups = "drop"
+    ) |>
+    gt() |>
+    fmt_number(columns = angler_trips, decimals = 0) |>
+    tab_header(title = "Unresolved mode share by block",
+               subtitle = "Must be understood, not necessarily zero, before delivery")
+}
+```
+
+## Known blockers
+
+| # | Item | Owner | Effect if unresolved |
+|---|---|---|---|
+| 1 | Guided/unguided absent for all mid-Columbia | Todd Miller | Whole block delivers `mode = "unknown"` |
+| 2 | 2025 coastal freshwater has no fallback identified | — | 2025 coastal is empty; PS covered by NEPA projection |
+| 3 | Upper Columbia (Chad Jackson) / Snake (Jeremy Trump) | pending since 8/11 | Thinnest block; no P1 at all |
+
+Resolved by scope cut: the LCR undocumented scalar, the Bonneville–McNary
+totals-only split, and the Buoy 10 Charter Boat mode question are no longer
+delivery blockers — that whole block (Columbia mainstem) is out of scope; see
+Purpose & deliverable contract. They'd only resurface if Jim/Melissa ever want
+WDFW to independently reproduce or reconcile against the consultant's own
+ODFW numbers.
+
+## Known defects
+
+- **`mid_columbia_yakima_creel_ingestion.R`** — `Hanford Reach fall Chinook
+  2025` rows carry `year = 2024`. The assembly script works around it by
+  trusting the year token in `fishery_name` and logging every corrected row,
+  but the ingestion script should be patched.
+- **`multi_fishery_creel_run_ledger.csv`** — 98 rows, all `ok` as of the
+  2026-08-14 run. The previous 3 errors / 1 skip are resolved. Lower Cowlitz
+  remains absent from the output entirely: it lacks the data needed for
+  effort estimation, a genuine gap rather than a pipeline bug.
+- **Superseded files on disk — RESOLVED (2026-08-17).** `multi_fishery_trip_summary.csv`
+  was stale but still present, and had already caused one analysis to be run
+  against wrong numbers; `results.csv` is no longer anywhere in the repo. The
+  reorganization moved the former to
+  `analysis/outputs/archive/multi_fishery_trip_summary_superseded_20260817.csv`,
+  and archived the two scripts that wrote the live pipeline's filenames
+  (`multi_fishery_trip_summary.R`, `multi_fishery_harvest_summary.R`) so they
+  can no longer clobber `multi_fishery_creel_summary.R`'s outputs. The
+  assembly script still logs a `defect` if it finds a superseded file.
+- **CRC compile** — region labels lost for 2023–2024; subtotal blocks
+  retained as leaf rows causing ~2× double-count. Confirm the current
+  `crc_freshwater_harvest_2021_2024_tidy.csv` postdates the fix.
+- **NEPA workbook** — fill-right errors in the 2022/2024 even-year columns.
+
+## Why the assembly output is not yet the deliverable
+
+`analysis/pst/03_analysis/pst_fw_effort_assembly.R` currently answers "what
+can we support right now," not "what do we owe Northern Economics." The P2
+ratio/expansion gap and the CRC-vs-creel bias handle are covered in Track A —
+assembly in practice above; the unresolved `mode = "unknown"` share is
+covered in Track B results above. Three more stand between the two, covered
+here.
+
+### Trip expansion — resolved
+
+An earlier version of this document reported that 29% of measured effort was
+being silently dropped (Nisqually, Puyallup/Carbon). **That finding was an
+artifact of reading a superseded file** (`multi_fishery_trip_summary.csv`).
+Against the current `multi_fishery_creel_trips.csv`:
+
+- All 49 fisheries expand cleanly — **zero** with `NA` trips.
+- The run ledger is 98 rows, **all `ok`** — no errors, no skips.
+- Nisqually 2022 *and* 2023, all four Puyallup/Carbon years, and all four
+  Drano years now carry trip estimates. The `[S4]` donor hierarchy is doing
+  the work: 778 rows use own-month trip length, 166 `area_season`, 66
+  `type_season`, 8 `fishery_season`.
+- Lower Cowlitz is absent entirely — the one genuine, confirmed data gap.
+
+The assembly script still logs expansion failures if they reappear, but
+there are none today.
+
+::: {.callout-warning}
+**The real hazard in the new file is the opposite of a drop — it's a
+double-count.** `multi_fishery_creel_trips.csv` stacks both the week- and
+month-stratified runs, so every stratum appears twice. Naively summing gives
+**1,881,197** trips against a correct month-basis figure of **954,177**. The
+assembly script filters to `PE_PERIOD = "month"` and asserts uniqueness of
+the design grain afterward — but any ad hoc query against the raw file that
+skips that filter will silently double every number in it.
+:::
+
+### P3 fallbacks not yet ingested
+
+`ingest_published_fallback()` only logs notes today. The NEPA projection for
+Puget Sound 2025 and any coastal 2025 fallback are not yet read.
+
+Separately, the year-specific **historical** NEPA estimates for 2022–2025 have
+not been located. The workbook in hand projects 2026/2027 and carries
+historical base-year data, but not final per-season estimates for the four
+years the consultant asked for. Either locate the previously-reported figures
+or re-run the projection logic for those years. (Carried over from the Track B
+producer's open-issues list, which is retired into this document.)
+
+### Trips vs. angler-days — still open
+
+See Glossary & unit conventions for the trips-vs-days distinction itself. No
+conversion is applied anywhere in this pipeline, and that decision has not
+been made — it belongs to Jim and Northern Economics, not to a pipeline
+default.
+
+## Coverage map {#sec-map}
+
+::: {.callout-note}
+**Placeholder.** Intent: a WA state map with river systems symbolized by
+assembly status — resolved (P1), resolved by ratio (P2), published-figure
+fallback (P3), and open gap — with a year facet or toggle. This is the
+progress tracker for the remaining outreach, and the single artifact most
+worth showing Jim in a status conversation.
+
+Requires: a river-system spatial layer (`data/spatial/`) joined to the
+registry crosswalk on its key, and the coverage ledger for the status fill.
+This layer does not exist in the repo as of this writing — the map is
+blocked on the data, not on the code below.
+:::
+
+```{r}
+#| label: coverage-map
+#| eval: false
+
+# Sketch — not yet wired. The spatial layer this references does not exist
+# in the repo yet; the path below is aspirational, not a stale reference to
+# a file that moved.
+# library(sf); library(leaflet)
+#
+# rivers_sf <- st_read(here::here("data", "spatial", "wa_river_systems.gpkg")) |>
+#   left_join(crosswalk, by = c("river_name" = "crosswalk_river")) |>
+#   left_join(coverage,  by = c("river", "year"))
+#
+# pal <- colorFactor(
+#   palette = c(P1 = "#1b7837", P2 = "#7fbf7b", P3 = "#fdb863", gap = "#b2182b"),
+#   domain  = rivers_sf$tier_or_gap
+# )
+#
+# leaflet(rivers_sf) |>
+#   addProviderTiles("CartoDB.Positron") |>
+#   addPolylines(color = ~pal(tier_or_gap), weight = 3, label = ~river) |>
+#   addLegend(pal = pal, values = ~tier_or_gap, title = "Assembly status")
+```
+
+## Open gaps
+
+```{r}
+#| label: gap-table
+
+if (is.null(gaps)) {
+  cat("Gap ledger not found.\n")
+} else {
+  gaps |>
+    arrange(block, river, year) |>
+    gt() |>
+    tab_header(title = "Logged gaps (R2)")
+}
+```
+
+Gaps tracked outside the ledger, because they are outreach rather than code:
+
+| Gap | Owner | Status |
+|---|---|---|
+| Yakima & McNary workbooks, 2023–2025 | Todd Miller (R3) | Received commitment 2026-08-12; not yet ingested |
+| Upper Columbia | Chad Jackson (R2) | Outreach 2026-08-11; pending |
+| Snake River | Jeremy Trump | Outreach 2026-08-11; pending |
+| Columbia Basin empirical effort/catch 2022–2025 (to replace FEIS rates) | Mark S. / CRD | Team check pending |
+| Coastal freshwater 2025 | — | No fallback identified |
+| McNary 2022 | Todd Miller | Confirmed missing; no source |
+| 2025 CRC harvest | Heidi / Harvest Data Team | Publishes October — binding constraint on 2025 |
+| NEPA odd/even ratio misapplication | Christina Iverson | Call pending; affects 2022/2024 columns |
+| Lower Cowlitz | — | Genuine data gap, not a bug; `KNOWN_FAILED` |
+| Yakima 2023–2025 trip expansion | Evan / Todd | **Blocker.** 4,393 / 5,529 / 3,533 effort-hrs present, `total_trips_est` NA for every row (OQ4 — 2023+ workbooks dropped the expanded trips column). ColumbiaTrib totals are undercounts until resolved |
+| Lower Chehalis 2023 NA-area shadow rows | Evan | Defect. Strata emitted twice, once coded and once `catch_area_code = NA`; dropped downstream, but fix the section→area join in `analysis/pst/02_ingest/multi_fishery_creel_summary.R` |
+| Drano `angler_final = "fail"` | Evan | Defect. Failed bank/boat classification recoded `"unknown"`; fix in the Drano PE branch |
+| Additivity check, 122 strata | Evan | Relative differences ~1e-4 — floating-point, not a missing species. Consider raising the tolerance so the check stops crying wolf |
+| week vs. month `pe_period` | Jim / Evan | 17 fisheries differ >15% between stratifications. `PE_PERIOD` is currently `"month"`; the choice needs to be made explicitly, not defaulted |
+| River-to-creel crosswalk | Evan | Raised as open in the Track B producer before the current design landed. Appears superseded: matching now keys on `catch_area_code` via `pst_river_block_crosswalk.csv`, not river name. Confirm and close, or reopen with specifics |
+| Pooled proportions for uncreeled rivers | Evan | Same vintage. Appears superseded by P2 within-block ratios with leave-one-out validation — which is the regional fallback that request asked for. Confirm and close |
+
+## Documented methodology deviations
+
+| # | Deviation | Rationale | Scope |
+|---|---|---|---|
+| MD1 | Mid-Columbia Track A totals accepted as **pre-computed** inputs (`R3_external`), bypassing the P1 hierarchy | Todd Miller's Hanford Reach boat expansion model is the only expansion that exists for these systems; it is an unvetted R3 spreadsheet, not a design-based PE run | Hanford Reach, Yakima, McNary only. **Not generalizable.** |
+| MD2 | Guided/unguided coded `"unknown"` for all mid-Columbia | Field not collected by R3 programs | Per R3 |
+
+For reference, the 2022 Hanford Reach figures accepted under MD1:
+26,342 boat trips and 2,103 bank trips (92.6 / 7.4). Track B location is
+therefore satisfied empirically for that river-year even though Track A is
+not design-based.
+
+# Delivery plan
+
+| Step | Owner | Blocking |
+|---|---|---|
+| 1. Land manual runs (Puyallup/Carbon, Nisqually, Drano) | Evan | No |
+| 2. Ingest Todd's 2023–2025 workbooks | Evan | Todd |
+| 3. Resolve odd/even ratio with Christina | Evan | Christina call |
+| 4. Confirm D5 (upriver spring Chinook) | Jim | Jim |
+| 5. Replace FEIS rates with CRD empirical where available | Evan | Mark / CRD |
+| 6. Freeze 2022–2024; flag 2025 as provisional | Evan | CRC October |
+| 7. ~~Reconcile A1–A4 wording between this doc and `PST_ANALYSIS.md`~~ — done 2026-08-17; `PST_ANALYSIS.md` folded into the intro/methods children and retired | — | — |
+| 8. Wire the coverage map | Evan | Spatial layer |
+| 9. Recover Yakima 2023–2025 trip expansion | Evan | Todd (OQ4) |
+| 10. Decide `PE_PERIOD` (week vs. month) on the record | Jim | No |
+
+::: {.callout-warning}
+**2025 cannot be complete before October.** The 2025 CRC harvest file is the
+input for every P2 and P3 row in that year. Options are to deliver 2022–2024
+final with 2025 following, or to deliver 2025 as projected and labeled per R5.
+This should be surfaced to the consultant now rather than at delivery.
+:::

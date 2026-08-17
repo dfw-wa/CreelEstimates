@@ -1,0 +1,114 @@
+<!-- _21_track_b_proportions.qmd — Track B results as committed to the repo: the mode x location proportion table and its cross-check against batch-level records. Derivation logic lives in the producer, not here. -->
+
+## Track B results: mode × location proportions
+
+The framework for this track — bank/boat as a design stratum, guided/unguided
+as a post-stratified conditional proportion within the boat stratum, and why
+the two are exported as a conditional $P(\text{guided}\mid\text{boat})$ rather
+than a joint four-way split — is described in Track B — mode × location
+above. This section presents the results that framework produces, not the
+framework itself.
+
+**The derivation does not run here.** It happens in the standalone producer
+`analysis/pst/02_ingest/interview_proportions.qmd`, which queries the
+interview database directly and is **not** included by this parent — it needs
+live DB access that a rendered deliverable should not depend on. What follows
+reads only the committed artifacts that producer writes to `OUT_DIR`.
+
+As of this writing, `OUT_DIR` holds two of the producer's outputs:
+`interview_mode_location_props.csv` and `interview_batch_crosscheck.csv`. The
+producer also writes roughly two dozen additional per-fishery proportion and
+variability tables — guided/type proportions and their variability summaries
+at fishery, monthly, and weekly grain, both interview-count-weighted and
+hours-weighted (`guide_proportions_fishery.csv`,
+`combined_proportions_weekly_hrs.csv`, `guide_variability_summary.csv`, and
+similar). Those were previously written to a repo-root `output/` directory
+that was never committed; `output_dir` in the producer now resolves to this
+same `OUT_DIR`, but the producer has not been re-run since that path fix, so
+those files are not yet present here. Every chunk below therefore degrades
+through `read_if()` exactly like the rest of this document.
+
+```{r}
+#| label: trackb-mode-location-props
+
+props <- read_if(file.path(OUT_DIR, "interview_mode_location_props.csv"))
+
+if (is.null(props)) {
+  cat("Track B proportions table not found. Run analysis/pst/02_ingest/interview_proportions.qmd.\n")
+} else {
+  props |>
+    arrange(fishery_name, year, location, mode) |>
+    select(fishery_name, year, location, mode,
+           n_interviews, n_location, prop, prop_hrs, prop_delta) |>
+    gt() |>
+    fmt_number(columns = c(prop, prop_hrs, prop_delta), decimals = 3) |>
+    tab_header(
+      title = "Interview-derived mode proportions",
+      subtitle = "Grain: fishery_name x year x location x mode. prop is the interview-count share; prop_hrs is the same split weighted by interview-reported hours; prop_delta is prop_hrs - prop"
+    )
+}
+```
+
+Two columns worth reading together rather than separately: `prop` is the raw
+share of interviews at a location classified guided vs. unguided; `prop_hrs`
+re-weights that same split by hours reported per interview, since a guided
+trip and an unguided trip are not sampled at equal effort-intensity.
+`prop_delta` is provided so a location-year where the two diverge sharply is
+visible without recomputing it — a large delta says the count-weighted and
+effort-weighted stories disagree, which is worth a second look before the
+proportion is applied to a Track A total.
+
+Note what this table does **not** contain: no row here carries
+`mode = "unknown"`. That value is real in the assembled deliverable (see
+Status & gaps), but it is a Track A/assembly-time artifact — rivers where the
+guided field was never collected (all mid-Columbia R3 programs) or where the
+interview sample fell below `MIN_INTERVIEWS` never reach this table at all,
+because there is no interview signal to compute a proportion from. An
+"unknown" share that will not go to zero on its own is the single number
+that gates delivery, and treating it as answered by this table would be a
+mistake — it is unresolved, not resolved, and needs either a documented
+donor decision from Jim or an explicit unclassified category agreed with
+Melissa.
+
+### Cross-check against batch-level records
+
+`interview_batch_crosscheck.csv` joins the interview records behind the
+table above against the independently produced batch effort file, at
+`fishery_name x year x location x month` grain, to catch two failure modes:
+interview coverage claimed where no batch effort record exists, and a
+trip-length figure computed from interviews (`mean_hrs_int`) diverging sharply
+from the one computed from the batch file (`mean_trip_length`). The raw file
+carries exact duplicate rows for some cells (an artifact of the upstream
+join, not a QA finding), so the chunk below de-duplicates before summarizing.
+
+```{r}
+#| label: trackb-batch-crosscheck
+
+crosscheck <- read_if(file.path(OUT_DIR, "interview_batch_crosscheck.csv"))
+
+if (is.null(crosscheck)) {
+  cat("Interview/batch crosscheck table not found.\n")
+} else {
+  crosscheck |>
+    distinct() |>
+    group_by(status) |>
+    summarise(
+      cells           = n(),
+      median_pct_diff = median(pct_diff, na.rm = TRUE),
+      median_ratio    = median(ratio, na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    gt() |>
+    fmt_number(columns = c(median_pct_diff, median_ratio), decimals = 2) |>
+    tab_header(
+      title = "Batch-record vs. interview-record coverage, by month x location cell",
+      subtitle = "ratio = mean_trip_length (batch) / mean_hrs_int (interview); pct_diff = 100 x (n_int_complete - n_batch) / n_batch"
+    )
+}
+```
+
+A `status` of `"interviews, no effort — batch gap or out of scope"` marks a
+cell where interviews exist but the batch effort file has nothing to compare
+against — either a genuine batch gap or a month/location combination outside
+that fishery's surveyed scope. It is not, by itself, evidence of a defect;
+it is a worklist for whoever reconciles the two files next.

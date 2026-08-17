@@ -1,0 +1,213 @@
+<!-- _20_track_a_assembly.qmd — Track A tiering as executed: P2 block-ratio extrapolation mechanics, its leave-one-out validation, and the CRC-vs-creel bias handle that justifies the ratio's denominator choice. -->
+
+## P2 extrapolation in practice
+
+P2 covers **CRC areas** with no creel survey. Everything operates at
+`catch_area_code`, not river: rivers span several areas (Quillayute is
+398|400|402|404|406), so a river-keyed ratio cannot be applied to a CRC row at
+all. Roll-up to river happens at the end.
+
+The estimator is a **ratio of sums within a block** — P1 creel trips over CRC
+harvest for the areas that have both — applied to the CRC harvest of areas
+that don't:
+
+$$
+\hat T_{a,y} \;=\; H^{CRC}_{a,y} \times \frac{\sum_{d \in D_{b,y}} T^{creel}_{d,y}}{\sum_{d \in D_{b,y}} H^{CRC}_{d,y}}
+$$
+
+where $D_{b,y}$ is the donor set: areas in block $b$ with **both** a
+design-based trip estimate and a CRC harvest figure in year $y$.
+
+**The denominator is CRC, deliberately.** The assembly script also computes a
+creel-denominated trips-per-salmon ratio (2.06–4.39 by block-year), and that
+figure is the right one for describing fishery behaviour. It is the wrong one
+for this expansion: applying it to a CRC numerator would assume CRC and creel
+harvest agree, when the run's own bias check puts the median at 0.77. Matching
+the donor denominator to the target measure keeps that bias inside the ratio
+instead of stacking it on top.
+
+Ratio of sums rather than mean of area ratios — the sum form weights donors by
+harvest, so a small area with a thin denominator can't swing the block.
+Per-area ratios are still computed, but only as a coherence diagnostic.
+
+Guardrails, each of which sends an area-year to the gap register rather than
+producing a number: minimum two donor areas, a donor-harvest floor of 100
+salmon, a plausibility band on the ratio, and a cap on the within-block CV of
+donor ratios. Year-specific ratios are preferred; a block-pooled ratio is the
+only fallback, labeled in `ratio_basis` per R5.
+
+The CRC-stream-to-river crosswalk that previously blocked this step already
+exists: `crc_areas` in the registry crosswalk maps area → river → block, and
+the bias check confirms CRC `stream_code` and creel `catch_area_code` share a
+coding scheme. What genuinely remains is narrower — CRC stream_codes present in
+the harvest file but in no crosswalk row. Those are unassignable and are logged,
+not guessed.
+
+`build_block_ratios()` derives **observed trips-per-salmon from the paired
+merged creel outputs** — both numerator and denominator from the same
+`est_pe_effort()` / `est_pe_catch()` run on the same strata, so the ratio is
+internally consistent rather than two independent estimates divided. Most
+recently observed block-year ratios:
+
+| Block | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| Puget Sound | 4.24 | 1.45 | 3.15 | 1.35 |
+| WA Coast | 1.98 | 2.53 | 1.93 | 2.19 |
+| Columbia tribs | 2.76 | 1.89 | 2.11 | 1.71 |
+
+Puget Sound odd years sit far below even years — the pink-salmon signal the
+NEPA workbook encodes as its 3.44/8.65 odd/even split. Direction matches
+independently, which is a useful check that the pairing is right. Magnitudes
+differ from NEPA's because these are creel-observed totals rather than
+CRC-expanded.
+
+**What still needs wiring:** applying those ratios to uncovered river-years.
+Given 127 CRC areas carry harvest with no creel behind them, this remains a
+large share of the eventual deliverable — logged as a `blocker`, not guessed.
+
+```{r}
+#| label: p2-ratios
+
+p2_ratios <- read_if(file.path(OUT_DIR, "pst_fw_p2_area_ratios.csv"))
+
+if (is.null(p2_ratios)) {
+  cat("P2 ratio table not found. Run analysis/pst/03_analysis/pst_fw_effort_assembly.R with the P2 module wired in.\n")
+} else {
+  p2_ratios |>
+    filter(ratio_basis == "block_year") |>
+    select(block, year, n_donor_rivers, donor_harvest, ratio, donor_ratio_cv, usable, fail_reason) |>
+    arrange(block, year) |>
+    gt() |>
+    fmt_number(columns = c(ratio, donor_ratio_cv), decimals = 3) |>
+    fmt_number(columns = donor_harvest, decimals = 0) |>
+    tab_header(
+      title = "Block-year trips-per-salmon ratios",
+      subtitle = "Estimated from creel-covered donor rivers; applied to uncovered CRC rivers in the same block"
+    )
+}
+```
+
+### How wrong is it likely to be?
+
+Rather than asking anyone to accept the extrapolation on structural grounds,
+the module runs a **leave-one-out check**: each donor river is held out in
+turn, the block ratio is rebuilt without it, and its trips are predicted as
+if it were uncovered. Comparing that prediction to its actual design-based
+estimate gives an empirical error band per block.
+
+Median absolute percent error is the number to quote when asked how much
+confidence P2 deserves. The signed median is worth reading alongside it — a
+block with modest scatter but consistent one-directional bias is a different
+problem from one with large symmetric error.
+
+```{r}
+#| label: p2-loo
+
+p2_loo <- read_if(file.path(OUT_DIR, "pst_fw_p2_loo_summary.csv"))
+
+if (is.null(p2_loo)) {
+  cat("P2 leave-one-out summary not found.\n")
+} else {
+  p2_loo |>
+    gt() |>
+    fmt_number(columns = c(median_ape, p90_ape, bias_pct), decimals = 1) |>
+    cols_label(
+      n_tests = "Held-out tests",
+      median_ape = "Median |error| %",
+      p90_ape = "90th pct |error| %",
+      bias_pct = "Median signed error %"
+    ) |>
+    tab_header(
+      title = "P2 leave-one-out validation by block",
+      subtitle = "Each donor river predicted from the remaining donors in its block"
+    )
+}
+```
+
+::: {.callout-warning}
+**Two biases to keep visible.** The numerator is creel trips for a *surveyed
+season*; the denominator is CRC harvest for the *calendar year*. Where the
+creel season is materially shorter than the CRC window, the ratio is biased
+low and P2 understates trips. Separately, a block ratio built on
+coho-dominated donors and applied to a Chinook-dominated river transports the
+wrong catch rate — holding species mix roughly constant is much of what the
+block definition is doing, and why R4 forbids crossing them.
+
+P2 produces a **total only**. Mode and location are `"unknown"` until Track B
+supplies a block-level conditional proportion; where none exists they stay
+unknown in the deliverable, which is a correct result rather than an
+incomplete one.
+:::
+
+## CRC vs. creel: the reporting-bias handle
+
+Both sources estimate the same quantity — total salmon kept in a CRC area-year —
+by unrelated means. Creel is design-based and observed on the ground; CRC is an
+angler-reported card expansion. `catch_area_code` is carried through the whole
+pipeline rather than collapsed at the river roll-up, because it is the only key
+that joins creel effort back to CRC harvest — rivers can span several CRC areas
+(Quillayute is 398|400|402|404|406), so rolling to river grain destroys that key
+one-way. Two roll-ups are written: river grain for the consultant's requested
+shape, area grain for this comparison. Their ratio is the empirical handle on
+reporting bias, and it is computable only because `catch_area_code` survives to
+the end of the pipeline instead of being collapsed to river early.
+
+Current run: **median CRC/creel = 0.77 across 62 comparable area-years**, IQR
+0.52–1.93. CRC reports less harvest than the design-based estimate at the
+median, but the spread is wide enough that the direction is not stable per
+area — another instance of R4: the bias doesn't travel between systems any
+better than the ratios do.
+
+This is what forces the P2 estimator to be **CRC-denominated**. A ratio built as
+creel-trips / creel-harvest and then applied to CRC harvest would inherit that
+bias as a systematic understatement. Building it as creel-trips / CRC-harvest
+puts the bias inside the ratio, where it cancels against the CRC numerator it
+is applied to.
+
+::: {.callout-note}
+Basis differs — CRC is license-year (Apr 1 – Mar 31), creel is calendar-month.
+The comparison is indicative at annual grain and is not a month-for-month
+reconciliation. 2025 pairs return zero CRC harvest because CRC publishes
+through license year 2024 only; those rows join but are flagged
+`comparable = FALSE` and excluded from the median, so a coverage artifact
+isn't misread as a reporting collapse.
+:::
+
+::: {.callout-warning}
+**Figure discrepancy, not yet reconciled.** An earlier documentation layer
+(`PST_ANALYSIS.md` §8.6, being retired into this document) reported **median
+CRC/creel ≈ 0.60 across 74 paired area-years**, and illustrated the
+non-uniformity with two examples: area 618 (Drano) running *above* 1.0 in
+2023–2024 while area 358 (Humptulips) sat near 0.35. The figure carried
+forward above — **0.77 across 62 comparable area-years** — comes from the
+current parent document and from `pst_p2_block_ratio.R`, and is treated here
+as the newer of the two, but the two runs disagree on both the ratio (0.60 vs
+0.77) and the pair count (74 vs 62). That gap is large enough to matter for
+anyone using this number to correct P2, and it has not been reconciled. Do
+not treat either figure as settled until it is checked against a fresh
+assembly run.
+:::
+
+This matters for P2 directly: if CRC is the harvest denominator for
+uncovered river-years but runs meaningfully below the design-based truth,
+then expanding CRC harvest by a creel-derived trips-per-salmon ratio
+inherits that bias. Whether to correct for it is a decision for Jim, not
+something to bury in the pipeline.
+
+```{r}
+#| label: crc-bias
+
+if (!is.null(crc_bias)) {
+  crc_bias |>
+    filter(comparable) |>
+    summarise(
+      n_area_years = n(),
+      median_ratio = median(crc_over_creel, na.rm = TRUE),
+      q25          = quantile(crc_over_creel, 0.25, na.rm = TRUE),
+      q75          = quantile(crc_over_creel, 0.75, na.rm = TRUE)
+    ) |>
+    gt() |>
+    fmt_number(columns = c(median_ratio, q25, q75), decimals = 2) |>
+    tab_header(title = "CRC harvest / creel harvest, same area-year")
+}
+```

@@ -45,4 +45,13 @@ Finally, the calculated estimates are presented as tables, plots, and standalone
 
   **PENDING FUNCTIONALIZED OUTPUTS**
 
+## Other workstreams
+
+`analysis/pst/` is a separate workstream from the in-season creel reporting
+described above: it assembles freshwater recreational angler trips for a
+Pacific Salmon Treaty economic valuation, not an in-season `fw_creel.Rmd`
+run. It has its own pipeline orchestrator (`run_pst_pipeline.R`) and its own
+documentation — see `analysis/pst/README.md` for scope, run order, and
+prerequisites before using anything in that directory.
+
  

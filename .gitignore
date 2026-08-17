@@ -52,3 +52,8 @@ config.yml
 # Dev container configuration
 .devcontainer/
 .devcontainer
+
+# Raw DB dumps regenerable by re-rendering analysis/pst/02_ingest/interview_proportions.qmd;
+# too large to track (31.6 MB / 3.3 MB vs. 1.4 MB for the next largest file in outputs/)
+analysis/pst/outputs/all_interviews.csv
+analysis/pst/outputs/all_interviews.rds

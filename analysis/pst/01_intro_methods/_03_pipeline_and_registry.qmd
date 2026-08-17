@@ -1,0 +1,83 @@
+<!-- _03_pipeline_and_registry.qmd — pipeline run order, input registry, output contract -->
+
+# Pipeline
+
+## Run order
+
+`analysis/pst/run_pst_pipeline.R` orchestrates the full sequence below in
+order; each step can also be run standalone.
+
+| # | Script | Writes |
+|---|---|---|
+| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2021_2024_tidy.csv` |
+| 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
+| 3 | `analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R` | `analysis/pst/outputs/mid_columbia_yakima_creel_summary.csv` |
+| 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |
+| 5 | `analysis/pst/03_analysis/pst_fw_effort_assembly.R` | the deliverable + three ledgers |
+| 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `PST_FW_Jim_Update.xlsx` |
+
+Steps 1–4 are independent and parallelizable. Step 5 is the only writer of
+the deliverable, and it is re-runnable at any time — it reads whatever is
+present and logs whatever isn't. Step 6 runs after step 5: the Excel export
+was split out of the assembly script into its own step so the workbook
+build can be re-run without re-running the tier hierarchy.
+
+## Registry
+
+| Artifact | Role |
+|---|---|
+| `input_files/pst/pst_input_manifest.csv` | Registered inputs — one row per source file/table, with tier, block, and expected coverage |
+| `input_files/pst/pst_river_block_crosswalk.csv` | Fishery → river → block mapping (63 rows) |
+| `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | Merged effort + harvest; single DB fetch, one `est_pe_effort()` and one `est_pe_catch()` per fishery, so trips and harvest are identical by construction |
+| `analysis/pst/02_ingest/interview_proportions.qmd` | Track B engine — conditional mode proportions from interviews |
+| `analysis/archive/integrate_manual_runs.R` | Archived — not part of the current run order. Reconciles per-fishery `fw_creel.Rmd` runs to the monthly batch grain |
+| `analysis/pst/03_analysis/pst_fw_effort_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
+
+::: {.callout-note}
+`input_files/pst/` currently contains `crc_areas_creeled.csv` and
+`external/`, alongside the manifest and crosswalk above.
+:::
+
+`input_files/pst/pst_input_manifest.csv` is one row per input,
+machine-readable, with `tier`, `period_basis`, `unit_declared`, `status`,
+and `blocking`. The assembly script reads it and refuses to run silently
+past anything flagged `blocking`.
+
+`input_files/pst/pst_river_block_crosswalk.csv` is 63 rows, generated from
+the branch's own data, resolving every creel fishery-year and provider
+river to a block, a delivery river label, and its CRC areas. Every fishery
+resolved cleanly; there are no `REVIEW` rows.
+
+| Block | Rows | Primary source | Delivered? |
+|---|---|---|---|
+| Puget Sound | 24 | creel PE | Yes |
+| WA Coast | 19 | creel PE | Yes |
+| Columbia tributaries | 17 | `R3_external` (Hanford, Yakima, McNary) — creel PE nominally covers Drano but currently returns zero usable effort | Yes |
+| Columbia mainstem | 3 | ODFW (Buoy 10, LCR, Bonneville–McNary) | **No — consultant-supplied, out of scope** |
+
+## Outputs
+
+Assembly emits the deliverable plus three ledgers, which is what lets the
+status children report status rather than assert it:
+
+| File | Grain | Purpose |
+|---|---|---|
+| `pst_fw_trips_by_mode_location_INTERMEDIATE.csv` | block × river × year × mode × location | **Intermediate — not the deliverable.** Trips + paired total-salmon harvest + `trips_per_salmon`. |
+| `pst_fw_trips_by_crc_area_INTERMEDIATE.csv` | block × river × **CRC area** × year × mode × location | Same as above but retains `catch_area_code` — **use this one for CRC joins** |
+| `pst_fw_p2_block_ratios.csv` | block × year | Paired trips-per-salmon derived from the merged creel run |
+| `pst_fw_p2_area_ratios.csv` | CRC area (and block × year) | Ratios from the P2 module in `pst_p2_block_ratio.R`. Distinct from `pst_fw_p2_block_ratios.csv` above — both are written, and they are not the same artifact |
+| `pst_fw_p2_donors.csv` | recipient area × donor area | Which surveyed areas each unsurveyed area borrowed from (rule R4: donors are within-block only) |
+| `pst_fw_p2_loo_detail.csv` | held-out area × year | Leave-one-out validation, row level |
+| `pst_fw_p2_loo_summary.csv` | block | LOO rollup; `median_ape` feeds `p2_median_error_pct` in the Jim workbook |
+| `pst_fw_crc_vs_creel_bias.csv` | CRC area × year | CRC vs design-based creel harvest, same area-year |
+| `pst_fw_effort_long.csv` | + month, fishery_name | Audit trail / re-aggregation |
+| `pst_fw_provenance_ledger.csv` | river-year × tier × source | Which number came from where |
+| `pst_fw_gap_register.csv` | source × severity | Every blocker, gap, defect, and decision |
+| `pst_fw_crc_coverage.csv` | CRC area | Feeds the status map |
+
+Every deliverable row carries `tier` and `source_id`. There are no
+unattributed numbers.
+
+- **Provenance ledger** — tier, source_id, method per row
+- **Gap ledger** — every skipped or absent input, with reason
+- **Coverage ledger** — river-year × track completion

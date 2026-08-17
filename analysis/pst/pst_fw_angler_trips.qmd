@@ -1,0 +1,109 @@
+---
+title: "PST Freshwater Recreational Angler Trips: Framework & Assembly Status"
+subtitle: "Angler trips by Year × River × Mode × Location, 2022–2025"
+author: "WDFW Fish Program — Freshwater Fisheries Policy"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(here)
+library(glue)
+library(gt)
+
+# Parent doc reads the artifacts produced by pst_fw_effort_assembly.R.
+# It renders with partial outputs by design: anything missing is reported
+# as a gap rather than raising an error (design rule R2).
+
+# Paths mirror the assembly script exactly (OUT_DIR / PST_DIR). This file
+# renders from analysis/pst/; here::here() resolves from the repo root either
+# way. Child {{< include >}} paths, by contrast, are relative to this file.
+OUT_DIR <- here::here("analysis", "pst", "outputs")
+PST_DIR <- here::here("input_files", "pst")
+
+read_if <- function(path, ...) {
+  if (file.exists(path)) readr::read_csv(path, show_col_types = FALSE, ...) else NULL
+}
+
+manifest    <- read_if(file.path(PST_DIR, "pst_input_manifest.csv"))
+crosswalk   <- read_if(file.path(PST_DIR, "pst_river_block_crosswalk.csv"))
+effort      <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"))
+effort_area <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"))
+provenance  <- read_if(file.path(OUT_DIR, "pst_fw_provenance_ledger.csv"))
+gaps        <- read_if(file.path(OUT_DIR, "pst_fw_gap_register.csv"))
+coverage    <- read_if(file.path(OUT_DIR, "pst_fw_crc_coverage.csv"))
+crc_bias    <- read_if(file.path(OUT_DIR, "pst_fw_crc_vs_creel_bias.csv"))
+```
+
+::: {.callout-note}
+## What this document is
+
+This is the **parent** for the PST freshwater angler trips work. It is
+assembled from child documents via `{{< include >}}`, each owning one part of
+the framework, assembly, or status:
+
+- `01_intro_methods/` — purpose and deliverable contract, the two-track
+  framework, and the pipeline registry.
+- `03_analysis/` — Track A tiering as executed, Track B proportion results,
+  and current assembly status and gaps.
+
+Every child inherits this document's knitr session: the objects loaded in
+`setup` above (`effort`, `effort_area`, `provenance`, `gaps`, `coverage`,
+`crc_bias`, `manifest`, `crosswalk`) and the `read_if()` helper are available
+to every included file without being redefined. Per design rule R2, this doc
+is expected to render cleanly from an **empty** pipeline — every child chunk
+that touches an artifact checks for its presence first and reports a gap
+rather than erroring. Rendering with partial or absent outputs is the normal
+state, not a failure mode.
+:::
+
+{{< include 01_intro_methods/_01_scope_and_contract.qmd >}}
+
+{{< include 01_intro_methods/_02_framework.qmd >}}
+
+{{< include 01_intro_methods/_03_pipeline_and_registry.qmd >}}
+
+{{< include 03_analysis/_20_track_a_assembly.qmd >}}
+
+{{< include 03_analysis/_21_track_b_proportions.qmd >}}
+
+{{< include 03_analysis/_22_status_and_gaps.qmd >}}
+
+# Glossary & unit conventions
+
+**Angler trips vs. angler days.** Not interchangeable. The consultant's
+template says "angler days"; what the creel infrastructure produces is angler
+trips. A multi-day angler generates multiple trips; a single trip does not
+necessarily span a day. This distinction is surfaced explicitly to Jim and to
+Northern Economics rather than absorbed silently in the pipeline.
+
+**Trip calculation.**
+$$
+\text{total\_trips\_est} = \frac{\text{total\_effort\_hrs}}{\text{mean\_trip\_length}}
+$$
+Group size is applied upstream, when effort is expanded — not in this
+division. Angler-hours vs. boat-hours vs. party-hours must be confirmed with
+each data provider before any trip figure is computed from their file. This
+has been the single most common source of silent error in inherited
+spreadsheets.
+
+**License year.** CRC harvest files are reported on a license year running
+April 1 – March 31. This is *not* a fiscal year and the two should not be
+used interchangeably in correspondence. Conversion to calendar year is a
+documented step in the assembly script, not an assumption.
+
+**Block.** The geographic/management unit within which a ratio is assumed
+portable. Defined by `input_files/pst/pst_river_block_crosswalk.csv`. The four blocks are PugetSound, WACoast, ColumbiaTrib, and ColumbiaMainstem (documented but not delivered).

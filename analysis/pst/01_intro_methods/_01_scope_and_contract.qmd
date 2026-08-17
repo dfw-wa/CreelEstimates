@@ -1,0 +1,143 @@
+<!-- _01_scope_and_contract.qmd — deliverable contract, scope, and consultant requirements -->
+
+::: {.callout-note}
+## What this document is
+
+This is the first of three "intro and methods" children for the PST
+freshwater effort parent document. Together with `_02_framework.qmd` and
+`_03_pipeline_and_registry.qmd`, it owns the framework — scope, the Track A
+tier hierarchy, the Track B derivation logic, assumptions A1–A4, design
+rules R1–R5 — while the analysis children report assembly status.
+
+This document specifically owns the deliverable contract: what was
+requested, by whom, over what geography, and the scope decisions made
+along the way. Framework material previously duplicated across
+`PST_ANALYSIS.md` and the Background/Methods prose in
+`interview_proportions.qmd` has been consolidated into these three
+children; those source documents are retired.
+
+Other children should not restate scope, tiers, or assumptions. They cite
+them (e.g. "per A2") and get on with the computation.
+:::
+
+# Purpose & deliverable contract
+
+The U.S. side of the Pacific Salmon Commission has contracted Northern
+Economics (Melissa Errend) to update the economic valuation of PST salmon
+fisheries. Commercial landings and marine recreational effort are already
+accessible at the needed resolution. **Freshwater recreational effort is
+not** — no standing WDFW reporting process produces angler trips broken out
+by mode and location. This work fills that gap.
+
+**Deliverable:** Year × River × Mode (guided/unguided) × Location
+(bank/boat) × Angler trips, 2022–2025. **Recipient:** Melissa Errend,
+Northern Economics. **Scope authority:** Jim Scott.
+
+## Requested format
+
+For 2022 through 2025, the consultant has requested effort data in the
+following format:
+
+| Field | Definition |
+|---|---|
+| **Year** | Calendar year, 2022–2025 |
+| **River** | Individual river/system (rolled to block where required) |
+| **Mode** | Guided vs. private (unguided) |
+| **Location** | Boat vs. bank |
+| **Angler trips** | Total estimated angler trips (see glossary) |
+
+Species scope: **PST salmon, total salmon** — not species-specific.
+Steelhead is excluded entirely.
+
+## Geographic scope
+
+| Region | In scope | Note |
+|---|---|---|
+| Puget Sound freshwater | Yes | CRC + creel; ~54 systems in the NEPA frame |
+| WA Coast freshwater | Yes | 2025 fallback still unidentified |
+| Columbia tributaries (WA) | Yes | Includes mid-Columbia R3 programs |
+| Columbia mainstem | **No** | Delivered to the consultant directly by ODFW (OR+WA combined) |
+| Steelhead, any region | **No** | Out of scope by definition |
+| Upriver spring Chinook (Columbia) | Candidate exclusion | Not PST-managed; limited ocean harvest — pending Jim's confirmation |
+
+::: {.callout-note}
+**Delivery scope note.** Buoy 10, Lower Columbia, and Bonneville–McNary
+(the Columbia mainstem block) are **excluded from delivery**. Those ODFW
+files were transmitted to WDFW *by Northern Economics* — the consultant
+already has this data, so we do not send it back.
+`analysis/pst/03_analysis/pst_fw_effort_assembly.R` never ingests this
+block; `DELIVER_BLOCKS` gates the deliverable to Puget Sound, WA Coast, and
+Columbia tributaries only. The block stays in the crosswalk purely for
+documentation, in case it's ever needed for internal QC.
+:::
+
+## Scope decisions on record
+
+| # | Question | Resolution | Authority |
+|---|---|---|---|
+| D1 | Species-specific or total salmon? | Total salmon | Jim (resolving Ryan Lothrop's PSC indicator-stock sideboard question) |
+| D2 | Steelhead included? | No | Consultant request |
+| D3 | Columbia mainstem | Out — ODFW delivers directly | Jim |
+| D4 | Catch/trip basis for FEIS-derived rows | FEIS Table 3-19 rates acceptable; prefer empirical 2022–2025 averages if readily available | Jim, 2026-08-03 |
+| D5 | Upriver spring Chinook | Proposed exclusion, **open** | Pending Jim |
+
+## Background & Consultant Request
+
+The U.S. has contracted with an economics consultant to assess the economic
+value of PST (Pacific Salmon Treaty) salmon fisheries. Commercial catch data
+and marine recreational fishing effort data are readily accessible, but
+**freshwater recreational effort** is more challenging to produce at the
+resolution requested.
+
+### Data Available Today
+
+**CRC-based freshwater trip estimates** already exist as part of the NEPA
+analysis for our annual fishing package. The NEPA spreadsheet
+(`NEPA PS_Recreational Effort Estimates 2025_2026_for 2026_2027 Projections_4_21_2026.xlsx`)
+produces annual trip estimates by river and month using CRC salmon harvest
+multiplied by a trips-per-salmon-caught ratio (per 2013 NOAA memo).
+Two ratios were originally established:
+
+| Year Type | Ratio | Rationale |
+|-----------|-------|-----------|
+| **Odd years** (2021, 2023, 2025, 2027…) | **3.44** trips/salmon | Abundant Puget Sound pink salmon (a strongly odd-year dominant run) mean anglers catch many salmon per trip — so fewer trips are needed per salmon caught |
+| **Even years** (2020, 2022, 2024, 2026…) | **8.65** trips/salmon | Pink salmon are nearly absent in even years; anglers rely on Chinook and coho alone, requiring ~2.5× more trips per salmon caught |
+
+However, **the "Even Effort" output column is blank (NA) in all available
+projection sheets** (2018 through 2026), and the current Summary tab
+(cell A15) explicitly documents that only the **odd-year ratio (3.44) is
+applied to all projections** regardless of whether the target year is odd
+or even.
+
+Using 3.44 for an even-year estimate (when 8.65 would be appropriate)
+understates effort by approximately **60%** (3.44 ÷ 8.65 ≈ 0.40). This
+affects any 2022 and 2024 estimates provided to the consultant.
+These estimates cover ~54 Puget Sound freshwater systems but are reported
+as **total trips only** — they are not broken out by mode (guided/unguided)
+or location (bank/boat).
+
+::: {.callout-warning}
+**Action item:** Confirm with the analyst whether the even-year ratio (8.65)
+should be reinstated for 2022 and 2024 estimates. Applying only the
+odd-year ratio (3.44) to even years likely understates freshwater effort by
+~60% for those years — a potentially significant issue for the consultant's
+economic valuation. Determine whether this was an intentional methodological
+decision and, if so, document the justification.
+:::
+
+**Creel interview data** from WDFW's internal database contains
+party-level records with guided status and bank/boat classification. These
+interviews do not cover all rivers, and sample sizes vary, but they provide
+the best available empirical basis for estimating the *proportional split*
+by mode and location.
+
+## Units note
+
+The consultant's request is phrased in "angler days"; everything this
+pipeline produces is angler **trips**
+(`total_trips_est = total_effort_hrs / mean_trip_length`). Trips and days
+are not interchangeable — some fisheries run multi-day trips, some anglers
+take more than one trip per day — and no trips→days conversion happens
+anywhere in this repo. That conversion, if it's needed, is a decision for
+Jim/Melissa, not a pipeline assumption. Every script, column, and output
+file in this repo says `trips`, not `days`.

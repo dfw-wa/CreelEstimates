@@ -1,0 +1,189 @@
+<!-- _02_framework.qmd — analytical framework: two-track decomposition, tier hierarchy, Track B derivation, assumptions, design rules -->
+
+# Framework
+
+## Two-track decomposition
+
+The deliverable is a product of two independently sourced quantities. Keeping
+them separate is what makes partial coverage tractable: a river can have a
+defensible total with an unknown split, or vice versa, and both states are
+representable in the output.
+
+$$
+\text{Trips}_{r,y,\,mode,\,loc} \;=\; \underbrace{T_{r,y}}_{\text{Track A}} \;\times\; \underbrace{\hat p_{r,y,\,mode,\,loc}}_{\text{Track B}}
+$$
+
+- **Track A — total angler trips** per river-year. Sourced by tier hierarchy.
+- **Track B — mode × location proportions.** Bank/boat comes from the design
+  stratum in `est_pe_effort()`. Guided/unguided is *post-stratification within
+  the boat stratum* using interview proportions.
+
+Track B is exported as a **conditional** $P(\text{guided}\mid\text{boat})$,
+not as a joint four-way proportion. The joint is reconstructed only at the
+final multiply, and only where the bank/boat split is itself design-based.
+
+## Track A — tier hierarchy
+
+| Tier | Source | Applies where |
+|---|---|---|
+| **P1** | Design-based creel estimates (`est_pe_effort()` → `total_effort_hrs ÷ mean_trip_length`) | Fisheries with an executed creel PE run |
+| **P2** | Regional creel-to-CRC ratios, computed **within block** | CRC-covered rivers without a PE run, inside a block that has one |
+| **P3** | Published figures — JSR tables, Mitchell Act FEIS rates, NMFS 2024 trips-per-salmon | No creel signal available in-block |
+
+Every row carries its tier. Tiers do not blend: a river-year is P1, P2, or
+P3, never an average of two.
+
+## Track B — mode × location
+
+1. **Bank/boat** is a design stratum, not a post-hoc classification. It comes
+   from the effort estimate directly, so it inherits the PE's expansion.
+2. **Guided/unguided** is not a design stratum in any WDFW freshwater program.
+   It is derived from interview counts within the boat stratum and applied as
+   a conditional proportion.
+3. Where the guided field is not collected at all (all mid-Columbia R3
+   programs), the dimension is coded `"unknown"` — never zero, never
+   defaulted to unguided.
+
+### Proposed Approach
+
+Apply creel-interview-derived proportions (guided/unguided × bank/boat) to
+the Track A total-trips figure to produce the mode × location breakdown the
+consultant needs — the same multiplication introduced above under
+Two-track decomposition, with $\hat{p}$ understood here specifically as the
+interview-derived proportion:
+
+$$
+\text{Trips}_{river,\, mode,\, location} = \text{Total Trips}_{river} \times \hat{p}_{river,\, mode,\, location}
+$$
+
+Where $\hat{p}$ is the proportion of interviews in that combined category
+(e.g., Guided-Boat = 15% of interviews at that river → 15% of estimated
+trips are assigned to Guided-Boat).
+
+**Key considerations for the meeting:**
+
+1. **Coverage gap** — Not all rivers with CRC trip estimates have creel
+   interview data. For rivers without creel coverage, options include
+   applying a regional/area-level proportion or a weighted average from
+   similar rivers.
+2. **Temporal resolution** — Proportions can be applied at the fishery-wide
+   level or monthly. The variability analysis below quantifies how much
+   proportions shift over time.
+3. **Years requested** — The consultant wants 2022–2025. The NEPA
+   spreadsheet currently has 2026/2027 projections and historical base
+   years. We may need to reconstruct or locate the 2022–2025 estimates.
+4. **Species scope** — PST salmon only (excludes steelhead).
+
+### Data Source
+
+Interview records are pulled from the WDFW PostgreSQL creel database via
+`creelutils::fetch_data(data_source = "internal")`. The full set of fishery
+names is obtained from `creelutils::fishery_lut()`. Each fishery's interview
+table is retrieved individually and combined.
+
+### Classification Logic
+
+- **Guided status** is derived from the `trip_guided` field:
+  "Guided" and "Non-guided" map directly; "Unknown" is treated as missing.
+- **Bank/Boat** uses `angler_type` when populated (older datasets).
+  For newer datasets, `boat_used == "No"` → Bank; `boat_used == "Yes"` → Boat,
+  with `fish_from_boat == "Bank"` overriding to Bank for parties that had a
+  boat but fished from shore.
+- **Combined** crosses the two classifications into four categories:
+  Guided-Bank, Guided-Boat, Unguided-Bank, Unguided-Boat.
+
+### Proportion Metrics
+
+Proportions are calculated two ways:
+
+1. **Interview counts** — each interview party counts as one unit.
+2. **Fishing hours** — `fishing_time × angler_count`, where fishing time
+   uses `fishing_end_time` for complete trips and `interview_time` as a
+   surrogate end for incomplete trips (following `prep_dwg_interview_fishing_time()`).
+
+### Temporal Aggregation & Variability
+
+Proportions are computed at three scales:
+
+- **Fishery-level** (entire dataset for a fishery)
+- **Monthly** (per fishery × calendar month)
+- **Weekly** (per fishery × ISO week)
+
+Variability (SD, CV, range) across units at each scale quantifies how stable
+these proportions are — informing whether a single fishery-wide proportion
+is sufficient or whether time-varying proportions should be applied to
+estimated trips.
+
+## Assumptions A1–A4
+
+::: {.callout-note}
+Assumptions A1–A4 were originally transcribed from `PST_ANALYSIS.md`. They
+are reconciled into this document as part of folding that file's framework
+content in here; `PST_ANALYSIS.md` is retired.
+:::
+
+| ID | Assumption | Consequence if violated |
+|---|---|---|
+| **A1** | Interviewed parties are representative of effort within the stratum and period from which they were drawn. | Mode proportions biased toward whatever access points and time blocks samplers favored. |
+| **A2** | Guiding occurs within the boat stratum. Guided bank effort is treated as negligible where not separately recorded. | Understates guided share on systems with walk-and-wade guiding. |
+| **A3** | Mode proportions are stable within the aggregation level at which they are applied (fishery-season unless monthly sample supports finer). | Seasonal shifts in guided share get flattened onto the annual total. |
+| **A4** | Where year-specific interview sample is insufficient, the conditional proportion may be borrowed from a donor **within the same block**, never across blocks. | Cross-block borrowing imports a different fishery's economics. |
+
+## Design rules R1–R5
+
+| ID | Rule |
+|---|---|
+| **R1** | Every output row carries `tier` and `source_id`. |
+| **R2** | Missing inputs log a gap and continue. The pipeline does not fail on absent data; partial assembly is the expected state. |
+| **R3** | Missing dimensions are coded `"unknown"`, never zero — a structural gap (e.g. Hanford Reach's guided/unguided field is simply not collected), not a stratum estimated at zero. |
+| **R4** | Ratios never cross blocks — not even within one river. |
+| **R5** | Projected, donor-borrowed, or otherwise non-native values are labeled in `method` and never collapse into an unlabeled total. |
+
+Supporting rules: smolts are excluded from all catch groups **[S3]**;
+within-season trip-length donors follow a four-tier hierarchy **[S4]** —
+month → area_season → type_season → fishery_season.
+
+## Why blocks, and why ratios stay inside them
+
+Trips-per-salmon is not a transferable constant. At the high-catch end,
+Buoy 10 runs under 1 trip per fish kept in most years (JSR Table 25 puts
+kept catch/trip in the 0.7–1.3 range across 2022–2025, i.e. roughly
+0.75–1.4 trips per salmon). Puget Sound freshwater runs several times
+higher: James Dixon's NMFS 2024 updated rates, anchored on 2022 WDFW data,
+put it at **3.539 trips/salmon (odd years) and 4.820 (even years)** —
+a defensible, well-documented figure, not an outlier built on sparse catch.
+Even between these two reasonably well-supported cases the ratio varies by
+roughly 3–6×, which is enough on its own to rule out a single statewide
+rate.
+
+JSR-verified figures for the rest of the Columbia mainstem block make the
+same point (2022–2025; Spring JSR Table 24, Fall JSR Tables 25–26): LCR fall
+(Aug–Oct) runs 2.75–3.95 trips/salmon, LCR spring (Feb–Jun 15) runs
+7.0–13.0, and LCR summer (Jun 16–Jul) runs 9.8–**60.7**. The 60.7 is real,
+not a typo — Jun 16–30 2025 (9,169 trips) and Jul 2024 (15,704 trips) both
+had zero kept Chinook, consistent with the weak/restricted lower Columbia
+summer Chinook returns those years. This is the LCR summer Chinook figure:
+it is a high outlier built on very little observed catch and needs its own
+scrutiny before it's treated as representative of anything, which is why it
+is not used as a reference case above. Hanford Reach (Columbia tributaries)
+sits at roughly 2.48 trips/salmon. There is no defensible single rate at
+any scale broader than one fishery-month.
+
+::: {.callout-warning}
+**Discrepancy in the Buoy 10 figure.** This document's JSR Table 25 reading
+puts Buoy 10 at kept catch/trip 0.7–1.3, i.e. roughly 0.75–1.4 trips/salmon,
+across 2022–2025. The retired `PST_ANALYSIS.md` (§5) reported Buoy 10 at
+1.4–2.8 trips/salmon for the same period, reading Spring JSR Table 24
+together with Fall JSR Tables 25–26. The two figures were never reconciled
+before `PST_ANALYSIS.md`'s retirement. This document keeps the parent
+figure (0.75–1.4) as the working value; the JSR tables should be re-read to
+resolve which range is correct — or whether both are correct for different
+sub-periods — before the figure is used externally.
+:::
+
+Blocks are the unit within which a ratio is assumed portable; the crosswalk in `input_files/pst/`
+carries the 63-row fishery-to-block mapping that enforces R4 mechanically.
+
+The same logic constrains the NEPA odd/even trips-per-salmon ratio
+(3.44 / 8.65): that spread is driven by Puget Sound pink salmon dominance
+and **does not transfer** to Columbia or coastal systems.

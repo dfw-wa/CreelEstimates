@@ -181,7 +181,7 @@ resolve which range is correct — or whether both are correct for different
 sub-periods — before the figure is used externally.
 :::
 
-Blocks are the unit within which a ratio is assumed portable; the crosswalk in `input_files/pst/`
+Blocks are the unit within which a ratio is assumed portable; the crosswalk in `input_files/pst/lookup_tables/`
 carries the 63-row fishery-to-block mapping that enforces R4 mechanically.
 
 The same logic constrains the NEPA odd/even trips-per-salmon ratio

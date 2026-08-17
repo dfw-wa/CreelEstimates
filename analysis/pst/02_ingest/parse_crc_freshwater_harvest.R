@@ -19,7 +19,7 @@
 #   is processed alongside 2022–2024 but is clearly tagged as reference-only in
 #   the output and warnings.
 #
-# Input files (input_files/pst/external/):
+# Input files (input_files/pst/CRC/):
 #   Salmon Freshwater Estimates 2021 Draft 1.xlsx  -> sheet "FW 2021-2022"
 #   Salmon Freshwater Estimates 2022 Draft 1.xlsx  -> sheet "FW 2022-2023"
 #   Salmon Freshwater Estimates 2023.xlsx          -> sheet "FW 2023-2024"
@@ -90,7 +90,7 @@ VALID_SPECIES <- c("Chinook", "Chum", "Pink", "Coho",
 #   $grandtots — "Total - All Areas" rows (for validation check 2)
 
 parse_fw_workbook <- function(license_year, filename, sheet) {
-  path <- here("input_files", "pst", "external", filename)
+  path <- here("input_files", "pst", "CRC", filename)
 
   cli::cli_h2(glue("Parsing license year {license_year} — {basename(path)} / {sheet}"))
 

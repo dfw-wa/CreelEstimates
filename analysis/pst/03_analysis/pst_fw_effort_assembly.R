@@ -77,7 +77,7 @@ YEARS_SCOPE <- 2022:2025
 DELIVER_BLOCKS <- c("PugetSound", "WACoast", "ColumbiaTrib")
 
 OUT_DIR <- here("analysis", "pst", "outputs")
-PST_DIR <- here("input_files", "pst")
+PST_DIR <- here("input_files", "pst", "lookup_tables")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # Canonical schema every ingest function must return.
@@ -638,7 +638,7 @@ build_block_ratios <- function(trips_p1) {
                  "crc_harvest")
   crc_yr <- NULL
   if (!is.null(crc)) {
-    crc_lut <- read_csv(here("input_files", "crc_area_lut.csv"),
+    crc_lut <- read_csv(here("input_files", "pst", "lookup_tables", "crc_area_lut.csv"),
                         show_col_types = FALSE) |>
       mutate(catch_area_code = as.character(catch_area_code)) |>
       distinct(catch_area_code, catch_area_region)

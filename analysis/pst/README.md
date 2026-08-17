@@ -35,20 +35,23 @@ canonical wording — stay consistent with it rather than paraphrasing.
 ## Before you run this
 
 `analysis/pst/03_analysis/pst_fw_effort_assembly.R` (pipeline step 5) reads
-two files that are **required inputs and are not currently in this repo**:
+two governing files:
 
-- `input_files/pst/pst_input_manifest.csv`
-- `input_files/pst/pst_river_block_crosswalk.csv`
+- `input_files/pst/lookup_tables/pst_input_manifest.csv`
+- `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv`
 
-Neither has ever been committed (verified by listing `input_files/pst/` —
-it currently holds only `crc_areas_creeled.csv` and an `external/`
-subfolder of source workbooks). Without the crosswalk, every ingested row
-is coded `block = "unknown"` and P2 expansion cannot run; without the
-manifest, the blocking-source check is skipped. This is not a bug — the
-assembly script is written to degrade gracefully (design rule R2, below)
-rather than error — but the output is materially incomplete until both
-files exist at those paths. If you're picking this workstream up and don't
-have them, ask Jim/Todd before assuming step 5's output is usable as-is.
+Both are now committed. They were absent for most of this workstream's
+life, which is why the assembly script reads them through `read_if()` and
+logs a gap rather than aborting: without the crosswalk every ingested row
+is coded `block = "unknown"` and P2 expansion cannot run, and without the
+manifest the blocking-source check is skipped. That degradation path is
+deliberate (design rule R2) and worth keeping — but it means a run that
+silently produces `block = "unknown"` everywhere is a signal to check that
+these two files are actually being found, not a result to use as-is.
+
+Everything else the pipeline reads lives under `input_files/pst/`,
+organized by provider: `CRC/`, `R1_creel/`, `R3_creel/`, `external_data/`,
+and `lookup_tables/`.
 
 ## Directory map
 
@@ -73,13 +76,13 @@ script's header for exactly what it does and does not do.
 | 2 | `02_ingest/multi_fishery_creel_summary.R` | **yes** | `multi_fishery_creel_{trips,harvest,qa,run_ledger,week_vs_month}.{csv,rds}` |
 | 3 | `02_ingest/mid_columbia_yakima_creel_ingestion.R` | no | `mid_columbia_yakima_creel_summary.csv` |
 | 4 | `02_ingest/interview_proportions.qmd` | **yes** | `interview_mode_location_props.csv`, `interview_batch_crosscheck.csv`, `all_interviews.{csv,rds}`, ~25 proportion/variability CSVs |
-| 5 | `03_analysis/pst_fw_effort_assembly.R` | no | reads 1–4 plus `input_files/pst/{pst_input_manifest,pst_river_block_crosswalk}.csv` and `input_files/crc_area_lut.csv`; sources `pst_p2_block_ratio.R`; writes the `pst_fw_*.csv` family |
+| 5 | `03_analysis/pst_fw_effort_assembly.R` | no | reads 1–4 plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv` and `input_files/pst/lookup_tables/crc_area_lut.csv`; sources `pst_p2_block_ratio.R`; writes the `pst_fw_*.csv` family |
 | 6 | `03_analysis/pst_fw_build_jim_workbook.R` | no | reads step 5's CSVs; writes `PST_FW_Jim_Update.xlsx` |
 | 7 | `quarto render pst_fw_angler_trips.qmd` | no | reads everything above; renders the parent doc |
 
 `02_ingest/patch_crosswalk_areas.R` is **not** part of this run order. It is
 a one-shot, idempotent maintenance script that rewrites
-`input_files/pst/pst_river_block_crosswalk.csv` in place (fills mid-Columbia
+`input_files/pst/lookup_tables/pst_river_block_crosswalk.csv` in place (fills mid-Columbia
 CRC areas, drops ColumbiaMainstem rows, flags Hanford as
 covered-but-unpartitioned so P2 doesn't double-count it). Run it by hand,
 review the diff, and commit — never from the orchestrator.

@@ -32,7 +32,7 @@
 #     such in the final summary, with the exact command to run.
 #   - It does not run 02_ingest/patch_crosswalk_areas.R. That is a one-shot,
 #     idempotent maintenance script that rewrites
-#     input_files/pst/pst_river_block_crosswalk.csv in place; it is not part
+#     input_files/pst/lookup_tables/pst_river_block_crosswalk.csv in place; it is not part
 #     of the routine pipeline and must be run and reviewed by hand. See its
 #     own header for what it does.
 #   - It does not install or check for packages. If a step's own library()

@@ -32,7 +32,7 @@ library(gt)
 # renders from analysis/pst/; here::here() resolves from the repo root either
 # way. Child {{< include >}} paths, by contrast, are relative to this file.
 OUT_DIR <- here::here("analysis", "pst", "outputs")
-PST_DIR <- here::here("input_files", "pst")
+PST_DIR <- here::here("input_files", "pst", "lookup_tables")
 
 read_if <- function(path, ...) {
   if (file.exists(path)) readr::read_csv(path, show_col_types = FALSE, ...) else NULL
@@ -106,4 +106,4 @@ used interchangeably in correspondence. Conversion to calendar year is a
 documented step in the assembly script, not an assumption.
 
 **Block.** The geographic/management unit within which a ratio is assumed
-portable. Defined by `input_files/pst/pst_river_block_crosswalk.csv`. The four blocks are PugetSound, WACoast, ColumbiaTrib, and ColumbiaMainstem (documented but not delivered).
+portable. Defined by `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv`. The four blocks are PugetSound, WACoast, ColumbiaTrib, and ColumbiaMainstem (documented but not delivered).

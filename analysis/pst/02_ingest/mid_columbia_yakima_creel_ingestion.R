@@ -11,12 +11,12 @@
 # Usage:
 #   Source interactively or run with Rscript from the repo root:
 #     Rscript analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R
-#   Requires no DB access — reads xlsx files from input_files/mid-Columbia/.
+#   Requires no DB access — reads xlsx files from input_files/pst/R3_creel/.
 #
 #   Output: analysis/pst/outputs/mid_columbia_yakima_creel_summary.csv
 #           (A downstream step row-binds this with multi_fishery_creel_trips.csv.)
 #
-# Source files used (in input_files/mid-Columbia/):
+# Source files used (in input_files/pst/R3_creel/):
 #   Hanford Reach (2022–2025):  "20YY Hanford Reach Boat Harvest Model.xlsx"
 #     Sheet used:  "Summary" (clean weekly table, rows detected by datetime in
 #                  col 0 after a multi-row merged header block).
@@ -116,7 +116,7 @@ library(lubridate)
 library(cli)
 library(here)
 # Input directory holding all mid-Columbia workbooks
-MID_COL_DIR <- here("input_files", "mid-Columbia")
+MID_COL_DIR <- here("input_files", "pst", "R3_creel")
 
 # Target years — mirrors the 2022–2025 window in multi_fishery_trip_summary.R
 TARGET_YEARS <- 2022L:2025L

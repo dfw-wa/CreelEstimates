@@ -27,7 +27,7 @@ library(tidyverse)
 library(here)
 library(glue)
 
-PST_DIR <- here("input_files", "pst")
+PST_DIR <- here("input_files", "pst", "lookup_tables")
 XW_PATH <- file.path(PST_DIR, "pst_river_block_crosswalk.csv")
 
 stopifnot(file.exists(XW_PATH))

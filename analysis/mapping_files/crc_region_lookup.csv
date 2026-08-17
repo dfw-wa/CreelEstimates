@@ -1,0 +1,242 @@
+CatchRecordCode,NameOfCRC,HydrologicSystem,block,region,region_source
+627,Okanogan River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+531,Columbia R 07: John Day to McNary Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,CRC harvest file
+655,Mill Creek (Walla Walla Co.),Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+659,Walla Walla River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+854,Sultan River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+860,Wallace River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+844,Skykomish River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+862,Woods Creek,Snohomish R. System,Puget Sound,Puget Sound,same hydrologic system
+852,Snoqualmie River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+856,Tokul Creek,Snohomish R. System,Puget Sound,Puget Sound,same hydrologic system
+842,Raging River,Snohomish R. System,Puget Sound,Puget Sound,same hydrologic system
+858,Tolt River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+555,Cispus River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+559,Cowlitz R. above Cowlitz Falls Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+563,Cowlitz R. between Mayfield & Cowlitz Falls Dams,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+568,Delameter Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+533,Columbia R 08: McNary Dam - Hwy 395 Bridge @ Pasco,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+830,Skagit River,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+866,Canyon Creek,Stillaguamish R. System,Puget Sound,Puget Sound,CRC harvest file
+525,Columbia R 04: I-5 Br. to Bonneville Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,mainstem reach rule
+828,Sauk River,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+832,Suiattle River,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+874,"Stillaguamish R, So. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,same hydrologic system
+870,Pilchuck Creek (Stillaguamish System),Stillaguamish R. System,Puget Sound,Puget Sound,same hydrologic system
+876,Stillaguamish River,Stillaguamish R. System,Puget Sound,Puget Sound,same hydrologic system
+848,"Skykomish River, So. Fork",Snohomish R. System,Puget Sound,Puget Sound,same hydrologic system
+846,"Skykomish River, No. Fork",Snohomish R. System,Puget Sound,Puget Sound,same hydrologic system
+547,Columbia R 15: Chief Joseph to Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+545,Columbia R 14: Wells to Chief Joseph Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+668,Washougal River above County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+665,"Washougal River, West Fork",Washougal R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+663,Washougal Hatchery on Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+667,Washougal River below County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+872,"Stillaguamish R, No. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,CRC harvest file
+816,Samish River,Samish R. System,Puget Sound,Puget Sound,CRC harvest file
+608,Klickitat River above Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+790,"Nooksack River, No. Fork",Nooksack R. System,Puget Sound,Puget Sound,CRC harvest file
+674,Wenatchee River,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+672,Icicle Creek,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+607,Klickitat River below Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+81,Area 8-1: Skagit Bay-Saratoga Psg.,Marine Water,Marine (out of scope),Marine,block fallback
+794,"Nooksack River, below North Fork",Nooksack R. System,Puget Sound,Puget Sound,CRC harvest file
+6,Area 6: E Juan de Fuca,Marine Water,Marine (out of scope),Marine,block fallback
+792,"Nooksack River, So. Fork",Nooksack R. System,Puget Sound,Puget Sound,CRC harvest file
+884,Whatcom Creek,Whatcom Cr. System,Puget Sound,Puget Sound,CRC harvest file
+825,Baker Lake,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+375,Naselle River,Naselle R. System,WA Coast,Coastal,CRC harvest file
+788,"Nooksack River, Mid. Fork",Nooksack R. System,Puget Sound,Puget Sound,CRC harvest file
+7,Area 7: San Juan Islands,Marine Water,Marine (out of scope),Marine,block fallback
+826,Cascade River,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+677,Wind River above Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+657,Touchet River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+736,Duckabush River,Duckabush R. System,Puget Sound,Puget Sound,CRC harvest file
+734,Dosewallips River,Dosewallips R. System,Puget Sound,Puget Sound,block fallback
+508,Big White Salmon River,White Salmon R. System,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+618,Little White Salmon River & Drano Lake,Little White Salmon R. Sys.,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+670,Lake Wenatchee,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+746,Green (Duwamish River) (King Co.),Green-Duwamish R. Sys,Puget Sound,Puget Sound,CRC harvest file
+834,Skokomish River (Mason Co.),Skokomish R. System,Puget Sound,Puget Sound,CRC harvest file
+880,Union River,Union R. System,Puget Sound,Puget Sound,block fallback
+878,Tahuya River,Tahuya R. System,Puget Sound,Puget Sound,block fallback
+732,Dewatto River,Dewatto R. System,Puget Sound,Puget Sound,CRC harvest file
+812,Quilcene River,Quilcene R. System,Puget Sound,Puget Sound,CRC harvest file
+766,Little Quilcene River,Little Quilcene R. System,Puget Sound,Puget Sound,CRC harvest file
+12,Area 12: Hood Canal,Marine Water,Marine (out of scope),Marine,block fallback
+11,Area 11: Mid-Puget Sound,Marine Water,Marine (out of scope),Marine,block fallback
+763,Lake Sammamish,Lake Washington System,Puget Sound,Puget Sound,same hydrologic system
+764,Sammamish River,Lake Washington System,Puget Sound,Puget Sound,CRC harvest file
+762,Lake Washington,Lake Washington System,Puget Sound,Puget Sound,CRC harvest file
+802,Carbon River,Puyallup R. System,Puget Sound,Puget Sound,CRC harvest file
+808,White (Stuck) River,Puyallup R. System,Puget Sound,Puget Sound,same hydrologic system
+770,McAllister Creek (Thurston Co.),Nisqually R. System,Puget Sound,Puget Sound,same hydrologic system
+728,Deschutes River,Deschutes R. System,Puget Sound,Puget Sound,CRC harvest file
+754,Kennedy Creek,Kennedy Cr. System,Puget Sound,Puget Sound,CRC harvest file
+529,Columbia R 06: The Dalles to John Day Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,CRC harvest file
+527,Columbia R 05: Bonneville to The Dalles Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,CRC harvest file
+850,Snohomish River,Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+712,Cedar River (King Co.),Lake Washington System,Puget Sound,Puget Sound,same hydrologic system
+748,Soos Creek,Green-Duwamish R. Sys,Puget Sound,Puget Sound,same hydrologic system
+758,,,Puget Sound,Puget Sound,block fallback
+804,Puyallup River,Puyallup R. System,Puget Sound,Puget Sound,CRC harvest file
+784,Berry Creek,Nisqually R. System,Puget Sound,Puget Sound,same hydrologic system
+632,Rock Creek (Skamania Co.),Rock Cr. System (Skamania),Lower Columbia tribs,Columbia - Lower,block fallback
+840,Pilchuck River (Snohomish System),Snohomish R. System,Puget Sound,Puget Sound,CRC harvest file
+567,Lacamas Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+566,Green River (Cowlitz Co.) above Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+575,"Toutle River, No. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+577,"Toutle River, So. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+543,Columbia R 13: Rocky Reach to Wells Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+571,Tilton River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+652,Palouse River,Palouse R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+644,Snake R 3: Lower Monumental to Little Goose Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+592,Grande Ronde River,Grande Ronde R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+650,"Snake R 6: upstream of the Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+653,Tucannon River,Tucannon R. System,Upper Columbia / Snake,Columbia - Upper,block fallback
+646,Snake R 4: Little Goose to Lower Granite Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+738,Dungeness River,Dungeness R. System,Puget Sound,Puget Sound,CRC harvest file
+552,Chelan River,Chelan River,Upper Columbia / Snake,Columbia - Upper,block fallback
+642,Snake R 2: Ice Harbor to Lower Monumental Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+621,Methow River,Methow R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+539,Columbia R 11: Wanapum to Rock Island Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+537,Columbia R 10: Priest Rapids to Wanapum Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+541,Columbia R 12: Rock Island to Rocky Reach Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+629,Similkameen River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,same hydrologic system
+586,Entiat River,Entiat R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+648,"Snake R 5: Lower Granite Dam to Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+690,Yakima River,Yakima R. System,Upper Columbia / Snake,Columbia - Upper,CRC harvest file
+549,Columbia R 16: above Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+535,Columbia R 09:  I-182 Bridge to old Hanford townsite,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+536,Columbia R 09:  Old Hanford townsite to Priest Rapids Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+573,Toutle River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+556,Goble Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+569,Olequa Creek (Cowlitz Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+595,Grays River above Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+594,Grays River below Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+635,Salmon Creek (Clark Co.),Salmon Cr. System (Clark),Lower Columbia tribs,Columbia - Lower,CRC harvest file
+613,"Lewis River, E. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+615,"Lewis River, No. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+602,Kalama River above Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+609,Cedar Creek (Clark Co.),Lewis R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+596,"Grays River, West Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+782,Morse Creek (Clallam Co.),Morse Cr. System,Puget Sound,Puget Sound,block fallback
+742,Elwha River,Elwha R. System,Puget Sound,Puget Sound,block fallback
+882,West Twin River,West Twin R. System,Puget Sound,Puget Sound,block fallback
+726,Deep Creek (Clallam Co.),Deep Cr. System (Clallam),Puget Sound,Puget Sound,CRC harvest file
+718,Clallam River,Clallam R. System,Puget Sound,Puget Sound,CRC harvest file
+752,Hoko River,Hoko R. System,Puget Sound,Puget Sound,block fallback
+768,Lyre River,Lyre R. System,Puget Sound,Puget Sound,CRC harvest file
+814,Salt Creek (Clallam Co.),Salt Cr. System,Puget Sound,Puget Sound,CRC harvest file
+517,Coal Creek (Cowlitz Co.),Coal Cr. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+638,Skamokawa Creek,Skamokawa Cr. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+818,Sekiu River,Sekiu R. System,Puget Sound,Puget Sound,CRC harvest file
+624,Mill Creek (Cowlitz Co.),Mill Cr. System (Cowlitz),Lower Columbia tribs,Columbia - Lower,block fallback
+501,Abernathy Creek,Abernathy Cr. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+589,Germany Creek,Germany Cr. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+584,Elochoman River above Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+379,"Nemah River, North (below Nemah Hatchery), Middle and South",Nemah R. System,WA Coast,Coastal,CRC harvest file
+386,Big River (Clallam Co.),Ozette R. System,WA Coast,Coastal,block fallback
+388,Ozette River,Ozette R. System,WA Coast,Coastal,block fallback
+402,Dickey River (Clallam Co.),Quillayute R. System,WA Coast,Coastal,CRC harvest file
+398,Bogachiel River,Quillayute R. System,WA Coast,Coastal,CRC harvest file
+418,Sooes River (Clallam Co.),Suez R. System,WA Coast,Coastal,CRC harvest file
+348,Hoh River above Oxbow Launch,Hoh R. System,WA Coast,Coastal,CRC harvest file
+400,Calawah River,Quillayute R. System,WA Coast,Coastal,CRC harvest file
+394,Queets River,Queets R. System,WA Coast,Coastal,CRC harvest file
+396,Salmon River (Jefferson Co.),Queets R. System,WA Coast,Coastal,CRC harvest file
+369,Kalaloch Creek,Kalaloch Cr. System,WA Coast,Coastal,block fallback
+406,Sol Duc River,Quillayute R. System,WA Coast,Coastal,CRC harvest file
+410,"Quinault R, Lower (below L. Quinault, not Cook Cr.)",Quinault R. System,WA Coast,Coastal,CRC harvest file
+22,Area 2-2: Grays Harbor,Marine Water,Marine (out of scope),Marine,block fallback
+382,North River,North R. System,WA Coast,Coastal,CRC harvest file
+384,Smith Creek (Pacific Co.),North R. System,WA Coast,Coastal,CRC harvest file
+424,Willapa River,Willapa R. System,WA Coast,Coastal,CRC harvest file
+352,"Hoh River, So. Fork",Hoh R. System,WA Coast,Coastal,CRC harvest file
+350,Hoh River below Oxbow Launch,Hoh R. System,WA Coast,Coastal,CRC harvest file
+345,Goodman Creek (Jefferson Co.),Goodman Cr. System,WA Coast,Coastal,CRC harvest file
+414,Raft River,Raft R. System,WA Coast,Coastal,block fallback
+412,"Quinault R, Upper (above L. Quinault)",Quinault R. System,WA Coast,Coastal,same hydrologic system
+327,Quinault Lake,Quinault R. System,WA Coast,Coastal,same hydrologic system
+408,Cook Creek,Quinault R. System,WA Coast,Coastal,CRC harvest file
+706,Black River (Thurston Co.),Chehalis R. System,WA Coast,Coastal,same hydrologic system
+315,Chehalis R. above Black R.,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+317,Chehalis R. below Black R.,Chehalis R. System,WA Coast,Coastal,same hydrologic system
+308,Cedar Creek (Grays Harbor Co.),Chehalis R. System,WA Coast,Coastal,same hydrologic system
+371,Moclips River,Moclips R. System,WA Coast,Coastal,block fallback
+339,Copalis River,Copalis R. System,WA Coast,Coastal,CRC harvest file
+319,"Chehalis River, So. Fork",Chehalis R. System,WA Coast,Coastal,same hydrologic system
+337,Wynoochee River,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+333,Skookumchuck River,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+422,"Willapa R, So. Fork",Willapa R. System,WA Coast,Coastal,same hydrologic system
+392,Clearwater River,Queets R. System,WA Coast,Coastal,CRC harvest file
+329,Satsop River,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+331,"Satsop River, West Fork",Chehalis R. System,WA Coast,Coastal,same hydrologic system
+335,Wishkah River,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+321,Cloquallam Creek,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+362,"Humptulips River, W. Fork",Humptulips R. System,WA Coast,Coastal,same hydrologic system
+361,"Humptulips River, E. Fork",Humptulips R. System,WA Coast,Coastal,same hydrologic system
+358,Humptulips River,Humptulips R. System,WA Coast,Coastal,CRC harvest file
+355,Hoquiam River,Hoquiam R. System,WA Coast,Coastal,CRC harvest file
+367,Johns River,Johns R. System,WA Coast,Coastal,CRC harvest file
+404,Quillayute River,Quillayute R. System,WA Coast,Coastal,CRC harvest file
+21,Area 2-1: Willapa Bay,Marine Water,Marine (out of scope),Marine,block fallback
+10,Area 10: N Puget Sound,Marine Water,Marine (out of scope),Marine,block fallback
+521,Columbia R 02: Tongue Pt. Rocky Pt. to Longview Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,CRC harvest file
+1,Area 1: Col R - Ledbetter,Marine Water,Marine (out of scope),Marine,block fallback
+3,Area 3: La Push,Marine Water,Marine (out of scope),Marine,block fallback
+4,Area 4: Cape Flattery,Marine Water,Marine (out of scope),Marine,block fallback
+5,Area 5: W Juan de Fuca,Marine Water,Marine (out of scope),Marine,block fallback
+9,Area 9: Admiralty Inlet,Marine Water,Marine (out of scope),Marine,block fallback
+82,Area 8-2: Port Susan-Port Gardner,Marine Water,Marine (out of scope),Marine,block fallback
+13,Area 13: S Puget Sound,Marine Water,Marine (out of scope),Marine,block fallback
+342,Elk River,Elk R. System,WA Coast,Coastal,CRC harvest file
+22W,Area 2-2W: Westport Boat Basin,Marine Water,Marine (out of scope),Marine,block fallback
+305,Bear River (Pacific Co.),Bear R. System,WA Coast,Coastal,CRC harvest file
+311,Cedar Creek (Jefferson Co.),Cedar Cr. System,WA Coast,Coastal,block fallback
+419,Van Winkle Creek,Chehalis R. System,WA Coast,Coastal,same hydrologic system
+370,Quigg Lake,Chehalis R. System,WA Coast,Coastal,same hydrologic system
+335A,Wishkah River (ADA Area),Chehalis R. System,WA Coast,Coastal,same hydrologic system
+364,Stevens Creek,Humptulips R. System,WA Coast,Coastal,same hydrologic system
+373,Mosquito Creek (Jefferson Co.),Mosquito Cr. System,WA Coast,Coastal,block fallback
+377,Salmon Creek (Pacific Co.),Naselle R. System,WA Coast,Coastal,same hydrologic system
+390,Palix River,Palix R. System,WA Coast,Coastal,block fallback
+389,Niawiakum River,Palix R. System,WA Coast,Coastal,block fallback
+625,Mill Creek (Lewis Co.),Mill Cr. (Lewis Co.),Lower Columbia tribs,Columbia - Lower,block fallback
+507,Blue Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+515,Chinook River,Chinook R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+519,Columbia R 01: Buoy 10 to Tongue Pt.-Rocky Pt.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,CRC harvest file
+565,Green River (Cowlitz Co.) below Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+580,Deep River (Wahkiakum Co.),Deep R. System (Wahkiakum),Lower Columbia tribs,Columbia - Lower,block fallback
+583,Elochoman River below Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+597,"Grays River, East Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,same hydrologic system
+598,Hamilton Creek,Hamilton Cr. System,Lower Columbia tribs,Columbia - Lower,block fallback
+600,Gobar Creek,Kalama R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+604,Kalama River below Modrow Bridge,Kalama R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+603,Kalama River between Modrow Bridge and Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+611,Lewis River (below E. Fork),Lewis R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+640,Snake R 1: below Ice Harbor Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,CRC harvest file
+661,Little Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+680,Wind River below Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,CRC harvest file
+708,Burley Creek (Kitsap Co.),Burley Cr. System,Puget Sound,Puget Sound,block fallback
+724,Dakota Creek (Whatcom Co.),Dakota Cr. System,Puget Sound,Puget Sound,CRC harvest file
+710,California Creek,California R. System,Puget Sound,Puget Sound,CRC harvest file
+714,Chambers Creek,Chambers Cr. System,Puget Sound,Puget Sound,CRC harvest file
+722,Curley Creek (Kitsap Co.),Curley Cr. System,Puget Sound,Puget Sound,block fallback
+727,Capitol Lake,Deschutes R. System,Puget Sound,Puget Sound,same hydrologic system
+760,,,Puget Sound,Puget Sound,block fallback
+774,McLane Creek (Thurston Co.),McLane Cr. System,Puget Sound,Puget Sound,block fallback
+778,Minter Creek (Pierce/Kitsap Co.),Minter Cr. System,Puget Sound,Puget Sound,CRC harvest file
+810,Pysht River,Pysht R. System,Puget Sound,Puget Sound,block fallback
+824,Baker River,Skagit R. System,Puget Sound,Puget Sound,CRC harvest file
+523,Columbia R 03: Longview Br. to I-5 Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,mainstem reach rule
+534,Columbia R 09:  Hwy 395 Bridge to I-182 Bridge,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,CRC harvest file
+420,Waatch River,Waatch River,WA Coast,Coastal,block fallback
+325,Newaukum River,Chehalis R. System,WA Coast,Coastal,CRC harvest file
+323,Joe Creek,Joe Creek System,WA Coast,Coastal,CRC harvest file
+2,Area 2: Westport,Marine Water,Marine (out of scope),Marine,block fallback
+329A,Satsop River (ADA Area),Chehalis R. System,WA Coast,Coastal,same hydrologic system
+786,Nisqually River,Nisqually R. System,Puget Sound,Puget Sound,CRC harvest file
+557,Coweeman River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+561,Cowlitz R. below Mayfield Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,CRC harvest file
+320,Elk Creek,Chehalis R. System,WA Coast,Coastal,same hydrologic system

@@ -1,0 +1,965 @@
+catch_record_code,crc_name,hydrologic_system,block,region,year,harvest_fish,harvest_species,harvest_license_year,status,source,note,creel_unit,crc_resolution,denominator_pathway,coverage
+519,Columbia R 01: Buoy 10 to Tongue Pt.-Rocky Pt.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2022,,,,Provider data received - harmonizing,ODFW (Buoy 10 by mode + catch),4 modes incl. Charter Boat; mode set differs from other blocks,Buoy 10 (ODFW),standalone,provider-supplied,No harvest file for this year
+519,Columbia R 01: Buoy 10 to Tongue Pt.-Rocky Pt.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2023,10224.0,6.0,2023-24,Provider data received - harmonizing,ODFW (Buoy 10 by mode + catch),4 modes incl. Charter Boat; mode set differs from other blocks,Buoy 10 (ODFW),standalone,provider-supplied,Creel + CRC harvest
+519,Columbia R 01: Buoy 10 to Tongue Pt.-Rocky Pt.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2024,22765.0,5.0,2024-25,Provider data received - harmonizing,ODFW (Buoy 10 by mode + catch),4 modes incl. Charter Boat; mode set differs from other blocks,Buoy 10 (ODFW),standalone,provider-supplied,Creel + CRC harvest
+519,Columbia R 01: Buoy 10 to Tongue Pt.-Rocky Pt.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2025,,,,Provider data received - harmonizing,ODFW (Buoy 10 by mode + catch),4 modes incl. Charter Boat; mode set differs from other blocks,Buoy 10 (ODFW),standalone,provider-supplied,No harvest file for this year
+521,Columbia R 02: Tongue Pt. Rocky Pt. to Longview Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2022,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+521,Columbia R 02: Tongue Pt. Rocky Pt. to Longview Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2023,37464.0,7.0,2023-24,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+521,Columbia R 02: Tongue Pt. Rocky Pt. to Longview Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2024,48677.0,7.0,"2023-24,2024-25",Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+521,Columbia R 02: Tongue Pt. Rocky Pt. to Longview Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2025,146.0,2.0,2024-25,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+523,Columbia R 03: Longview Br. to I-5 Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2022,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+523,Columbia R 03: Longview Br. to I-5 Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2023,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,Neither
+523,Columbia R 03: Longview Br. to I-5 Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2024,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,Neither
+523,Columbia R 03: Longview Br. to I-5 Br.,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2025,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+525,Columbia R 04: I-5 Br. to Bonneville Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2022,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+525,Columbia R 04: I-5 Br. to Bonneville Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2023,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,Neither
+525,Columbia R 04: I-5 Br. to Bonneville Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2024,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,Neither
+525,Columbia R 04: I-5 Br. to Bonneville Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Lower,2025,,,,Blocked - open question,ODFW (LCR angler trips by mode),Undocumented hardcoded scalar 0.86/0.91/0.85/0.85 across modes - resolve with Mark S.,Lower Columbia (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+527,Columbia R 05: Bonneville to The Dalles Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2022,,,,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+527,Columbia R 05: Bonneville to The Dalles Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2023,9474.0,4.0,2023-24,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+527,Columbia R 05: Bonneville to The Dalles Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2024,8388.0,6.0,2024-25,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+527,Columbia R 05: Bonneville to The Dalles Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2025,,,,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+529,Columbia R 06: The Dalles to John Day Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2022,,,,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+529,Columbia R 06: The Dalles to John Day Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2023,1890.0,3.0,2023-24,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+529,Columbia R 06: The Dalles to John Day Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2024,1601.0,3.0,2024-25,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+529,Columbia R 06: The Dalles to John Day Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2025,14.0,1.0,2024-25,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+531,Columbia R 07: John Day to McNary Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2022,,,,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+531,Columbia R 07: John Day to McNary Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2023,1036.0,3.0,2023-24,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+531,Columbia R 07: John Day to McNary Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2024,1005.0,5.0,2024-25,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+531,Columbia R 07: John Day to McNary Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Middle,2025,,,,Blocked - open question,ODFW (Bonneville-McNary),"Totals only, no mode/location split - request from ODFW or donor proportions from LCR",Bonneville-McNary (ODFW),share of multi-CRC unit,provider-supplied,No harvest file for this year
+533,Columbia R 08: McNary Dam - Hwy 395 Bridge @ Pasco,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Todd Miller (McNary workbook),Workbook outstanding; parser stubbed generically,,standalone,,No harvest file for this year
+533,Columbia R 08: McNary Dam - Hwy 395 Bridge @ Pasco,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,294.0,4.0,2023-24,Requested - awaiting response,Todd Miller (McNary workbook),Workbook outstanding; parser stubbed generically,,standalone,,"CRC harvest, no creel"
+533,Columbia R 08: McNary Dam - Hwy 395 Bridge @ Pasco,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,275.0,4.0,2024-25,Requested - awaiting response,Todd Miller (McNary workbook),Workbook outstanding; parser stubbed generically,,standalone,,"CRC harvest, no creel"
+533,Columbia R 08: McNary Dam - Hwy 395 Bridge @ Pasco,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Todd Miller (McNary workbook),Workbook outstanding; parser stubbed generically,,standalone,,No harvest file for this year
+534,Columbia R 09:  Hwy 395 Bridge to I-182 Bridge,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Provider data received - harmonizing,Todd Miller (2022 Hanford Reach boat harvest model),"Boat-vs-angler unit confirmed (10,687 boats / 26,342 anglers); 92.6/7.4 boat/bank; NO guided/unguided field - missing dimension, not zero",Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+534,Columbia R 09:  Hwy 395 Bridge to I-182 Bridge,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,921.0,5.0,2023-24,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+534,Columbia R 09:  Hwy 395 Bridge to I-182 Bridge,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,630.0,4.0,2024-25,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+534,Columbia R 09:  Hwy 395 Bridge to I-182 Bridge,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+535,Columbia R 09:  I-182 Bridge to old Hanford townsite,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Provider data received - harmonizing,Todd Miller (2022 Hanford Reach boat harvest model),"Boat-vs-angler unit confirmed (10,687 boats / 26,342 anglers); 92.6/7.4 boat/bank; NO guided/unguided field - missing dimension, not zero",Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+535,Columbia R 09:  I-182 Bridge to old Hanford townsite,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,5931.0,5.0,2023-24,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+535,Columbia R 09:  I-182 Bridge to old Hanford townsite,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,12676.0,5.0,2024-25,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+535,Columbia R 09:  I-182 Bridge to old Hanford townsite,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,54.0,1.0,2024-25,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+536,Columbia R 09:  Old Hanford townsite to Priest Rapids Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Provider data received - harmonizing,Todd Miller (2022 Hanford Reach boat harvest model),"Boat-vs-angler unit confirmed (10,687 boats / 26,342 anglers); 92.6/7.4 boat/bank; NO guided/unguided field - missing dimension, not zero",Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+536,Columbia R 09:  Old Hanford townsite to Priest Rapids Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,9079.0,5.0,2023-24,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+536,Columbia R 09:  Old Hanford townsite to Priest Rapids Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,7073.0,5.0,2024-25,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,"CRC harvest, no creel"
+536,Columbia R 09:  Old Hanford townsite to Priest Rapids Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Todd Miller,Angler trips data confirmed for delivery 2026-08-12; verify angler-hrs vs boat/party-hrs,Hanford Reach salmon,share of multi-CRC unit,provider-supplied,No harvest file for this year
+537,Columbia R 10: Priest Rapids to Wanapum Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+537,Columbia R 10: Priest Rapids to Wanapum Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,3491.0,4.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+537,Columbia R 10: Priest Rapids to Wanapum Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,3168.0,4.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+537,Columbia R 10: Priest Rapids to Wanapum Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+539,Columbia R 11: Wanapum to Rock Island Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+539,Columbia R 11: Wanapum to Rock Island Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,856.0,3.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+539,Columbia R 11: Wanapum to Rock Island Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,551.0,4.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+539,Columbia R 11: Wanapum to Rock Island Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+541,Columbia R 12: Rock Island to Rocky Reach Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+541,Columbia R 12: Rock Island to Rocky Reach Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,1531.0,4.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+541,Columbia R 12: Rock Island to Rocky Reach Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,2366.0,4.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+541,Columbia R 12: Rock Island to Rocky Reach Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+543,Columbia R 13: Rocky Reach to Wells Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+543,Columbia R 13: Rocky Reach to Wells Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,7890.0,5.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+543,Columbia R 13: Rocky Reach to Wells Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,11056.0,6.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+543,Columbia R 13: Rocky Reach to Wells Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+545,Columbia R 14: Wells to Chief Joseph Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+545,Columbia R 14: Wells to Chief Joseph Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,46082.0,6.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+545,Columbia R 14: Wells to Chief Joseph Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,105247.0,5.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+545,Columbia R 14: Wells to Chief Joseph Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+547,Columbia R 15: Chief Joseph to Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+547,Columbia R 15: Chief Joseph to Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,Neither
+547,Columbia R 15: Chief Joseph to Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,237.0,2.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+547,Columbia R 15: Chief Joseph to Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+549,Columbia R 16: above Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+549,Columbia R 16: above Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,Neither
+549,Columbia R 16: above Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2024,26.0,1.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,"CRC harvest, no creel"
+549,Columbia R 16: above Grand Coulee Dam,Columbia R. Mainstem,Columbia mainstem,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; upper Columbia mainstem creel coverage unknown,,standalone,,No harvest file for this year
+501,Abernathy Creek,Abernathy Cr. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+501,Abernathy Creek,Abernathy Cr. System,Lower Columbia tribs,Columbia - Lower,2023,17.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+501,Abernathy Creek,Abernathy Cr. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+501,Abernathy Creek,Abernathy Cr. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+507,Blue Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2022-23 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,No harvest file for this year
+507,Blue Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2022-23; Lower Cowlitz salmon and steelhead 2023-24 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,Neither
+507,Blue Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,13.0,1.0,2024-25,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2023-24 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,"CRC harvest, no creel"
+507,Blue Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,P3 published/projected figure,JSR spring/fall reports,2025 covered via published JSR tables,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,No harvest file for this year
+508,Big White Salmon River,White Salmon R. System,Lower Columbia tribs,Columbia - Middle,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+508,Big White Salmon River,White Salmon R. System,Lower Columbia tribs,Columbia - Middle,2023,182.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+508,Big White Salmon River,White Salmon R. System,Lower Columbia tribs,Columbia - Middle,2024,142.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+508,Big White Salmon River,White Salmon R. System,Lower Columbia tribs,Columbia - Middle,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+515,Chinook River,Chinook R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+515,Chinook River,Chinook R. System,Lower Columbia tribs,Columbia - Lower,2023,85.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+515,Chinook River,Chinook R. System,Lower Columbia tribs,Columbia - Lower,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+515,Chinook River,Chinook R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+517,Coal Creek (Cowlitz Co.),Coal Cr. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+517,Coal Creek (Cowlitz Co.),Coal Cr. System,Lower Columbia tribs,Columbia - Lower,2023,51.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+517,Coal Creek (Cowlitz Co.),Coal Cr. System,Lower Columbia tribs,Columbia - Lower,2024,239.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+517,Coal Creek (Cowlitz Co.),Coal Cr. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+555,Cispus River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+555,Cispus River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,16.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+555,Cispus River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,680.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+555,Cispus River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+556,Goble Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+556,Goble Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+556,Goble Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+556,Goble Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+557,Coweeman River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+557,Coweeman River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+557,Coweeman River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,26.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+557,Coweeman River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+559,Cowlitz R. above Cowlitz Falls Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+559,Cowlitz R. above Cowlitz Falls Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,2370.0,4.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+559,Cowlitz R. above Cowlitz Falls Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,928.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+559,Cowlitz R. above Cowlitz Falls Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+561,Cowlitz R. below Mayfield Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2022-23 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,No harvest file for this year
+561,Cowlitz R. below Mayfield Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,6554.0,6.0,2023-24,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2022-23; Lower Cowlitz salmon and steelhead 2023-24 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,"CRC harvest, no creel"
+561,Cowlitz R. below Mayfield Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,3815.0,4.0,2024-25,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Lower Cowlitz salmon and steelhead 2023-24 - investigate the study-design branch before treating as a data gap,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,"CRC harvest, no creel"
+561,Cowlitz R. below Mayfield Dam,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,32.0,1.0,2024-25,P3 published/projected figure,JSR spring/fall reports,2025 covered via published JSR tables,Lower Cowlitz salmon and steelhead,"CRC-native effort, pooled denominator",pipeline_no_output - PE run returned nothing,No harvest file for this year
+563,Cowlitz R. between Mayfield & Cowlitz Falls Dams,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+563,Cowlitz R. between Mayfield & Cowlitz Falls Dams,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,16.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+563,Cowlitz R. between Mayfield & Cowlitz Falls Dams,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,65.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+563,Cowlitz R. between Mayfield & Cowlitz Falls Dams,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+565,Green River (Cowlitz Co.) below Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+565,Green River (Cowlitz Co.) below Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,180.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+565,Green River (Cowlitz Co.) below Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,65.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+565,Green River (Cowlitz Co.) below Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+566,Green River (Cowlitz Co.) above Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+566,Green River (Cowlitz Co.) above Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,33.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+566,Green River (Cowlitz Co.) above Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,536.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+566,Green River (Cowlitz Co.) above Toutle Hatchery,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+567,Lacamas Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+567,Lacamas Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+567,Lacamas Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+567,Lacamas Creek (Lewis Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+568,Delameter Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+568,Delameter Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+568,Delameter Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+568,Delameter Creek,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+569,Olequa Creek (Cowlitz Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+569,Olequa Creek (Cowlitz Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+569,Olequa Creek (Cowlitz Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+569,Olequa Creek (Cowlitz Co.),Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+571,Tilton River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+571,Tilton River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,2844.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+571,Tilton River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,2157.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+571,Tilton River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+573,Toutle River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+573,Toutle River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,32.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+573,Toutle River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,26.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+573,Toutle River,Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+575,"Toutle River, No. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+575,"Toutle River, No. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,1276.0,4.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+575,"Toutle River, No. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,405.0,5.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+575,"Toutle River, No. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+577,"Toutle River, So. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+577,"Toutle River, So. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+577,"Toutle River, So. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+577,"Toutle River, So. Fork",Cowlitz R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+580,Deep River (Wahkiakum Co.),Deep R. System (Wahkiakum),Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+580,Deep River (Wahkiakum Co.),Deep R. System (Wahkiakum),Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+580,Deep River (Wahkiakum Co.),Deep R. System (Wahkiakum),Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+580,Deep River (Wahkiakum Co.),Deep R. System (Wahkiakum),Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+583,Elochoman River below Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+583,Elochoman River below Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+583,Elochoman River below Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+583,Elochoman River below Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+584,Elochoman River above Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+584,Elochoman River above Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2023,68.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+584,Elochoman River above Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2024,66.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+584,Elochoman River above Foster Rd Bridge,Elochoman R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+589,Germany Creek,Germany Cr. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+589,Germany Creek,Germany Cr. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+589,Germany Creek,Germany Cr. System,Lower Columbia tribs,Columbia - Lower,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+589,Germany Creek,Germany Cr. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+594,Grays River below Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+594,Grays River below Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2023,102.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+594,Grays River below Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+594,Grays River below Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+595,Grays River above Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+595,Grays River above Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2023,17.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+595,Grays River above Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2024,397.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+595,Grays River above Barr Rd Bridge,Grays R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+596,"Grays River, West Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+596,"Grays River, West Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+596,"Grays River, West Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+596,"Grays River, West Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+597,"Grays River, East Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+597,"Grays River, East Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+597,"Grays River, East Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+597,"Grays River, East Fork",Grays R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+598,Hamilton Creek,Hamilton Cr. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+598,Hamilton Creek,Hamilton Cr. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+598,Hamilton Creek,Hamilton Cr. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+598,Hamilton Creek,Hamilton Cr. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+600,Gobar Creek,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+600,Gobar Creek,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+600,Gobar Creek,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+600,Gobar Creek,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+602,Kalama River above Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+602,Kalama River above Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2023,51.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+602,Kalama River above Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2024,53.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+602,Kalama River above Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+603,Kalama River between Modrow Bridge and Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+603,Kalama River between Modrow Bridge and Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2023,631.0,4.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+603,Kalama River between Modrow Bridge and Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2024,1561.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+603,Kalama River between Modrow Bridge and Kalama Falls Hatchery,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+604,Kalama River below Modrow Bridge,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+604,Kalama River below Modrow Bridge,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2023,2506.0,4.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+604,Kalama River below Modrow Bridge,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2024,1758.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+604,Kalama River below Modrow Bridge,Kalama R. System,Lower Columbia tribs,Columbia - Lower,2025,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,No harvest file for this year
+607,Klickitat River below Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+607,Klickitat River below Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2023,5356.0,6.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+607,Klickitat River below Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2024,6419.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+607,Klickitat River below Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2025,55.0,2.0,2024-25,Not yet assessed,,,,standalone,,No harvest file for this year
+608,Klickitat River above Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+608,Klickitat River above Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2023,1586.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+608,Klickitat River above Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2024,1223.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+608,Klickitat River above Fishway 5,Klickitat R. System,Lower Columbia tribs,Columbia - Middle,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+609,Cedar Creek (Clark Co.),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+609,Cedar Creek (Clark Co.),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+609,Cedar Creek (Clark Co.),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2024,39.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+609,Cedar Creek (Clark Co.),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+611,Lewis River (below E. Fork),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+611,Lewis River (below E. Fork),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2023,1204.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+611,Lewis River (below E. Fork),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2024,884.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+611,Lewis River (below E. Fork),Lewis R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+613,"Lewis River, E. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+613,"Lewis River, E. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+613,"Lewis River, E. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+613,"Lewis River, E. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+615,"Lewis River, No. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+615,"Lewis River, No. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2023,9207.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+615,"Lewis River, No. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2024,7262.0,7.0,"2023-24,2024-25",Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+615,"Lewis River, No. Fork",Lewis R. System,Lower Columbia tribs,Columbia - Lower,2025,65.0,1.0,2024-25,Not yet assessed,,,,standalone,,No harvest file for this year
+618,Little White Salmon River & Drano Lake,Little White Salmon R. Sys.,Lower Columbia tribs,Columbia - Middle,2022,,,,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Drano Lake salmon and steelhead 2022 - investigate the study-design branch before treating as a data gap,Drano Lake salmon and steelhead,standalone,pipeline_no_output - PE run returned nothing,No harvest file for this year
+618,Little White Salmon River & Drano Lake,Little White Salmon R. Sys.,Lower Columbia tribs,Columbia - Middle,2023,11681.0,6.0,2023-24,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Drano Lake salmon and steelhead 2023 - investigate the study-design branch before treating as a data gap,Drano Lake salmon and steelhead,standalone,pipeline_no_output - PE run returned nothing,"CRC harvest, no creel"
+618,Little White Salmon River & Drano Lake,Little White Salmon R. Sys.,Lower Columbia tribs,Columbia - Middle,2024,10544.0,4.0,2024-25,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Drano Lake salmon and steelhead 2024 - investigate the study-design branch before treating as a data gap,Drano Lake salmon and steelhead,standalone,pipeline_no_output - PE run returned nothing,"CRC harvest, no creel"
+618,Little White Salmon River & Drano Lake,Little White Salmon R. Sys.,Lower Columbia tribs,Columbia - Middle,2025,27.0,1.0,2024-25,Pipeline defect - no PE output,multi_fishery_trip_summary.csv,PE run returned zero effort and null angler_final for Drano Lake salmon and steelhead 2025 - investigate the study-design branch before treating as a data gap,Drano Lake salmon and steelhead,standalone,pipeline_no_output - PE run returned nothing,No harvest file for this year
+624,Mill Creek (Cowlitz Co.),Mill Cr. System (Cowlitz),Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+624,Mill Creek (Cowlitz Co.),Mill Cr. System (Cowlitz),Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+624,Mill Creek (Cowlitz Co.),Mill Cr. System (Cowlitz),Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+624,Mill Creek (Cowlitz Co.),Mill Cr. System (Cowlitz),Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+625,Mill Creek (Lewis Co.),Mill Cr. (Lewis Co.),Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+625,Mill Creek (Lewis Co.),Mill Cr. (Lewis Co.),Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+625,Mill Creek (Lewis Co.),Mill Cr. (Lewis Co.),Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+625,Mill Creek (Lewis Co.),Mill Cr. (Lewis Co.),Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+632,Rock Creek (Skamania Co.),Rock Cr. System (Skamania),Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+632,Rock Creek (Skamania Co.),Rock Cr. System (Skamania),Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+632,Rock Creek (Skamania Co.),Rock Cr. System (Skamania),Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+632,Rock Creek (Skamania Co.),Rock Cr. System (Skamania),Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+635,Salmon Creek (Clark Co.),Salmon Cr. System (Clark),Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+635,Salmon Creek (Clark Co.),Salmon Cr. System (Clark),Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+635,Salmon Creek (Clark Co.),Salmon Cr. System (Clark),Lower Columbia tribs,Columbia - Lower,2024,119.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+635,Salmon Creek (Clark Co.),Salmon Cr. System (Clark),Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+638,Skamokawa Creek,Skamokawa Cr. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+638,Skamokawa Creek,Skamokawa Cr. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+638,Skamokawa Creek,Skamokawa Cr. System,Lower Columbia tribs,Columbia - Lower,2024,16.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+638,Skamokawa Creek,Skamokawa Cr. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+661,Little Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+661,Little Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+661,Little Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2024,40.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+661,Little Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+663,Washougal Hatchery on Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+663,Washougal Hatchery on Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2023,,,,Not yet assessed,,,,standalone,,Neither
+663,Washougal Hatchery on Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+663,Washougal Hatchery on Washougal River,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+665,"Washougal River, West Fork",Washougal R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+665,"Washougal River, West Fork",Washougal R. System,Lower Columbia tribs,Columbia - Lower,2023,17.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+665,"Washougal River, West Fork",Washougal R. System,Lower Columbia tribs,Columbia - Lower,2024,,,,Not yet assessed,,,,standalone,,Neither
+665,"Washougal River, West Fork",Washougal R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+667,Washougal River below County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+667,Washougal River below County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2023,324.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+667,Washougal River below County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2024,357.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+667,Washougal River below County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+668,Washougal River above County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+668,Washougal River above County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2023,51.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+668,Washougal River above County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2024,26.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+668,Washougal River above County Line Access,Washougal R. System,Lower Columbia tribs,Columbia - Lower,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+677,Wind River above Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+677,Wind River above Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2023,133.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+677,Wind River above Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2024,136.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+677,Wind River above Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+680,Wind River below Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+680,Wind River below Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2023,3835.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+680,Wind River below Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2024,4978.0,5.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+680,Wind River below Shipherd Falls,Wind R. System,Lower Columbia tribs,Columbia - Middle,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+1,Area 1: Col R - Ledbetter,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+1,Area 1: Col R - Ledbetter,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+1,Area 1: Col R - Ledbetter,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+1,Area 1: Col R - Ledbetter,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+10,Area 10: N Puget Sound,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+10,Area 10: N Puget Sound,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+10,Area 10: N Puget Sound,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+10,Area 10: N Puget Sound,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+11,Area 11: Mid-Puget Sound,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+11,Area 11: Mid-Puget Sound,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+11,Area 11: Mid-Puget Sound,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+11,Area 11: Mid-Puget Sound,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+12,Area 12: Hood Canal,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+12,Area 12: Hood Canal,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+12,Area 12: Hood Canal,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+12,Area 12: Hood Canal,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+13,Area 13: S Puget Sound,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+13,Area 13: S Puget Sound,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+13,Area 13: S Puget Sound,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+13,Area 13: S Puget Sound,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+2,Area 2: Westport,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+2,Area 2: Westport,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+2,Area 2: Westport,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+2,Area 2: Westport,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+21,Area 2-1: Willapa Bay,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+21,Area 2-1: Willapa Bay,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+21,Area 2-1: Willapa Bay,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+21,Area 2-1: Willapa Bay,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22,Area 2-2: Grays Harbor,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22,Area 2-2: Grays Harbor,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22,Area 2-2: Grays Harbor,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22,Area 2-2: Grays Harbor,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22W,Area 2-2W: Westport Boat Basin,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22W,Area 2-2W: Westport Boat Basin,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22W,Area 2-2W: Westport Boat Basin,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+22W,Area 2-2W: Westport Boat Basin,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+3,Area 3: La Push,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+3,Area 3: La Push,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+3,Area 3: La Push,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+3,Area 3: La Push,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+4,Area 4: Cape Flattery,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+4,Area 4: Cape Flattery,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+4,Area 4: Cape Flattery,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+4,Area 4: Cape Flattery,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+5,Area 5: W Juan de Fuca,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+5,Area 5: W Juan de Fuca,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+5,Area 5: W Juan de Fuca,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+5,Area 5: W Juan de Fuca,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+6,Area 6: E Juan de Fuca,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+6,Area 6: E Juan de Fuca,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+6,Area 6: E Juan de Fuca,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+6,Area 6: E Juan de Fuca,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+7,Area 7: San Juan Islands,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+7,Area 7: San Juan Islands,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+7,Area 7: San Juan Islands,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+7,Area 7: San Juan Islands,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+81,Area 8-1: Skagit Bay-Saratoga Psg.,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+81,Area 8-1: Skagit Bay-Saratoga Psg.,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+81,Area 8-1: Skagit Bay-Saratoga Psg.,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+81,Area 8-1: Skagit Bay-Saratoga Psg.,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+82,Area 8-2: Port Susan-Port Gardner,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+82,Area 8-2: Port Susan-Port Gardner,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+82,Area 8-2: Port Susan-Port Gardner,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+82,Area 8-2: Port Susan-Port Gardner,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+9,Area 9: Admiralty Inlet,Marine Water,Marine (out of scope),Marine,2022,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+9,Area 9: Admiralty Inlet,Marine Water,Marine (out of scope),Marine,2023,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+9,Area 9: Admiralty Inlet,Marine Water,Marine (out of scope),Marine,2024,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+9,Area 9: Admiralty Inlet,Marine Water,Marine (out of scope),Marine,2025,,,,Marine (out of scope),,,,standalone,,Marine (out of scope)
+708,Burley Creek (Kitsap Co.),Burley Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+708,Burley Creek (Kitsap Co.),Burley Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+708,Burley Creek (Kitsap Co.),Burley Cr. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+708,Burley Creek (Kitsap Co.),Burley Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+710,California Creek,California R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+710,California Creek,California R. System,Puget Sound,Puget Sound,2023,81.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+710,California Creek,California R. System,Puget Sound,Puget Sound,2024,31.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+710,California Creek,California R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+712,Cedar River (King Co.),Lake Washington System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+712,Cedar River (King Co.),Lake Washington System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+712,Cedar River (King Co.),Lake Washington System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+712,Cedar River (King Co.),Lake Washington System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+714,Chambers Creek,Chambers Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+714,Chambers Creek,Chambers Cr. System,Puget Sound,Puget Sound,2023,40.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+714,Chambers Creek,Chambers Cr. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+714,Chambers Creek,Chambers Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+718,Clallam River,Clallam R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+718,Clallam River,Clallam R. System,Puget Sound,Puget Sound,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+718,Clallam River,Clallam R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+718,Clallam River,Clallam R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+722,Curley Creek (Kitsap Co.),Curley Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+722,Curley Creek (Kitsap Co.),Curley Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+722,Curley Creek (Kitsap Co.),Curley Cr. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+722,Curley Creek (Kitsap Co.),Curley Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+724,Dakota Creek (Whatcom Co.),Dakota Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+724,Dakota Creek (Whatcom Co.),Dakota Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+724,Dakota Creek (Whatcom Co.),Dakota Cr. System,Puget Sound,Puget Sound,2024,26.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+724,Dakota Creek (Whatcom Co.),Dakota Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+726,Deep Creek (Clallam Co.),Deep Cr. System (Clallam),Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+726,Deep Creek (Clallam Co.),Deep Cr. System (Clallam),Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+726,Deep Creek (Clallam Co.),Deep Cr. System (Clallam),Puget Sound,Puget Sound,2024,63.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+726,Deep Creek (Clallam Co.),Deep Cr. System (Clallam),Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+727,Capitol Lake,Deschutes R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+727,Capitol Lake,Deschutes R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+727,Capitol Lake,Deschutes R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+727,Capitol Lake,Deschutes R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+728,Deschutes River,Deschutes R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+728,Deschutes River,Deschutes R. System,Puget Sound,Puget Sound,2023,81.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+728,Deschutes River,Deschutes R. System,Puget Sound,Puget Sound,2024,47.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+728,Deschutes River,Deschutes R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+732,Dewatto River,Dewatto R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+732,Dewatto River,Dewatto R. System,Puget Sound,Puget Sound,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+732,Dewatto River,Dewatto R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+732,Dewatto River,Dewatto R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+734,Dosewallips River,Dosewallips R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+734,Dosewallips River,Dosewallips R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+734,Dosewallips River,Dosewallips R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+734,Dosewallips River,Dosewallips R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+736,Duckabush River,Duckabush R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+736,Duckabush River,Duckabush R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+736,Duckabush River,Duckabush R. System,Puget Sound,Puget Sound,2024,16.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+736,Duckabush River,Duckabush R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+738,Dungeness River,Dungeness R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+738,Dungeness River,Dungeness R. System,Puget Sound,Puget Sound,2023,992.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+738,Dungeness River,Dungeness R. System,Puget Sound,Puget Sound,2024,922.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+738,Dungeness River,Dungeness R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+742,Elwha River,Elwha R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+742,Elwha River,Elwha R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+742,Elwha River,Elwha R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+742,Elwha River,Elwha R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+746,Green (Duwamish River) (King Co.),Green-Duwamish R. Sys,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+746,Green (Duwamish River) (King Co.),Green-Duwamish R. Sys,Puget Sound,Puget Sound,2023,44849.0,7.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+746,Green (Duwamish River) (King Co.),Green-Duwamish R. Sys,Puget Sound,Puget Sound,2024,17909.0,5.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+746,Green (Duwamish River) (King Co.),Green-Duwamish R. Sys,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+748,Soos Creek,Green-Duwamish R. Sys,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+748,Soos Creek,Green-Duwamish R. Sys,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+748,Soos Creek,Green-Duwamish R. Sys,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+748,Soos Creek,Green-Duwamish R. Sys,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+752,Hoko River,Hoko R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+752,Hoko River,Hoko R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+752,Hoko River,Hoko R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+752,Hoko River,Hoko R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+754,Kennedy Creek,Kennedy Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+754,Kennedy Creek,Kennedy Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+754,Kennedy Creek,Kennedy Cr. System,Puget Sound,Puget Sound,2024,283.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+754,Kennedy Creek,Kennedy Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+758,,,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+758,,,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+758,,,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+758,,,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+760,,,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+760,,,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+760,,,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+760,,,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+762,Lake Washington,Lake Washington System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+762,Lake Washington,Lake Washington System,Puget Sound,Puget Sound,2023,383.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+762,Lake Washington,Lake Washington System,Puget Sound,Puget Sound,2024,109.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+762,Lake Washington,Lake Washington System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+763,Lake Sammamish,Lake Washington System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+763,Lake Sammamish,Lake Washington System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+763,Lake Sammamish,Lake Washington System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+763,Lake Sammamish,Lake Washington System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+764,Sammamish River,Lake Washington System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+764,Sammamish River,Lake Washington System,Puget Sound,Puget Sound,2023,298.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+764,Sammamish River,Lake Washington System,Puget Sound,Puget Sound,2024,94.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+764,Sammamish River,Lake Washington System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+766,Little Quilcene River,Little Quilcene R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+766,Little Quilcene River,Little Quilcene R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+766,Little Quilcene River,Little Quilcene R. System,Puget Sound,Puget Sound,2024,110.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+766,Little Quilcene River,Little Quilcene R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+768,Lyre River,Lyre R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+768,Lyre River,Lyre R. System,Puget Sound,Puget Sound,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+768,Lyre River,Lyre R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+768,Lyre River,Lyre R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+770,McAllister Creek (Thurston Co.),Nisqually R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+770,McAllister Creek (Thurston Co.),Nisqually R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+770,McAllister Creek (Thurston Co.),Nisqually R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+770,McAllister Creek (Thurston Co.),Nisqually R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+774,McLane Creek (Thurston Co.),McLane Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+774,McLane Creek (Thurston Co.),McLane Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+774,McLane Creek (Thurston Co.),McLane Cr. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+774,McLane Creek (Thurston Co.),McLane Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+778,Minter Creek (Pierce/Kitsap Co.),Minter Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+778,Minter Creek (Pierce/Kitsap Co.),Minter Cr. System,Puget Sound,Puget Sound,2023,4621.0,6.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+778,Minter Creek (Pierce/Kitsap Co.),Minter Cr. System,Puget Sound,Puget Sound,2024,5424.0,5.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+778,Minter Creek (Pierce/Kitsap Co.),Minter Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+782,Morse Creek (Clallam Co.),Morse Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+782,Morse Creek (Clallam Co.),Morse Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+782,Morse Creek (Clallam Co.),Morse Cr. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+782,Morse Creek (Clallam Co.),Morse Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+784,Berry Creek,Nisqually R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+784,Berry Creek,Nisqually R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+784,Berry Creek,Nisqually R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+784,Berry Creek,Nisqually R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+786,Nisqually River,Nisqually R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Nisqually salmon 2022,Nisqually salmon,standalone,donor_required - no interviews anywhere in unit,No harvest file for this year
+786,Nisqually River,Nisqually R. System,Puget Sound,Puget Sound,2023,5136.0,5.0,2023-24,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Nisqually salmon,standalone,donor_required - no interviews anywhere in unit,"CRC harvest, no creel"
+786,Nisqually River,Nisqually R. System,Puget Sound,Puget Sound,2024,3230.0,5.0,2024-25,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Nisqually salmon,standalone,donor_required - no interviews anywhere in unit,"CRC harvest, no creel"
+786,Nisqually River,Nisqually R. System,Puget Sound,Puget Sound,2025,,,,P3 published/projected figure,NEPA PS projection workbook,"2025 via NEPA projection - MUST be labelled as projection, not estimate",Nisqually salmon,standalone,donor_required - no interviews anywhere in unit,No harvest file for this year
+788,"Nooksack River, Mid. Fork",Nooksack R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+788,"Nooksack River, Mid. Fork",Nooksack R. System,Puget Sound,Puget Sound,2023,68.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+788,"Nooksack River, Mid. Fork",Nooksack R. System,Puget Sound,Puget Sound,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+788,"Nooksack River, Mid. Fork",Nooksack R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+790,"Nooksack River, No. Fork",Nooksack R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+790,"Nooksack River, No. Fork",Nooksack R. System,Puget Sound,Puget Sound,2023,744.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+790,"Nooksack River, No. Fork",Nooksack R. System,Puget Sound,Puget Sound,2024,119.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+790,"Nooksack River, No. Fork",Nooksack R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+792,"Nooksack River, So. Fork",Nooksack R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+792,"Nooksack River, So. Fork",Nooksack R. System,Puget Sound,Puget Sound,2023,1201.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+792,"Nooksack River, So. Fork",Nooksack R. System,Puget Sound,Puget Sound,2024,2121.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+792,"Nooksack River, So. Fork",Nooksack R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+794,"Nooksack River, below North Fork",Nooksack R. System,Puget Sound,Puget Sound,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Nooksack fall salmon,standalone,donor_required - thin and no pooling partner in unit,No harvest file for this year
+794,"Nooksack River, below North Fork",Nooksack R. System,Puget Sound,Puget Sound,2023,2112.0,4.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Nooksack fall salmon 2023,Nooksack fall salmon,standalone,donor_required - thin and no pooling partner in unit,Creel + CRC harvest
+794,"Nooksack River, below North Fork",Nooksack R. System,Puget Sound,Puget Sound,2024,4979.0,5.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Nooksack fall salmon 2024,Nooksack fall salmon,standalone,donor_required - thin and no pooling partner in unit,Creel + CRC harvest
+794,"Nooksack River, below North Fork",Nooksack R. System,Puget Sound,Puget Sound,2025,,,,P3 published/projected figure,NEPA PS projection workbook,"2025 via NEPA projection - MUST be labelled as projection, not estimate",Nooksack fall salmon,standalone,donor_required - thin and no pooling partner in unit,No harvest file for this year
+802,Carbon River,Puyallup R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup_Carbon salmon 2022,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,No harvest file for this year
+802,Carbon River,Puyallup R. System,Puget Sound,Puget Sound,2023,2469.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup_Carbon salmon 2023,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,Creel + CRC harvest
+802,Carbon River,Puyallup R. System,Puget Sound,Puget Sound,2024,2999.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup Carbon salmon 2024,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,Creel + CRC harvest
+802,Carbon River,Puyallup R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup Carbon salmon 2025,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,No harvest file for this year
+804,Puyallup River,Puyallup R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup_Carbon salmon 2022,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,No harvest file for this year
+804,Puyallup River,Puyallup R. System,Puget Sound,Puget Sound,2023,56064.0,6.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup_Carbon salmon 2023,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,Creel + CRC harvest
+804,Puyallup River,Puyallup R. System,Puget Sound,Puget Sound,2024,13064.0,5.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup Carbon salmon 2024,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,Creel + CRC harvest
+804,Puyallup River,Puyallup R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Puyallup Carbon salmon 2025,Puyallup Carbon salmon,"CRC-native effort, pooled denominator",donor_required - no interviews anywhere in unit,No harvest file for this year
+808,White (Stuck) River,Puyallup R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+808,White (Stuck) River,Puyallup R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+808,White (Stuck) River,Puyallup R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+808,White (Stuck) River,Puyallup R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+810,Pysht River,Pysht R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+810,Pysht River,Pysht R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+810,Pysht River,Pysht R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+810,Pysht River,Pysht R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+812,Quilcene River,Quilcene R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+812,Quilcene River,Quilcene R. System,Puget Sound,Puget Sound,2023,2973.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+812,Quilcene River,Quilcene R. System,Puget Sound,Puget Sound,2024,4097.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+812,Quilcene River,Quilcene R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+814,Salt Creek (Clallam Co.),Salt Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+814,Salt Creek (Clallam Co.),Salt Cr. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+814,Salt Creek (Clallam Co.),Salt Cr. System,Puget Sound,Puget Sound,2024,266.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+814,Salt Creek (Clallam Co.),Salt Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+816,Samish River,Samish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+816,Samish River,Samish R. System,Puget Sound,Puget Sound,2023,14111.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+816,Samish River,Samish R. System,Puget Sound,Puget Sound,2024,10710.0,5.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+816,Samish River,Samish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+818,Sekiu River,Sekiu R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+818,Sekiu River,Sekiu R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+818,Sekiu River,Sekiu R. System,Puget Sound,Puget Sound,2024,16.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+818,Sekiu River,Sekiu R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+824,Baker River,Skagit R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+824,Baker River,Skagit R. System,Puget Sound,Puget Sound,2023,180.0,4.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+824,Baker River,Skagit R. System,Puget Sound,Puget Sound,2024,39.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+824,Baker River,Skagit R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+825,Baker Lake,Skagit R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+825,Baker Lake,Skagit R. System,Puget Sound,Puget Sound,2023,12729.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+825,Baker Lake,Skagit R. System,Puget Sound,Puget Sound,2024,10697.0,2.0,"2023-24,2024-25",Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+825,Baker Lake,Skagit R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+826,Cascade River,Skagit R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Cascade fall salmon 2022,Cascade fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+826,Cascade River,Skagit R. System,Puget Sound,Puget Sound,2023,1950.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Cascade fall salmon 2023,Cascade fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+826,Cascade River,Skagit R. System,Puget Sound,Puget Sound,2024,3162.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Cascade fall salmon 2024,Cascade fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+826,Cascade River,Skagit R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Skagit fall salmon 2025,Cascade fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+828,Sauk River,Skagit R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+828,Sauk River,Skagit R. System,Puget Sound,Puget Sound,2023,49.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+828,Sauk River,Skagit R. System,Puget Sound,Puget Sound,2024,39.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+828,Sauk River,Skagit R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+830,Skagit River,Skagit R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Skagit fall salmon 2022,Skagit fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+830,Skagit River,Skagit R. System,Puget Sound,Puget Sound,2023,26645.0,7.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Skagit fall salmon 2023,Skagit fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+830,Skagit River,Skagit R. System,Puget Sound,Puget Sound,2024,14633.0,6.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Skagit fall salmon 2024,Skagit fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+830,Skagit River,Skagit R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Skagit fall salmon 2025,Skagit fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+832,Suiattle River,Skagit R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+832,Suiattle River,Skagit R. System,Puget Sound,Puget Sound,2023,33.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+832,Suiattle River,Skagit R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+832,Suiattle River,Skagit R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+834,Skokomish River (Mason Co.),Skokomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+834,Skokomish River (Mason Co.),Skokomish R. System,Puget Sound,Puget Sound,2023,343.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+834,Skokomish River (Mason Co.),Skokomish R. System,Puget Sound,Puget Sound,2024,31.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+834,Skokomish River (Mason Co.),Skokomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+840,Pilchuck River (Snohomish System),Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+840,Pilchuck River (Snohomish System),Snohomish R. System,Puget Sound,Puget Sound,2023,305.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+840,Pilchuck River (Snohomish System),Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+840,Pilchuck River (Snohomish System),Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+842,Raging River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+842,Raging River,Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+842,Raging River,Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+842,Raging River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+844,Skykomish River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+844,Skykomish River,Snohomish R. System,Puget Sound,Puget Sound,2023,401.0,3.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2023,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+844,Skykomish River,Snohomish R. System,Puget Sound,Puget Sound,2024,200.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2024,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+844,Skykomish River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2025,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+846,"Skykomish River, No. Fork",Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+846,"Skykomish River, No. Fork",Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+846,"Skykomish River, No. Fork",Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+846,"Skykomish River, No. Fork",Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+848,"Skykomish River, So. Fork",Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+848,"Skykomish River, So. Fork",Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+848,"Skykomish River, So. Fork",Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+848,"Skykomish River, So. Fork",Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+850,Snohomish River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2022,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+850,Snohomish River,Snohomish R. System,Puget Sound,Puget Sound,2023,25214.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2023,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+850,Snohomish River,Snohomish R. System,Puget Sound,Puget Sound,2024,1675.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2024,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+850,Snohomish River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2025,Snohomish fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+852,Snoqualmie River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2022,Snohomish fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+852,Snoqualmie River,Snohomish R. System,Puget Sound,Puget Sound,2023,144.0,2.0,2023-24,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Snohomish fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,"CRC harvest, no creel"
+852,Snoqualmie River,Snohomish R. System,Puget Sound,Puget Sound,2024,182.0,1.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Snohomish fall salmon 2024,Snohomish fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+852,Snoqualmie River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,P3 published/projected figure,NEPA PS projection workbook,"2025 via NEPA projection - MUST be labelled as projection, not estimate",Snohomish fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+854,Sultan River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+854,Sultan River,Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+854,Sultan River,Snohomish R. System,Puget Sound,Puget Sound,2024,26.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+854,Sultan River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+856,Tokul Creek,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+856,Tokul Creek,Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+856,Tokul Creek,Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+856,Tokul Creek,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+858,Tolt River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+858,Tolt River,Snohomish R. System,Puget Sound,Puget Sound,2023,96.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+858,Tolt River,Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+858,Tolt River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+860,Wallace River,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Wallace salmon and gamefish 2022-23,Wallace salmon and gamefish,standalone,crc_own,No harvest file for this year
+860,Wallace River,Snohomish R. System,Puget Sound,Puget Sound,2023,610.0,2.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Wallace salmon and gamefish 2022-23; Wallace salmon and gamefish 2023-24,Wallace salmon and gamefish,standalone,crc_own,Creel + CRC harvest
+860,Wallace River,Snohomish R. System,Puget Sound,Puget Sound,2024,1126.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Wallace salmon and gamefish 2024-25,Wallace salmon and gamefish,standalone,crc_own,Creel + CRC harvest
+860,Wallace River,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,P3 published/projected figure,NEPA PS projection workbook,"2025 via NEPA projection - MUST be labelled as projection, not estimate",Wallace salmon and gamefish,standalone,crc_own,No harvest file for this year
+862,Woods Creek,Snohomish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+862,Woods Creek,Snohomish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+862,Woods Creek,Snohomish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+862,Woods Creek,Snohomish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+866,Canyon Creek,Stillaguamish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+866,Canyon Creek,Stillaguamish R. System,Puget Sound,Puget Sound,2023,145.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+866,Canyon Creek,Stillaguamish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+866,Canyon Creek,Stillaguamish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+870,Pilchuck Creek (Stillaguamish System),Stillaguamish R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+870,Pilchuck Creek (Stillaguamish System),Stillaguamish R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+870,Pilchuck Creek (Stillaguamish System),Stillaguamish R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+870,Pilchuck Creek (Stillaguamish System),Stillaguamish R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+872,"Stillaguamish R, No. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+872,"Stillaguamish R, No. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2023,1894.0,2.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2023-24,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+872,"Stillaguamish R, No. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2024,919.0,4.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2024-25,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+872,"Stillaguamish R, No. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2025-26,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+874,"Stillaguamish R, So. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+874,"Stillaguamish R, So. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2023,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",pool_within_unit,Neither
+874,"Stillaguamish R, So. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2024,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2024-25,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",pool_within_unit,"Creel, no CRC harvest"
+874,"Stillaguamish R, So. Fork",Stillaguamish R. System,Puget Sound,Puget Sound,2025,,,,P3 published/projected figure,NEPA PS projection workbook,"2025 via NEPA projection - MUST be labelled as projection, not estimate",Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+876,Stillaguamish River,Stillaguamish R. System,Puget Sound,Puget Sound,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+876,Stillaguamish River,Stillaguamish R. System,Puget Sound,Puget Sound,2023,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2023-24,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,"Creel, no CRC harvest"
+876,Stillaguamish River,Stillaguamish R. System,Puget Sound,Puget Sound,2024,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2024-25,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,"Creel, no CRC harvest"
+876,Stillaguamish River,Stillaguamish R. System,Puget Sound,Puget Sound,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Stillaguamish salmon and gamefish 2025-26,Stillaguamish salmon and gamefish,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+878,Tahuya River,Tahuya R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+878,Tahuya River,Tahuya R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+878,Tahuya River,Tahuya R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+878,Tahuya River,Tahuya R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+880,Union River,Union R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+880,Union River,Union R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+880,Union River,Union R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+880,Union River,Union R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+882,West Twin River,West Twin R. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+882,West Twin River,West Twin R. System,Puget Sound,Puget Sound,2023,,,,Not yet assessed,,,,standalone,,Neither
+882,West Twin River,West Twin R. System,Puget Sound,Puget Sound,2024,,,,Not yet assessed,,,,standalone,,Neither
+882,West Twin River,West Twin R. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+884,Whatcom Creek,Whatcom Cr. System,Puget Sound,Puget Sound,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+884,Whatcom Creek,Whatcom Cr. System,Puget Sound,Puget Sound,2023,135.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+884,Whatcom Creek,Whatcom Cr. System,Puget Sound,Puget Sound,2024,13.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+884,Whatcom Creek,Whatcom Cr. System,Puget Sound,Puget Sound,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+552,Chelan River,Chelan River,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+552,Chelan River,Chelan River,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+552,Chelan River,Chelan River,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+552,Chelan River,Chelan River,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+586,Entiat River,Entiat R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+586,Entiat River,Entiat R. System,Upper Columbia / Snake,Columbia - Upper,2023,80.0,2.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+586,Entiat River,Entiat R. System,Upper Columbia / Snake,Columbia - Upper,2024,63.0,1.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+586,Entiat River,Entiat R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+592,Grande Ronde River,Grande Ronde R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+592,Grande Ronde River,Grande Ronde R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+592,Grande Ronde River,Grande Ronde R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+592,Grande Ronde River,Grande Ronde R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+621,Methow River,Methow R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+621,Methow River,Methow R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+621,Methow River,Methow R. System,Upper Columbia / Snake,Columbia - Upper,2024,63.0,1.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+621,Methow River,Methow R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+627,Okanogan River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+627,Okanogan River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+627,Okanogan River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2024,361.0,2.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+627,Okanogan River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+629,Similkameen River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+629,Similkameen River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+629,Similkameen River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+629,Similkameen River,Okanogan R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+640,Snake R 1: below Ice Harbor Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+640,Snake R 1: below Ice Harbor Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,394.0,3.0,2023-24,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+640,Snake R 1: below Ice Harbor Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,767.0,3.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+640,Snake R 1: below Ice Harbor Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+642,Snake R 2: Ice Harbor to Lower Monumental Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+642,Snake R 2: Ice Harbor to Lower Monumental Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+642,Snake R 2: Ice Harbor to Lower Monumental Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,67.0,2.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+642,Snake R 2: Ice Harbor to Lower Monumental Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+644,Snake R 3: Lower Monumental to Little Goose Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+644,Snake R 3: Lower Monumental to Little Goose Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,1334.0,3.0,2023-24,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+644,Snake R 3: Lower Monumental to Little Goose Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,928.0,2.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+644,Snake R 3: Lower Monumental to Little Goose Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+646,Snake R 4: Little Goose to Lower Granite Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+646,Snake R 4: Little Goose to Lower Granite Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,45.0,2.0,2023-24,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+646,Snake R 4: Little Goose to Lower Granite Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,26.0,1.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+646,Snake R 4: Little Goose to Lower Granite Dam,Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+648,"Snake R 5: Lower Granite Dam to Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+648,"Snake R 5: Lower Granite Dam to Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,1910.0,2.0,2023-24,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+648,"Snake R 5: Lower Granite Dam to Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,2142.0,3.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+648,"Snake R 5: Lower Granite Dam to Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+650,"Snake R 6: upstream of the Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+650,"Snake R 6: upstream of the Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2023,501.0,2.0,2023-24,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+650,"Snake R 6: upstream of the Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2024,375.0,3.0,2024-25,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+650,"Snake R 6: upstream of the Interstate Bridge, Clarkston",Snake R. Mainstem,Upper Columbia / Snake,Columbia - Snake,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+652,Palouse River,Palouse R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+652,Palouse River,Palouse R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+652,Palouse River,Palouse R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+652,Palouse River,Palouse R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+653,Tucannon River,Tucannon R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+653,Tucannon River,Tucannon R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+653,Tucannon River,Tucannon R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+653,Tucannon River,Tucannon R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+655,Mill Creek (Walla Walla Co.),Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+655,Mill Creek (Walla Walla Co.),Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+655,Mill Creek (Walla Walla Co.),Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+655,Mill Creek (Walla Walla Co.),Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+657,Touchet River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+657,Touchet River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+657,Touchet River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+657,Touchet River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+659,Walla Walla River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+659,Walla Walla River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2023,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+659,Walla Walla River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,Neither
+659,Walla Walla River,Walla Walla R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Jeremy Trump (Snake R. region),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+670,Lake Wenatchee,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+670,Lake Wenatchee,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2023,23207.0,3.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+670,Lake Wenatchee,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2024,31447.0,3.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+670,Lake Wenatchee,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+672,Icicle Creek,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+672,Icicle Creek,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2023,616.0,3.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+672,Icicle Creek,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2024,918.0,3.0,2024-25,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+672,Icicle Creek,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+674,Wenatchee River,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+674,Wenatchee River,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2023,67.0,2.0,2023-24,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,"CRC harvest, no creel"
+674,Wenatchee River,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2024,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,Neither
+674,Wenatchee River,Wenatchee R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Chad Jackson (R2),Contacted 2026-08-11; response pending,,standalone,,No harvest file for this year
+690,Yakima River,Yakima R. System,Upper Columbia / Snake,Columbia - Upper,2022,,,,Provider data received - harmonizing,Todd Miller (2022 Yakima fall fishery summary),Sept 1 - Oct 31 only; confirm season coverage vs full-year need,Yakima fall salmon,standalone,provider-supplied,No harvest file for this year
+690,Yakima River,Yakima R. System,Upper Columbia / Snake,Columbia - Upper,2023,412.0,4.0,2023-24,Requested - awaiting response,Todd Miller,Pending with Hanford Reach delivery,Yakima fall salmon,standalone,provider-supplied,"CRC harvest, no creel"
+690,Yakima River,Yakima R. System,Upper Columbia / Snake,Columbia - Upper,2024,721.0,4.0,2024-25,Requested - awaiting response,Todd Miller,Pending with Hanford Reach delivery,Yakima fall salmon,standalone,provider-supplied,"CRC harvest, no creel"
+690,Yakima River,Yakima R. System,Upper Columbia / Snake,Columbia - Upper,2025,,,,Requested - awaiting response,Todd Miller,Pending with Hanford Reach delivery,Yakima fall salmon,standalone,provider-supplied,No harvest file for this year
+305,Bear River (Pacific Co.),Bear R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+305,Bear River (Pacific Co.),Bear R. System,WA Coast,Coastal,2023,17.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+305,Bear River (Pacific Co.),Bear R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+305,Bear River (Pacific Co.),Bear R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+308,Cedar Creek (Grays Harbor Co.),Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+308,Cedar Creek (Grays Harbor Co.),Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+308,Cedar Creek (Grays Harbor Co.),Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+308,Cedar Creek (Grays Harbor Co.),Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+311,Cedar Creek (Jefferson Co.),Cedar Cr. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+311,Cedar Creek (Jefferson Co.),Cedar Cr. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+311,Cedar Creek (Jefferson Co.),Cedar Cr. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+311,Cedar Creek (Jefferson Co.),Cedar Cr. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+315,Chehalis R. above Black R.,Chehalis R. System,WA Coast,Coastal,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Chehalis salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+315,Chehalis R. above Black R.,Chehalis R. System,WA Coast,Coastal,2023,12154.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Upper Chehalis salmon 2023,Chehalis salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+315,Chehalis R. above Black R.,Chehalis R. System,WA Coast,Coastal,2024,13550.0,5.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Chehalis salmon 2024,Chehalis salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+315,Chehalis R. above Black R.,Chehalis R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Chehalis salmon 2025,Chehalis salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+317,Chehalis R. below Black R.,Chehalis R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Chehalis salmon 2022,Chehalis salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+317,Chehalis R. below Black R.,Chehalis R. System,WA Coast,Coastal,2023,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Lower Chehalis salmon 2023; Upper Chehalis salmon 2023,Chehalis salmon,"CRC-native effort, pooled denominator",crc_own,"Creel, no CRC harvest"
+317,Chehalis R. below Black R.,Chehalis R. System,WA Coast,Coastal,2024,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Chehalis salmon 2024,Chehalis salmon,"CRC-native effort, pooled denominator",crc_own,"Creel, no CRC harvest"
+317,Chehalis R. below Black R.,Chehalis R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Chehalis salmon 2025,Chehalis salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+319,"Chehalis River, So. Fork",Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+319,"Chehalis River, So. Fork",Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+319,"Chehalis River, So. Fork",Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+319,"Chehalis River, So. Fork",Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+320,Elk Creek,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+320,Elk Creek,Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+320,Elk Creek,Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+320,Elk Creek,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+321,Cloquallam Creek,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+321,Cloquallam Creek,Chehalis R. System,WA Coast,Coastal,2023,49.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+321,Cloquallam Creek,Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+321,Cloquallam Creek,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+323,Joe Creek,Joe Creek System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+323,Joe Creek,Joe Creek System,WA Coast,Coastal,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+323,Joe Creek,Joe Creek System,WA Coast,Coastal,2024,79.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+323,Joe Creek,Joe Creek System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+325,Newaukum River,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+325,Newaukum River,Chehalis R. System,WA Coast,Coastal,2023,16.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+325,Newaukum River,Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+325,Newaukum River,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+327,Quinault Lake,Quinault R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+327,Quinault Lake,Quinault R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+327,Quinault Lake,Quinault R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+327,Quinault Lake,Quinault R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+329,Satsop River,Chehalis R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Satsop salmon 2022,Satsop salmon,standalone,crc_own,No harvest file for this year
+329,Satsop River,Chehalis R. System,WA Coast,Coastal,2023,4817.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Satsop salmon 2023,Satsop salmon,standalone,crc_own,Creel + CRC harvest
+329,Satsop River,Chehalis R. System,WA Coast,Coastal,2024,5395.0,5.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Satsop salmon 2024,Satsop salmon,standalone,crc_own,Creel + CRC harvest
+329,Satsop River,Chehalis R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Satsop salmon 2025,Satsop salmon,standalone,crc_own,No harvest file for this year
+329A,Satsop River (ADA Area),Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+329A,Satsop River (ADA Area),Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+329A,Satsop River (ADA Area),Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+329A,Satsop River (ADA Area),Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+331,"Satsop River, West Fork",Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+331,"Satsop River, West Fork",Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+331,"Satsop River, West Fork",Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+331,"Satsop River, West Fork",Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+333,Skookumchuck River,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+333,Skookumchuck River,Chehalis R. System,WA Coast,Coastal,2023,16.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+333,Skookumchuck River,Chehalis R. System,WA Coast,Coastal,2024,109.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+333,Skookumchuck River,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+335,Wishkah River,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+335,Wishkah River,Chehalis R. System,WA Coast,Coastal,2023,251.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+335,Wishkah River,Chehalis R. System,WA Coast,Coastal,2024,82.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+335,Wishkah River,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+335A,Wishkah River (ADA Area),Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+335A,Wishkah River (ADA Area),Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+335A,Wishkah River (ADA Area),Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+335A,Wishkah River (ADA Area),Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+337,Wynoochee River,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+337,Wynoochee River,Chehalis R. System,WA Coast,Coastal,2023,407.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+337,Wynoochee River,Chehalis R. System,WA Coast,Coastal,2024,608.0,3.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+337,Wynoochee River,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+339,Copalis River,Copalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+339,Copalis River,Copalis R. System,WA Coast,Coastal,2023,342.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+339,Copalis River,Copalis R. System,WA Coast,Coastal,2024,204.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+339,Copalis River,Copalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+342,Elk River,Elk R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+342,Elk River,Elk R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+342,Elk River,Elk R. System,WA Coast,Coastal,2024,68.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+342,Elk River,Elk R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+345,Goodman Creek (Jefferson Co.),Goodman Cr. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+345,Goodman Creek (Jefferson Co.),Goodman Cr. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+345,Goodman Creek (Jefferson Co.),Goodman Cr. System,WA Coast,Coastal,2024,16.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+345,Goodman Creek (Jefferson Co.),Goodman Cr. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+348,Hoh River above Oxbow Launch,Hoh R. System,WA Coast,Coastal,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Hoh fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+348,Hoh River above Oxbow Launch,Hoh R. System,WA Coast,Coastal,2023,342.0,2.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Hoh fall salmon 2023,Hoh fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+348,Hoh River above Oxbow Launch,Hoh R. System,WA Coast,Coastal,2024,107.0,1.0,2024-25,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Hoh fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,"CRC harvest, no creel"
+348,Hoh River above Oxbow Launch,Hoh R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Hoh fall salmon 2025,Hoh fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+350,Hoh River below Oxbow Launch,Hoh R. System,WA Coast,Coastal,2022,,,,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Hoh fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+350,Hoh River below Oxbow Launch,Hoh R. System,WA Coast,Coastal,2023,1352.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Hoh fall salmon 2023,Hoh fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+350,Hoh River below Oxbow Launch,Hoh R. System,WA Coast,Coastal,2024,294.0,3.0,2024-25,Gap - no pathway identified,,CRC surveyed in other years but not this one - P2 ratio or P3 fill needed,Hoh fall salmon,"CRC-native effort, pooled denominator",crc_own,"CRC harvest, no creel"
+350,Hoh River below Oxbow Launch,Hoh R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Hoh fall salmon 2025,Hoh fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+352,"Hoh River, So. Fork",Hoh R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+352,"Hoh River, So. Fork",Hoh R. System,WA Coast,Coastal,2023,17.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+352,"Hoh River, So. Fork",Hoh R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+352,"Hoh River, So. Fork",Hoh R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+355,Hoquiam River,Hoquiam R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+355,Hoquiam River,Hoquiam R. System,WA Coast,Coastal,2023,63.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+355,Hoquiam River,Hoquiam R. System,WA Coast,Coastal,2024,244.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+355,Hoquiam River,Hoquiam R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+358,Humptulips River,Humptulips R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Humptulips salmon 2022,Humptulips salmon,standalone,crc_own,No harvest file for this year
+358,Humptulips River,Humptulips R. System,WA Coast,Coastal,2023,2339.0,5.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Humptulips salmon 2023,Humptulips salmon,standalone,crc_own,Creel + CRC harvest
+358,Humptulips River,Humptulips R. System,WA Coast,Coastal,2024,4934.0,5.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Humptulips salmon 2024,Humptulips salmon,standalone,crc_own,Creel + CRC harvest
+358,Humptulips River,Humptulips R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Humptulips salmon 2025,Humptulips salmon,standalone,crc_own,No harvest file for this year
+361,"Humptulips River, E. Fork",Humptulips R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+361,"Humptulips River, E. Fork",Humptulips R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+361,"Humptulips River, E. Fork",Humptulips R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+361,"Humptulips River, E. Fork",Humptulips R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+362,"Humptulips River, W. Fork",Humptulips R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+362,"Humptulips River, W. Fork",Humptulips R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+362,"Humptulips River, W. Fork",Humptulips R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+362,"Humptulips River, W. Fork",Humptulips R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+364,Stevens Creek,Humptulips R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+364,Stevens Creek,Humptulips R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+364,Stevens Creek,Humptulips R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+364,Stevens Creek,Humptulips R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+367,Johns River,Johns R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+367,Johns River,Johns R. System,WA Coast,Coastal,2023,16.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+367,Johns River,Johns R. System,WA Coast,Coastal,2024,109.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+367,Johns River,Johns R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+369,Kalaloch Creek,Kalaloch Cr. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+369,Kalaloch Creek,Kalaloch Cr. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+369,Kalaloch Creek,Kalaloch Cr. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+369,Kalaloch Creek,Kalaloch Cr. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+370,Quigg Lake,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+370,Quigg Lake,Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+370,Quigg Lake,Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+370,Quigg Lake,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+371,Moclips River,Moclips R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+371,Moclips River,Moclips R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+371,Moclips River,Moclips R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+371,Moclips River,Moclips R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+373,Mosquito Creek (Jefferson Co.),Mosquito Cr. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+373,Mosquito Creek (Jefferson Co.),Mosquito Cr. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+373,Mosquito Creek (Jefferson Co.),Mosquito Cr. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+373,Mosquito Creek (Jefferson Co.),Mosquito Cr. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+375,Naselle River,Naselle R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+375,Naselle River,Naselle R. System,WA Coast,Coastal,2023,3092.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+375,Naselle River,Naselle R. System,WA Coast,Coastal,2024,3136.0,5.0,"2023-24,2024-25",Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+375,Naselle River,Naselle R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+377,Salmon Creek (Pacific Co.),Naselle R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+377,Salmon Creek (Pacific Co.),Naselle R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+377,Salmon Creek (Pacific Co.),Naselle R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+377,Salmon Creek (Pacific Co.),Naselle R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+379,"Nemah River, North (below Nemah Hatchery), Middle and South",Nemah R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+379,"Nemah River, North (below Nemah Hatchery), Middle and South",Nemah R. System,WA Coast,Coastal,2023,979.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+379,"Nemah River, North (below Nemah Hatchery), Middle and South",Nemah R. System,WA Coast,Coastal,2024,2597.0,4.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+379,"Nemah River, North (below Nemah Hatchery), Middle and South",Nemah R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+382,North River,North R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+382,North River,North R. System,WA Coast,Coastal,2023,355.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+382,North River,North R. System,WA Coast,Coastal,2024,585.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+382,North River,North R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+384,Smith Creek (Pacific Co.),North R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+384,Smith Creek (Pacific Co.),North R. System,WA Coast,Coastal,2023,119.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+384,Smith Creek (Pacific Co.),North R. System,WA Coast,Coastal,2024,80.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+384,Smith Creek (Pacific Co.),North R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+386,Big River (Clallam Co.),Ozette R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+386,Big River (Clallam Co.),Ozette R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+386,Big River (Clallam Co.),Ozette R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+386,Big River (Clallam Co.),Ozette R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+388,Ozette River,Ozette R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+388,Ozette River,Ozette R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+388,Ozette River,Ozette R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+388,Ozette River,Ozette R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+389,Niawiakum River,Palix R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+389,Niawiakum River,Palix R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+389,Niawiakum River,Palix R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+389,Niawiakum River,Palix R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+390,Palix River,Palix R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+390,Palix River,Palix R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+390,Palix River,Palix R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+390,Palix River,Palix R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+392,Clearwater River,Queets R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+392,Clearwater River,Queets R. System,WA Coast,Coastal,2023,98.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+392,Clearwater River,Queets R. System,WA Coast,Coastal,2024,83.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+392,Clearwater River,Queets R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+394,Queets River,Queets R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+394,Queets River,Queets R. System,WA Coast,Coastal,2023,130.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+394,Queets River,Queets R. System,WA Coast,Coastal,2024,97.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+394,Queets River,Queets R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+396,Salmon River (Jefferson Co.),Queets R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+396,Salmon River (Jefferson Co.),Queets R. System,WA Coast,Coastal,2023,98.0,2.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+396,Salmon River (Jefferson Co.),Queets R. System,WA Coast,Coastal,2024,208.0,2.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+396,Salmon River (Jefferson Co.),Queets R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+398,Bogachiel River,Quillayute R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2022,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+398,Bogachiel River,Quillayute R. System,WA Coast,Coastal,2023,196.0,3.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2023,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+398,Bogachiel River,Quillayute R. System,WA Coast,Coastal,2024,134.0,3.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2024,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+398,Bogachiel River,Quillayute R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2025,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+400,Calawah River,Quillayute R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2022,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+400,Calawah River,Quillayute R. System,WA Coast,Coastal,2023,32.0,1.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2023,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+400,Calawah River,Quillayute R. System,WA Coast,Coastal,2024,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2024,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,"Creel, no CRC harvest"
+400,Calawah River,Quillayute R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2025,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+402,Dickey River (Clallam Co.),Quillayute R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2022,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+402,Dickey River (Clallam Co.),Quillayute R. System,WA Coast,Coastal,2023,130.0,3.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2023,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+402,Dickey River (Clallam Co.),Quillayute R. System,WA Coast,Coastal,2024,40.0,2.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2024,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,Creel + CRC harvest
+402,Dickey River (Clallam Co.),Quillayute R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2025,Quillayute fall salmon,"CRC-native effort, pooled denominator",pool_within_unit,No harvest file for this year
+404,Quillayute River,Quillayute R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2022,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+404,Quillayute River,Quillayute R. System,WA Coast,Coastal,2023,1388.0,4.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2023,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+404,Quillayute River,Quillayute R. System,WA Coast,Coastal,2024,396.0,3.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2024,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+404,Quillayute River,Quillayute R. System,WA Coast,Coastal,2025,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2025,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+406,Sol Duc River,Quillayute R. System,WA Coast,Coastal,2022,,,,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2022,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+406,Sol Duc River,Quillayute R. System,WA Coast,Coastal,2023,749.0,4.0,2023-24,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2023,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+406,Sol Duc River,Quillayute R. System,WA Coast,Coastal,2024,889.0,3.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2024,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,Creel + CRC harvest
+406,Sol Duc River,Quillayute R. System,WA Coast,Coastal,2025,40.0,1.0,2024-25,P1 creel estimate in hand,multi_fishery_trip_summary.csv,Quillayute fall salmon 2025,Quillayute fall salmon,"CRC-native effort, pooled denominator",crc_own,No harvest file for this year
+408,Cook Creek,Quinault R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+408,Cook Creek,Quinault R. System,WA Coast,Coastal,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+408,Cook Creek,Quinault R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+408,Cook Creek,Quinault R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+410,"Quinault R, Lower (below L. Quinault, not Cook Cr.)",Quinault R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+410,"Quinault R, Lower (below L. Quinault, not Cook Cr.)",Quinault R. System,WA Coast,Coastal,2023,140.0,3.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+410,"Quinault R, Lower (below L. Quinault, not Cook Cr.)",Quinault R. System,WA Coast,Coastal,2024,16.0,1.0,2024-25,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+410,"Quinault R, Lower (below L. Quinault, not Cook Cr.)",Quinault R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+412,"Quinault R, Upper (above L. Quinault)",Quinault R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+412,"Quinault R, Upper (above L. Quinault)",Quinault R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+412,"Quinault R, Upper (above L. Quinault)",Quinault R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+412,"Quinault R, Upper (above L. Quinault)",Quinault R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+414,Raft River,Raft R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+414,Raft River,Raft R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+414,Raft River,Raft R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+414,Raft River,Raft R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+418,Sooes River (Clallam Co.),Suez R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+418,Sooes River (Clallam Co.),Suez R. System,WA Coast,Coastal,2023,20.0,1.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+418,Sooes River (Clallam Co.),Suez R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+418,Sooes River (Clallam Co.),Suez R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+419,Van Winkle Creek,Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+419,Van Winkle Creek,Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+419,Van Winkle Creek,Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+419,Van Winkle Creek,Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+420,Waatch River,Waatch River,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+420,Waatch River,Waatch River,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+420,Waatch River,Waatch River,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+420,Waatch River,Waatch River,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+422,"Willapa R, So. Fork",Willapa R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+422,"Willapa R, So. Fork",Willapa R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+422,"Willapa R, So. Fork",Willapa R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+422,"Willapa R, So. Fork",Willapa R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+424,Willapa River,Willapa R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+424,Willapa River,Willapa R. System,WA Coast,Coastal,2023,3069.0,5.0,2023-24,Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+424,Willapa River,Willapa R. System,WA Coast,Coastal,2024,2941.0,5.0,"2023-24,2024-25",Not yet assessed,,,,standalone,,"CRC harvest, no creel"
+424,Willapa River,Willapa R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+706,Black River (Thurston Co.),Chehalis R. System,WA Coast,Coastal,2022,,,,Not yet assessed,,,,standalone,,No harvest file for this year
+706,Black River (Thurston Co.),Chehalis R. System,WA Coast,Coastal,2023,,,,Not yet assessed,,,,standalone,,Neither
+706,Black River (Thurston Co.),Chehalis R. System,WA Coast,Coastal,2024,,,,Not yet assessed,,,,standalone,,Neither
+706,Black River (Thurston Co.),Chehalis R. System,WA Coast,Coastal,2025,,,,Not yet assessed,,,,standalone,,No harvest file for this year

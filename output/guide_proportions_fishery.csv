@@ -1,0 +1,213 @@
+fishery_name,guided_status,n,total,prop
+Baker summer sockeye 2022,Guided,9,566,0.015901060070671377
+Baker summer sockeye 2022,Unguided,557,566,0.9840989399293286
+Baker summer sockeye 2023,Guided,9,485,0.018556701030927835
+Baker summer sockeye 2023,Unguided,476,485,0.9814432989690721
+Cascade fall salmon 2021,Unguided,106,106,1
+Cascade fall salmon 2022,Unguided,182,182,1
+Cascade fall salmon 2023,Guided,1,273,0.003663003663003663
+Cascade fall salmon 2023,Unguided,272,273,0.99633699633699635
+Cascade fall salmon 2024,Unguided,200,200,1
+Cascade spring Chinook 2022,Unguided,411,411,1
+Cascade spring Chinook 2023,Unguided,158,158,1
+Cascade spring Chinook 2024,Unguided,154,154,1
+Cascade winter gamefish 2021-22,Unguided,15,15,1
+Cascade winter gamefish 2023,Unguided,7,7,1
+Chehalis salmon 2022,Guided,90,883,0.10192525481313704
+Chehalis salmon 2022,Unguided,793,883,0.8980747451868629
+Chehalis salmon 2024,Guided,54,1341,0.040268456375838924
+Chehalis salmon 2024,Unguided,1287,1341,0.959731543624161
+Chehalis salmon 2025,Guided,78,1355,0.057564575645756455
+Chehalis salmon 2025,Unguided,1277,1355,0.9424354243542435
+Chehalis winter steelhead 2024-25,Guided,14,377,0.03713527851458886
+Chehalis winter steelhead 2024-25,Unguided,363,377,0.9628647214854111
+Chehalis winter steelhead 2025-26,Guided,3,57,0.05263157894736842
+Chehalis winter steelhead 2025-26,Unguided,54,57,0.9473684210526315
+Drano Lake salmon and steelhead 2023,Guided,118,979,0.1205311542390194
+Drano Lake salmon and steelhead 2023,Unguided,861,979,0.8794688457609806
+Drano Lake salmon and steelhead 2024,Guided,120,1010,0.1188118811881188
+Drano Lake salmon and steelhead 2024,Unguided,890,1010,0.8811881188118812
+Drano Lake salmon and steelhead 2025,Guided,122,966,0.12629399585921325
+Drano Lake salmon and steelhead 2025,Unguided,844,966,0.8737060041407867
+Drano Lake salmon and steelhead 2026,Unguided,70,70,1
+Drano Lake spring Chinook 2026,Guided,145,833,0.17406962785114047
+Drano Lake spring Chinook 2026,Unguided,688,833,0.8259303721488596
+Hoh fall salmon 2023,Guided,12,62,0.1935483870967742
+Hoh fall salmon 2023,Unguided,50,62,0.8064516129032258
+Hoh fall salmon 2025,Guided,50,214,0.2336448598130841
+Hoh fall salmon 2025,Unguided,164,214,0.7663551401869159
+Hoh winter steelhead 2022-23,Guided,181,666,0.27177177177177175
+Hoh winter steelhead 2022-23,Unguided,485,666,0.7282282282282282
+Hoh winter steelhead 2023-24,Guided,220,756,0.291005291005291
+Hoh winter steelhead 2023-24,Unguided,536,756,0.708994708994709
+Hoh winter steelhead 2024-25,Guided,188,553,0.3399638336347197
+Hoh winter steelhead 2024-25,Unguided,365,553,0.6600361663652803
+Hoh winter steelhead 2025-26,Guided,249,771,0.3229571984435798
+Hoh winter steelhead 2025-26,Unguided,522,771,0.6770428015564203
+Humptulips salmon 2020,Guided,153,845,0.18106508875739644
+Humptulips salmon 2020,Unguided,692,845,0.8189349112426035
+Humptulips salmon 2021,Guided,95,723,0.1313969571230982
+Humptulips salmon 2021,Unguided,628,723,0.8686030428769018
+Humptulips salmon 2022,Guided,51,669,0.07623318385650224
+Humptulips salmon 2022,Unguided,618,669,0.9237668161434978
+Humptulips salmon 2023,Guided,73,868,0.08410138248847926
+Humptulips salmon 2023,Unguided,795,868,0.9158986175115207
+Humptulips salmon 2024,Guided,67,901,0.07436182019977802
+Humptulips salmon 2024,Unguided,834,901,0.925638179800222
+Humptulips salmon 2025,Guided,42,910,0.046153846153846156
+Humptulips salmon 2025,Unguided,868,910,0.9538461538461539
+Humptulips winter steelhead 2024-25,Guided,14,365,0.038356164383561646
+Humptulips winter steelhead 2024-25,Unguided,351,365,0.9616438356164384
+Humptulips winter steelhead 2025-26,Guided,17,535,0.03177570093457944
+Humptulips winter steelhead 2025-26,Unguided,518,535,0.9682242990654205
+Lower Chehalis salmon 2023,Guided,9,743,0.012113055181695828
+Lower Chehalis salmon 2023,Unguided,734,743,0.9878869448183042
+Lower Cowlitz salmon and steelhead 2022-23,Guided,119,309,0.3851132686084142
+Lower Cowlitz salmon and steelhead 2022-23,Unguided,190,309,0.6148867313915858
+Lower Cowlitz salmon and steelhead 2023-24,Guided,263,1816,0.1448237885462555
+Lower Cowlitz salmon and steelhead 2023-24,Unguided,1553,1816,0.8551762114537445
+Naselle winter steelhead 2022,Guided,2,166,0.012048192771084338
+Naselle winter steelhead 2022,Unguided,164,166,0.9879518072289156
+Naselle winter steelhead 2022-23,Unguided,201,201,1
+Naselle winter steelhead 2023-24,Guided,5,311,0.01607717041800643
+Naselle winter steelhead 2023-24,Unguided,306,311,0.9839228295819936
+Nooksack fall salmon 2023,Unguided,27,27,1
+Nooksack fall salmon 2024,Unguided,58,58,1
+Nooksack spring Chinook 2022,Unguided,162,162,1
+Nooksack spring Chinook 2026,Guided,2,236,0.00847457627118644
+Nooksack spring Chinook 2026,Unguided,234,236,0.9915254237288136
+Nooksack winter gamefish 2021-22,Unguided,254,254,1
+Nooksack winter gamefish 2022-23,Guided,3,293,0.010238907849829351
+Nooksack winter gamefish 2022-23,Unguided,290,293,0.9897610921501706
+Post Quillayute winter steelhead 2023-24,Guided,163,339,0.4808259587020649
+Post Quillayute winter steelhead 2023-24,Unguided,176,339,0.5191740412979351
+Pre Quillayute winter steelhead 2023-24,Guided,55,125,0.44
+Pre Quillayute winter steelhead 2023-24,Unguided,70,125,0.56
+Puyallup Carbon salmon 2024,Unguided,1,1,1
+Queets winter steelhead 2024-25,Guided,7,59,0.11864406779661017
+Queets winter steelhead 2024-25,Unguided,52,59,0.8813559322033898
+Queets winter steelhead 2025-26,Guided,5,40,0.125
+Queets winter steelhead 2025-26,Unguided,35,40,0.875
+Quillayute fall salmon 2022,Guided,51,379,0.1345646437994723
+Quillayute fall salmon 2022,Unguided,328,379,0.8654353562005277
+Quillayute fall salmon 2023,Guided,31,317,0.09779179810725552
+Quillayute fall salmon 2023,Unguided,286,317,0.9022082018927445
+Quillayute fall salmon 2024,Guided,102,662,0.1540785498489426
+Quillayute fall salmon 2024,Unguided,560,662,0.8459214501510574
+Quillayute fall salmon 2025,Guided,68,606,0.11221122112211221
+Quillayute fall salmon 2025,Unguided,538,606,0.8877887788778878
+Quillayute spring chinook 2025,Guided,51,140,0.36428571428571427
+Quillayute spring chinook 2025,Unguided,89,140,0.6357142857142857
+Quillayute spring chinook 2026,Guided,29,133,0.21804511278195488
+Quillayute spring chinook 2026,Unguided,104,133,0.7819548872180451
+Quillayute winter steelhead 2022-23,Guided,112,248,0.45161290322580644
+Quillayute winter steelhead 2022-23,Unguided,136,248,0.5483870967741935
+Quillayute winter steelhead 2024-25,Guided,266,751,0.35419440745672437
+Quillayute winter steelhead 2024-25,Unguided,485,751,0.6458055925432756
+Quillayute winter steelhead 2025-26,Guided,286,1074,0.26629422718808193
+Quillayute winter steelhead 2025-26,Unguided,788,1074,0.7337057728119181
+Quinault winter steelhead 2024-25,Guided,10,46,0.21739130434782608
+Quinault winter steelhead 2024-25,Unguided,36,46,0.782608695652174
+Quinault winter steelhead 2025-26,Unguided,20,20,1
+Satsop salmon 2022,Guided,5,327,0.01529051987767584
+Satsop salmon 2022,Unguided,322,327,0.9847094801223242
+Satsop salmon 2023,Guided,8,367,0.021798365122615803
+Satsop salmon 2023,Unguided,359,367,0.9782016348773842
+Satsop salmon 2024,Guided,9,475,0.018947368421052633
+Satsop salmon 2024,Unguided,466,475,0.9810526315789474
+Satsop salmon 2025,Guided,19,330,0.05757575757575758
+Satsop salmon 2025,Unguided,311,330,0.9424242424242424
+Satsop winter steelhead 2024-25,Guided,11,342,0.03216374269005848
+Satsop winter steelhead 2024-25,Unguided,331,342,0.9678362573099415
+Satsop winter steelhead 2025-26,Guided,11,161,0.06832298136645963
+Satsop winter steelhead 2025-26,Unguided,150,161,0.9316770186335404
+Skagit fall salmon 2021,Guided,11,891,0.012345679012345678
+Skagit fall salmon 2021,Unguided,880,891,0.9876543209876543
+Skagit fall salmon 2022,Guided,51,1673,0.030484160191273164
+Skagit fall salmon 2022,Unguided,1622,1673,0.9695158398087268
+Skagit fall salmon 2023,Guided,48,2677,0.017930519237952934
+Skagit fall salmon 2023,Unguided,2629,2677,0.982069480762047
+Skagit fall salmon 2024,Guided,33,1779,0.01854974704890388
+Skagit fall salmon 2024,Unguided,1746,1779,0.9814502529510961
+Skagit fall salmon 2025,Guided,71,2633,0.026965438663121913
+Skagit fall salmon 2025,Unguided,2562,2633,0.973034561336878
+Skagit spring Chinook 2021 lower,Unguided,121,121,1
+Skagit spring Chinook 2022 lower,Unguided,336,336,1
+Skagit spring Chinook 2022 upper,Guided,10,111,0.09009009009009009
+Skagit spring Chinook 2022 upper,Unguided,101,111,0.9099099099099099
+Skagit spring Chinook 2023 lower,Unguided,180,180,1
+Skagit spring Chinook 2023 upper,Guided,10,127,0.07874015748031496
+Skagit spring Chinook 2023 upper,Unguided,117,127,0.9212598425196851
+Skagit spring Chinook 2024 lower,Unguided,330,330,1
+Skagit spring Chinook 2024 upper,Guided,8,365,0.021917808219178082
+Skagit spring Chinook 2024 upper,Unguided,357,365,0.9780821917808219
+Skagit spring Chinook 2025 lower,Guided,1,163,0.006134969325153374
+Skagit spring Chinook 2025 lower,Unguided,162,163,0.9938650306748467
+Skagit spring Chinook 2025 upper,Guided,11,413,0.026634382566585957
+Skagit spring Chinook 2025 upper,Unguided,402,413,0.9733656174334141
+Skagit spring Chinook 2026 lower,Guided,1,242,0.004132231404958678
+Skagit spring Chinook 2026 lower,Unguided,241,242,0.9958677685950413
+Skagit spring Chinook 2026 upper,Guided,15,289,0.05190311418685121
+Skagit spring Chinook 2026 upper,Unguided,274,289,0.9480968858131488
+Skagit spring gamefish 2025,Unguided,2,2,1
+Skagit summer gamefish 2022,Guided,2,81,0.024691358024691357
+Skagit summer gamefish 2022,Unguided,79,81,0.9753086419753086
+Skagit summer gamefish 2024,Unguided,41,41,1
+Skagit summer sockeye 2022,Unguided,521,521,1
+Skagit summer sockeye 2023,Guided,5,216,0.023148148148148147
+Skagit summer sockeye 2023,Unguided,211,216,0.9768518518518519
+Skagit summer sockeye 2024,Guided,5,709,0.007052186177715092
+Skagit summer sockeye 2024,Unguided,704,709,0.9929478138222849
+Skagit summer sockeye 2025,Guided,2,607,0.0032948929159802307
+Skagit summer sockeye 2025,Unguided,605,607,0.9967051070840197
+Skagit summer sockeye 2026,Guided,8,483,0.016563146997929608
+Skagit summer sockeye 2026,Unguided,475,483,0.9834368530020704
+Skagit winter gamefish 2021-22,Guided,5,141,0.03546099290780142
+Skagit winter gamefish 2021-22,Unguided,136,141,0.9645390070921985
+Skagit winter gamefish 2022-23,Guided,4,248,0.016129032258064516
+Skagit winter gamefish 2022-23,Unguided,244,248,0.9838709677419355
+Skagit winter gamefish 2024,Guided,1,70,0.014285714285714285
+Skagit winter gamefish 2024,Unguided,69,70,0.9857142857142858
+Skagit winter gamefish 2025,Guided,1,94,0.010638297872340425
+Skagit winter gamefish 2025,Unguided,93,94,0.9893617021276596
+Skagit winter steelhead 2021,Guided,133,1860,0.07150537634408602
+Skagit winter steelhead 2021,Unguided,1727,1860,0.928494623655914
+Skagit winter steelhead 2023,Guided,32,726,0.0440771349862259
+Skagit winter steelhead 2023,Unguided,694,726,0.9559228650137741
+Skagit winter steelhead 2024,Guided,95,1223,0.0776778413736713
+Skagit winter steelhead 2024,Unguided,1128,1223,0.9223221586263287
+Skagit winter steelhead 2025,Guided,106,1165,0.09098712446351931
+Skagit winter steelhead 2025,Unguided,1059,1165,0.9090128755364807
+Skookumchuck winter steelhead 2024-25,Unguided,476,476,1
+Skookumchuck winter steelhead 2025-26,Unguided,241,241,1
+Skykomish summer Chinook 2020,Guided,35,61,0.5737704918032787
+Skykomish summer Chinook 2020,Unguided,26,61,0.4262295081967213
+Skykomish summer Chinook 2021,Guided,47,148,0.31756756756756754
+Skykomish summer Chinook 2021,Unguided,101,148,0.6824324324324325
+Skykomish summer Chinook and gamefish 2022,Guided,66,724,0.09116022099447514
+Skykomish summer Chinook and gamefish 2022,Unguided,658,724,0.9088397790055248
+Skykomish summer Chinook and gamefish 2025,Guided,12,250,0.048
+Skykomish summer Chinook and gamefish 2025,Unguided,238,250,0.952
+Skykomish winter gamefish 2021-22,Unguided,248,248,1
+Skykomish winter gamefish 2022-23,Unguided,1,1,1
+Snohomish fall salmon 2021,Guided,5,618,0.008090614886731391
+Snohomish fall salmon 2021,Unguided,613,618,0.9919093851132686
+Snohomish fall salmon 2023,Guided,13,13,1
+Snohomish fall salmon 2024,Guided,5,5,1
+Snohomish fall salmon 2025,Guided,12,1272,0.009433962264150943
+Snohomish fall salmon 2025,Unguided,1260,1272,0.9905660377358491
+South Fork Willapa winter steelhead 2022-23,Unguided,12,12,1
+South Fork Willapa winter steelhead 2023-24,Unguided,17,17,1
+Stillaguamish salmon and gamefish 2024-25,Guided,1,1,1
+Stillaguamish salmon and gamefish 2025-26,Unguided,645,645,1
+Upper Chehalis salmon 2023,Guided,33,242,0.13636363636363635
+Upper Chehalis salmon 2023,Unguided,209,242,0.8636363636363636
+Willapa winter steelhead 2022,Guided,5,285,0.017543859649122806
+Willapa winter steelhead 2022,Unguided,280,285,0.9824561403508771
+Willapa winter steelhead 2022-23,Unguided,289,289,1
+Willapa winter steelhead 2023-24,Guided,1,534,0.0018726591760299626
+Willapa winter steelhead 2023-24,Unguided,533,534,0.99812734082397
+Wynoochee winter steelhead 2024-25,Guided,54,545,0.09908256880733946
+Wynoochee winter steelhead 2024-25,Unguided,491,545,0.9009174311926605
+Wynoochee winter steelhead 2025-26,Guided,57,427,0.13348946135831383
+Wynoochee winter steelhead 2025-26,Unguided,370,427,0.8665105386416861

@@ -1,0 +1,131 @@
+block,river_label,year,tier,source_id,method,location_basis,mode_basis,n_rows
+ColumbiaTrib,Drano Lake,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,7
+ColumbiaTrib,Drano Lake,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; zero_effort,design_stratum,no_proportion_available,1
+ColumbiaTrib,Drano Lake,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,1
+ColumbiaTrib,Drano Lake,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,11
+ColumbiaTrib,Drano Lake,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=fishery_season; estimated_donor,design_stratum,no_proportion_available,1
+ColumbiaTrib,Drano Lake,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=fishery_season; zero_effort,design_stratum,no_proportion_available,3
+ColumbiaTrib,Drano Lake,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+ColumbiaTrib,Drano Lake,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+ColumbiaTrib,Hanford Reach,2022,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,4
+ColumbiaTrib,Hanford Reach,2022,P2,p2_block_ratio,"P2 block ratio 2.659 creel-trips per CRC-salmon (block_year, 2 donor area(s) [618|690]) x CRC harvest 10862. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2022,P2,p2_block_ratio,"P2 block ratio 2.659 creel-trips per CRC-salmon (block_year, 2 donor area(s) [618|690]) x CRC harvest 2447. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2022,P2,p2_block_ratio,"P2 block ratio 2.659 creel-trips per CRC-salmon (block_year, 2 donor area(s) [618|690]) x CRC harvest 9417. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2023,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,5
+ColumbiaTrib,Hanford Reach,2023,P2,p2_block_ratio,"P2 block ratio 1.501 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 5931. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2023,P2,p2_block_ratio,"P2 block ratio 1.501 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 9079. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2023,P2,p2_block_ratio,"P2 block ratio 1.501 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 921. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2024,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,5
+ColumbiaTrib,Hanford Reach,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 12676. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 630. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 7073. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Hanford Reach,2025,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,4
+ColumbiaTrib,Lower Cowlitz,2022,P2,p2_block_ratio,"P2 block ratio 2.659 creel-trips per CRC-salmon (block_year, 2 donor area(s) [618|690]) x CRC harvest 6869. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Lower Cowlitz,2023,P2,p2_block_ratio,"P2 block ratio 1.501 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 6615. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Lower Cowlitz,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 13. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Lower Cowlitz,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 3815. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,McNary Reservoir,2022,P2,p2_block_ratio,"P2 block ratio 2.659 creel-trips per CRC-salmon (block_year, 2 donor area(s) [618|690]) x CRC harvest 385. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,McNary Reservoir,2023,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,4
+ColumbiaTrib,McNary Reservoir,2024,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,4
+ColumbiaTrib,McNary Reservoir,2025,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,3
+ColumbiaTrib,Yakima,2022,P1,R3_external,"R3-reported weekly creel summary, expanded (spreadsheet calculation, not independently vetted by WDFW HQ)",design_stratum,not_collected,2
+ColumbiaTrib,Yakima,2023,P2,p2_block_ratio,"P2 block ratio 1.501 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 412. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+ColumbiaTrib,Yakima,2024,P2,p2_block_ratio,"P2 block ratio 1.556 creel-trips per CRC-salmon (block_year, 2 donor area(s) [533|618]) x CRC harvest 721. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+PugetSound,Cascade,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,3
+PugetSound,Cascade,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,3
+PugetSound,Cascade,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,3
+PugetSound,Nisqually,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,no_proportion_available,1
+PugetSound,Nisqually,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,9
+PugetSound,Nisqually,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,no_proportion_available,1
+PugetSound,Nisqually,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,9
+PugetSound,Nisqually,2024,P2,p2_block_ratio,"P2 block ratio 3.372 creel-trips per CRC-salmon (block_year, 10 donor area(s) [794|802|804|826|830|844|850|852|860|872]) x CRC harvest 3230. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+PugetSound,Nooksack,2022,P2,p2_block_ratio,"P2 block ratio 5.344 creel-trips per CRC-salmon (block_year, 9 donor area(s) [786|802|804|826|830|850|852|860|872]) x CRC harvest 2507. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+PugetSound,Nooksack,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,2
+PugetSound,Nooksack,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,1
+PugetSound,Nooksack,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,1
+PugetSound,Puyallup Carbon,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Puyallup Carbon,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,5
+PugetSound,Puyallup Carbon,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,5
+PugetSound,Puyallup/Carbon,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Puyallup/Carbon,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,3
+PugetSound,Puyallup/Carbon,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Puyallup/Carbon,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,5
+PugetSound,Skagit,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,9
+PugetSound,Skagit,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+PugetSound,Skagit,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,6
+PugetSound,Skagit,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,15
+PugetSound,Skagit,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,fishery_year_interviews,6
+PugetSound,Snohomish,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,8
+PugetSound,Snohomish,2022,P2,p2_block_ratio,"P2 block ratio 5.344 creel-trips per CRC-salmon (block_year, 9 donor area(s) [786|802|804|826|830|850|852|860|872]) x CRC harvest 891. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+PugetSound,Snohomish,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,8
+PugetSound,Snohomish,2023,P2,p2_block_ratio,"P2 block ratio 2.101 creel-trips per CRC-salmon (block_year, 10 donor area(s) [786|794|802|804|826|830|844|850|860|872]) x CRC harvest 144. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+PugetSound,Snohomish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,10
+PugetSound,Snohomish,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,1
+PugetSound,Snohomish,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,11
+PugetSound,Stillaguamish,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,6
+PugetSound,Stillaguamish,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,8
+PugetSound,Stillaguamish,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,no_proportion_available,3
+PugetSound,Stillaguamish,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,3
+PugetSound,Stillaguamish,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,11
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; estimated_donor,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,no_proportion_available,1
+PugetSound,Stillaguamish,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,4
+PugetSound,Stillaguamish,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,4
+PugetSound,Wallace,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,3
+PugetSound,Wallace,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,4
+PugetSound,Wallace,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,2
+WACoast,Chehalis,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+WACoast,Chehalis,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,3
+WACoast,Chehalis,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,3
+WACoast,Chehalis,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,18
+WACoast,Chehalis,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,21
+WACoast,Chehalis + Upper Chehalis,2022,P2,p2_block_ratio,"P2 block ratio 3.02 creel-trips per CRC-salmon (block_year, 7 donor area(s) [329|358|398|400|402|404|406]) x CRC harvest 11439. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+WACoast,Hoh,2022,P2,p2_block_ratio,"P2 block ratio 3.02 creel-trips per CRC-salmon (block_year, 7 donor area(s) [329|358|398|400|402|404|406]) x CRC harvest 440. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+WACoast,Hoh,2022,P2,p2_block_ratio,"P2 block ratio 3.02 creel-trips per CRC-salmon (block_year, 7 donor area(s) [329|358|398|400|402|404|406]) x CRC harvest 90. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,1
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,2
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,1
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,2
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; estimated_donor,design_stratum,fishery_year_interviews,1
+WACoast,Hoh,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,fishery_year_interviews,1
+WACoast,Hoh,2024,P2,p2_block_ratio,"P2 block ratio 1.444 creel-trips per CRC-salmon (block_year, 7 donor area(s) [315|329|358|398|402|404|406]) x CRC harvest 107. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+WACoast,Hoh,2024,P2,p2_block_ratio,"P2 block ratio 1.444 creel-trips per CRC-salmon (block_year, 7 donor area(s) [315|329|358|398|402|404|406]) x CRC harvest 294. CRC-denominated: the CRC reporting bias is inside the ratio, not applied on top of it.",crc_no_split,not_collected,1
+WACoast,Hoh,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,4
+WACoast,Hoh,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,17
+WACoast,Humptulips,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+WACoast,Humptulips,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,9
+WACoast,Humptulips,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+WACoast,Humptulips,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,12
+WACoast,Lower Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,2
+WACoast,Lower Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,6
+WACoast,Quillayute,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,9
+WACoast,Quillayute,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,16
+WACoast,Quillayute,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,31
+WACoast,Quillayute,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; estimated_donor,design_stratum,fishery_year_interviews,3
+WACoast,Quillayute,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,fishery_year_interviews,1
+WACoast,Quillayute,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,2
+WACoast,Quillayute,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,16
+WACoast,Quillayute,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,22
+WACoast,Quillayute,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; estimated_donor,design_stratum,fishery_year_interviews,8
+WACoast,Quillayute,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; zero_effort,design_stratum,fishery_year_interviews,12
+WACoast,Quillayute,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,6
+WACoast,Quillayute,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,33
+WACoast,Quillayute,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=type_season; estimated_donor,design_stratum,fishery_year_interviews,6
+WACoast,Quillayute,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,fishery_year_interviews,13
+WACoast,Quillayute,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,10
+WACoast,Quillayute,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,37
+WACoast,Satsop,2022,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,6
+WACoast,Satsop,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,2
+WACoast,Satsop,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,4
+WACoast,Satsop,2024,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,6
+WACoast,Satsop,2025,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,6
+WACoast,Upper Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; estimated_donor,design_stratum,no_proportion_available,1
+WACoast,Upper Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,fishery_year_interviews,4
+WACoast,Upper Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=area_season; zero_effort,design_stratum,no_proportion_available,2
+WACoast,Upper Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,fishery_year_interviews,8
+WACoast,Upper Chehalis,2023,P1,creel_pe,design-based PE (pe_period=month); trip_length_source=month; estimated,design_stratum,no_proportion_available,3

@@ -1,0 +1,594 @@
+fishery_name,month,guided_status,n,total,prop
+Baker summer sockeye 2022,2022-07-01,Guided,5,345,0.014492753623188406
+Baker summer sockeye 2022,2022-07-01,Unguided,340,345,0.9855072463768116
+Baker summer sockeye 2022,2022-08-01,Guided,4,221,0.01809954751131222
+Baker summer sockeye 2022,2022-08-01,Unguided,217,221,0.9819004524886877
+Baker summer sockeye 2023,2023-07-01,Guided,3,337,0.008902077151335312
+Baker summer sockeye 2023,2023-07-01,Unguided,334,337,0.9910979228486647
+Baker summer sockeye 2023,2023-08-01,Guided,6,148,0.04054054054054054
+Baker summer sockeye 2023,2023-08-01,Unguided,142,148,0.9594594594594594
+Cascade fall salmon 2021,2021-09-01,Unguided,13,13,1
+Cascade fall salmon 2021,2021-10-01,Unguided,59,59,1
+Cascade fall salmon 2021,2021-11-01,Unguided,34,34,1
+Cascade fall salmon 2022,2022-09-01,Unguided,19,19,1
+Cascade fall salmon 2022,2022-10-01,Unguided,121,121,1
+Cascade fall salmon 2022,2022-11-01,Unguided,42,42,1
+Cascade fall salmon 2023,2023-09-01,Unguided,42,42,1
+Cascade fall salmon 2023,2023-10-01,Guided,1,158,0.006329113924050633
+Cascade fall salmon 2023,2023-10-01,Unguided,157,158,0.9936708860759493
+Cascade fall salmon 2023,2023-11-01,Unguided,73,73,1
+Cascade fall salmon 2024,2024-09-01,Unguided,30,30,1
+Cascade fall salmon 2024,2024-10-01,Unguided,135,135,1
+Cascade fall salmon 2024,2024-11-01,Unguided,35,35,1
+Cascade spring Chinook 2022,2022-06-01,Unguided,305,305,1
+Cascade spring Chinook 2022,2022-07-01,Unguided,106,106,1
+Cascade spring Chinook 2023,2023-06-01,Unguided,120,120,1
+Cascade spring Chinook 2023,2023-07-01,Unguided,38,38,1
+Cascade spring Chinook 2024,2024-05-01,Unguided,12,12,1
+Cascade spring Chinook 2024,2024-06-01,Unguided,134,134,1
+Cascade spring Chinook 2024,2024-07-01,Unguided,8,8,1
+Cascade winter gamefish 2021-22,2021-12-01,Unguided,10,10,1
+Cascade winter gamefish 2021-22,2022-01-01,Unguided,5,5,1
+Cascade winter gamefish 2023,2023-01-01,Unguided,7,7,1
+Chehalis salmon 2022,2022-09-01,Guided,12,268,0.04477611940298507
+Chehalis salmon 2022,2022-09-01,Unguided,256,268,0.9552238805970149
+Chehalis salmon 2022,2022-10-01,Guided,68,531,0.128060263653484
+Chehalis salmon 2022,2022-10-01,Unguided,463,531,0.871939736346516
+Chehalis salmon 2022,2022-11-01,Guided,10,72,0.1388888888888889
+Chehalis salmon 2022,2022-11-01,Unguided,62,72,0.8611111111111112
+Chehalis salmon 2022,2022-12-01,Unguided,12,12,1
+Chehalis salmon 2024,2024-09-01,Guided,8,419,0.01909307875894988
+Chehalis salmon 2024,2024-09-01,Unguided,411,419,0.9809069212410502
+Chehalis salmon 2024,2024-10-01,Guided,32,570,0.056140350877192984
+Chehalis salmon 2024,2024-10-01,Unguided,538,570,0.9438596491228071
+Chehalis salmon 2024,2024-11-01,Guided,12,299,0.04013377926421405
+Chehalis salmon 2024,2024-11-01,Unguided,287,299,0.959866220735786
+Chehalis salmon 2024,2024-12-01,Guided,2,53,0.03773584905660377
+Chehalis salmon 2024,2024-12-01,Unguided,51,53,0.9622641509433962
+Chehalis salmon 2025,2025-09-01,Guided,8,443,0.01805869074492099
+Chehalis salmon 2025,2025-09-01,Unguided,435,443,0.981941309255079
+Chehalis salmon 2025,2025-10-01,Guided,49,600,0.08166666666666667
+Chehalis salmon 2025,2025-10-01,Unguided,551,600,0.9183333333333333
+Chehalis salmon 2025,2025-11-01,Guided,20,294,0.06802721088435375
+Chehalis salmon 2025,2025-11-01,Unguided,274,294,0.9319727891156463
+Chehalis salmon 2025,2025-12-01,Guided,1,18,0.05555555555555555
+Chehalis salmon 2025,2025-12-01,Unguided,17,18,0.9444444444444444
+Chehalis winter steelhead 2024-25,2024-11-01,Guided,12,277,0.04332129963898917
+Chehalis winter steelhead 2024-25,2024-11-01,Unguided,265,277,0.9566787003610109
+Chehalis winter steelhead 2024-25,2024-12-01,Guided,2,53,0.03773584905660377
+Chehalis winter steelhead 2024-25,2024-12-01,Unguided,51,53,0.9622641509433962
+Chehalis winter steelhead 2024-25,2025-01-01,Unguided,26,26,1
+Chehalis winter steelhead 2024-25,2025-02-01,Unguided,21,21,1
+Chehalis winter steelhead 2025-26,2025-12-01,Guided,1,18,0.05555555555555555
+Chehalis winter steelhead 2025-26,2025-12-01,Unguided,17,18,0.9444444444444444
+Chehalis winter steelhead 2025-26,2026-01-01,Guided,2,28,0.07142857142857142
+Chehalis winter steelhead 2025-26,2026-01-01,Unguided,26,28,0.9285714285714286
+Chehalis winter steelhead 2025-26,2026-02-01,Unguided,11,11,1
+Drano Lake salmon and steelhead 2023,2023-07-01,Guided,2,23,0.08695652173913043
+Drano Lake salmon and steelhead 2023,2023-07-01,Unguided,21,23,0.9130434782608695
+Drano Lake salmon and steelhead 2023,2023-08-01,Guided,27,375,0.072
+Drano Lake salmon and steelhead 2023,2023-08-01,Unguided,348,375,0.928
+Drano Lake salmon and steelhead 2023,2023-09-01,Guided,56,380,0.14736842105263157
+Drano Lake salmon and steelhead 2023,2023-09-01,Unguided,324,380,0.8526315789473684
+Drano Lake salmon and steelhead 2023,2023-10-01,Guided,33,201,0.16417910447761194
+Drano Lake salmon and steelhead 2023,2023-10-01,Unguided,168,201,0.835820895522388
+Drano Lake salmon and steelhead 2024,2024-07-01,Guided,4,49,0.08163265306122448
+Drano Lake salmon and steelhead 2024,2024-07-01,Unguided,45,49,0.9183673469387755
+Drano Lake salmon and steelhead 2024,2024-08-01,Guided,10,227,0.04405286343612335
+Drano Lake salmon and steelhead 2024,2024-08-01,Unguided,217,227,0.9559471365638766
+Drano Lake salmon and steelhead 2024,2024-09-01,Guided,85,491,0.17311608961303462
+Drano Lake salmon and steelhead 2024,2024-09-01,Unguided,406,491,0.8268839103869654
+Drano Lake salmon and steelhead 2024,2024-10-01,Guided,21,243,0.08641975308641975
+Drano Lake salmon and steelhead 2024,2024-10-01,Unguided,222,243,0.9135802469135802
+Drano Lake salmon and steelhead 2025,2025-07-01,Guided,3,54,0.05555555555555555
+Drano Lake salmon and steelhead 2025,2025-07-01,Unguided,51,54,0.9444444444444444
+Drano Lake salmon and steelhead 2025,2025-08-01,Guided,17,283,0.06007067137809187
+Drano Lake salmon and steelhead 2025,2025-08-01,Unguided,266,283,0.9399293286219081
+Drano Lake salmon and steelhead 2025,2025-09-01,Guided,74,405,0.18271604938271604
+Drano Lake salmon and steelhead 2025,2025-09-01,Unguided,331,405,0.817283950617284
+Drano Lake salmon and steelhead 2025,2025-10-01,Guided,28,224,0.125
+Drano Lake salmon and steelhead 2025,2025-10-01,Unguided,196,224,0.875
+Drano Lake salmon and steelhead 2026,2026-07-01,Unguided,20,20,1
+Drano Lake salmon and steelhead 2026,2026-08-01,Unguided,50,50,1
+Drano Lake spring Chinook 2026,2026-04-01,Guided,44,316,0.13924050632911392
+Drano Lake spring Chinook 2026,2026-04-01,Unguided,272,316,0.8607594936708861
+Drano Lake spring Chinook 2026,2026-05-01,Guided,100,474,0.2109704641350211
+Drano Lake spring Chinook 2026,2026-05-01,Unguided,374,474,0.7890295358649789
+Drano Lake spring Chinook 2026,2026-06-01,Guided,1,23,0.043478260869565216
+Drano Lake spring Chinook 2026,2026-06-01,Unguided,22,23,0.9565217391304348
+Drano Lake spring Chinook 2026,2026-07-01,Unguided,20,20,1
+Hoh fall salmon 2023,2023-09-01,Guided,12,62,0.1935483870967742
+Hoh fall salmon 2023,2023-09-01,Unguided,50,62,0.8064516129032258
+Hoh fall salmon 2025,2025-09-01,Guided,12,63,0.19047619047619047
+Hoh fall salmon 2025,2025-09-01,Unguided,51,63,0.8095238095238095
+Hoh fall salmon 2025,2025-10-01,Guided,30,109,0.27522935779816515
+Hoh fall salmon 2025,2025-10-01,Unguided,79,109,0.7247706422018348
+Hoh fall salmon 2025,2025-11-01,Guided,8,41,0.1951219512195122
+Hoh fall salmon 2025,2025-11-01,Unguided,33,41,0.8048780487804879
+Hoh fall salmon 2025,2025-12-01,Unguided,1,1,1
+Hoh winter steelhead 2022-23,2022-12-01,Unguided,18,18,1
+Hoh winter steelhead 2022-23,2023-01-01,Guided,16,109,0.14678899082568808
+Hoh winter steelhead 2022-23,2023-01-01,Unguided,93,109,0.8532110091743119
+Hoh winter steelhead 2022-23,2023-02-01,Guided,68,228,0.2982456140350877
+Hoh winter steelhead 2022-23,2023-02-01,Unguided,160,228,0.7017543859649122
+Hoh winter steelhead 2022-23,2023-03-01,Guided,97,311,0.31189710610932475
+Hoh winter steelhead 2022-23,2023-03-01,Unguided,214,311,0.6881028938906752
+Hoh winter steelhead 2023-24,2023-12-01,Guided,1,46,0.021739130434782608
+Hoh winter steelhead 2023-24,2023-12-01,Unguided,45,46,0.9782608695652174
+Hoh winter steelhead 2023-24,2024-01-01,Guided,18,91,0.1978021978021978
+Hoh winter steelhead 2023-24,2024-01-01,Unguided,73,91,0.8021978021978022
+Hoh winter steelhead 2023-24,2024-02-01,Guided,91,298,0.3053691275167785
+Hoh winter steelhead 2023-24,2024-02-01,Unguided,207,298,0.6946308724832215
+Hoh winter steelhead 2023-24,2024-03-01,Guided,110,321,0.3426791277258567
+Hoh winter steelhead 2023-24,2024-03-01,Unguided,211,321,0.6573208722741433
+Hoh winter steelhead 2024-25,2024-12-01,Guided,1,10,0.1
+Hoh winter steelhead 2024-25,2024-12-01,Unguided,9,10,0.9
+Hoh winter steelhead 2024-25,2025-01-01,Guided,39,154,0.2532467532467532
+Hoh winter steelhead 2024-25,2025-01-01,Unguided,115,154,0.7467532467532467
+Hoh winter steelhead 2024-25,2025-02-01,Guided,85,199,0.4271356783919598
+Hoh winter steelhead 2024-25,2025-02-01,Unguided,114,199,0.5728643216080402
+Hoh winter steelhead 2024-25,2025-03-01,Guided,63,190,0.33157894736842103
+Hoh winter steelhead 2024-25,2025-03-01,Unguided,127,190,0.6684210526315789
+Hoh winter steelhead 2025-26,2025-12-01,Unguided,22,22,1
+Hoh winter steelhead 2025-26,2026-01-01,Guided,19,105,0.18095238095238095
+Hoh winter steelhead 2025-26,2026-01-01,Unguided,86,105,0.819047619047619
+Hoh winter steelhead 2025-26,2026-02-01,Guided,91,291,0.3127147766323024
+Hoh winter steelhead 2025-26,2026-02-01,Unguided,200,291,0.6872852233676976
+Hoh winter steelhead 2025-26,2026-03-01,Guided,139,353,0.3937677053824363
+Hoh winter steelhead 2025-26,2026-03-01,Unguided,214,353,0.6062322946175638
+Humptulips salmon 2020,2020-09-01,Guided,82,423,0.1938534278959811
+Humptulips salmon 2020,2020-09-01,Unguided,341,423,0.806146572104019
+Humptulips salmon 2020,2020-10-01,Guided,47,260,0.18076923076923077
+Humptulips salmon 2020,2020-10-01,Unguided,213,260,0.8192307692307692
+Humptulips salmon 2020,2020-11-01,Guided,24,162,0.14814814814814814
+Humptulips salmon 2020,2020-11-01,Unguided,138,162,0.8518518518518519
+Humptulips salmon 2021,2021-09-01,Guided,38,327,0.1162079510703364
+Humptulips salmon 2021,2021-09-01,Unguided,289,327,0.8837920489296636
+Humptulips salmon 2021,2021-10-01,Guided,34,283,0.12014134275618374
+Humptulips salmon 2021,2021-10-01,Unguided,249,283,0.8798586572438163
+Humptulips salmon 2021,2021-11-01,Guided,23,113,0.20353982300884957
+Humptulips salmon 2021,2021-11-01,Unguided,90,113,0.7964601769911505
+Humptulips salmon 2022,2022-09-01,Guided,31,266,0.11654135338345864
+Humptulips salmon 2022,2022-09-01,Unguided,235,266,0.8834586466165414
+Humptulips salmon 2022,2022-10-01,Guided,5,95,0.05263157894736842
+Humptulips salmon 2022,2022-10-01,Unguided,90,95,0.9473684210526315
+Humptulips salmon 2022,2022-11-01,Guided,15,212,0.07075471698113207
+Humptulips salmon 2022,2022-11-01,Unguided,197,212,0.9292452830188679
+Humptulips salmon 2022,2022-12-01,Unguided,96,96,1
+Humptulips salmon 2023,2023-09-01,Guided,26,312,0.08333333333333333
+Humptulips salmon 2023,2023-09-01,Unguided,286,312,0.9166666666666666
+Humptulips salmon 2023,2023-10-01,Guided,25,344,0.07267441860465117
+Humptulips salmon 2023,2023-10-01,Unguided,319,344,0.9273255813953488
+Humptulips salmon 2023,2023-11-01,Guided,22,212,0.10377358490566038
+Humptulips salmon 2023,2023-11-01,Unguided,190,212,0.8962264150943396
+Humptulips salmon 2024,2024-09-01,Guided,22,321,0.06853582554517133
+Humptulips salmon 2024,2024-09-01,Unguided,299,321,0.9314641744548287
+Humptulips salmon 2024,2024-10-01,Guided,35,317,0.11041009463722397
+Humptulips salmon 2024,2024-10-01,Unguided,282,317,0.889589905362776
+Humptulips salmon 2024,2024-11-01,Guided,6,156,0.038461538461538464
+Humptulips salmon 2024,2024-11-01,Unguided,150,156,0.9615384615384616
+Humptulips salmon 2024,2024-12-01,Guided,4,107,0.037383177570093455
+Humptulips salmon 2024,2024-12-01,Unguided,103,107,0.9626168224299065
+Humptulips salmon 2025,2025-09-01,Guided,12,183,0.06557377049180328
+Humptulips salmon 2025,2025-09-01,Unguided,171,183,0.9344262295081968
+Humptulips salmon 2025,2025-10-01,Guided,15,327,0.045871559633027525
+Humptulips salmon 2025,2025-10-01,Unguided,312,327,0.9541284403669725
+Humptulips salmon 2025,2025-11-01,Guided,14,253,0.05533596837944664
+Humptulips salmon 2025,2025-11-01,Unguided,239,253,0.9446640316205533
+Humptulips salmon 2025,2025-12-01,Guided,1,147,0.006802721088435374
+Humptulips salmon 2025,2025-12-01,Unguided,146,147,0.9931972789115646
+Humptulips winter steelhead 2024-25,2024-11-01,Guided,6,153,0.0392156862745098
+Humptulips winter steelhead 2024-25,2024-11-01,Unguided,147,153,0.9607843137254902
+Humptulips winter steelhead 2024-25,2024-12-01,Guided,4,107,0.037383177570093455
+Humptulips winter steelhead 2024-25,2024-12-01,Unguided,103,107,0.9626168224299065
+Humptulips winter steelhead 2024-25,2025-01-01,Guided,4,102,0.0392156862745098
+Humptulips winter steelhead 2024-25,2025-01-01,Unguided,98,102,0.9607843137254902
+Humptulips winter steelhead 2024-25,2025-02-01,Unguided,3,3,1
+Humptulips winter steelhead 2025-26,2025-11-01,Guided,14,253,0.05533596837944664
+Humptulips winter steelhead 2025-26,2025-11-01,Unguided,239,253,0.9446640316205533
+Humptulips winter steelhead 2025-26,2025-12-01,Guided,1,147,0.006802721088435374
+Humptulips winter steelhead 2025-26,2025-12-01,Unguided,146,147,0.9931972789115646
+Humptulips winter steelhead 2025-26,2026-01-01,Guided,2,132,0.015151515151515152
+Humptulips winter steelhead 2025-26,2026-01-01,Unguided,130,132,0.9848484848484849
+Humptulips winter steelhead 2025-26,2026-02-01,Unguided,3,3,1
+Lower Chehalis salmon 2023,2023-09-01,Guided,4,309,0.012944983818770227
+Lower Chehalis salmon 2023,2023-09-01,Unguided,305,309,0.9870550161812298
+Lower Chehalis salmon 2023,2023-10-01,Guided,4,322,0.012422360248447204
+Lower Chehalis salmon 2023,2023-10-01,Unguided,318,322,0.9875776397515528
+Lower Chehalis salmon 2023,2023-11-01,Guided,1,112,0.008928571428571428
+Lower Chehalis salmon 2023,2023-11-01,Unguided,111,112,0.9910714285714286
+Lower Cowlitz salmon and steelhead 2022-23,2022-08-01,Guided,17,37,0.4594594594594595
+Lower Cowlitz salmon and steelhead 2022-23,2022-08-01,Unguided,20,37,0.5405405405405406
+Lower Cowlitz salmon and steelhead 2022-23,2022-09-01,Guided,4,45,0.08888888888888889
+Lower Cowlitz salmon and steelhead 2022-23,2022-09-01,Unguided,41,45,0.9111111111111111
+Lower Cowlitz salmon and steelhead 2022-23,2022-10-01,Guided,1,19,0.05263157894736842
+Lower Cowlitz salmon and steelhead 2022-23,2022-10-01,Unguided,18,19,0.9473684210526315
+Lower Cowlitz salmon and steelhead 2022-23,2022-11-01,Guided,1,7,0.14285714285714285
+Lower Cowlitz salmon and steelhead 2022-23,2022-11-01,Unguided,6,7,0.8571428571428571
+Lower Cowlitz salmon and steelhead 2022-23,2023-02-01,Guided,10,19,0.5263157894736842
+Lower Cowlitz salmon and steelhead 2022-23,2023-02-01,Unguided,9,19,0.47368421052631576
+Lower Cowlitz salmon and steelhead 2022-23,2023-03-01,Guided,17,31,0.5483870967741935
+Lower Cowlitz salmon and steelhead 2022-23,2023-03-01,Unguided,14,31,0.45161290322580644
+Lower Cowlitz salmon and steelhead 2022-23,2023-04-01,Guided,6,14,0.42857142857142855
+Lower Cowlitz salmon and steelhead 2022-23,2023-04-01,Unguided,8,14,0.5714285714285714
+Lower Cowlitz salmon and steelhead 2022-23,2023-05-01,Guided,3,14,0.21428571428571427
+Lower Cowlitz salmon and steelhead 2022-23,2023-05-01,Unguided,11,14,0.7857142857142857
+Lower Cowlitz salmon and steelhead 2022-23,2023-06-01,Guided,15,32,0.46875
+Lower Cowlitz salmon and steelhead 2022-23,2023-06-01,Unguided,17,32,0.53125
+Lower Cowlitz salmon and steelhead 2022-23,2023-07-01,Guided,45,91,0.4945054945054945
+Lower Cowlitz salmon and steelhead 2022-23,2023-07-01,Unguided,46,91,0.5054945054945055
+Lower Cowlitz salmon and steelhead 2023-24,2023-08-01,Guided,15,79,0.189873417721519
+Lower Cowlitz salmon and steelhead 2023-24,2023-08-01,Unguided,64,79,0.810126582278481
+Lower Cowlitz salmon and steelhead 2023-24,2023-09-01,Guided,2,214,0.009345794392523364
+Lower Cowlitz salmon and steelhead 2023-24,2023-09-01,Unguided,212,214,0.9906542056074766
+Lower Cowlitz salmon and steelhead 2023-24,2023-10-01,Guided,7,216,0.032407407407407406
+Lower Cowlitz salmon and steelhead 2023-24,2023-10-01,Unguided,209,216,0.9675925925925926
+Lower Cowlitz salmon and steelhead 2023-24,2023-11-01,Guided,2,100,0.02
+Lower Cowlitz salmon and steelhead 2023-24,2023-11-01,Unguided,98,100,0.98
+Lower Cowlitz salmon and steelhead 2023-24,2023-12-01,Guided,1,50,0.02
+Lower Cowlitz salmon and steelhead 2023-24,2023-12-01,Unguided,49,50,0.98
+Lower Cowlitz salmon and steelhead 2023-24,2024-01-01,Guided,21,165,0.12727272727272726
+Lower Cowlitz salmon and steelhead 2023-24,2024-01-01,Unguided,144,165,0.8727272727272727
+Lower Cowlitz salmon and steelhead 2023-24,2024-02-01,Guided,53,244,0.21721311475409835
+Lower Cowlitz salmon and steelhead 2023-24,2024-02-01,Unguided,191,244,0.7827868852459017
+Lower Cowlitz salmon and steelhead 2023-24,2024-03-01,Guided,93,279,0.3333333333333333
+Lower Cowlitz salmon and steelhead 2023-24,2024-03-01,Unguided,186,279,0.6666666666666666
+Lower Cowlitz salmon and steelhead 2023-24,2024-04-01,Guided,11,150,0.07333333333333333
+Lower Cowlitz salmon and steelhead 2023-24,2024-04-01,Unguided,139,150,0.9266666666666666
+Lower Cowlitz salmon and steelhead 2023-24,2024-05-01,Guided,3,89,0.033707865168539325
+Lower Cowlitz salmon and steelhead 2023-24,2024-05-01,Unguided,86,89,0.9662921348314607
+Lower Cowlitz salmon and steelhead 2023-24,2024-06-01,Guided,26,112,0.23214285714285715
+Lower Cowlitz salmon and steelhead 2023-24,2024-06-01,Unguided,86,112,0.7678571428571429
+Lower Cowlitz salmon and steelhead 2023-24,2024-07-01,Guided,29,118,0.2457627118644068
+Lower Cowlitz salmon and steelhead 2023-24,2024-07-01,Unguided,89,118,0.7542372881355932
+Naselle winter steelhead 2022,2022-01-01,Guided,2,106,0.018867924528301886
+Naselle winter steelhead 2022,2022-01-01,Unguided,104,106,0.9811320754716981
+Naselle winter steelhead 2022,2022-02-01,Unguided,60,60,1
+Naselle winter steelhead 2022-23,2022-12-01,Unguided,17,17,1
+Naselle winter steelhead 2022-23,2023-01-01,Unguided,58,58,1
+Naselle winter steelhead 2022-23,2023-02-01,Unguided,66,66,1
+Naselle winter steelhead 2022-23,2023-03-01,Unguided,60,60,1
+Naselle winter steelhead 2023-24,2023-12-01,Guided,1,127,0.007874015748031496
+Naselle winter steelhead 2023-24,2023-12-01,Unguided,126,127,0.9921259842519685
+Naselle winter steelhead 2023-24,2024-01-01,Unguided,66,66,1
+Naselle winter steelhead 2023-24,2024-02-01,Guided,2,71,0.028169014084507043
+Naselle winter steelhead 2023-24,2024-02-01,Unguided,69,71,0.971830985915493
+Naselle winter steelhead 2023-24,2024-03-01,Guided,2,47,0.0425531914893617
+Naselle winter steelhead 2023-24,2024-03-01,Unguided,45,47,0.9574468085106383
+Nooksack fall salmon 2023,2023-11-01,Unguided,27,27,1
+Nooksack fall salmon 2024,2024-11-01,Unguided,58,58,1
+Nooksack spring Chinook 2022,2022-05-01,Unguided,35,35,1
+Nooksack spring Chinook 2022,2022-06-01,Unguided,94,94,1
+Nooksack spring Chinook 2022,2022-07-01,Unguided,33,33,1
+Nooksack spring Chinook 2026,2026-05-01,Unguided,123,123,1
+Nooksack spring Chinook 2026,2026-06-01,Guided,2,113,0.017699115044247787
+Nooksack spring Chinook 2026,2026-06-01,Unguided,111,113,0.9823008849557522
+Nooksack winter gamefish 2021-22,2022-01-01,Unguided,63,63,1
+Nooksack winter gamefish 2021-22,2022-02-01,Unguided,191,191,1
+Nooksack winter gamefish 2022-23,2022-12-01,Unguided,87,87,1
+Nooksack winter gamefish 2022-23,2023-01-01,Unguided,24,24,1
+Nooksack winter gamefish 2022-23,2023-02-01,Guided,3,182,0.016483516483516484
+Nooksack winter gamefish 2022-23,2023-02-01,Unguided,179,182,0.9835164835164835
+Post Quillayute winter steelhead 2023-24,2024-01-01,Guided,9,20,0.45
+Post Quillayute winter steelhead 2023-24,2024-01-01,Unguided,11,20,0.55
+Post Quillayute winter steelhead 2023-24,2024-02-01,Guided,75,136,0.5514705882352942
+Post Quillayute winter steelhead 2023-24,2024-02-01,Unguided,61,136,0.4485294117647059
+Post Quillayute winter steelhead 2023-24,2024-03-01,Guided,79,183,0.43169398907103823
+Post Quillayute winter steelhead 2023-24,2024-03-01,Unguided,104,183,0.5683060109289617
+Pre Quillayute winter steelhead 2023-24,2023-12-01,Guided,5,28,0.17857142857142858
+Pre Quillayute winter steelhead 2023-24,2023-12-01,Unguided,23,28,0.8214285714285714
+Pre Quillayute winter steelhead 2023-24,2024-01-01,Guided,50,97,0.5154639175257731
+Pre Quillayute winter steelhead 2023-24,2024-01-01,Unguided,47,97,0.4845360824742268
+Puyallup Carbon salmon 2024,2024-09-01,Unguided,1,1,1
+Queets winter steelhead 2024-25,2025-01-01,Guided,1,21,0.047619047619047616
+Queets winter steelhead 2024-25,2025-01-01,Unguided,20,21,0.9523809523809523
+Queets winter steelhead 2024-25,2025-02-01,Guided,6,38,0.15789473684210525
+Queets winter steelhead 2024-25,2025-02-01,Unguided,32,38,0.8421052631578947
+Queets winter steelhead 2025-26,2025-12-01,Unguided,4,4,1
+Queets winter steelhead 2025-26,2026-01-01,Unguided,13,13,1
+Queets winter steelhead 2025-26,2026-02-01,Guided,4,15,0.26666666666666666
+Queets winter steelhead 2025-26,2026-02-01,Unguided,11,15,0.7333333333333333
+Queets winter steelhead 2025-26,2026-03-01,Guided,1,8,0.125
+Queets winter steelhead 2025-26,2026-03-01,Unguided,7,8,0.875
+Quillayute fall salmon 2022,2022-09-01,Unguided,6,6,1
+Quillayute fall salmon 2022,2022-10-01,Unguided,16,16,1
+Quillayute fall salmon 2022,2022-11-01,Guided,32,213,0.15023474178403756
+Quillayute fall salmon 2022,2022-11-01,Unguided,181,213,0.8497652582159625
+Quillayute fall salmon 2022,2022-12-01,Guided,19,144,0.13194444444444445
+Quillayute fall salmon 2022,2022-12-01,Unguided,125,144,0.8680555555555556
+Quillayute fall salmon 2023,2023-10-01,Guided,24,250,0.096
+Quillayute fall salmon 2023,2023-10-01,Unguided,226,250,0.904
+Quillayute fall salmon 2023,2023-11-01,Guided,7,66,0.10606060606060606
+Quillayute fall salmon 2023,2023-11-01,Unguided,59,66,0.8939393939393939
+Quillayute fall salmon 2023,2023-12-01,Unguided,1,1,1
+Quillayute fall salmon 2024,2024-09-01,Guided,16,197,0.08121827411167512
+Quillayute fall salmon 2024,2024-09-01,Unguided,181,197,0.9187817258883249
+Quillayute fall salmon 2024,2024-10-01,Guided,46,300,0.15333333333333332
+Quillayute fall salmon 2024,2024-10-01,Unguided,254,300,0.8466666666666667
+Quillayute fall salmon 2024,2024-11-01,Guided,40,165,0.24242424242424243
+Quillayute fall salmon 2024,2024-11-01,Unguided,125,165,0.7575757575757576
+Quillayute fall salmon 2025,2025-09-01,Guided,13,155,0.08387096774193549
+Quillayute fall salmon 2025,2025-09-01,Unguided,142,155,0.9161290322580645
+Quillayute fall salmon 2025,2025-10-01,Guided,40,296,0.13513513513513514
+Quillayute fall salmon 2025,2025-10-01,Unguided,256,296,0.8648648648648649
+Quillayute fall salmon 2025,2025-11-01,Guided,15,154,0.09740259740259741
+Quillayute fall salmon 2025,2025-11-01,Unguided,139,154,0.9025974025974026
+Quillayute fall salmon 2025,2025-12-01,Unguided,1,1,1
+Quillayute spring chinook 2025,2025-05-01,Guided,41,102,0.4019607843137255
+Quillayute spring chinook 2025,2025-05-01,Unguided,61,102,0.5980392156862745
+Quillayute spring chinook 2025,2025-06-01,Guided,10,38,0.2631578947368421
+Quillayute spring chinook 2025,2025-06-01,Unguided,28,38,0.7368421052631579
+Quillayute spring chinook 2026,2026-05-01,Guided,29,133,0.21804511278195488
+Quillayute spring chinook 2026,2026-05-01,Unguided,104,133,0.7819548872180451
+Quillayute winter steelhead 2022-23,2022-12-01,Guided,2,12,0.16666666666666666
+Quillayute winter steelhead 2022-23,2022-12-01,Unguided,10,12,0.8333333333333334
+Quillayute winter steelhead 2022-23,2023-01-01,Guided,40,91,0.43956043956043955
+Quillayute winter steelhead 2022-23,2023-01-01,Unguided,51,91,0.5604395604395604
+Quillayute winter steelhead 2022-23,2023-02-01,Guided,44,109,0.4036697247706422
+Quillayute winter steelhead 2022-23,2023-02-01,Unguided,65,109,0.5963302752293578
+Quillayute winter steelhead 2022-23,2023-03-01,Guided,26,36,0.7222222222222222
+Quillayute winter steelhead 2022-23,2023-03-01,Unguided,10,36,0.2777777777777778
+Quillayute winter steelhead 2024-25,2024-12-01,Guided,24,194,0.12371134020618557
+Quillayute winter steelhead 2024-25,2024-12-01,Unguided,170,194,0.8762886597938144
+Quillayute winter steelhead 2024-25,2025-01-01,Guided,31,137,0.22627737226277372
+Quillayute winter steelhead 2024-25,2025-01-01,Unguided,106,137,0.7737226277372263
+Quillayute winter steelhead 2024-25,2025-02-01,Guided,56,139,0.4028776978417266
+Quillayute winter steelhead 2024-25,2025-02-01,Unguided,83,139,0.5971223021582733
+Quillayute winter steelhead 2024-25,2025-03-01,Guided,155,281,0.5516014234875445
+Quillayute winter steelhead 2024-25,2025-03-01,Unguided,126,281,0.4483985765124555
+Quillayute winter steelhead 2025-26,2025-12-01,Guided,9,198,0.045454545454545456
+Quillayute winter steelhead 2025-26,2025-12-01,Unguided,189,198,0.9545454545454546
+Quillayute winter steelhead 2025-26,2026-01-01,Guided,39,243,0.16049382716049382
+Quillayute winter steelhead 2025-26,2026-01-01,Unguided,204,243,0.8395061728395061
+Quillayute winter steelhead 2025-26,2026-02-01,Guided,100,303,0.33003300330033003
+Quillayute winter steelhead 2025-26,2026-02-01,Unguided,203,303,0.66996699669967
+Quillayute winter steelhead 2025-26,2026-03-01,Guided,138,330,0.41818181818181815
+Quillayute winter steelhead 2025-26,2026-03-01,Unguided,192,330,0.5818181818181818
+Quinault winter steelhead 2024-25,2025-03-01,Guided,10,46,0.21739130434782608
+Quinault winter steelhead 2024-25,2025-03-01,Unguided,36,46,0.782608695652174
+Quinault winter steelhead 2025-26,2026-01-01,Unguided,2,2,1
+Quinault winter steelhead 2025-26,2026-02-01,Unguided,6,6,1
+Quinault winter steelhead 2025-26,2026-03-01,Unguided,12,12,1
+Satsop salmon 2022,2022-10-01,Unguided,73,73,1
+Satsop salmon 2022,2022-11-01,Guided,5,209,0.023923444976076555
+Satsop salmon 2022,2022-11-01,Unguided,204,209,0.9760765550239234
+Satsop salmon 2022,2022-12-01,Unguided,45,45,1
+Satsop salmon 2023,2023-10-01,Guided,2,169,0.011834319526627219
+Satsop salmon 2023,2023-10-01,Unguided,167,169,0.9881656804733728
+Satsop salmon 2023,2023-11-01,Guided,6,198,0.030303030303030304
+Satsop salmon 2023,2023-11-01,Unguided,192,198,0.9696969696969697
+Satsop salmon 2024,2024-10-01,Guided,2,283,0.007067137809187279
+Satsop salmon 2024,2024-10-01,Unguided,281,283,0.9929328621908127
+Satsop salmon 2024,2024-11-01,Guided,5,147,0.034013605442176874
+Satsop salmon 2024,2024-11-01,Unguided,142,147,0.9659863945578231
+Satsop salmon 2024,2024-12-01,Guided,2,45,0.044444444444444446
+Satsop salmon 2024,2024-12-01,Unguided,43,45,0.9555555555555556
+Satsop salmon 2025,2025-10-01,Guided,8,140,0.05714285714285714
+Satsop salmon 2025,2025-10-01,Unguided,132,140,0.9428571428571428
+Satsop salmon 2025,2025-11-01,Guided,10,161,0.062111801242236024
+Satsop salmon 2025,2025-11-01,Unguided,151,161,0.937888198757764
+Satsop salmon 2025,2025-12-01,Guided,1,29,0.034482758620689655
+Satsop salmon 2025,2025-12-01,Unguided,28,29,0.9655172413793104
+Satsop winter steelhead 2024-25,2024-11-01,Guided,5,147,0.034013605442176874
+Satsop winter steelhead 2024-25,2024-11-01,Unguided,142,147,0.9659863945578231
+Satsop winter steelhead 2024-25,2024-12-01,Guided,2,45,0.044444444444444446
+Satsop winter steelhead 2024-25,2024-12-01,Unguided,43,45,0.9555555555555556
+Satsop winter steelhead 2024-25,2025-01-01,Guided,1,56,0.017857142857142856
+Satsop winter steelhead 2024-25,2025-01-01,Unguided,55,56,0.9821428571428571
+Satsop winter steelhead 2024-25,2025-02-01,Guided,3,94,0.031914893617021274
+Satsop winter steelhead 2024-25,2025-02-01,Unguided,91,94,0.9680851063829787
+Satsop winter steelhead 2025-26,2025-12-01,Guided,1,29,0.034482758620689655
+Satsop winter steelhead 2025-26,2025-12-01,Unguided,28,29,0.9655172413793104
+Satsop winter steelhead 2025-26,2026-01-01,Guided,2,60,0.03333333333333333
+Satsop winter steelhead 2025-26,2026-01-01,Unguided,58,60,0.9666666666666667
+Satsop winter steelhead 2025-26,2026-02-01,Guided,8,72,0.1111111111111111
+Satsop winter steelhead 2025-26,2026-02-01,Unguided,64,72,0.8888888888888888
+Skagit fall salmon 2021,2021-08-01,Unguided,130,130,1
+Skagit fall salmon 2021,2021-09-01,Guided,2,472,0.00423728813559322
+Skagit fall salmon 2021,2021-09-01,Unguided,470,472,0.9957627118644068
+Skagit fall salmon 2021,2021-10-01,Guided,6,194,0.030927835051546393
+Skagit fall salmon 2021,2021-10-01,Unguided,188,194,0.9690721649484536
+Skagit fall salmon 2021,2021-11-01,Guided,2,49,0.04081632653061224
+Skagit fall salmon 2021,2021-11-01,Unguided,47,49,0.9591836734693877
+Skagit fall salmon 2021,2021-12-01,Guided,1,46,0.021739130434782608
+Skagit fall salmon 2021,2021-12-01,Unguided,45,46,0.9782608695652174
+Skagit fall salmon 2022,2022-09-01,Guided,12,815,0.014723926380368098
+Skagit fall salmon 2022,2022-09-01,Unguided,803,815,0.9852760736196319
+Skagit fall salmon 2022,2022-10-01,Guided,31,670,0.04626865671641791
+Skagit fall salmon 2022,2022-10-01,Unguided,639,670,0.9537313432835821
+Skagit fall salmon 2022,2022-11-01,Guided,8,188,0.0425531914893617
+Skagit fall salmon 2022,2022-11-01,Unguided,180,188,0.9574468085106383
+Skagit fall salmon 2023,2023-08-01,Guided,1,581,0.0017211703958691911
+Skagit fall salmon 2023,2023-08-01,Unguided,580,581,0.9982788296041308
+Skagit fall salmon 2023,2023-09-01,Guided,17,1199,0.014178482068390326
+Skagit fall salmon 2023,2023-09-01,Unguided,1182,1199,0.9858215179316097
+Skagit fall salmon 2023,2023-10-01,Guided,19,694,0.027377521613832854
+Skagit fall salmon 2023,2023-10-01,Unguided,675,694,0.9726224783861671
+Skagit fall salmon 2023,2023-11-01,Guided,11,203,0.054187192118226604
+Skagit fall salmon 2023,2023-11-01,Unguided,192,203,0.9458128078817734
+Skagit fall salmon 2024,2024-09-01,Guided,2,1005,0.001990049751243781
+Skagit fall salmon 2024,2024-09-01,Unguided,1003,1005,0.9980099502487563
+Skagit fall salmon 2024,2024-10-01,Guided,22,565,0.03893805309734513
+Skagit fall salmon 2024,2024-10-01,Unguided,543,565,0.9610619469026549
+Skagit fall salmon 2024,2024-11-01,Guided,9,209,0.0430622009569378
+Skagit fall salmon 2024,2024-11-01,Unguided,200,209,0.9569377990430622
+Skagit fall salmon 2025,2025-08-01,Guided,2,451,0.004434589800443459
+Skagit fall salmon 2025,2025-08-01,Unguided,449,451,0.9955654101995566
+Skagit fall salmon 2025,2025-09-01,Guided,15,1192,0.012583892617449664
+Skagit fall salmon 2025,2025-09-01,Unguided,1177,1192,0.9874161073825504
+Skagit fall salmon 2025,2025-10-01,Guided,41,869,0.047180667433831994
+Skagit fall salmon 2025,2025-10-01,Unguided,828,869,0.952819332566168
+Skagit fall salmon 2025,2025-11-01,Guided,13,121,0.10743801652892562
+Skagit fall salmon 2025,2025-11-01,Unguided,108,121,0.8925619834710744
+Skagit spring Chinook 2021 lower,2021-05-01,Unguided,121,121,1
+Skagit spring Chinook 2022 lower,2022-05-01,Unguided,336,336,1
+Skagit spring Chinook 2022 upper,2022-06-01,Guided,10,92,0.10869565217391304
+Skagit spring Chinook 2022 upper,2022-06-01,Unguided,82,92,0.8913043478260869
+Skagit spring Chinook 2022 upper,2022-07-01,Unguided,19,19,1
+Skagit spring Chinook 2023 lower,2023-05-01,Unguided,180,180,1
+Skagit spring Chinook 2023 upper,2023-06-01,Guided,8,112,0.07142857142857142
+Skagit spring Chinook 2023 upper,2023-06-01,Unguided,104,112,0.9285714285714286
+Skagit spring Chinook 2023 upper,2023-07-01,Guided,2,15,0.13333333333333333
+Skagit spring Chinook 2023 upper,2023-07-01,Unguided,13,15,0.8666666666666667
+Skagit spring Chinook 2024 lower,2024-04-01,Unguided,87,87,1
+Skagit spring Chinook 2024 lower,2024-05-01,Unguided,243,243,1
+Skagit spring Chinook 2024 upper,2024-05-01,Unguided,14,14,1
+Skagit spring Chinook 2024 upper,2024-06-01,Guided,7,298,0.02348993288590604
+Skagit spring Chinook 2024 upper,2024-06-01,Unguided,291,298,0.9765100671140939
+Skagit spring Chinook 2024 upper,2024-07-01,Guided,1,53,0.018867924528301886
+Skagit spring Chinook 2024 upper,2024-07-01,Unguided,52,53,0.9811320754716981
+Skagit spring Chinook 2025 lower,2025-04-01,Unguided,71,71,1
+Skagit spring Chinook 2025 lower,2025-05-01,Guided,1,92,0.010869565217391304
+Skagit spring Chinook 2025 lower,2025-05-01,Unguided,91,92,0.9891304347826086
+Skagit spring Chinook 2025 upper,2025-05-01,Guided,6,94,0.06382978723404255
+Skagit spring Chinook 2025 upper,2025-05-01,Unguided,88,94,0.9361702127659575
+Skagit spring Chinook 2025 upper,2025-06-01,Guided,5,271,0.01845018450184502
+Skagit spring Chinook 2025 upper,2025-06-01,Unguided,266,271,0.981549815498155
+Skagit spring Chinook 2025 upper,2025-07-01,Unguided,48,48,1
+Skagit spring Chinook 2026 lower,2026-04-01,Guided,1,156,0.00641025641025641
+Skagit spring Chinook 2026 lower,2026-04-01,Unguided,155,156,0.9935897435897436
+Skagit spring Chinook 2026 lower,2026-05-01,Unguided,86,86,1
+Skagit spring Chinook 2026 upper,2026-05-01,Guided,7,136,0.051470588235294115
+Skagit spring Chinook 2026 upper,2026-05-01,Unguided,129,136,0.9485294117647058
+Skagit spring Chinook 2026 upper,2026-06-01,Guided,8,132,0.06060606060606061
+Skagit spring Chinook 2026 upper,2026-06-01,Unguided,124,132,0.9393939393939394
+Skagit spring Chinook 2026 upper,2026-07-01,Unguided,21,21,1
+Skagit spring gamefish 2025,2025-04-01,Unguided,2,2,1
+Skagit summer gamefish 2022,2022-07-01,Guided,1,22,0.045454545454545456
+Skagit summer gamefish 2022,2022-07-01,Unguided,21,22,0.9545454545454546
+Skagit summer gamefish 2022,2022-08-01,Guided,1,59,0.01694915254237288
+Skagit summer gamefish 2022,2022-08-01,Unguided,58,59,0.9830508474576272
+Skagit summer gamefish 2024,2024-08-01,Unguided,41,41,1
+Skagit summer sockeye 2022,2022-06-01,Unguided,174,174,1
+Skagit summer sockeye 2022,2022-07-01,Unguided,347,347,1
+Skagit summer sockeye 2023,2023-06-01,Guided,3,102,0.029411764705882353
+Skagit summer sockeye 2023,2023-06-01,Unguided,99,102,0.9705882352941176
+Skagit summer sockeye 2023,2023-07-01,Guided,2,114,0.017543859649122806
+Skagit summer sockeye 2023,2023-07-01,Unguided,112,114,0.9824561403508771
+Skagit summer sockeye 2024,2024-06-01,Guided,2,306,0.006535947712418301
+Skagit summer sockeye 2024,2024-06-01,Unguided,304,306,0.9934640522875817
+Skagit summer sockeye 2024,2024-07-01,Guided,3,403,0.007444168734491315
+Skagit summer sockeye 2024,2024-07-01,Unguided,400,403,0.9925558312655087
+Skagit summer sockeye 2025,2025-06-01,Guided,2,304,0.006578947368421052
+Skagit summer sockeye 2025,2025-06-01,Unguided,302,304,0.993421052631579
+Skagit summer sockeye 2025,2025-07-01,Unguided,303,303,1
+Skagit summer sockeye 2026,2026-06-01,Guided,4,196,0.02040816326530612
+Skagit summer sockeye 2026,2026-06-01,Unguided,192,196,0.9795918367346939
+Skagit summer sockeye 2026,2026-07-01,Guided,4,287,0.013937282229965157
+Skagit summer sockeye 2026,2026-07-01,Unguided,283,287,0.9860627177700348
+Skagit winter gamefish 2021-22,2022-01-01,Guided,5,141,0.03546099290780142
+Skagit winter gamefish 2021-22,2022-01-01,Unguided,136,141,0.9645390070921985
+Skagit winter gamefish 2022-23,2022-12-01,Unguided,22,22,1
+Skagit winter gamefish 2022-23,2023-01-01,Guided,4,226,0.017699115044247787
+Skagit winter gamefish 2022-23,2023-01-01,Unguided,222,226,0.9823008849557522
+Skagit winter gamefish 2024,2024-01-01,Guided,1,70,0.014285714285714285
+Skagit winter gamefish 2024,2024-01-01,Unguided,69,70,0.9857142857142858
+Skagit winter gamefish 2025,2025-01-01,Guided,1,94,0.010638297872340425
+Skagit winter gamefish 2025,2025-01-01,Unguided,93,94,0.9893617021276596
+Skagit winter steelhead 2021,2021-02-01,Guided,26,429,0.06060606060606061
+Skagit winter steelhead 2021,2021-02-01,Unguided,403,429,0.9393939393939394
+Skagit winter steelhead 2021,2021-03-01,Guided,67,985,0.06802030456852792
+Skagit winter steelhead 2021,2021-03-01,Unguided,918,985,0.9319796954314721
+Skagit winter steelhead 2021,2021-04-01,Guided,40,446,0.08968609865470852
+Skagit winter steelhead 2021,2021-04-01,Unguided,406,446,0.9103139013452914
+Skagit winter steelhead 2023,2023-03-01,Guided,5,149,0.03355704697986577
+Skagit winter steelhead 2023,2023-03-01,Unguided,144,149,0.9664429530201343
+Skagit winter steelhead 2023,2023-04-01,Guided,27,577,0.04679376083188908
+Skagit winter steelhead 2023,2023-04-01,Unguided,550,577,0.9532062391681109
+Skagit winter steelhead 2024,2024-02-01,Guided,21,334,0.06287425149700598
+Skagit winter steelhead 2024,2024-02-01,Unguided,313,334,0.937125748502994
+Skagit winter steelhead 2024,2024-03-01,Guided,48,546,0.08791208791208792
+Skagit winter steelhead 2024,2024-03-01,Unguided,498,546,0.9120879120879121
+Skagit winter steelhead 2024,2024-04-01,Guided,26,343,0.07580174927113703
+Skagit winter steelhead 2024,2024-04-01,Unguided,317,343,0.924198250728863
+Skagit winter steelhead 2025,2025-02-01,Guided,11,202,0.054455445544554455
+Skagit winter steelhead 2025,2025-02-01,Unguided,191,202,0.9455445544554455
+Skagit winter steelhead 2025,2025-03-01,Guided,60,676,0.08875739644970414
+Skagit winter steelhead 2025,2025-03-01,Unguided,616,676,0.9112426035502958
+Skagit winter steelhead 2025,2025-04-01,Guided,35,287,0.12195121951219512
+Skagit winter steelhead 2025,2025-04-01,Unguided,252,287,0.8780487804878049
+Skookumchuck winter steelhead 2024-25,2024-12-01,Unguided,144,144,1
+Skookumchuck winter steelhead 2024-25,2025-01-01,Unguided,184,184,1
+Skookumchuck winter steelhead 2024-25,2025-02-01,Unguided,148,148,1
+Skookumchuck winter steelhead 2025-26,2025-12-01,Unguided,39,39,1
+Skookumchuck winter steelhead 2025-26,2026-01-01,Unguided,118,118,1
+Skookumchuck winter steelhead 2025-26,2026-02-01,Unguided,84,84,1
+Skykomish summer Chinook 2020,2020-05-01,Guided,1,23,0.043478260869565216
+Skykomish summer Chinook 2020,2020-05-01,Unguided,22,23,0.9565217391304348
+Skykomish summer Chinook 2020,2020-06-01,Guided,30,33,0.9090909090909091
+Skykomish summer Chinook 2020,2020-06-01,Unguided,3,33,0.09090909090909091
+Skykomish summer Chinook 2020,2020-07-01,Guided,4,5,0.8
+Skykomish summer Chinook 2020,2020-07-01,Unguided,1,5,0.2
+Skykomish summer Chinook 2021,2021-05-01,Guided,2,2,1
+Skykomish summer Chinook 2021,2021-06-01,Guided,27,101,0.26732673267326734
+Skykomish summer Chinook 2021,2021-06-01,Unguided,74,101,0.7326732673267327
+Skykomish summer Chinook 2021,2021-07-01,Guided,18,45,0.4
+Skykomish summer Chinook 2021,2021-07-01,Unguided,27,45,0.6
+Skykomish summer Chinook and gamefish 2022,2022-05-01,Guided,1,28,0.03571428571428571
+Skykomish summer Chinook and gamefish 2022,2022-05-01,Unguided,27,28,0.9642857142857143
+Skykomish summer Chinook and gamefish 2022,2022-06-01,Guided,42,357,0.11764705882352941
+Skykomish summer Chinook and gamefish 2022,2022-06-01,Unguided,315,357,0.8823529411764706
+Skykomish summer Chinook and gamefish 2022,2022-07-01,Guided,23,325,0.07076923076923076
+Skykomish summer Chinook and gamefish 2022,2022-07-01,Unguided,302,325,0.9292307692307692
+Skykomish summer Chinook and gamefish 2022,2022-08-01,Unguided,14,14,1
+Skykomish summer Chinook and gamefish 2025,2025-06-01,Guided,9,205,0.04390243902439024
+Skykomish summer Chinook and gamefish 2025,2025-06-01,Unguided,196,205,0.9560975609756097
+Skykomish summer Chinook and gamefish 2025,2025-07-01,Guided,3,45,0.06666666666666667
+Skykomish summer Chinook and gamefish 2025,2025-07-01,Unguided,42,45,0.9333333333333333
+Skykomish winter gamefish 2021-22,2021-12-01,Unguided,108,108,1
+Skykomish winter gamefish 2021-22,2022-01-01,Unguided,95,95,1
+Skykomish winter gamefish 2021-22,2022-02-01,Unguided,45,45,1
+Skykomish winter gamefish 2022-23,2022-10-01,Unguided,1,1,1
+Snohomish fall salmon 2021,2021-08-01,Guided,1,114,0.008771929824561403
+Snohomish fall salmon 2021,2021-08-01,Unguided,113,114,0.9912280701754386
+Snohomish fall salmon 2021,2021-09-01,Guided,4,456,0.008771929824561403
+Snohomish fall salmon 2021,2021-09-01,Unguided,452,456,0.9912280701754386
+Snohomish fall salmon 2021,2021-10-01,Unguided,48,48,1
+Snohomish fall salmon 2023,2023-09-01,Guided,4,4,1
+Snohomish fall salmon 2023,2023-10-01,Guided,7,7,1
+Snohomish fall salmon 2023,2023-11-01,Guided,2,2,1
+Snohomish fall salmon 2024,2024-10-01,Guided,5,5,1
+Snohomish fall salmon 2025,2025-08-01,Guided,1,444,0.0022522522522522522
+Snohomish fall salmon 2025,2025-08-01,Unguided,443,444,0.9977477477477478
+Snohomish fall salmon 2025,2025-09-01,Guided,5,657,0.0076103500761035
+Snohomish fall salmon 2025,2025-09-01,Unguided,652,657,0.9923896499238964
+Snohomish fall salmon 2025,2025-10-01,Unguided,51,51,1
+Snohomish fall salmon 2025,2025-11-01,Guided,6,120,0.05
+Snohomish fall salmon 2025,2025-11-01,Unguided,114,120,0.95
+South Fork Willapa winter steelhead 2022-23,2022-12-01,Unguided,1,1,1
+South Fork Willapa winter steelhead 2022-23,2023-01-01,Unguided,7,7,1
+South Fork Willapa winter steelhead 2022-23,2023-02-01,Unguided,4,4,1
+South Fork Willapa winter steelhead 2023-24,2023-12-01,Unguided,3,3,1
+South Fork Willapa winter steelhead 2023-24,2024-01-01,Unguided,9,9,1
+South Fork Willapa winter steelhead 2023-24,2024-02-01,Unguided,5,5,1
+Stillaguamish salmon and gamefish 2024-25,2024-10-01,Guided,1,1,1
+Stillaguamish salmon and gamefish 2025-26,2025-09-01,Unguided,193,193,1
+Stillaguamish salmon and gamefish 2025-26,2025-10-01,Unguided,452,452,1
+Upper Chehalis salmon 2023,2023-10-01,Guided,17,123,0.13821138211382114
+Upper Chehalis salmon 2023,2023-10-01,Unguided,106,123,0.8617886178861789
+Upper Chehalis salmon 2023,2023-11-01,Guided,16,119,0.13445378151260504
+Upper Chehalis salmon 2023,2023-11-01,Unguided,103,119,0.865546218487395
+Willapa winter steelhead 2022,2022-01-01,Unguided,169,169,1
+Willapa winter steelhead 2022,2022-02-01,Guided,5,116,0.04310344827586207
+Willapa winter steelhead 2022,2022-02-01,Unguided,111,116,0.9568965517241379
+Willapa winter steelhead 2022-23,2022-12-01,Unguided,29,29,1
+Willapa winter steelhead 2022-23,2023-01-01,Unguided,123,123,1
+Willapa winter steelhead 2022-23,2023-02-01,Unguided,78,78,1
+Willapa winter steelhead 2022-23,2023-03-01,Unguided,59,59,1
+Willapa winter steelhead 2023-24,2023-12-01,Unguided,263,263,1
+Willapa winter steelhead 2023-24,2024-01-01,Unguided,112,112,1
+Willapa winter steelhead 2023-24,2024-02-01,Unguided,76,76,1
+Willapa winter steelhead 2023-24,2024-03-01,Guided,1,83,0.012048192771084338
+Willapa winter steelhead 2023-24,2024-03-01,Unguided,82,83,0.9879518072289156
+Wynoochee winter steelhead 2024-25,2024-12-01,Guided,3,113,0.02654867256637168
+Wynoochee winter steelhead 2024-25,2024-12-01,Unguided,110,113,0.9734513274336283
+Wynoochee winter steelhead 2024-25,2025-01-01,Guided,30,249,0.12048192771084337
+Wynoochee winter steelhead 2024-25,2025-01-01,Unguided,219,249,0.8795180722891566
+Wynoochee winter steelhead 2024-25,2025-02-01,Guided,21,183,0.11475409836065574
+Wynoochee winter steelhead 2024-25,2025-02-01,Unguided,162,183,0.8852459016393442
+Wynoochee winter steelhead 2025-26,2025-12-01,Guided,3,84,0.03571428571428571
+Wynoochee winter steelhead 2025-26,2025-12-01,Unguided,81,84,0.9642857142857143
+Wynoochee winter steelhead 2025-26,2026-01-01,Guided,34,199,0.1708542713567839
+Wynoochee winter steelhead 2025-26,2026-01-01,Unguided,165,199,0.8291457286432161
+Wynoochee winter steelhead 2025-26,2026-02-01,Guided,20,144,0.1388888888888889
+Wynoochee winter steelhead 2025-26,2026-02-01,Unguided,124,144,0.8611111111111112

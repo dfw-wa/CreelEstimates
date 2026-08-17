@@ -6,15 +6,15 @@
 # (Jim) can see what the PST freshwater effort pipeline currently supports
 # without running anything. This is a STATUS UPDATE, not the Northern
 # Economics deliverable - the filename and the cover tab both say so, and
-# every gap/blocker visible in pst_fw_effort_assembly.R's console summary is
+# every gap/blocker visible in pst_fw_angler_trips_assembly.R's console summary is
 # visible here too, not smoothed over for presentation.
 #
-# MUST RUN AFTER pst_fw_effort_assembly.R. This script does not compute
+# MUST RUN AFTER pst_fw_angler_trips_assembly.R. This script does not compute
 # anything itself - it reads the CSVs that script writes to OUT_DIR and lays
 # them out into tabs. If the CSVs are stale, this workbook is stale.
 #
 # Inputs (all from OUT_DIR = analysis/pst/outputs, written by
-# pst_fw_effort_assembly.R):
+# pst_fw_angler_trips_assembly.R):
 #   pst_fw_trips_by_mode_location_INTERMEDIATE.csv  (effort_by_mode_location)
 #   pst_fw_trips_by_crc_area_INTERMEDIATE.csv       (effort_by_area)
 #   pst_fw_p2_area_ratios.csv                       (p2x$ratios)
@@ -32,7 +32,7 @@
 #
 # Missing upstream CSVs (interview props not run, P2 not wired, a prior
 # assembly run that predates a given file, etc.) are handled the same way as
-# pst_fw_effort_assembly.R handles them: log and skip or empty the affected
+# pst_fw_angler_trips_assembly.R handles them: log and skip or empty the affected
 # tab, never fabricate one. [R2] A missing dimension stays coded "unknown",
 # never zero, never imputed. [R3]
 # =============================================================================
@@ -46,7 +46,7 @@ OUT_DIR <- here("analysis", "pst", "outputs")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ---- 0. Defensive read helper ------------------------------------------------
-# Same convention as pst_fw_effort_assembly.R's read_if(): a missing input is
+# Same convention as pst_fw_angler_trips_assembly.R's read_if(): a missing input is
 # noted, never fatal, and the caller gets NULL back to branch on. [R2]
 
 log_note <- function(source_id, detail) {
@@ -58,7 +58,7 @@ read_if <- function(path, source_id, detail = NULL, reader = readr::read_csv) {
   if (!file.exists(path)) {
     log_note(source_id, detail %||% glue(
       "not found at {path} - tab skipped or shown empty in the workbook. ",
-      "Run pst_fw_effort_assembly.R first."
+      "Run pst_fw_angler_trips_assembly.R first."
     ))
     return(NULL)
   }
@@ -94,7 +94,7 @@ crc_vs_creel <- read_if(file.path(OUT_DIR, "pst_fw_crc_vs_creel_bias.csv"), "crc
 if (is.null(effort_by_mode_location) || is.null(effort_by_area)) {
   log_note("workbook", paste(
     "the two roll-up tables are the core of this workbook and are missing -",
-    "run pst_fw_effort_assembly.R before this script. Continuing so whatever",
+    "run pst_fw_angler_trips_assembly.R before this script. Continuing so whatever",
     "IS available (gaps, provenance) still gets written."
   ))
 }

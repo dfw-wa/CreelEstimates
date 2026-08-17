@@ -6,7 +6,7 @@
 #| label: status-summary
 
 if (is.null(effort)) {
-  cat("No assembly output found. Run analysis/pst_fw_effort_assembly.R.\n")
+  cat("No assembly output found. Run analysis/pst_fw_angler_trips_assembly.R.\n")
 } else {
   effort |>
     count(block, year, name = "rows") |>
@@ -82,7 +82,7 @@ ODFW numbers.
 
 ## Why the assembly output is not yet the deliverable
 
-`analysis/pst/03_analysis/pst_fw_effort_assembly.R` currently answers "what
+`analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` currently answers "what
 can we support right now," not "what do we owe Northern Economics." The P2
 ratio/expansion gap and the CRC-vs-creel bias handle are covered in Track A —
 assembly in practice above; the unresolved `mode = "unknown"` share is

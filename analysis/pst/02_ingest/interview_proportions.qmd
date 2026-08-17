@@ -133,7 +133,7 @@ depends on it:
 
 - **Location (bank/boat)** for these rivers already comes from `angler_final`
   in R3's own trip data (`mid_columbia_yakima_creel_summary.csv`, source_id
-  `R3_external`) — `pst_fw_effort_assembly.R` reads it directly as
+  `R3_external`) — `pst_fw_angler_trips_assembly.R` reads it directly as
   `location_basis = "design_stratum"`. This document's interview pull was
   never the source for that.
 - **Mode (guided/unguided)** can't be resolved from interviews regardless of
@@ -1181,7 +1181,7 @@ ggplot(compare_type, aes(x = prop_counts, y = prop_hours)) +
 
 ## Export: Mode × Location Proportions for Assembly
 
-This is the hand-off to `analysis/pst/03_analysis/pst_fw_effort_assembly.R`. Everything above
+This is the hand-off to `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R`. Everything above
 describes and diagnoses the proportions; this section writes the one table the
 assembly script consumes.
 
@@ -1278,7 +1278,7 @@ if (nrow(chk) > 0) {
 
 ### Cells resting on thin support
 
-`pst_fw_effort_assembly.R` falls back to block-pooled proportions below
+`pst_fw_angler_trips_assembly.R` falls back to block-pooled proportions below
 `MIN_INTERVIEWS = 30`. This table is where that threshold actually bites, so it
 should be read before accepting the deliverable — a fishery appearing here is
 one whose mode split is borrowed, not measured.

@@ -34,7 +34,7 @@ canonical wording — stay consistent with it rather than paraphrasing.
 
 ## Before you run this
 
-`analysis/pst/03_analysis/pst_fw_effort_assembly.R` (pipeline step 5) reads
+`analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` (pipeline step 5) reads
 two governing files:
 
 - `input_files/pst/lookup_tables/pst_input_manifest.csv`
@@ -59,7 +59,7 @@ and `lookup_tables/`.
 |---|---|
 | `01_intro_methods/` | `_`-prefixed Quarto fragments owning the framework: deliverable contract & scope (`_01_scope_and_contract.qmd`), the P1/P2/P3 tier hierarchy and Track A/B split (`_02_framework.qmd`), and the pipeline registry (`_03_pipeline_and_registry.qmd`). Never rendered standalone. |
 | `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. Also holds `patch_crosswalk_areas.R`, a one-shot maintenance script — see below. |
-| `03_analysis/` | The two assembly scripts (`pst_fw_effort_assembly.R`, `pst_fw_build_jim_workbook.R`), the P2 ratio-expansion helper they source (`pst_p2_block_ratio.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
+| `03_analysis/` | The two assembly scripts (`pst_fw_angler_trips_assembly.R`, `pst_fw_build_jim_workbook.R`), the P2 ratio-expansion helper they source (`pst_p2_block_ratio.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
 | `outputs/` | Every CSV/RDS/XLSX written by the pipeline. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
 | `correspondence/` | Point-in-time status write-ups (e.g. `PST_FW_Effort_Status_Brief_2026-08-06.md`) — snapshots for external audiences, not living documentation. |
 
@@ -76,7 +76,7 @@ script's header for exactly what it does and does not do.
 | 2 | `02_ingest/multi_fishery_creel_summary.R` | **yes** | `multi_fishery_creel_{trips,harvest,qa,run_ledger,week_vs_month}.{csv,rds}` |
 | 3 | `02_ingest/mid_columbia_yakima_creel_ingestion.R` | no | `mid_columbia_yakima_creel_summary.csv` |
 | 4 | `02_ingest/interview_proportions.qmd` | **yes** | `interview_mode_location_props.csv`, `interview_batch_crosscheck.csv`, `all_interviews.{csv,rds}`, ~25 proportion/variability CSVs |
-| 5 | `03_analysis/pst_fw_effort_assembly.R` | no | reads 1–4 plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv` and `input_files/pst/lookup_tables/crc_area_lut.csv`; sources `pst_p2_block_ratio.R`; writes the `pst_fw_*.csv` family |
+| 5 | `03_analysis/pst_fw_angler_trips_assembly.R` | no | reads 1–4 plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv` and `input_files/pst/lookup_tables/crc_area_lut.csv`; sources `pst_p2_block_ratio.R`; writes the `pst_fw_*.csv` family |
 | 6 | `03_analysis/pst_fw_build_jim_workbook.R` | no | reads step 5's CSVs; writes `PST_FW_Jim_Update.xlsx` |
 | 7 | `quarto render pst_fw_angler_trips.qmd` | no | reads everything above; renders the parent doc |
 
@@ -107,12 +107,12 @@ whenever Track B proportions need refreshing.
 ## Design rule R2
 
 Referenced throughout this subtree, defined in
-`pst_fw_effort_assembly.R`'s header:
+`pst_fw_angler_trips_assembly.R`'s header:
 
 > A missing input is logged as a gap, never silently dropped and never
 > fatal. Partial assembly is the expected state until all providers return.
 
-`run_pst_pipeline.R`, `pst_fw_effort_assembly.R`, `pst_fw_build_jim_workbook.R`,
+`run_pst_pipeline.R`, `pst_fw_angler_trips_assembly.R`, `pst_fw_build_jim_workbook.R`,
 and `pst_fw_angler_trips.qmd` all follow this: a missing file produces a
 logged gap (console message and/or a row in `outputs/pst_fw_gap_register.csv`)
 and the run continues with whatever is available, rather than stopping.

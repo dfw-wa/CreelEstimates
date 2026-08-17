@@ -24,7 +24,7 @@ library(here)
 library(glue)
 library(gt)
 
-# Parent doc reads the artifacts produced by pst_fw_effort_assembly.R.
+# Parent doc reads the artifacts produced by pst_fw_angler_trips_assembly.R.
 # It renders with partial outputs by design: anything missing is reported
 # as a gap rather than raising an error (design rule R2).
 

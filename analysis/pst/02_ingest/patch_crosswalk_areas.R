@@ -152,7 +152,7 @@ xw_patched |>
 # ==============================================================================
 #
 # A. ALL_BLOCKS can collapse into DELIVER_BLOCKS.
-#    In analysis/pst/03_analysis/pst_fw_effort_assembly.R, ALL_BLOCKS existed only so the crosswalk
+#    In analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R, ALL_BLOCKS existed only so the crosswalk
 #    validation would tolerate the documented-but-excluded mainstem rows. With
 #    those rows gone:
 #

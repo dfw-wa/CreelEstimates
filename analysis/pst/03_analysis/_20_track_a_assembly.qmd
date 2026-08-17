@@ -71,7 +71,7 @@ large share of the eventual deliverable — logged as a `blocker`, not guessed.
 p2_ratios <- read_if(file.path(OUT_DIR, "pst_fw_p2_area_ratios.csv"))
 
 if (is.null(p2_ratios)) {
-  cat("P2 ratio table not found. Run analysis/pst/03_analysis/pst_fw_effort_assembly.R with the P2 module wired in.\n")
+  cat("P2 ratio table not found. Run analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R with the P2 module wired in.\n")
 } else {
   p2_ratios |>
     filter(ratio_basis == "block_year") |>

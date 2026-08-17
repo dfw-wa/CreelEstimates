@@ -13,7 +13,7 @@ order; each step can also be run standalone.
 | 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
 | 3 | `analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R` | `analysis/pst/outputs/mid_columbia_yakima_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |
-| 5 | `analysis/pst/03_analysis/pst_fw_effort_assembly.R` | the deliverable + three ledgers |
+| 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | the deliverable + three ledgers |
 | 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `PST_FW_Jim_Update.xlsx` |
 
 Steps 1–4 are independent and parallelizable. Step 5 is the only writer of
@@ -31,7 +31,7 @@ build can be re-run without re-running the tier hierarchy.
 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | Merged effort + harvest; single DB fetch, one `est_pe_effort()` and one `est_pe_catch()` per fishery, so trips and harvest are identical by construction |
 | `analysis/pst/02_ingest/interview_proportions.qmd` | Track B engine — conditional mode proportions from interviews |
 | `analysis/archive/integrate_manual_runs.R` | Archived — not part of the current run order. Reconciles per-fishery `fw_creel.Rmd` runs to the monthly batch grain |
-| `analysis/pst/03_analysis/pst_fw_effort_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
+| `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
 
 ::: {.callout-note}
 `input_files/pst/` is organized by provider rather than by file type:

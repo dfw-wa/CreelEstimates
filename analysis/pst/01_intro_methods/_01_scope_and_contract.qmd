@@ -65,7 +65,7 @@ Steelhead is excluded entirely.
 (the Columbia mainstem block) are **excluded from delivery**. Those ODFW
 files were transmitted to WDFW *by Northern Economics* — the consultant
 already has this data, so we do not send it back.
-`analysis/pst/03_analysis/pst_fw_effort_assembly.R` never ingests this
+`analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` never ingests this
 block; `DELIVER_BLOCKS` gates the deliverable to Puget Sound, WA Coast, and
 Columbia tributaries only. The block stays in the crosswalk purely for
 documentation, in case it's ever needed for internal QC.

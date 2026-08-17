@@ -42,7 +42,7 @@
 #   Every producer script under 02_ingest/ and 03_analysis/ defines its own
 #   top-level objects with the SAME NAMES - OUT_DIR, PST_DIR, read_if(),
 #   log_gap(), canon(), GRAIN, and so on (compare
-#   pst_fw_effort_assembly.R and pst_fw_build_jim_workbook.R, which both
+#   pst_fw_angler_trips_assembly.R and pst_fw_build_jim_workbook.R, which both
 #   define read_if()/log_note() at file scope). source()-ing several of
 #   these into one session would let a later script's definitions silently
 #   shadow an earlier script's, or trip on a leftover object from a prior
@@ -60,14 +60,14 @@
 #   every script here use base library()/Rscript); system2() avoids adding
 #   one just for this.
 #
-# Design rule this file follows (from pst_fw_effort_assembly.R):
+# Design rule this file follows (from pst_fw_angler_trips_assembly.R):
 #   [R2] "A missing input is logged as a gap, never silently dropped and
 #   never fatal. Partial assembly is the expected state until all providers
 #   return." Applied here at the step level: every step is wrapped so an
 #   error is caught, logged with its condition message, and does NOT stop
 #   the run. Steps 5 and 6 depend on upstream outputs but are still
 #   ATTEMPTED even when known to be missing inputs, because
-#   pst_fw_effort_assembly.R degrades gracefully (empty/partial tables, not
+#   pst_fw_angler_trips_assembly.R degrades gracefully (empty/partial tables, not
 #   an error) when its inputs are absent - skipping them pre-emptively here
 #   would contradict that design and hide what the assembly script is
 #   actually able to produce from what's on disk right now.
@@ -114,7 +114,7 @@ STEP_REGISTRY <- list(
     depends_on = character(0)
   ),
   "05_effort_assembly" = list(
-    path       = "analysis/pst/03_analysis/pst_fw_effort_assembly.R",
+    path       = "analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R",
     needs_db   = FALSE,
     depends_on = c("01_crc_freshwater_harvest", "02_multi_fishery_creel_summary",
                     "03_mid_columbia_yakima", "04_interview_proportions")

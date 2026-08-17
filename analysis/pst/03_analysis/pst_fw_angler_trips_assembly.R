@@ -1,6 +1,6 @@
 # =============================================================================
-# pst_fw_effort_assembly.R
-# Location: analysis/pst/03_analysis/pst_fw_effort_assembly.R
+# pst_fw_angler_trips_assembly.R
+# Location: analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R
 #
 # Combines angler trips with creel-derived mode/location proportions to produce
 # an INTERMEDIATE table at Year x River x Mode (guided/unguided) x Location
@@ -42,7 +42,7 @@
 #                                                                       multi_fishery_creel_harvest.csv
 #   3. analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R -> mid_columbia_yakima_creel_summary.csv
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
-#   5. analysis/pst/03_analysis/pst_fw_effort_assembly.R            <- THIS SCRIPT
+#   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
 #   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Jim_Update.xlsx
 #                                                                       (run AFTER this script)
 #

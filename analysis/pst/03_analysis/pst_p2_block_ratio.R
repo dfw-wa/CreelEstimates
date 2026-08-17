@@ -453,7 +453,7 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crosswalk,
 
 
 # ==============================================================================
-# DROP-IN FOR pst_fw_effort_assembly.R
+# DROP-IN FOR pst_fw_angler_trips_assembly.R
 # ==============================================================================
 # Keep build_block_ratios() as it stands -- it produces the creel-denominated
 # diagnostic ratios and the CRC denominator table (p2$crc), both consumed here.

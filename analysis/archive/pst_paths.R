@@ -1,5 +1,28 @@
 # ------------------------------------------------------------------------------
-# pst_paths.R
+# ARCHIVED 2026-08-17 — never wired in. Nothing sourced this file.
+#
+# Why it is not in use:
+#   1. Every path below is wrong. It assumes an R/ directory, an
+#      analysis/registry/ directory, and analysis/outputs/ as the output root.
+#      The real layout is analysis/pst/{01_intro_methods,02_ingest,03_analysis},
+#      with inputs under input_files/pst/lookup_tables/ and outputs under
+#      analysis/pst/outputs/.
+#   2. The PST_OUTPUTS filenames do not match what the pipeline writes —
+#      e.g. "pst_fw_gap_ledger.csv" vs the actual pst_fw_gap_register.csv, and
+#      "pst_p2_block_ratios.csv" vs the actual pst_fw_p2_block_ratios.csv.
+#      Sourcing this as-is would resolve to files that do not exist.
+#   3. It contradicts the pattern the pipeline actually settled on: a single
+#      orchestrator owning its own here() calls inline, with no separate
+#      path-config layer.
+#
+# The problem it was trying to solve is real, though, and worth remembering:
+# the parent doc and the assembly script can drift apart on a filename. That
+# drift already happened once — pst_fw_p2_block_ratios.csv and
+# pst_fw_p2_area_ratios.csv are two different artifacts whose names differ by
+# one word, and the output contract had to call that out explicitly. If that
+# class of bug recurs, a filename registry (not a full path layer) is the
+# cheap fix, and this file is the sketch of one.
+# ------------------------------------------------------------------------------
 #
 # Single source of truth for every path the PST freshwater effort pipeline
 # touches. The assembly script, the P2 module, and PST_FW_Effort.qmd all read

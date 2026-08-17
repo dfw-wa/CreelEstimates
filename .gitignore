@@ -57,3 +57,6 @@ config.yml
 # too large to track (31.6 MB / 3.3 MB vs. 1.4 MB for the next largest file in outputs/)
 analysis/pst/outputs/all_interviews.csv
 analysis/pst/outputs/all_interviews.rds
+
+# Local scratch cache (interview_proportions.qmd DB pull; regenerable)
+.cache/

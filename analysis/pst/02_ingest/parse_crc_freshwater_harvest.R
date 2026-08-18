@@ -3,7 +3,7 @@
 #
 # Purpose:
 #   Parse and validate the CRC-expanded freshwater salmon harvest workbooks
-#   for license years 2021–2024 (sheet-level data, not creel estimates) and
+#   for license years 2019–2024 (sheet-level data, not creel estimates) and
 #   produce a clean, tidy long-format CSV of leaf-level harvest counts.
 #
 #   This script is a *pre-processing step only*: it outputs harvest counts as
@@ -12,21 +12,37 @@
 #   river-to-creel crosswalk matching are separate, later steps implemented in
 #   interview_proportions.qmd.
 #
-# Why 2021 is included despite being outside the consultant's scope (2022–2024):
-#   The even/odd year pattern in salmon runs (especially Pink) makes year-over-
-#   year sanity checks most meaningful when both an even and odd neighbour are
-#   present. 2021 provides a historical baseline for the 2023 odd-year row and
-#   is processed alongside 2022–2024 but is clearly tagged as reference-only in
-#   the output and warnings.
+# Why 2019–2021 are included despite being outside the consultant's scope
+# (2022–2024):
+#   Two distinct reasons, added at different times - don't conflate them:
+#
+#   1. [2021] The even/odd year pattern in salmon runs (especially Pink)
+#      makes year-over-year sanity checks most meaningful when both an even
+#      and odd neighbour are present. 2021 provides a historical baseline for
+#      the 2023 odd-year row and is processed alongside 2022–2024 but is
+#      clearly tagged as reference-only in the output and warnings.
+#
+#   2. [2019–2020, added 2026-08-18] A planned 5-year-average CRC harvest
+#      projection is the fallback for 2025 WA Coast / Columbia tributary
+#      rows where no creel survey exists (no 2025 creel PE means no P1, and
+#      those rivers currently have no within-block P2 donor either - see the
+#      open coastal_2025 gap in pst_fw_angler_trips_assembly.R). A 5-year
+#      mean needs 5 years of harvest history behind the projected year, so
+#      2019–2020 fill out 2019–2024 alongside the existing 2021–2024. This
+#      is NOT the odd/even baselining reason above - it is a separate,
+#      later addition for a separate downstream use, and would still be
+#      needed even if the odd/even check did not exist.
 #
 # Input files (input_files/pst/CRC/):
-#   Salmon Freshwater Estimates 2021 Draft 1.xlsx  -> sheet "FW 2021-2022"
-#   Salmon Freshwater Estimates 2022 Draft 1.xlsx  -> sheet "FW 2022-2023"
-#   Salmon Freshwater Estimates 2023.xlsx          -> sheet "FW 2023-2024"
-#   Salmon Freshwater Estimates 2024.xlsx          -> sheet "FW 2024-2025"
+#   Salmon Freshwater Estimates 2019 Prop. Final.xlsx -> sheet "FW 2019-2020"
+#   Salmon Freshwater Estimates 2020 Draft 1a.xlsx     -> sheet "FW 2020-2021"
+#   Salmon Freshwater Estimates 2021 Draft 1.xlsx      -> sheet "FW 2021-2022"
+#   Salmon Freshwater Estimates 2022 Draft 1.xlsx      -> sheet "FW 2022-2023"
+#   Salmon Freshwater Estimates 2023.xlsx              -> sheet "FW 2023-2024"
+#   Salmon Freshwater Estimates 2024.xlsx              -> sheet "FW 2024-2025"
 #
 # Output:
-#   analysis/pst/outputs/crc_freshwater_harvest_2021_2024_tidy.csv
+#   analysis/pst/outputs/crc_freshwater_harvest_2019_2024_tidy.csv
 #
 # Validation (printed summary, not a separate file):
 #   1. Monthly leaf rows sum == stream-species "Total" row per file.
@@ -35,7 +51,7 @@
 #   4. Year-over-year harvest swing >3× or <0.33× flagged (warning, not error).
 #      Even/odd year patterns (Pink, Coho) noted explicitly.
 #   5. No Steelhead rows (these files are salmon-only per PST scope).
-#   6. Blocking: all four years (2021–2024) must be present in output.
+#   6. Blocking: all six years (2019–2024) must be present in output.
 #
 # Zero / blank convention:
 #   Blank and zero cells in monthly harvest columns are both treated as 0
@@ -55,14 +71,16 @@ library(cli)
 out_dir <- here("analysis", "pst", "outputs")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-OUT_CSV <- file.path(out_dir, "crc_freshwater_harvest_2021_2024_tidy.csv")
+OUT_CSV <- file.path(out_dir, "crc_freshwater_harvest_2019_2024_tidy.csv")
 
 FILE_MANIFEST <- tribble(
-  ~license_year, ~filename,                                       ~sheet,
-  2021L,         "Salmon Freshwater Estimates 2021 Draft 1.xlsx", "FW 2021-2022",
-  2022L,         "Salmon Freshwater Estimates 2022 Draft 1.xlsx", "FW 2022-2023",
-  2023L,         "Salmon Freshwater Estimates 2023.xlsx",         "FW 2023-2024",
-  2024L,         "Salmon Freshwater Estimates 2024.xlsx",         "FW 2024-2025"
+  ~license_year, ~filename,                                            ~sheet,
+  2019L,         "Salmon Freshwater Estimates 2019 Prop. Final.xlsx", "FW 2019-2020",
+  2020L,         "Salmon Freshwater Estimates 2020 Draft 1a.xlsx",    "FW 2020-2021",
+  2021L,         "Salmon Freshwater Estimates 2021 Draft 1.xlsx",     "FW 2021-2022",
+  2022L,         "Salmon Freshwater Estimates 2022 Draft 1.xlsx",     "FW 2022-2023",
+  2023L,         "Salmon Freshwater Estimates 2023.xlsx",             "FW 2023-2024",
+  2024L,         "Salmon Freshwater Estimates 2024.xlsx",             "FW 2024-2025"
 )
 
 # License year runs Apr of the named year through Mar of the following year.
@@ -421,13 +439,18 @@ if (nrow(check1_fail) == 0L) {
 cli::cli_h2("Check 2: Leaf sums vs region-level subtotals")
 # Each file contains per-region aggregate blocks (col_B = 'Total', col_C/D = NA)
 # excluded from the leaf extract. These are the natural reconciliation target.
-# For 2023 and 2024 (published files) leaf sums should equal region subtotals
-# exactly. For 2021 and 2022 (Draft 1 files) small discrepancies are expected:
+# For 2019, 2023, and 2024 (published/final files) leaf sums equal region
+# subtotals exactly. For 2020, 2021, and 2022 (Draft files) small
+# discrepancies are expected:
+# - 2020: Unknown region (-1428) has a subtotal block but NO individual stream
+#         rows in the draft - same pattern as 2022 below, confirmed by
+#         per-region breakdown: all 6 named regions reconcile exactly, only
+#         "Unknown" is missing from the leaf extract.
 # - 2021: Columbia Old Hanford +41, Skagit River -852 (pre-pub cell errors)
 # - 2022: Unknown region (-3509) has a subtotal block but NO individual stream
 #         rows in the draft, so those fish appear only in the region subtotal,
 #         not in the leaf extract.
-# Both are flagged as warnings, not failures.
+# All three are flagged as warnings, not failures.
 #
 # The file 'Total - All Areas' row is also shown. Unlike the earlier parsing
 # defect that made it appear as a ~2x bug, it now matches leaf_grand within the
@@ -482,8 +505,8 @@ if (nrow(check2_fail) == 0L) {
   cli::cli_alert_warning(
     "WARNING (not blocking for Draft 1 files): \\
      Leaf vs region-subtotal mismatch for {nrow(check2_fail)} year(s). \\
-     Expected for 2021 (stream-level cell errors) and 2022 (Unknown region \\
-     has no leaf rows in draft, only a subtotal block):"
+     Expected for 2020 and 2022 (Unknown region has no leaf rows in draft, \\
+     only a subtotal block) and 2021 (stream-level cell errors):"
   )
   print(select(check2_fail, license_year, leaf_grand, region_subtot_sum, diff_region))
 }
@@ -511,11 +534,11 @@ if (nrow(steelhead_rows) == 0L) {
 }
 
 
-## --- Check 6: All four years present (blocking) ------------------------------
-cli::cli_h2("Check 6: All four license years present in output (blocking)")
+## --- Check 6: All six years present (blocking) -------------------------------
+cli::cli_h2("Check 6: All six license years present in output (blocking)")
 
 years_present <- sort(unique(all_leaf$license_year))
-years_required <- 2021L:2024L
+years_required <- 2019L:2024L
 years_missing  <- setdiff(years_required, years_present)
 
 if (length(years_missing) > 0L) {

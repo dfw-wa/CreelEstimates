@@ -676,7 +676,7 @@ build_block_ratios <- function(trips_p1) {
   # numeric freshwater codes, which forces the whole column to character on
   # read. stream_code in the CRC harvest file is purely numeric and comes in as
   # a double. Coerce both sides explicitly - inferred types won't agree.
-  crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2021_2024_tidy.csv"),
+  crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2019_2024_tidy.csv"),
                  "crc_harvest")
   crc_yr <- NULL
   if (!is.null(crc)) {

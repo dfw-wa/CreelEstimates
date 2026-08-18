@@ -83,7 +83,7 @@ ODFW numbers.
   assembly script still logs a `defect` if it finds a superseded file.
 - **CRC compile** — region labels lost for 2023–2024; subtotal blocks
   retained as leaf rows causing ~2× double-count. Confirm the current
-  `crc_freshwater_harvest_2021_2024_tidy.csv` postdates the fix.
+  `crc_freshwater_harvest_2019_2024_tidy.csv` postdates the fix.
 - **NEPA workbook** — fill-right errors in the 2022/2024 even-year columns.
 
 ## Why the assembly output is not yet the deliverable

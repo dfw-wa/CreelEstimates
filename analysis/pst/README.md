@@ -72,7 +72,7 @@ script's header for exactly what it does and does not do.
 
 | Step | Script | DB/VPN? | Writes to `outputs/` |
 |---|---|---|---|
-| 1 | `02_ingest/parse_crc_freshwater_harvest.R` | no | `crc_freshwater_harvest_2021_2024_tidy.csv` |
+| 1 | `02_ingest/parse_crc_freshwater_harvest.R` | no | `crc_freshwater_harvest_2019_2024_tidy.csv` |
 | 2 | `02_ingest/multi_fishery_creel_summary.R` | **yes** | `multi_fishery_creel_{trips,harvest,qa,run_ledger,week_vs_month}.{csv,rds}` |
 | 3 | `02_ingest/district_creel_ingestion.R` | no | `district_creel_summary.csv` |
 | 4 | `02_ingest/interview_proportions.qmd` | **yes** | `interview_mode_location_props.csv`, `interview_batch_crosscheck.csv`, `all_interviews.{csv,rds}`, ~25 proportion/variability CSVs |

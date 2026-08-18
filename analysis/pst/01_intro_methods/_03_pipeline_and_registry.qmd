@@ -9,7 +9,7 @@ order; each step can also be run standalone.
 
 | # | Script | Writes |
 |---|---|---|
-| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2021_2024_tidy.csv` |
+| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2019_2024_tidy.csv` |
 | 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
 | 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/district_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |

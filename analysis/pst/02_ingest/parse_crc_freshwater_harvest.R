@@ -3,18 +3,18 @@
 #
 # Purpose:
 #   Parse and validate the CRC-expanded freshwater salmon harvest workbooks
-#   for license years 2019–2024 (sheet-level data, not creel estimates) and
+#   for license years 2010–2024 (sheet-level data, not creel estimates) and
 #   produce a clean, tidy long-format CSV of leaf-level harvest counts.
 #
 #   This script is a *pre-processing step only*: it outputs harvest counts as
 #   published in the CRC workbooks. No trips-per-salmon ratio is applied here.
 #   The ratio application (odd-year 3.44 / even-year 8.65) and the
 #   river-to-creel crosswalk matching are separate, later steps implemented in
-#   interview_proportions.qmd.
+#   interview_proportions.qmd and pst_crc_harvest_projection.R.
 #
-# Why 2019–2021 are included despite being outside the consultant's scope
+# Why 2010–2021 are included despite being outside the consultant's scope
 # (2022–2024):
-#   Two distinct reasons, added at different times - don't conflate them:
+#   Three distinct reasons, added at different times - don't conflate them:
 #
 #   1. [2021] The even/odd year pattern in salmon runs (especially Pink)
 #      makes year-over-year sanity checks most meaningful when both an even
@@ -22,27 +22,61 @@
 #      the 2023 odd-year row and is processed alongside 2022–2024 but is
 #      clearly tagged as reference-only in the output and warnings.
 #
-#   2. [2019–2020, added 2026-08-18] A planned 5-year-average CRC harvest
-#      projection is the fallback for 2025 WA Coast / Columbia tributary
-#      rows where no creel survey exists (no 2025 creel PE means no P1, and
-#      those rivers currently have no within-block P2 donor either - see the
-#      open coastal_2025 gap in pst_fw_angler_trips_assembly.R). A 5-year
-#      mean needs 5 years of harvest history behind the projected year, so
-#      2019–2020 fill out 2019–2024 alongside the existing 2021–2024. This
-#      is NOT the odd/even baselining reason above - it is a separate,
-#      later addition for a separate downstream use, and would still be
-#      needed even if the odd/even check did not exist.
+#   2. [2019–2020, added 2026-08-18] A 6-year-average CRC harvest projection
+#      is the fallback for 2025 WA Coast / Columbia tributary rows where no
+#      creel survey exists (no 2025 creel PE means no P1, and those rivers
+#      currently have no within-block P2 donor either - see the coastal_2025
+#      gap in pst_fw_angler_trips_assembly.R). A 6-year mean needs 6 years of
+#      harvest history behind the projected year, so 2019–2020 fill out
+#      2019–2024 alongside the existing 2021–2024. This is NOT the odd/even
+#      baselining reason above - it is a separate, later addition for a
+#      separate downstream use, and would still be needed even if the
+#      odd/even check did not exist.
+#
+#   3. [2010–2018, added 2026-08-19] The Puget Sound freshwater effort
+#      projection (a separate, WDFW-supplied dataset produced with NWIFC and
+#      handed to BIA to satisfy NEPA analysis requirements for the Puget
+#      Sound fishing package - not itself part of this pipeline) is built
+#      from a 5-year SAME-PARITY mean catch per stream (previous 5 even
+#      years, or previous 5 odd years - not a straight trailing mean), going
+#      back to base years as early as 2015. Reconstructing that statistic
+#      from OUR OWN pure-CRC data - to check it against the existing
+#      pre-computed file rather than assume it - needs the full run of years
+#      behind it, not just the most recent handful. See
+#      pst_crc_harvest_projection.R for the reconstruction and comparison.
+#      2015 is the earliest base year actually used by the existing
+#      calculation as of this writing, but 2010–2014 are included too since
+#      they were supplied and cost nothing extra to parse.
 #
 # Input files (input_files/pst/CRC/):
-#   Salmon Freshwater Estimates 2019 Prop. Final.xlsx -> sheet "FW 2019-2020"
-#   Salmon Freshwater Estimates 2020 Draft 1a.xlsx     -> sheet "FW 2020-2021"
-#   Salmon Freshwater Estimates 2021 Draft 1.xlsx      -> sheet "FW 2021-2022"
-#   Salmon Freshwater Estimates 2022 Draft 1.xlsx      -> sheet "FW 2022-2023"
-#   Salmon Freshwater Estimates 2023.xlsx              -> sheet "FW 2023-2024"
-#   Salmon Freshwater Estimates 2024.xlsx              -> sheet "FW 2024-2025"
+#   Salmon Freshwater Estimates 2010 Draft 1.xls        -> sheet "Salmon Freshwater Report 2010"
+#   Salmon Freshwater Estimates 2011 Draft 1.xls        -> sheet "Salmon Freshwater Report 2011"
+#   Salmon Freshwater Estimates 2012 Draft.xls          -> sheet "Salmon Freshwater Report 2012"
+#   Salmon Freshwater Estimates 2013.xls                -> sheet "Salmon Freshwater 2013"
+#   Salmon Freshwater Estimates 2014 First Full.xls     -> sheet "Salmon Freshwater Estimates 201" (Excel-truncated name)
+#   Salmon Freshwater Estimates 2015 First Full 1.xls   -> sheet "Salmon Freshwater Estimates 201" (Excel-truncated name)
+#   Salmon Freshwater Estimates 2016 First Full 1.xls   -> sheet "Salmon FW 2016-17"
+#   Salmon Freshwater Estimates 2017.xlsx               -> sheet "FW 2017-2018"
+#   Salmon Freshwater Estimates 2018 Draft 1.xlsx       -> sheet "FW 2018-2019"
+#   Salmon Freshwater Estimates 2019 Prop. Final.xlsx   -> sheet "FW 2019-2020"
+#   Salmon Freshwater Estimates 2020 Draft 1a.xlsx      -> sheet "FW 2020-2021"
+#   Salmon Freshwater Estimates 2021 Draft 1.xlsx       -> sheet "FW 2021-2022"
+#   Salmon Freshwater Estimates 2022 Draft 1.xlsx       -> sheet "FW 2022-2023"
+#   Salmon Freshwater Estimates 2023.xlsx               -> sheet "FW 2023-2024"
+#   Salmon Freshwater Estimates 2024.xlsx               -> sheet "FW 2024-2025"
+#
+# Reader note: the 2017 file (.xlsx) throws a readxl internal error
+# ("vector::_M_range_check") on every sheet-read attempt, tried multiple
+# ways (full read, ranged read, n_max). openpyxl (Python) and openxlsx (R)
+# both read the SAME file cleanly with an ordinary Layout B structure - this
+# is a readxl-specific parsing bug on this one file, not real corruption and
+# not a different layout. read_fw_raw() below tries readxl first (fast, used
+# for the other 14 files) and falls back to openxlsx only on error, so this
+# is transparent to parse_fw_workbook() and does not require a separate code
+# path for 2017's actual layout.
 #
 # Output:
-#   analysis/pst/outputs/crc_freshwater_harvest_2019_2024_tidy.csv
+#   analysis/pst/outputs/crc_freshwater_harvest_2010_2024_tidy.csv
 #
 # Validation (printed summary, not a separate file):
 #   1. Monthly leaf rows sum == stream-species "Total" row per file.
@@ -51,7 +85,7 @@
 #   4. Year-over-year harvest swing >3× or <0.33× flagged (warning, not error).
 #      Even/odd year patterns (Pink, Coho) noted explicitly.
 #   5. No Steelhead rows (these files are salmon-only per PST scope).
-#   6. Blocking: all six years (2019–2024) must be present in output.
+#   6. Blocking: all fifteen years (2010–2024) must be present in output.
 #
 # Zero / blank convention:
 #   Blank and zero cells in monthly harvest columns are both treated as 0
@@ -62,6 +96,7 @@
 
 library(tidyverse)
 library(readxl)
+library(openxlsx)
 library(glue)
 library(here)
 library(cli)
@@ -71,17 +106,47 @@ library(cli)
 out_dir <- here("analysis", "pst", "outputs")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-OUT_CSV <- file.path(out_dir, "crc_freshwater_harvest_2019_2024_tidy.csv")
+OUT_CSV <- file.path(out_dir, "crc_freshwater_harvest_2010_2024_tidy.csv")
 
 FILE_MANIFEST <- tribble(
-  ~license_year, ~filename,                                            ~sheet,
-  2019L,         "Salmon Freshwater Estimates 2019 Prop. Final.xlsx", "FW 2019-2020",
-  2020L,         "Salmon Freshwater Estimates 2020 Draft 1a.xlsx",    "FW 2020-2021",
-  2021L,         "Salmon Freshwater Estimates 2021 Draft 1.xlsx",     "FW 2021-2022",
-  2022L,         "Salmon Freshwater Estimates 2022 Draft 1.xlsx",     "FW 2022-2023",
-  2023L,         "Salmon Freshwater Estimates 2023.xlsx",             "FW 2023-2024",
-  2024L,         "Salmon Freshwater Estimates 2024.xlsx",             "FW 2024-2025"
+  ~license_year, ~filename,                                              ~sheet,
+  2010L,         "Salmon Freshwater Estimates 2010 Draft 1.xls",        "Salmon Freshwater Report 2010",
+  2011L,         "Salmon Freshwater Estimates 2011 Draft 1.xls",        "Salmon Freshwater Report 2011",
+  2012L,         "Salmon Freshwater Estimates 2012 Draft.xls",          "Salmon Freshwater Report 2012",
+  2013L,         "Salmon Freshwater Estimates 2013.xls",                "Salmon Freshwater 2013",
+  2014L,         "Salmon Freshwater Estimates 2014 First Full.xls",     "Salmon Freshwater Estimates 201",
+  2015L,         "Salmon Freshwater Estimates 2015 First Full 1.xls",   "Salmon Freshwater Estimates 201",
+  2016L,         "Salmon Freshwater Estimates 2016 First Full 1.xls",   "Salmon FW 2016-17",
+  2017L,         "Salmon Freshwater Estimates 2017.xlsx",               "FW 2017-2018",
+  2018L,         "Salmon Freshwater Estimates 2018 Draft 1.xlsx",       "FW 2018-2019",
+  2019L,         "Salmon Freshwater Estimates 2019 Prop. Final.xlsx",   "FW 2019-2020",
+  2020L,         "Salmon Freshwater Estimates 2020 Draft 1a.xlsx",      "FW 2020-2021",
+  2021L,         "Salmon Freshwater Estimates 2021 Draft 1.xlsx",       "FW 2021-2022",
+  2022L,         "Salmon Freshwater Estimates 2022 Draft 1.xlsx",       "FW 2022-2023",
+  2023L,         "Salmon Freshwater Estimates 2023.xlsx",               "FW 2023-2024",
+  2024L,         "Salmon Freshwater Estimates 2024.xlsx",               "FW 2024-2025"
 )
+
+#' Read a raw, unheadered sheet, falling back from readxl to openxlsx.
+#' See the "Reader note" above the file manifest for why: readxl throws an
+#' internal C++ range-check error on the 2017 workbook specifically, even
+#' though the file is not corrupt (openpyxl and openxlsx both read it fine).
+#' Returned shape matches read_excel(col_names = FALSE) closely enough for
+#' every downstream positional (`raw[[i]]`, `raw[row, ]`) access in
+#' parse_fw_workbook() to work unmodified against either source.
+read_fw_raw <- function(path, sheet) {
+  tryCatch({
+    read_excel(path, sheet = sheet, col_names = FALSE, .name_repair = "minimal")
+  }, error = function(e) {
+    cli::cli_alert_warning(
+      "readxl failed for {basename(path)} ({conditionMessage(e)}) - falling \\
+       back to openxlsx."
+    )
+    raw_df <- openxlsx::read.xlsx(path, sheet = sheet, colNames = FALSE,
+                                  skipEmptyRows = FALSE)
+    tibble::as_tibble(raw_df, .name_repair = "minimal")
+  })
+}
 
 # License year runs Apr of the named year through Mar of the following year.
 # Map month abbreviations to (calendar_year_offset, calendar_month) where
@@ -112,9 +177,10 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
 
   cli::cli_h2(glue("Parsing license year {license_year} — {basename(path)} / {sheet}"))
 
-  # Read without column names; everything as text to preserve merged cells
-  raw <- read_excel(path, sheet = sheet, col_names = FALSE,
-                    .name_repair = "minimal")
+  # Read without column names; everything as text to preserve merged cells.
+  # Falls back readxl -> openxlsx automatically for the one file that needs
+  # it (2017) - see read_fw_raw()'s own header note.
+  raw <- read_fw_raw(path, sheet)
 
   # ---- Locate header rows ----
   # Two layouts exist across these workbooks:
@@ -424,8 +490,21 @@ if (nrow(check1_fail) == 0L) {
     "PASS: All {nrow(check1)} stream subtotal rows reconcile with leaf sums."
   )
 } else {
-  # Known pre-publication inconsistencies in 2021 Draft 1 (Columbia Old Hanford +41,
-  # Skagit River -852) are expected. Leaf month-cell values are authoritative.
+  # Known pre-publication inconsistencies, all small relative to the stream's
+  # own total, are expected in Draft-status files - leaf month-cell values
+  # are authoritative, not the stream subtotal row:
+  # - 2010: Klickitat River codes 607/608 (-3670/+3670, exactly offsetting -
+  #         a code-assignment swap between two adjacent codes in the source,
+  #         not a loss; the two together net to zero).
+  # - 2013: Columbia Hwy 395 area (+235).
+  # - 2017: 7 streams (largest: B10 Line/Rocky Pt +14426, "Unknown" +954).
+  #         This is the file read via the openxlsx fallback (see the reader
+  #         note above) - cross-checked independently against openpyxl's own
+  #         read before trusting it, and the discrepancy pattern here is the
+  #         same "Draft subtotal row disagrees with its own leaf cells"
+  #         pattern seen in every other Draft-status year, not a symptom of
+  #         the fallback reader misreading cells.
+  # - 2021: Columbia Old Hanford (+41), Skagit River (-852).
   cli::cli_alert_warning(
     "WARNING (not blocking for Draft 1 files): \\
      {nrow(check1_fail)} stream subtotal(s) do not match leaf sums:"
@@ -439,18 +518,32 @@ if (nrow(check1_fail) == 0L) {
 cli::cli_h2("Check 2: Leaf sums vs region-level subtotals")
 # Each file contains per-region aggregate blocks (col_B = 'Total', col_C/D = NA)
 # excluded from the leaf extract. These are the natural reconciliation target.
-# For 2019, 2023, and 2024 (published/final files) leaf sums equal region
-# subtotals exactly. For 2020, 2021, and 2022 (Draft files) small
-# discrepancies are expected:
-# - 2020: Unknown region (-1428) has a subtotal block but NO individual stream
-#         rows in the draft - same pattern as 2022 below, confirmed by
-#         per-region breakdown: all 6 named regions reconcile exactly, only
-#         "Unknown" is missing from the leaf extract.
-# - 2021: Columbia Old Hanford +41, Skagit River -852 (pre-pub cell errors)
-# - 2022: Unknown region (-3509) has a subtotal block but NO individual stream
-#         rows in the draft, so those fish appear only in the region subtotal,
-#         not in the leaf extract.
-# All three are flagged as warnings, not failures.
+# For 2011, 2019, 2023, and 2024 (published/final files) leaf sums equal
+# region subtotals exactly. For every Draft-status year, small discrepancies
+# are expected, confirmed per-region rather than assumed, and fall into three
+# patterns - don't conflate them:
+#
+#   A. "Unknown" has a subtotal block but NO leaf rows at all (that region's
+#      fish appear only in the aggregate, never broken out by stream) -
+#      2010 (-3564), 2014 (-6474), 2015 (-6999), 2016 (-2523), 2018 (-1087),
+#      2020 (-1428), 2022 (-3509). Confirmed by per-region breakdown: every
+#      NAMED region reconciles exactly in these years; only "Unknown" is
+#      missing from the leaf extract.
+#
+#   B. "Unknown" has leaf rows but NO subtotal block exists for it at all -
+#      the opposite direction from pattern A - 2012 (+4710), 2013 (+13428
+#      of its +13193 net; see below for the rest).
+#
+#   C. Genuine stream/region-level cell errors within an otherwise-complete
+#      region (leaf and subtotal both present, values just disagree) -
+#      2013 Columbia Upper (-235, on top of pattern B above, net +13193),
+#      2017 (all 7 regions off by a few cells to tens; Columbia Lower's
+#      -14426 is the dominant one and is the SAME underlying source error as
+#      the B10 Line/Rocky Pt +14426 in Check 1 above, not a second, separate
+#      defect - one bad subtotal cell shows up in both checks), 2021
+#      Columbia Old Hanford (+41) and Skagit River (-852).
+#
+# All are flagged as warnings, not failures.
 #
 # The file 'Total - All Areas' row is also shown. Unlike the earlier parsing
 # defect that made it appear as a ~2x bug, it now matches leaf_grand within the
@@ -504,9 +597,12 @@ if (nrow(check2_fail) == 0L) {
 } else {
   cli::cli_alert_warning(
     "WARNING (not blocking for Draft 1 files): \\
-     Leaf vs region-subtotal mismatch for {nrow(check2_fail)} year(s). \\
-     Expected for 2020 and 2022 (Unknown region has no leaf rows in draft, \\
-     only a subtotal block) and 2021 (stream-level cell errors):"
+     Leaf vs region-subtotal mismatch for {nrow(check2_fail)} year(s), all \\
+     small relative to file totals - three patterns, see the code comment \\
+     above Check 2 for which year is which: 'Unknown' region missing from \\
+     the leaf extract (2010, 2014, 2015, 2016, 2018, 2020, 2022); 'Unknown' \\
+     present in the leaf extract but with no subtotal block (2012, 2013); \\
+     genuine stream/region cell errors (2013, 2017, 2021):"
   )
   print(select(check2_fail, license_year, leaf_grand, region_subtot_sum, diff_region))
 }
@@ -534,11 +630,11 @@ if (nrow(steelhead_rows) == 0L) {
 }
 
 
-## --- Check 6: All six years present (blocking) -------------------------------
-cli::cli_h2("Check 6: All six license years present in output (blocking)")
+## --- Check 6: All fifteen years present (blocking) ----------------------------
+cli::cli_h2("Check 6: All fifteen license years present in output (blocking)")
 
 years_present <- sort(unique(all_leaf$license_year))
-years_required <- 2019L:2024L
+years_required <- 2010L:2024L
 years_missing  <- setdiff(years_required, years_present)
 
 if (length(years_missing) > 0L) {

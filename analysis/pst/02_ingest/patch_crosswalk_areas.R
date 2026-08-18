@@ -7,7 +7,7 @@
 #   1. Fill crc_areas for the three mid-Columbia R3_external fisheries.
 #      Hanford Reach = 534|535|536, McNary = 533, Yakima = 690.
 #      Source: CRC_AREA_LUT / HANFORD_CRC_AREAS in
-#      mid_columbia_yakima_creel_ingestion.R, confirmed by Todd Miller
+#      district_creel_ingestion.R, confirmed by Todd Miller
 #      2026-08-11 (OQ1). Hanford 536 is independently corroborated by the CRC
 #      harvest file, where stream_code 536 is "Columbia Old Hanford
 #      townsite-Priest Rapids Dam".
@@ -19,6 +19,15 @@
 #   3. Mark Hanford's areas as covered-but-unpartitioned so P2 does not
 #      re-expand them (see the note at the bottom -- this is the part that
 #      would otherwise silently double-count).
+#
+# NOT done here, and NOT a patch this script's shape fits: Snake River (R1,
+# added to district_creel_ingestion.R 2026-08-18) has NO crosswalk rows at
+# all yet -- there is nothing existing to patch, only new rows to add
+# (source_id = "R1_external", river_label = "Snake River", block presumably
+# "ColumbiaTrib"). That is a real content decision (what block, what CRC-area
+# note), not a mechanical area-code fix like the three below, so it is left
+# for deliberate review rather than asserted here. See the callout in
+# 01_intro_methods/_03_pipeline_and_registry.qmd.
 #
 # Writes a timestamped backup first. Run once, review the diff, commit.
 # ==============================================================================

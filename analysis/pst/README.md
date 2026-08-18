@@ -74,7 +74,7 @@ script's header for exactly what it does and does not do.
 |---|---|---|---|
 | 1 | `02_ingest/parse_crc_freshwater_harvest.R` | no | `crc_freshwater_harvest_2021_2024_tidy.csv` |
 | 2 | `02_ingest/multi_fishery_creel_summary.R` | **yes** | `multi_fishery_creel_{trips,harvest,qa,run_ledger,week_vs_month}.{csv,rds}` |
-| 3 | `02_ingest/mid_columbia_yakima_creel_ingestion.R` | no | `mid_columbia_yakima_creel_summary.csv` |
+| 3 | `02_ingest/district_creel_ingestion.R` | no | `district_creel_summary.csv` |
 | 4 | `02_ingest/interview_proportions.qmd` | **yes** | `interview_mode_location_props.csv`, `interview_batch_crosscheck.csv`, `all_interviews.{csv,rds}`, ~25 proportion/variability CSVs |
 | 5 | `03_analysis/pst_fw_angler_trips_assembly.R` | no | reads 1–4 plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv` and `input_files/pst/lookup_tables/crc_area_lut.csv`; sources `pst_p2_block_ratio.R`; writes the `pst_fw_*.csv` family |
 | 6 | `03_analysis/pst_fw_build_jim_workbook.R` | no | reads step 5's CSVs; writes `PST_FW_Jim_Update.xlsx` |

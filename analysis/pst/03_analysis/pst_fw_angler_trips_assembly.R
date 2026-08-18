@@ -13,7 +13,7 @@
 #     their effort is simply missing from block totals. Yakima 2023-2025 is
 #     the live case: 13,455 effort-hrs with no total_trips_est (OQ4).
 #   - mode = "unknown" rows are unresolved, not a finished answer. Note that
-#     P2 and R3_external rows can NEVER be resolved by Track B - neither
+#     P2 and district_creel rows can NEVER be resolved by Track B - neither
 #     source collects the field - so this figure will not reach zero.
 #   - P3 published fallbacks (NEPA projection for PS 2025, coastal 2025) are
 #     not ingested.
@@ -40,7 +40,7 @@
 #   1. analysis/pst/02_ingest/parse_crc_freshwater_harvest.R        -> crc_freshwater_harvest_*.csv
 #   2. analysis/pst/02_ingest/multi_fishery_creel_summary.R         -> multi_fishery_creel_trips.csv
 #                                                                       multi_fishery_creel_harvest.csv
-#   3. analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R -> mid_columbia_yakima_creel_summary.csv
+#   3. analysis/pst/02_ingest/district_creel_ingestion.R            -> district_creel_summary.csv
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
 #   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
 #   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Jim_Update.xlsx
@@ -101,7 +101,7 @@ canon <- function(df) {
       location = replace_na(as.character(location), "unknown"),
       mode     = replace_na(as.character(mode),     "unknown"),
       year     = as.integer(year),
-      # P1 sources (creel_pe, R3_external) carry catch_area_code as numeric,
+      # P1 sources (creel_pe, district_creel) carry catch_area_code as numeric,
       # coming straight off est_pe_effort(). pst_p2_block_ratio.R works in
       # character throughout -- required because crc_area_lut.csv mixes numeric
       # freshwater codes with string marine sub-area codes ("2-1", "8-2"), which
@@ -209,14 +209,40 @@ if (!is.null(manifest)) {
 # block = "unknown" [R3] instead of left_join() erroring against a NULL
 # crosswalk. Behavior is byte-for-byte identical to the old bare join when
 # crosswalk is present.
-attach_crosswalk_block <- function(df, filter_source_id) {
+#
+# Joins on (source_id, fishery_name) rather than fishery_name alone: once a
+# single ingested file can carry more than one source_id - district_creel_
+# summary.csv now mixes R1_external and R3_external rows, with R2_external
+# anticipated - a fishery_name-only join risks matching a crosswalk row
+# registered under the wrong source. `df` must already carry its final
+# source_id column before this is called; every caller below sets source_id
+# earlier in its pipe for exactly this reason.
+#
+# A (source_id, fishery_name) with no crosswalk match logs a gap [R2] rather
+# than silently vanishing from the DELIVER_BLOCKS-filtered rollups later.
+# This is the guard that makes a real gap visible: Snake River (R1) has no
+# crosswalk rows yet as of this writing (see district_creel_ingestion.R), so
+# without this check those rows would resolve block = "unknown" and drop out
+# of section 6 with no trace in the gap register.
+attach_crosswalk_block <- function(df) {
   if (is.null(crosswalk)) {
     return(df |> mutate(river_label = NA_character_, block = "unknown"))
   }
-  df |>
-    left_join(crosswalk |> filter(source_id == filter_source_id) |>
-                select(fishery_name, river_label, block),
-              by = "fishery_name")
+  joined <- df |>
+    left_join(crosswalk |> select(source_id, fishery_name, river_label, block),
+              by = c("source_id", "fishery_name"))
+
+  unmatched <- joined |> filter(is.na(block)) |> distinct(source_id, fishery_name)
+  if (nrow(unmatched) > 0) {
+    pwalk(unmatched, function(source_id, fishery_name)
+      log_gap(source_id, NA, "gap",
+              glue("{fishery_name}: no crosswalk row for source_id='{source_id}' - ",
+                   "block unresolved, coded 'unknown' and excluded from ",
+                   "DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv ",
+                   "is patched")))
+  }
+
+  joined |> mutate(block = coalesce(block, "unknown"))
 }
 
 # ---- 2. Track A ingest: total angler trips per river-year --------------------
@@ -443,13 +469,13 @@ ingest_creel_pe <- function() {
   # donor-borrowed trip lengths, which [R5] requires be labelled not absorbed.
   d |>
     filter(!is.na(total_trips_est)) |>
-    attach_crosswalk_block("creel_pe") |>
+    mutate(source_id = "creel_pe") |>
+    attach_crosswalk_block() |>
     mutate(
       location       = coalesce(angler_final, "unknown"),
       mode           = "unknown",           # resolved in Track B  [R3]
       angler_trips   = total_trips_est,
       tier           = "P1",
-      source_id      = "creel_pe",
       method         = glue("design-based PE (pe_period={PE_PERIOD}); ",
                             "trip_length_source={trip_length_source}; ",
                             "{trip_expansion}"),
@@ -459,25 +485,42 @@ ingest_creel_pe <- function() {
     canon()
 }
 
-## 2b. R3_external: mid/upper Columbia (P1, no mode dimension) ---------------
-# Hanford Reach / Yakima / McNary trip totals as calculated by WDFW Region 3
-# (Todd Miller) in their own spreadsheets - NOT run through this repo's
-# design-based PE estimators. Named for the source, not the person, because
-# that's the fact that matters for the provenance ledger: this is an unvetted
-# external calculation. We don't have the capacity to audit R3's own
-# effort-expansion methodology, so it stays a visibly distinct source_id rather
-# than folded into "creel_pe" where it would read as equivalent to a PE run.
+## 2b. district_creel: pre-computed external district totals (P1, no mode) ---
+# Trip totals calculated by WDFW district staff in their own spreadsheets -
+# NOT run through this repo's design-based PE estimators. Currently R3 (Todd
+# Miller: Hanford Reach / Yakima / McNary) and R1 (Jeremy Trump: Snake
+# River); R2 is expected to contribute a workbook eventually - see
+# district_creel_ingestion.R's header. source_id is derived per row from the
+# ingestion script's `district` column (R1_external / R3_external, etc.)
+# rather than fixed to one district, because that assumption stopped holding
+# the moment a second district landed in the same file. Named for the
+# source, not the person, because that's the fact that matters for the
+# provenance ledger: this is an unvetted external calculation. We don't have
+# the capacity to audit each district's own effort-expansion methodology, so
+# it stays a visibly distinct source_id rather than folded into "creel_pe"
+# where it would read as equivalent to a PE run.
 #
 # CRC areas (Todd, 2026-08-11, OQ1): Yakima 690, McNary 533, Hanford Reach
 # 534|535|536. Hanford is a composite - the Summary sheet gives one fleet-wide
 # weekly total with no section breakdown, so catch_area_code stays NA on these
 # rows and the crosswalk carries area_coverage = "covered_unpartitioned" to
-# stop P2 re-expanding those three areas. See section 3.
+# stop P2 re-expanding those three areas. See section 3. Snake River (R1) is
+# the same composite-area situation (six CRC areas, no per-area breakdown in
+# source) and additionally has NO crosswalk rows at all yet - those rows will
+# resolve block = "unknown" via attach_crosswalk_block()'s unmatched-row gap
+# log until pst_river_block_crosswalk.csv is patched.
 
-ingest_r3_external <- function() {
-  d <- read_if(file.path(OUT_DIR, "mid_columbia_yakima_creel_summary.csv"),
-               "R3_external", block = "ColumbiaTrib")
+ingest_district_creel <- function() {
+  d <- read_if(file.path(OUT_DIR, "district_creel_summary.csv"),
+               "district_creel", block = "ColumbiaTrib")
   if (is.null(d)) return(NULL)
+
+  if (!"district" %in% names(d)) {
+    log_gap("district_creel", NA, "blocker",
+            paste("no district column - cannot attribute rows to a",
+                  "source_id; re-run district_creel_ingestion.R"))
+    return(NULL)
+  }
 
   # DEFECT 2026-08-13: 'Hanford Reach fall Chinook 2025' rows carry year = 2024.
   # Trust the fishery_name year token over the year column until the ingestion
@@ -487,52 +530,51 @@ ingest_r3_external <- function() {
              as.integer(str_extract(fishery_name, "\\d{4}(?=\\s*$)")))) |>
     mutate(year_mismatch = !is.na(year_from_name) & year_from_name != year)
   if (any(d$year_mismatch, na.rm = TRUE)) {
-    log_gap("R3_external", "ColumbiaTrib", "defect",
+    log_gap("district_creel", "ColumbiaTrib", "defect",
             glue("{sum(d$year_mismatch, na.rm = TRUE)} rows where year column ",
                  "disagrees with fishery_name year token; using name token. ",
-                 "Patch mid_columbia_yakima_creel_ingestion.R."))
+                 "Patch district_creel_ingestion.R."))
   }
 
   d <- d |>
-    mutate(year = coalesce(year_from_name, as.integer(year))) |>
+    mutate(year      = coalesce(year_from_name, as.integer(year)),
+           source_id = paste0(district, "_external")) |>
     filter(year %in% YEARS_SCOPE)
 
-  # Same silent-drop hazard as creel_pe: log any R3 fishery-year that has
-  # effort but no trips rather than letting it vanish. [R2]
-  r3_lost <- d |>
-    group_by(fishery_name) |>
+  # Same silent-drop hazard as creel_pe: log any district fishery-year that
+  # has effort but no trips rather than letting it vanish. [R2]
+  district_lost <- d |>
+    group_by(source_id, fishery_name) |>
     summarise(trips_ok   = sum(!is.na(total_trips_est)),
               effort_hrs = sum(total_effort_hrs, na.rm = TRUE),
               .groups = "drop") |>
     filter(trips_ok == 0)
-  if (nrow(r3_lost) > 0) {
-    walk2(r3_lost$fishery_name, r3_lost$effort_hrs, \(fn, hrs)
-      log_gap("R3_external", "ColumbiaTrib",
-              if (hrs > 0) "blocker" else "gap",
-              glue("{fn}: no usable total_trips_est",
-                   if (hrs > 0) glue(" despite {format(round(hrs), big.mark = ',')} effort-hrs - expansion failed (OQ4), DROPPED")
+  if (nrow(district_lost) > 0) {
+    pwalk(district_lost, function(source_id, fishery_name, trips_ok, effort_hrs)
+      log_gap(source_id, "ColumbiaTrib",
+              if (effort_hrs > 0) "blocker" else "gap",
+              glue("{fishery_name}: no usable total_trips_est",
+                   if (effort_hrs > 0) glue(" despite {format(round(effort_hrs), big.mark = ',')} effort-hrs - expansion failed, DROPPED")
                    else " and no effort - genuine gap")))
   }
 
-  # R3's file names the area column crc_area, not catch_area_code. Without this
-  # rename canon() would emit an all-NA catch_area_code for the whole block and
-  # the CRC join would silently find nothing for mid-Columbia.
+  # District files name the area column crc_area, not catch_area_code.
+  # Without this rename canon() would emit an all-NA catch_area_code for the
+  # whole block and the CRC join would silently find nothing.
   if ("crc_area" %in% names(d) && !"catch_area_code" %in% names(d)) {
     d <- d |> rename(catch_area_code = crc_area)
   }
 
   d |>
     filter(!is.na(total_trips_est)) |>
-    attach_crosswalk_block("R3_external") |>
+    attach_crosswalk_block() |>
     mutate(
       location       = coalesce(angler_final, "unknown"),
       mode           = "unknown",           # structural gap, not zero  [R3]
       angler_trips   = total_trips_est,
       tier           = "P1",
-      source_id      = "R3_external",
-      method         = paste("R3-reported weekly creel summary, expanded",
-                             "(spreadsheet calculation, not independently",
-                             "vetted by WDFW HQ)"),
+      method         = glue("external district-supplied calculation, not ",
+                            "independently vetted by WDFW HQ ({data_provider})"),
       location_basis = "design_stratum",
       mode_basis     = "not_collected"
     ) |>
@@ -775,7 +817,7 @@ apply_track_b <- function(trips) {
 
 # ---- 5. Assemble ------------------------------------------------------------
 
-trips_p1 <- bind_rows(ingest_creel_pe(), ingest_r3_external())
+trips_p1 <- bind_rows(ingest_creel_pe(), ingest_district_creel())
 invisible(ingest_published_fallback())
 
 p2 <- build_block_ratios(trips_p1)
@@ -1006,7 +1048,7 @@ print(effort_by_mode_location |> group_by(tier) |>
 # pct_mode_unknown RISES when P2 is on. CRC has no bank/boat or guided field,
 # so P2 rows are permanently unknown on both dimensions. That is the honest
 # number, not a regression - the denominator grew, the resolvable share didn't.
-message("\nunresolved mode share (P2 and R3_external can never be resolved):")
+message("\nunresolved mode share (P2 and district_creel can never be resolved):")
 print(effort_by_mode_location |> group_by(block) |>
         summarise(angler_trips = sum(angler_trips),
                   pct_mode_unknown =

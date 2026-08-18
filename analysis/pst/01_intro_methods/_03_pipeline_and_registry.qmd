@@ -11,7 +11,7 @@ order; each step can also be run standalone.
 |---|---|---|
 | 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2021_2024_tidy.csv` |
 | 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
-| 3 | `analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R` | `analysis/pst/outputs/mid_columbia_yakima_creel_summary.csv` |
+| 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/district_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |
 | 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | the deliverable + three ledgers |
 | 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `PST_FW_Jim_Update.xlsx` |
@@ -29,17 +29,19 @@ build can be re-run without re-running the tier hierarchy.
 | `input_files/pst/lookup_tables/pst_input_manifest.csv` | Registered inputs — one row per source file/table, with tier, block, and expected coverage |
 | `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv` | Fishery → river → block mapping (63 rows) |
 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | Merged effort + harvest; single DB fetch, one `est_pe_effort()` and one `est_pe_catch()` per fishery, so trips and harvest are identical by construction |
+| `analysis/pst/02_ingest/district_creel_ingestion.R` | Pre-computed district totals not run through this repo's PE estimators — R3 (Todd Miller: Hanford/Yakima/McNary) and R1 (Jeremy Trump: Snake River); R2 anticipated |
 | `analysis/pst/02_ingest/interview_proportions.qmd` | Track B engine — conditional mode proportions from interviews |
 | `analysis/archive/integrate_manual_runs.R` | Archived — not part of the current run order. Reconciles per-fishery `fw_creel.Rmd` runs to the monthly batch grain |
 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
 
 ::: {.callout-note}
 `input_files/pst/` is organized by provider rather than by file type:
-`CRC/` (the CRC freshwater harvest workbooks), `R1_creel/`, `R3_creel/`
-(Todd Miller's mid-Columbia and Yakima workbooks), `external_data/`
-(JSR tables, FEIS, NEPA, ODFW/LCR), and `lookup_tables/` (the manifest
-and crosswalk above, plus `crc_area_lut.csv` and
-`creel_fishery_catch_group_lut.csv`).
+`CRC/` (the CRC freshwater harvest workbooks), `R1_creel/` (Jeremy Trump's
+Snake River annual summary), `R3_creel/` (Todd Miller's mid-Columbia and
+Yakima workbooks), `external_data/` (JSR tables, FEIS, NEPA, ODFW/LCR), and
+`lookup_tables/` (the manifest and crosswalk above, plus `crc_area_lut.csv`
+and `creel_fishery_catch_group_lut.csv`). An `R2_creel/` directory is
+anticipated but no file has arrived from R2 yet.
 :::
 
 `input_files/pst/lookup_tables/pst_input_manifest.csv` is one row per input,
@@ -58,6 +60,18 @@ resolved cleanly; there are no `REVIEW` rows.
 | WA Coast | 19 | creel PE | Yes |
 | Columbia tributaries | 17 | `R3_external` (Hanford, Yakima, McNary) — creel PE nominally covers Drano but currently returns zero usable effort | Yes |
 | Columbia mainstem | 3 | ODFW (Buoy 10, LCR, Bonneville–McNary) | **No — consultant-supplied, out of scope** |
+
+::: {.callout-warning}
+**Snake River (R1) has no crosswalk rows yet.** `district_creel_ingestion.R`
+now also ingests an R1 (Jeremy Trump) Snake River workbook alongside the R3
+files above, but `pst_river_block_crosswalk.csv` has not been updated with
+`source_id = "R1_external"` rows for it. Until it is, those rows resolve
+`block = "unknown"` (logged as a gap by `attach_crosswalk_block()` in
+`pst_fw_angler_trips_assembly.R`) and are excluded from the
+`DELIVER_BLOCKS`-filtered outputs — ingested, but not yet delivered. Add the
+crosswalk rows (river_label = "Snake River", block presumably
+`ColumbiaTrib`) to surface this data.
+:::
 
 ## Outputs
 

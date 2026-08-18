@@ -1,20 +1,50 @@
 # ==============================================================================
-# mid_columbia_yakima_creel_ingestion.R
+# district_creel_ingestion.R
 #
 # Purpose:
-#   Parse ad hoc weekly creel-summary workbooks provided by Todd Miller (WDFW
-#   R-district creel staff) for mid-Columbia mainstem and Yakima River
-#   fisheries, and reshape them into a table matching the schema of
-#   multi_fishery_creel_trips.csv so the two sources can be row-bound for the
-#   freshwater PST effort deliverable.
+#   Parse ad hoc creel-summary workbooks provided directly by WDFW district
+#   creel staff — pre-computed trip/effort totals that never touch this
+#   repo's own PE estimators — and reshape them into a table matching the
+#   schema of multi_fishery_creel_trips.csv so they can be row-bound for the
+#   freshwater PST effort deliverable. Originally written for Todd Miller's
+#   (R3) mid-Columbia and Yakima weekly models; extended 2026-08-18 to also
+#   cover Jeremy Trump's (R1) Snake River annual summary. R2 is expected to
+#   supply a workbook eventually — see "R2 — anticipated" below.
 #
 # Usage:
 #   Source interactively or run with Rscript from the repo root:
-#     Rscript analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R
-#   Requires no DB access — reads xlsx files from input_files/pst/R3_creel/.
+#     Rscript analysis/pst/02_ingest/district_creel_ingestion.R
+#   Requires no DB access — reads xlsx files from input_files/pst/R3_creel/
+#   and input_files/pst/R1_creel/.
 #
-#   Output: analysis/pst/outputs/mid_columbia_yakima_creel_summary.csv
+#   Output: analysis/pst/outputs/district_creel_summary.csv
 #           (A downstream step row-binds this with multi_fishery_creel_trips.csv.)
+#
+# Every row carries a `district` column (R1/R3, eventually R2) so that
+# pst_fw_angler_trips_assembly.R can attribute source_id and method per row
+# instead of assuming everything in this file came from one place — that
+# assumption held when this file was Todd-Miller-only; it stopped holding the
+# moment a second district's data landed in the same output.
+#
+# R1 — Snake River (Jeremy Trump), added 2026-08-18:
+#   Source file:  input_files/pst/R1_creel/Salmon Angler Days 2022-2025.xlsx
+#   One small annual summary, not a weekly model — see ingest_snake_river()
+#   for the full parsing notes, including the "Angler Days" label issue
+#   (Jeremy confirms these are trips, not days — see the LABEL NOTE there)
+#   and the crosswalk gap (Snake River has no pst_river_block_crosswalk.csv
+#   rows yet, so these rows currently resolve block = "unknown" downstream).
+#
+# R2 — anticipated, not yet received:
+#   No workbook has arrived from R2 as of this writing. R2_DIR is declared
+#   below (input_files/pst/R2_creel/) so a future ingest_r2_*() function has
+#   somewhere to read from without another repath, but no parser exists
+#   because the format is unknown. ingest_district_creel_files() checks
+#   R2_DIR at run time and warns (rather than silently doing nothing) if
+#   files show up there before a parser is written. When R2's file arrives:
+#   inspect its structure, write ingest_r2_<fishery>() following the pattern
+#   of ingest_snake_river() (annual/simple) or the R3 ingest_*() functions
+#   (weekly/expanded), set district = "R2", and call it from
+#   ingest_district_creel_files().
 #
 # Source files used (in input_files/pst/R3_creel/):
 #   Hanford Reach (2022–2025):  "20YY Hanford Reach Boat Harvest Model.xlsx"
@@ -115,8 +145,11 @@ library(readxl)
 library(lubridate)
 library(cli)
 library(here)
-# Input directory holding all mid-Columbia workbooks
-MID_COL_DIR <- here("input_files", "pst", "R3_creel")
+
+# Input directories, one per contributing district.
+R3_DIR <- here("input_files", "pst", "R3_creel")   # Todd Miller: mid-Columbia/Yakima
+R1_DIR <- here("input_files", "pst", "R1_creel")    # Jeremy Trump: Snake River
+R2_DIR <- here("input_files", "pst", "R2_creel")    # anticipated, not yet received
 
 # Target years — mirrors the 2022–2025 window in multi_fishery_trip_summary.R
 TARGET_YEARS <- 2022L:2025L
@@ -379,7 +412,8 @@ ingest_hanford_boat <- function(path, year) {
       sd                       = NA_real_,
       pe_period                = "week",
       harvest_expansion        = "expanded",
-      data_provider            = "Todd Miller / R-district weekly summary"
+      data_provider            = "Todd Miller / R-district weekly summary",
+      district                 = "R3"
     )
 
   build_target_schema(monthly)
@@ -542,7 +576,8 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
       sd                = NA_real_,
       pe_period         = "week",
       harvest_expansion = "expanded",
-      data_provider     = "Todd Miller / R-district weekly summary"
+      data_provider     = "Todd Miller / R-district weekly summary",
+      district          = "R3"
     )
 
   build_target_schema(monthly)
@@ -642,7 +677,8 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
       pe_period         = "week",
       # Harvest is sampled (not expanded) — same limitation as trips for 2023+.
       harvest_expansion = "sampled",
-      data_provider     = "Todd Miller / R-district weekly summary"
+      data_provider     = "Todd Miller / R-district weekly summary",
+      district          = "R3"
     )
 
   build_target_schema(monthly)
@@ -783,7 +819,8 @@ ingest_mcnary <- function(path, year) {
       sd                = NA_real_,
       pe_period         = "week",
       harvest_expansion = "expanded",
-      data_provider     = "Todd Miller / R-district weekly summary"
+      data_provider     = "Todd Miller / R-district weekly summary",
+      district          = "R3"
     )
 
   build_target_schema(monthly)
@@ -798,7 +835,7 @@ TARGET_COLS <- c(
   "fishery_name", "year", "month", "crc_area", "angler_final",
   "total_effort_hrs", "n_completed_angler_trips", "mean_trip_length",
   "mean_group_size", "sd", "total_trips_est", "pe_period",
-  "total_salmon_harvest", "harvest_expansion", "data_provider"
+  "total_salmon_harvest", "harvest_expansion", "data_provider", "district"
 )
 
 build_target_schema <- function(df) {
@@ -815,9 +852,164 @@ build_target_schema <- function(df) {
 }
 
 
-# 6. Combining wrapper --------------------------------------------------------
+# 6. Snake River (R1) annual angler-trip parser -------------------------------
 
-#' Discover and ingest all mid-Columbia workbooks for a given set of years.
+# The Snake River in WA spans six CRC areas (Ice Harbor Dam up to the WA/ID
+# state line; see input_files/pst/lookup_tables/crc_area_lut.csv). The R1
+# source file gives one fleet-wide total per species-year with no area-level
+# breakdown, so crc_area is set to NA in ingest_snake_river(), mirroring how
+# ingest_hanford_boat() handles the same composite-area problem for Hanford
+# Reach. The six constituent areas are documented here for reference only.
+SNAKE_CRC_AREAS <- c(640L, 642L, 644L, 646L, 648L, 650L)  # not used as crc_area
+
+#' Ingest the R1 Snake River annual angler-trip workbook.
+#'
+#' Source: Jeremy Trump (WDFW Region 1). Unlike the R3 workbooks above, this
+#' is a single small annual summary, not a weekly creel model — one row per
+#' species x year, already split into boat and shore (bank) components. There
+#' is no effort-hours column, no harvest column, and no sampled/expanded
+#' distinction to reconstruct; these are finished trip totals, not raw counts
+#' to expand.
+#'
+#' LABEL NOTE: the source workbook's own column headers say "Angler Days"
+#' ("Boat Angler Days", "Shore Angler Days", "Total Angler Days"). Per
+#' Jeremy Trump, these values are angler TRIPS — the workbook's column
+#' headers are simply mislabeled. This function copies the values into
+#' total_trips_est unchanged; NO trips<->days conversion is applied anywhere
+#' in this pipeline (see the UNITS NOTE in pst_fw_angler_trips_assembly.R).
+#' Reconfirm this reading with Jeremy before the deliverable ships — if the
+#' numbers really are angler-days for some species/year, they must NOT be
+#' row-bound with everything else here as if they were trips.
+#'
+#' CROSSWALK GAP: as of this writing, pst_river_block_crosswalk.csv has no
+#' rows for Snake River fisheries. Until it does,
+#' pst_fw_angler_trips_assembly.R's attach_crosswalk_block() will fail to
+#' resolve a block for every row this function produces — coded
+#' block = "unknown" [R3] and logged as a gap, per that function's own
+#' unmatched-row check, rather than silently excluded. Add source_id =
+#' "R1_external" rows to the crosswalk (river_label = "Snake River"; block is
+#' presumably "ColumbiaTrib" — it is a Columbia tributary geographically,
+#' consistent with Hanford/Yakima/McNary) to surface this data in the
+#' deliverable.
+#'
+#' DATA QUALITY: the source workbook flags its own Fall CH 2023 row with an
+#' inline note — Boat (4827) + Shore (173) = 5000, but the Total Angler Days
+#' column shows 4990. This function uses the Boat and Shore columns directly
+#' (never Total), so the discrepancy does not propagate into our output, but
+#' is logged as a warning for traceability.
+#'
+#' @param path  Full path to the xlsx file.
+#' @return A data frame in the target schema — one row per species x year x
+#'   angler_final (boat/bank) with a usable value. Rows where the source is
+#'   blank or "N/A" are dropped, not coded as zero (Fall CH 2022 is all
+#'   "N/A"; Fall CH 2025 is a fully blank row as of this writing).
+ingest_snake_river <- function(path) {
+
+  cli::cli_alert_info("Ingesting Snake River (R1): {.path {basename(path)}}")
+
+  raw <- suppressMessages(readxl::read_excel(
+    path, sheet = 1, col_names = FALSE, .name_repair = "unique"
+  ))
+
+  # Column layout (1-indexed, confirmed from the 2022–2025 workbook):
+  #   row 1: title.  row 2: blank.
+  #   row 3: header ("Species", "Year", "Boat Angler Days", "Shore Angler
+  #          Days", "Total Angler Days").  rows 4+: data.
+  #   col 1: blank.  col 2: Species.  col 3: Year.
+  #   col 4: Boat Angler Days.  col 5: Shore Angler Days.
+  #   col 6: Total Angler Days (cross-check only — never read into output).
+  COL_SPECIES <- 2L
+  COL_YEAR    <- 3L
+  COL_BOAT    <- 4L
+  COL_SHORE   <- 5L
+  COL_TOTAL   <- 6L
+
+  species_col <- as.character(unlist(raw[[COL_SPECIES]]))
+  is_data_row <- !is.na(species_col) & species_col %in% c("Spring CH", "Fall CH")
+
+  if (!any(is_data_row)) {
+    cli::cli_abort("No data rows found in {.path {basename(path)}}")
+  }
+
+  safe_num <- function(col_idx) {
+    # "N/A" (and any other non-numeric text) becomes NA via suppressWarnings,
+    # not zero — a fishery-year with unusable data must not read as "no
+    # trips" [R2].
+    suppressWarnings(as.numeric(unlist(raw[[col_idx]])[is_data_row]))
+  }
+
+  SPECIES_LABEL <- c("Spring CH" = "spring Chinook", "Fall CH" = "fall Chinook")
+
+  annual <- tibble::tibble(
+    species     = species_col[is_data_row],
+    year        = as.integer(unlist(raw[[COL_YEAR]])[is_data_row]),
+    boat_trips  = safe_num(COL_BOAT),
+    shore_trips = safe_num(COL_SHORE),
+    total_trips = safe_num(COL_TOTAL)
+  )
+
+  # Cross-check, not a correction: the source's own Total column sometimes
+  # disagrees with Boat + Shore. We never use Total; Boat and Shore are
+  # authoritative here. Log every year the two disagree so the discrepancy
+  # stays visible rather than silently resolved one way or the other.
+  mismatch <- annual |>
+    dplyr::filter(!is.na(boat_trips), !is.na(shore_trips), !is.na(total_trips),
+                  (boat_trips + shore_trips) != total_trips)
+  if (nrow(mismatch) > 0) {
+    purrr::pwalk(mismatch, function(species, year, boat_trips, shore_trips,
+                                    total_trips, ...)
+      cli::cli_alert_warning(
+        "Snake River {species} {year}: Boat ({boat_trips}) + Shore \\
+         ({shore_trips}) = {boat_trips + shore_trips}, but source Total \\
+         column shows {total_trips}. Using Boat/Shore; Total column ignored."
+      ))
+  }
+
+  # Long: one row per species x year x angler_final, dropping N/A / blank
+  # cells rather than coding them zero.
+  long <- dplyr::bind_rows(
+    annual |> dplyr::transmute(species, year, angler_final = "boat",
+                               total_trips_est = boat_trips),
+    annual |> dplyr::transmute(species, year, angler_final = "bank",
+                               total_trips_est = shore_trips)
+  ) |>
+    dplyr::filter(!is.na(total_trips_est))
+
+  dropped <- annual |>
+    dplyr::filter(is.na(boat_trips) & is.na(shore_trips))
+  if (nrow(dropped) > 0) {
+    purrr::pwalk(dropped, function(species, year, ...)
+      cli::cli_alert_warning(
+        "Snake River {species} {year}: no usable Boat or Shore value \\
+         (source is blank or 'N/A') — dropped, not coded as zero."
+      ))
+  }
+
+  long |>
+    dplyr::mutate(
+      fishery_name      = sprintf("Snake River %s %d",
+                                  SPECIES_LABEL[species], year),
+      month             = NA_integer_,   # annual grain, no month breakdown
+      crc_area          = NA_integer_,   # composite; see SNAKE_CRC_AREAS
+      total_effort_hrs  = NA_real_,      # not provided in source
+      n_completed_angler_trips = NA_real_,
+      mean_trip_length  = NA_real_,
+      mean_group_size   = NA_real_,
+      sd                = NA_real_,
+      pe_period         = "year",
+      total_salmon_harvest = NA_real_,   # source has no harvest column
+      harvest_expansion = NA_character_, # not applicable — trips only
+      data_provider     = "Jeremy Trump / R1 annual angler-trip summary",
+      district          = "R1"
+    ) |>
+    build_target_schema()
+}
+
+
+# 7. Combining wrapper --------------------------------------------------------
+
+#' Discover and ingest all R3 mid-Columbia/Yakima workbooks for a given set
+#' of years.
 #'
 #' Matches filenames by pattern:
 #'   "^<year> Hanford Reach Boat Harvest Model"
@@ -827,9 +1019,9 @@ build_target_schema <- function(df) {
 #' @param dir       Directory containing the xlsx files.
 #' @param years     Integer vector of target years.
 #' @return A data frame with all successfully ingested records.
-ingest_mid_columbia <- function(dir = MID_COL_DIR, years = TARGET_YEARS) {
+ingest_r3_mid_columbia <- function(dir = R3_DIR, years = TARGET_YEARS) {
 
-  cli::cli_h2("Mid-Columbia creel workbook ingestion")
+  cli::cli_h2("R3 mid-Columbia/Yakima creel workbook ingestion")
 
   all_files <- list.files(dir, pattern = "\\.xlsx$", full.names = TRUE,
                           ignore.case = TRUE)
@@ -933,40 +1125,116 @@ ingest_mid_columbia <- function(dir = MID_COL_DIR, years = TARGET_YEARS) {
   }
 
   if (length(results) == 0) {
-    cli::cli_abort("No workbooks were successfully ingested.")
+    cli::cli_abort("No R3 workbooks were successfully ingested.")
   }
 
   combined <- dplyr::bind_rows(results)
   cli::cli_alert_success(
-    "Ingested {nrow(combined)} rows across \\
+    "R3: ingested {nrow(combined)} rows across \\
      {dplyr::n_distinct(combined$fishery_name)} fisheries."
   )
   combined
 }
 
 
-# 7. Run and save output -------------------------------------------------------
+# 8. Top-level wrapper: all districts -----------------------------------------
 
-columbia_creel <- ingest_mid_columbia()
+#' Discover and ingest every district-supplied creel workbook this script
+#' knows how to parse (currently R3, R1), and warn — rather than silently
+#' doing nothing — if R2 files have arrived but no parser exists for them yet.
+#'
+#' @return A data frame with all successfully ingested records across every
+#'   district, each row carrying `district`.
+ingest_district_creel_files <- function() {
+
+  cli::cli_h1("District-supplied creel workbook ingestion")
+
+  results <- list()
+
+  r3 <- tryCatch(
+    ingest_r3_mid_columbia(),
+    error = function(e) {
+      cli::cli_alert_danger("R3 ingestion failed: {conditionMessage(e)}")
+      NULL
+    }
+  )
+  if (!is.null(r3)) results <- c(results, list(r3))
+
+  r1_files <- list.files(R1_DIR, pattern = "\\.xlsx$", full.names = TRUE,
+                        ignore.case = TRUE)
+  if (length(r1_files) == 0) {
+    cli::cli_alert_warning("No R1 xlsx files found in {.path {R1_DIR}}")
+  } else {
+    if (length(r1_files) > 1) {
+      cli::cli_alert_warning(
+        "Multiple R1 files found; using first: \\
+         {.path {basename(r1_files[1])}}"
+      )
+    }
+    r1 <- tryCatch(
+      ingest_snake_river(r1_files[1]),
+      error = function(e) {
+        cli::cli_alert_danger("R1 (Snake River) ingestion failed: {conditionMessage(e)}")
+        NULL
+      }
+    )
+    if (!is.null(r1)) results <- c(results, list(r1))
+  }
+
+  # R2 — anticipated, not yet received. See header note for what to do when
+  # a file shows up here: this is a visible warning, not silent inaction, so
+  # a dropped-in R2 file doesn't sit unnoticed until someone asks why R2's
+  # numbers aren't in the deliverable.
+  if (dir.exists(R2_DIR)) {
+    r2_files <- list.files(R2_DIR, pattern = "\\.xlsx$", full.names = TRUE,
+                           ignore.case = TRUE)
+    if (length(r2_files) > 0) {
+      cli::cli_alert_warning(
+        "{length(r2_files)} file(s) found in {.path {R2_DIR}} but no R2 \\
+         parser exists yet — NOT ingested. Write ingest_r2_*() following the \\
+         pattern of ingest_snake_river() or the R3 ingest_*() functions, set \\
+         district = \"R2\", and call it from ingest_district_creel_files()."
+      )
+    }
+  }
+
+  if (length(results) == 0) {
+    cli::cli_abort("No district workbooks were successfully ingested.")
+  }
+
+  combined <- dplyr::bind_rows(results)
+  cli::cli_alert_success(
+    "Ingested {nrow(combined)} rows across \\
+     {dplyr::n_distinct(combined$fishery_name)} fisheries, \\
+     {dplyr::n_distinct(combined$district)} district(s): \\
+     {paste(sort(unique(combined$district)), collapse = ', ')}."
+  )
+  combined
+}
+
+
+# 9. Run and save output -------------------------------------------------------
+
+district_creel <- ingest_district_creel_files()
 
 out_dir  <- here("analysis", "pst", "outputs")
-out_path <- file.path(out_dir, "mid_columbia_yakima_creel_summary.csv")
+out_path <- file.path(out_dir, "district_creel_summary.csv")
 
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-utils::write.csv(columbia_creel, out_path, row.names = FALSE)
+utils::write.csv(district_creel, out_path, row.names = FALSE)
 
 cli::cli_alert_success(
-  "Saved {nrow(columbia_creel)} rows to {.path {out_path}}"
+  "Saved {nrow(district_creel)} rows to {.path {out_path}}"
 )
 
 # Preview
 cli::cli_h3("Row counts by fishery")
-columbia_creel |>
-  dplyr::count(fishery_name, angler_final) |>
-  print(n = 30)
+district_creel |>
+  dplyr::count(district, fishery_name, angler_final) |>
+  print(n = 40)
 
 cli::cli_h3("Rows with NA total_trips_est (review before analysis)")
-columbia_creel |>
+district_creel |>
   dplyr::filter(is.na(total_trips_est)) |>
-  dplyr::count(fishery_name) |>
+  dplyr::count(district, fishery_name) |>
   print(n = 20)

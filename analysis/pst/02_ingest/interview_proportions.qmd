@@ -132,8 +132,10 @@ further, because neither Track A nor Track B in the assembly script actually
 depends on it:
 
 - **Location (bank/boat)** for these rivers already comes from `angler_final`
-  in R3's own trip data (`mid_columbia_yakima_creel_summary.csv`, source_id
-  `R3_external`) — `pst_fw_angler_trips_assembly.R` reads it directly as
+  in R3's own trip data (`district_creel_summary.csv`, source_id
+  `R3_external` — that file also now carries R1's Snake River data
+  alongside R3's, but each row keeps its own district-derived source_id) —
+  `pst_fw_angler_trips_assembly.R` reads it directly as
   `location_basis = "design_stratum"`. This document's interview pull was
   never the source for that.
 - **Mode (guided/unguided)** can't be resolved from interviews regardless of

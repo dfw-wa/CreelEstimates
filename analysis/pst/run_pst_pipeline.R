@@ -86,7 +86,7 @@ library(glue)
 STEPS <- c(
   "01_crc_freshwater_harvest",
   "02_multi_fishery_creel_summary",
-  "03_mid_columbia_yakima",
+  "03_district_creel",
   "05_effort_assembly",
   "06_jim_workbook"
 )
@@ -108,8 +108,8 @@ STEP_REGISTRY <- list(
     needs_db   = TRUE,
     depends_on = character(0)
   ),
-  "03_mid_columbia_yakima" = list(
-    path       = "analysis/pst/02_ingest/mid_columbia_yakima_creel_ingestion.R",
+  "03_district_creel" = list(
+    path       = "analysis/pst/02_ingest/district_creel_ingestion.R",
     needs_db   = FALSE,
     depends_on = character(0)
   ),
@@ -117,7 +117,7 @@ STEP_REGISTRY <- list(
     path       = "analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R",
     needs_db   = FALSE,
     depends_on = c("01_crc_freshwater_harvest", "02_multi_fishery_creel_summary",
-                    "03_mid_columbia_yakima", "04_interview_proportions")
+                    "03_district_creel", "04_interview_proportions")
   ),
   "06_jim_workbook" = list(
     path       = "analysis/pst/03_analysis/pst_fw_build_jim_workbook.R",

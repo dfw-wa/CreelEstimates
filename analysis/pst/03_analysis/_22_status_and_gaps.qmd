@@ -58,10 +58,16 @@ ODFW numbers.
 
 ## Known defects
 
-- **`mid_columbia_yakima_creel_ingestion.R`** — `Hanford Reach fall Chinook
+- **`district_creel_ingestion.R`** — `Hanford Reach fall Chinook
   2025` rows carry `year = 2024`. The assembly script works around it by
   trusting the year token in `fishery_name` and logging every corrected row,
   but the ingestion script should be patched.
+- **Snake River (R1) has no crosswalk coverage.** `district_creel_ingestion.R`
+  ingests Jeremy Trump's Snake River workbook (added 2026-08-18), but
+  `pst_river_block_crosswalk.csv` has no `source_id = "R1_external"` rows for
+  it yet, so those rows resolve `block = "unknown"` and are excluded from the
+  deliverable — ingested but not delivered. See the callout in
+  `01_intro_methods/_03_pipeline_and_registry.qmd`.
 - **`multi_fishery_creel_run_ledger.csv`** — 98 rows, all `ok` as of the
   2026-08-14 run. The previous 3 errors / 1 skip are resolved. Lower Cowlitz
   remains absent from the output entirely: it lacks the data needed for
@@ -215,7 +221,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 
 | # | Deviation | Rationale | Scope |
 |---|---|---|---|
-| MD1 | Mid-Columbia Track A totals accepted as **pre-computed** inputs (`R3_external`), bypassing the P1 hierarchy | Todd Miller's Hanford Reach boat expansion model is the only expansion that exists for these systems; it is an unvetted R3 spreadsheet, not a design-based PE run | Hanford Reach, Yakima, McNary only. **Not generalizable.** |
+| MD1 | Mid-Columbia and Snake River Track A totals accepted as **pre-computed** inputs (`district_creel` source_ids: `R3_external`, `R1_external`), bypassing the P1 hierarchy | Todd Miller's (R3) and Jeremy Trump's (R1) spreadsheet totals are the only expansion that exists for these systems; unvetted external calculations, not design-based PE runs | Hanford Reach, Yakima, McNary (delivering), Snake River (ingested but not yet delivered — see the crosswalk gap noted above). **Not generalizable**; R2 will need the same call when it arrives. |
 | MD2 | Guided/unguided coded `"unknown"` for all mid-Columbia | Field not collected by R3 programs | Per R3 |
 
 For reference, the 2022 Hanford Reach figures accepted under MD1:

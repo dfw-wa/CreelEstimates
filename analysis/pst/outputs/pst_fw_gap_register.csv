@@ -5,10 +5,16 @@ creel_pe,NA,defect,"Lower Chehalis salmon 2023: strata emitted TWICE, once with 
 creel_pe,NA,defect,"4 rows with angler_final = 'fail' (Drano Lake salmon and steelhead 2024) carrying 1,745 effort-hrs. This is a failed bank/boat classification, not a location - recoded 'unknown'. Fix in the Drano PE branch."
 creel_harvest,NA,note,stacks pe_period = week/month; keeping 'month' only - summing both would double every estimate
 creel_harvest,NA,note,"37 strata have effort/trips but no TotalSalmon row - treated as zero harvest, trips retained. Trips-per-salmon is undefined for these and they are excluded from ratio derivation, not from the trip totals."
-R3_external,ColumbiaTrib,defect,4 rows where year column disagrees with fishery_name year token; using name token. Patch mid_columbia_yakima_creel_ingestion.R.
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2023: no usable total_trips_est despite 4,393 effort-hrs - expansion failed (OQ4), DROPPED"
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2024: no usable total_trips_est despite 5,529 effort-hrs - expansion failed (OQ4), DROPPED"
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2025: no usable total_trips_est despite 3,533 effort-hrs - expansion failed (OQ4), DROPPED"
+district_creel,ColumbiaTrib,defect,4 rows where year column disagrees with fishery_name year token; using name token. Patch district_creel_ingestion.R.
+R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2023: no usable total_trips_est despite 4,393 effort-hrs - expansion failed, DROPPED"
+R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2024: no usable total_trips_est despite 5,529 effort-hrs - expansion failed, DROPPED"
+R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2025: no usable total_trips_est despite 3,533 effort-hrs - expansion failed, DROPPED"
+R1_external,NA,gap,"Snake River spring Chinook 2022: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
+R1_external,NA,gap,"Snake River spring Chinook 2023: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
+R1_external,NA,gap,"Snake River spring Chinook 2024: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
+R1_external,NA,gap,"Snake River spring Chinook 2025: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
+R1_external,NA,gap,"Snake River fall Chinook 2023: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
+R1_external,NA,gap,"Snake River fall Chinook 2024: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
 nepa_workbook,PugetSound,note,2025 PS values are a projection; must be labeled method='projection'
 coastal_2025,WACoast,gap,no 2025 fallback identified for coastal freshwater - open item
 p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2022: 2.58 trips/salmon (creel-denominated) from 3 creel fisheries (50,303 trips / 19,486 salmon)"

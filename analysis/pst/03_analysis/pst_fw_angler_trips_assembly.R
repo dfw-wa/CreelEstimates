@@ -681,7 +681,7 @@ build_block_ratios <- function(trips_p1) {
   # numeric freshwater codes, which forces the whole column to character on
   # read. stream_code in the CRC harvest file is purely numeric and comes in as
   # a double. Coerce both sides explicitly - inferred types won't agree.
-  crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2019_2024_tidy.csv"),
+  crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                  "crc_harvest")
   crc_yr <- NULL
   if (!is.null(crc)) {
@@ -888,7 +888,7 @@ if (!is.null(p2x)) {
 # 6-year mean. This re-reads the same file build_block_ratios() already read
 # once internally; the duplicate read is deliberate so build_block_ratios()
 # itself stays untouched.
-crc_hist <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2019_2024_tidy.csv"),
+crc_hist <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                     "crc_harvest_history")
 
 p3x <- if (is.null(p2x)) {
@@ -919,6 +919,21 @@ if (!is.null(p3x)) {
   write_csv(p3x$trips,        file.path(OUT_DIR, "pst_fw_crc_projection.csv"))
   write_csv(p3x$sanity_check, file.path(OUT_DIR, "pst_fw_crc_projection_sanity.csv"))
   write_csv(p3x$coverage,     file.path(OUT_DIR, "pst_fw_crc_projection_coverage.csv"))
+}
+
+# ---- 5d. NEPA vs. pure-CRC 5-year even/odd mean comparison (diagnostic) -----
+# Purely diagnostic - does not feed effort_long or any deliverable row. Only
+# runs if the NEPA workbook is present; a missing workbook is a logged gap,
+# never fatal (R2). See pst_crc_harvest_projection.R PART 2 header for why
+# this comparison exists and what it does/doesn't decide.
+nepa_cmp <- run_nepa_pure_crc_comparison(
+  crc_hist = crc_hist,
+  crosswalk = crosswalk,
+  nepa_dir = here("input_files", "pst", "external_data")
+)
+
+if (!is.null(nepa_cmp)) {
+  write_csv(nepa_cmp, file.path(OUT_DIR, "pst_fw_nepa_vs_pure_crc_comparison.csv"))
 }
 
 # ---- 6. Intermediate output (NOT the deliverable) ---------------------------

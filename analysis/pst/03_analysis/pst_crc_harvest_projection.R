@@ -355,3 +355,308 @@ run_crc_projection <- function(crc_hist, effort_long, donors, crosswalk,
   list(trips = applied$trips, gaps = applied$gaps, sanity_check = sanity,
        coverage = proj$coverage)
 }
+
+
+# ==============================================================================
+# PART 2: NEPA vs. pure-CRC 5-year even/odd mean comparison (Puget Sound)
+# ==============================================================================
+# NOT part of the P3 projection above and does not feed the deliverable. This
+# is a diagnostic: does reconstructing the Puget Sound freshwater effort
+# projection's own governing statistic - a 5-year SAME-PARITY mean catch per
+# stream (previous 5 even years, or previous 5 odd years, not a straight
+# trailing mean) - from pure CRC data land close to what the existing NEPA-
+# derived file already has, or does it diverge?
+#
+# BACKGROUND, so this isn't read as a P3-style projection with a different
+# window: the Puget Sound freshwater effort projection is not itself part of
+# this pipeline. It is a separate dataset WDFW produces in conjunction with
+# NWIFC and hands to BIA, which uses it to satisfy NEPA (federal law)
+# analysis requirements for the Puget Sound fishing package. "NEPA" here
+# names the legal requirement the deliverable serves, not the entity that
+# built it - WDFW/NWIFC did.
+#
+# WHY THIS COMPARISON MATTERS, CONCRETELY
+# Cross-checking against the same NEPA/pure-CRC discrepancy already found and
+# quantified per-stream-per-year earlier in this workstream: rivers with a
+# WDFW design-based creel program (Cascade, Nisqually, Nooksack, Puyallup,
+# Carbon, Skagit, Snohomish, Stillaguamish - per source_id = "creel_pe" in
+# pst_river_block_crosswalk.csv) get creel-SUBSTITUTED harvest in the
+# existing NEPA-derived file, not raw CRC card-count harvest. Streams with no
+# creel program get raw CRC either way, so those should - and do - land
+# close to the existing file. This section reconstructs the SAME even/odd
+# 5-year mean statistic from pure CRC for every Puget Sound stream in the
+# workbook and reports the two groups (creel-covered vs. not) separately, so
+# the size of the substitution effect is visible as a number, not an
+# impression from a handful of spot checks.
+#
+# WHAT THIS DOES NOT DECIDE
+# Whether to keep taking the existing NEPA-derived file as-is, or switch to a
+# pure-CRC reconstruction, is a judgment call about which basis produces more
+# defensible/credible trip estimates for the rivers where the two disagree -
+# not something to default silently in either direction here. This section's
+# job is to make the size and shape of the disagreement measurable so that
+# decision can be made with real numbers instead of a general sense that they
+# probably differ.
+#
+# NEPA WORKBOOK MECHANICS (reverse-engineered and verified by hand against
+# the file, not assumed): each "20XX FW Effort Projection" tab covers a pair
+# of years - even year 20XX and the following odd year 20XX+1. Per stream, a
+# "Historic Salmon Catch" block gives ALL-SPECIES-COMBINED catch by calendar
+# year plus four precomputed columns: 10 yr, 5 yr (straight trailing means -
+# NOT used here), even 5 yr, and odd 5 yr. even 5 yr is the mean of the 5
+# most recent EVEN calendar years strictly before 20XX; odd 5 yr is the mean
+# of the 5 most recent ODD calendar years strictly before 20XX (equivalently,
+# before 20XX+1, since 20XX is even). Verified against "2026 FW Effort
+# Projection" / Samish River by hand: even 5 yr = mean(2016,2018,2020,2022,
+# 2024 catch) = 7878.8, matching the file's own value to the decimal; odd
+# 5 yr = mean(2015,2017,2019,2021,2023 catch) = 8391.6, same match. These
+# even 5 yr / odd 5 yr columns - not the plain 5 yr / 10 yr ones - are what
+# fold into the file's final Even/Odd Effort output via the trips-per-salmon
+# ratio (3.44 odd / 8.65 even) and a regulation-closure scaling factor; this
+# section stops at the catch-mean layer since that is what "harvest" means
+# in the ask this section answers, not the fully-scaled effort figure.
+
+NEPA_COMPARISON_CONTROL <- list(
+  nepa_workbook   = "NEPA PS_Recreational Effort Estimates 2025_2026_for 2026_2027 Projections_4_21_2026.xlsx",
+  nepa_sheet      = "2026 FW Effort Projection",
+  even_years      = c(2016L, 2018L, 2020L, 2022L, 2024L),  # matches nepa_sheet's own "even 5 yr" window - see mechanics note above
+  odd_years       = c(2015L, 2017L, 2019L, 2021L, 2023L),  # matches nepa_sheet's own "odd 5 yr" window
+  min_years       = 3,   # a mean from 1-2 years is that year's value wearing an average's name - same floor as CRC_PROJECTION_CONTROL$min_history_years
+  flag_threshold  = 0.15 # |pct diff| beyond this is flagged in the printed summary; the CSV keeps every stream regardless
+)
+
+
+# --- 5. Read NEPA's own precomputed even/odd 5-year means ---------------------
+#' Extract, per stream, the ALL-SPECIES TOTAL row's precomputed "even 5 yr"
+#' and "odd 5 yr" catch columns from a "20XX FW Effort Projection" tab. Column
+#' positions are read from the tab's own year-header row (row 3), not
+#' hardcoded, so this survives the workbook adding or removing species/year
+#' columns in a future edition.
+#'
+#' @param path   path to the NEPA workbook
+#' @param sheet  the "20XX FW Effort Projection" tab name
+#' @return tibble(stream, nepa_even5yr, nepa_odd5yr)
+read_nepa_5yr_means <- function(path, sheet) {
+  raw <- suppressMessages(readxl::read_excel(path, sheet = sheet, col_names = FALSE))
+
+  col1 <- as.character(unlist(raw[[1]]))
+  col2 <- as.character(unlist(raw[[2]]))
+
+  # Stream name only appears on the block's first row; forward-fill down
+  # through its per-month rows to the TOTAL row, same fill-down pattern used
+  # throughout parse_crc_freshwater_harvest.R for the same reason.
+  stream_filled <- col1
+  for (i in seq_along(stream_filled)) {
+    if (is.na(stream_filled[i]) || stream_filled[i] == "") {
+      stream_filled[i] <- if (i > 1) stream_filled[i - 1] else NA_character_
+    }
+  }
+
+  total_rows <- which(col2 == "TOTAL")
+  if (length(total_rows) == 0) {
+    cli::cli_abort("No stream TOTAL rows found in {sheet} of {basename(path)}.")
+  }
+
+  year_header <- as.character(unlist(raw[3, ]))
+  even5_col   <- which(year_header == "even 5 yr")
+  odd5_col    <- which(year_header == "odd 5 yr")
+  if (length(even5_col) == 0 || length(odd5_col) == 0) {
+    cli::cli_abort(
+      "Could not find 'even 5 yr' / 'odd 5 yr' columns in row 3 of {sheet} - \\
+       the workbook's layout may have changed. Found headers: \\
+       {paste(unique(na.omit(year_header)), collapse = ', ')}."
+    )
+  }
+  # Two "5 yr"-family blocks exist in this tab (Historic Salmon Catch, then a
+  # derived Historic Salmon Effort block downstream) - take the FIRST
+  # occurrence of each, which is the catch block this section is about.
+  even5_col <- even5_col[1]
+  odd5_col  <- odd5_col[1]
+
+  tibble::tibble(
+    stream       = stream_filled[total_rows],
+    nepa_even5yr = suppressWarnings(as.numeric(unlist(raw[total_rows, even5_col]))),
+    nepa_odd5yr  = suppressWarnings(as.numeric(unlist(raw[total_rows, odd5_col])))
+  )
+}
+
+
+#' Reduce a stream name to a bare-base comparison key: strip embedded
+#' newlines, whitespace, a trailing period, and the common River/Creek/Lake
+#' suffix (spelled out or abbreviated) from either side. NEPA's names are
+#' abbreviated ("SAMISH R.", "GREEN-DUWAMISH") and ours are spelled out
+#' ("Samish River") - a plain case/whitespace normalization alone leaves
+#' every ordinary river name unmatched (confirmed: the first version of this
+#' comparison without suffix-stripping matched only 1 of 54 NEPA streams).
+#' Not exhaustive - a handful of disambiguated or compound names (e.g. "Purdy
+#' Cr.- HC" for the Hood Canal Purdy Creek, distinct from the South Sound
+#' one) won't reduce to a match either side and surface in the run's
+#' "unmatched" note instead of being forced.
+normalize_stream_key <- function(x) {
+  x |>
+    stringr::str_replace_all("[\r\n]+", " ") |>
+    stringr::str_squish() |>
+    toupper() |>
+    stringr::str_remove("\\.$") |>
+    stringr::str_replace_all("\\bRIVER\\b", "R") |>
+    stringr::str_replace_all("\\bCREEK\\b", "CR") |>
+    stringr::str_replace_all("\\bLAKE\\b", "LK") |>
+    stringr::str_remove("\\s+(R|CR|LK)\\.?$") |>
+    stringr::str_squish()
+}
+
+
+# --- 6. Reconstruct the same statistic from pure CRC ---------------------------
+#' Same even/odd 5-year mean, computed from OUR pure-CRC tidy data instead of
+#' NEPA's file. All-species-combined per stream per calendar year, to match
+#' the NEPA tab's own grain (verified in the mechanics note above - its
+#' "Historic Salmon Catch" block is not species-specific).
+#'
+#' Matches NEPA's stream-name rows on normalize_stream_key() rather than
+#' stream_code/catch_area_code: the NEPA tab's rows ARE named streams, not
+#' CRC area codes, and the two aren't always 1:1 (a named stream can span
+#' multiple CRC areas). A name-based join is the same key NEPA itself
+#' reports against.
+#'
+#' @param crc_hist  full, unfiltered CRC harvest tidy CSV
+#' @return tibble(stream_norm, our_even5yr, n_even, our_odd5yr, n_odd)
+reconstruct_pure_crc_5yr_means <- function(crc_hist, control = NEPA_COMPARISON_CONTROL) {
+  crc_hist |>
+    mutate(stream_norm = normalize_stream_key(stream)) |>
+    group_by(stream_norm, calendar_year) |>
+    summarise(annual_total = sum(harvest_count, na.rm = TRUE), .groups = "drop") |>
+    group_by(stream_norm) |>
+    summarise(
+      our_even5yr = mean(annual_total[calendar_year %in% control$even_years], na.rm = TRUE),
+      n_even      = sum(calendar_year %in% control$even_years & !is.na(annual_total)),
+      our_odd5yr  = mean(annual_total[calendar_year %in% control$odd_years], na.rm = TRUE),
+      n_odd       = sum(calendar_year %in% control$odd_years & !is.na(annual_total)),
+      .groups = "drop"
+    )
+}
+
+
+# --- 7. Compare, split by creel coverage ---------------------------------------
+#' Join NEPA's precomputed means against the pure-CRC reconstruction, and tag
+#' each stream as creel-covered or not using pst_river_block_crosswalk.csv's
+#' own creel_pe river_label list - not a hardcoded guess-list. A stream is
+#' "creel-covered" if any creel_pe river_label, reduced through the same
+#' normalize_stream_key() used for the join, appears as a substring of the
+#' stream's normalized NEPA name; river_label groupings are coarser than
+#' individual stream names (e.g. "Puyallup Carbon" covers both "PUYALLUP R."
+#' and "CARBON R."), so substring containment is the correct direction to
+#' test, not exact equality.
+#'
+#' @param nepa_means  output of read_nepa_5yr_means()
+#' @param our_means   output of reconstruct_pure_crc_5yr_means()
+#' @param crosswalk   pst_river_block_crosswalk.csv, already loaded
+#' @return tibble with one row per NEPA stream that also has pure-CRC data
+compare_nepa_vs_pure_crc <- function(nepa_means, our_means, crosswalk,
+                                     control = NEPA_COMPARISON_CONTROL) {
+
+  creel_rivers <- crosswalk |>
+    filter(source_id == "creel_pe") |>
+    distinct(river_label) |>
+    pull(river_label) |>
+    normalize_stream_key()
+  creel_rivers <- creel_rivers[nchar(creel_rivers) > 0]
+
+  is_creel_covered <- function(stream_norm) {
+    any(purrr::map_lgl(creel_rivers, ~ stringr::str_detect(stream_norm, stringr::fixed(.x))))
+  }
+
+  nepa_means |>
+    mutate(stream_norm = normalize_stream_key(stream)) |>
+    inner_join(our_means, by = "stream_norm") |>
+    rowwise() |>
+    mutate(creel_covered = is_creel_covered(stream_norm)) |>
+    ungroup() |>
+    mutate(
+      even_usable   = n_even >= control$min_years,
+      odd_usable    = n_odd  >= control$min_years,
+      diff_even     = our_even5yr - nepa_even5yr,
+      diff_odd      = our_odd5yr  - nepa_odd5yr,
+      pct_diff_even = if_else(nepa_even5yr > 0, diff_even / nepa_even5yr, NA_real_),
+      pct_diff_odd  = if_else(nepa_odd5yr  > 0, diff_odd  / nepa_odd5yr,  NA_real_),
+      flag_even     = even_usable & !is.na(pct_diff_even) &
+                       abs(pct_diff_even) > control$flag_threshold,
+      flag_odd      = odd_usable & !is.na(pct_diff_odd) &
+                       abs(pct_diff_odd) > control$flag_threshold
+    ) |>
+    select(stream, creel_covered,
+           nepa_even5yr, our_even5yr, n_even, even_usable, diff_even, pct_diff_even, flag_even,
+           nepa_odd5yr, our_odd5yr, n_odd, odd_usable, diff_odd, pct_diff_odd, flag_odd) |>
+    arrange(desc(creel_covered), stream)
+}
+
+
+# --- 8. Driver -------------------------------------------------------------------
+#' @param crc_hist   full, unfiltered CRC harvest tidy CSV (2010-2024)
+#' @param crosswalk  pst_river_block_crosswalk.csv, already loaded
+#' @param nepa_dir   directory holding the NEPA workbook (input_files/pst/external_data)
+#' @return tibble (the comparison table) or NULL
+run_nepa_pure_crc_comparison <- function(crc_hist, crosswalk, nepa_dir,
+                                         control = NEPA_COMPARISON_CONTROL) {
+
+  if (is.null(crc_hist)) {
+    message("[gap] nepa_comparison: no CRC harvest history table; comparison skipped entirely.")
+    return(NULL)
+  }
+  if (is.null(crosswalk)) {
+    message("[gap] nepa_comparison: no crosswalk; cannot classify streams as creel-covered or not, comparison skipped.")
+    return(NULL)
+  }
+
+  nepa_path <- file.path(nepa_dir, control$nepa_workbook)
+  if (!file.exists(nepa_path)) {
+    message(glue(
+      "[gap] nepa_comparison: NEPA workbook not found at {nepa_path}; ",
+      "comparison skipped."
+    ))
+    return(NULL)
+  }
+
+  nepa_means <- read_nepa_5yr_means(nepa_path, control$nepa_sheet)
+  our_means  <- reconstruct_pure_crc_5yr_means(crc_hist, control)
+  cmp        <- compare_nepa_vs_pure_crc(nepa_means, our_means, crosswalk, control)
+
+  n_matched   <- nrow(cmp)
+  n_unmatched <- nrow(nepa_means) - n_matched
+  if (n_unmatched > 0) {
+    unmatched_names <- setdiff(stringr::str_squish(nepa_means$stream),
+                               stringr::str_squish(cmp$stream))
+    message(glue(
+      "[note] nepa_comparison: {n_unmatched} of {nrow(nepa_means)} NEPA stream(s) ",
+      "had no matching stream name in the pure-CRC data - {paste(unmatched_names, collapse = ', ')}."
+    ))
+  }
+
+  creel_grp    <- filter(cmp, creel_covered)
+  noncreel_grp <- filter(cmp, !creel_covered)
+
+  summarize_grp <- function(g, label) {
+    both <- c(g$pct_diff_even[g$even_usable], g$pct_diff_odd[g$odd_usable])
+    both <- both[!is.na(both)]
+    if (length(both) == 0) {
+      message(glue("[note] nepa_comparison: {label} - no usable comparisons."))
+      return(invisible(NULL))
+    }
+    message(glue(
+      "[note] nepa_comparison: {label} ({length(both)} even/odd comparisons across ",
+      "{n_distinct(g$stream)} streams) - median |% diff| {round(median(abs(both)) * 100, 1)}%, ",
+      "mean |% diff| {round(mean(abs(both)) * 100, 1)}%, ",
+      "{sum(g$flag_even, na.rm = TRUE) + sum(g$flag_odd, na.rm = TRUE)} of {length(both)} ",
+      "exceed the {control$flag_threshold * 100}% flag threshold."
+    ))
+  }
+
+  message(glue(
+    "[note] nepa_comparison: {n_matched} Puget Sound stream(s) compared ",
+    "({nrow(creel_grp)} creel-covered, {nrow(noncreel_grp)} not) against ",
+    "{control$nepa_sheet} in {basename(nepa_path)}."
+  ))
+  summarize_grp(creel_grp,    "creel-covered streams (creel-substituted in the NEPA file)")
+  summarize_grp(noncreel_grp, "non-creel streams (raw CRC in the NEPA file either way)")
+
+  cmp
+}

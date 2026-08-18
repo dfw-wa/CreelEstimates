@@ -9,7 +9,7 @@ order; each step can also be run standalone.
 
 | # | Script | Writes |
 |---|---|---|
-| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2019_2024_tidy.csv` |
+| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2010_2024_tidy.csv` |
 | 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
 | 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/district_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |
@@ -33,6 +33,8 @@ build can be re-run without re-running the tier hierarchy.
 | `analysis/pst/02_ingest/interview_proportions.qmd` | Track B engine — conditional mode proportions from interviews |
 | `analysis/archive/integrate_manual_runs.R` | Archived — not part of the current run order. Reconciles per-fishery `fw_creel.Rmd` runs to the monthly batch grain |
 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
+| `analysis/pst/03_analysis/pst_p2_block_ratio.R` | Sourced by the assembly script. Tier P2: within-block CRC-harvest-ratio expansion for real (non-projected) years |
+| `analysis/pst/03_analysis/pst_crc_harvest_projection.R` | Sourced by the assembly script. Tier P3: 6-year-mean CRC harvest projection for 2025 (WACoast/ColumbiaTrib only), plus a separate diagnostic comparing NEPA's 5-year even/odd mean catch to the same statistic reconstructed from pure CRC — see the outputs table below |
 
 ::: {.callout-note}
 `input_files/pst/` is organized by provider rather than by file type:
@@ -88,6 +90,10 @@ status children report status rather than assert it:
 | `pst_fw_p2_loo_detail.csv` | held-out area × year | Leave-one-out validation, row level |
 | `pst_fw_p2_loo_summary.csv` | block | LOO rollup; `median_ape` feeds `p2_median_error_pct` in the Jim workbook |
 | `pst_fw_crc_vs_creel_bias.csv` | CRC area × year | CRC vs design-based creel harvest, same area-year |
+| `pst_fw_crc_projection.csv` | CRC area × year (2025 only) | Tier P3 (`pst_crc_harvest_projection.R`): 2025 trips for WACoast/ColumbiaTrib areas with no P1 and no real P2, expanded from a projected 6-year-mean CRC harvest through the same ratio machinery P2 uses. Never PugetSound — see that script's header |
+| `pst_fw_crc_projection_sanity.csv` | CRC area | P3's projected 6-year-mean harvest vs. partial actual 2025 CRC (Jan–Mar), where available |
+| `pst_fw_crc_projection_coverage.csv` | CRC area | Which candidate P3 areas were projected vs. excluded, and why |
+| `pst_fw_nepa_vs_pure_crc_comparison.csv` | NEPA stream × even/odd | **Diagnostic only — not consumed by the deliverable.** `pst_crc_harvest_projection.R`'s PART 2: NEPA's own 5-year even/odd mean catch per Puget Sound stream vs. the same statistic reconstructed from pure (pre-creel-substitution) CRC, split by whether the stream is creel-covered (`source_id == "creel_pe"` in the crosswalk). Quantifies the creel-substitution effect; written only if the NEPA workbook is present |
 | `pst_fw_effort_long.csv` | + month, fishery_name | Audit trail / re-aggregation |
 | `pst_fw_provenance_ledger.csv` | river-year × tier × source | Which number came from where |
 | `pst_fw_gap_register.csv` | source × severity | Every blocker, gap, defect, and decision |

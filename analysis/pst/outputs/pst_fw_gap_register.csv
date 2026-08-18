@@ -358,6 +358,7 @@ crc_projection,NA,gap,area 377: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 379: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 382: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 384: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+crc_projection,NA,gap,area 388: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 389: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 390: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 392: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -453,6 +454,7 @@ crc_projection,NA,gap,area 768: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 770: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 774: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 778: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+crc_projection,NA,gap,area 782: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 788: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 790: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 792: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -471,6 +473,7 @@ crc_projection,NA,gap,area 840: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 854: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 858: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 866: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+crc_projection,NA,gap,area 878: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 884: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 192: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,ColumbiaTrib,gap,"area 534: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"

@@ -65,6 +65,11 @@ library(glue)
 # see the header of that file for why the denominator matters.
 source(here("analysis", "pst", "03_analysis", "pst_p2_block_ratio.R"))
 
+# P3 CRC-harvest projection. Reuses P2's block-pooled ratio on a projected
+# (not real) CRC harvest, for blocks NEPA's own 2014+ projection doesn't
+# cover. See that file's header for why block-pooled only, never block-year.
+source(here("analysis", "pst", "03_analysis", "pst_crc_harvest_projection.R"))
+
 # ---- 0. Config --------------------------------------------------------------
 
 YEARS_SCOPE <- 2022:2025
@@ -870,6 +875,50 @@ if (!is.null(p2x)) {
 } else {
   log_gap("p2_expansion", NA, "blocker",
           "P2 did not run - no crosswalk, no CRC table, or no CRC/creel area overlap.")
+}
+
+# ---- 5c. P3 CRC-harvest projection -------------------------------------------
+# Runs AFTER P2 on purpose: "already covered?" for this tier means covered by
+# EITHER P1 or real P2, so effort_long must already carry the P2 merge above.
+# Never touches PugetSound - that block's 2025 projection is NEPA-derived,
+# a separate longer even/odd series back to 2014, not this 6-year CRC mean.
+#
+# crc_hist is read independently here rather than reusing p2$crc: p2$crc is
+# filtered to YEARS_SCOPE (2022-2025), which drops 2019-2021 - too late for a
+# 6-year mean. This re-reads the same file build_block_ratios() already read
+# once internally; the duplicate read is deliberate so build_block_ratios()
+# itself stays untouched.
+crc_hist <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2019_2024_tidy.csv"),
+                    "crc_harvest_history")
+
+p3x <- if (is.null(p2x)) {
+  message(paste("[gap] crc_projection: P2 did not run, so no donor pairs are",
+               "available to derive a ratio from; P3 projection skipped."))
+  NULL
+} else {
+  run_crc_projection(
+    crc_hist       = crc_hist,
+    effort_long    = effort_long,
+    donors         = p2x$donors,
+    crosswalk      = crosswalk,
+    deliver_blocks = DELIVER_BLOCKS
+  )
+}
+
+if (!is.null(p3x)) {
+  effort_long <- bind_rows(effort_long, canon(p3x$trips))
+
+  if (nrow(p3x$gaps) > 0) {
+    walk(seq_len(nrow(p3x$gaps)), \(i) {
+      g <- p3x$gaps[i, ]
+      log_gap("crc_projection", g$block, "gap",
+              glue("area {g$catch_area_code}: {g$reason}"))
+    })
+  }
+
+  write_csv(p3x$trips,        file.path(OUT_DIR, "pst_fw_crc_projection.csv"))
+  write_csv(p3x$sanity_check, file.path(OUT_DIR, "pst_fw_crc_projection_sanity.csv"))
+  write_csv(p3x$coverage,     file.path(OUT_DIR, "pst_fw_crc_projection_coverage.csv"))
 }
 
 # ---- 6. Intermediate output (NOT the deliverable) ---------------------------

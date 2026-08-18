@@ -11,23 +11,16 @@ ColumbiaTrib,Drano Lake,618,2024,unknown,unknown,331.95158667552386,0,P1,creel_p
 ColumbiaTrib,Drano Lake,618,2025,unguided,bank,3684.9186605922378,613.14965,P1,creel_pe,6.009819398237018
 ColumbiaTrib,Drano Lake,618,2025,guided,boat,2816.331590878735,1908.8042073786278,P1,creel_pe,1.4754428872233156
 ColumbiaTrib,Drano Lake,618,2025,unguided,boat,13735.387676826618,9309.331995002325,P1,creel_pe,1.4754428872233154
-ColumbiaTrib,Hanford Reach,534,2022,unknown,unknown,6507.727063227128,2447,P2,p2_block_ratio,2.6594716237135794
-ColumbiaTrib,Hanford Reach,534,2023,unknown,unknown,1382.4053599505544,921,P2,p2_block_ratio,1.5009830184045108
-ColumbiaTrib,Hanford Reach,534,2024,unknown,unknown,980.2979636204927,630,P2,p2_block_ratio,1.5560285136833218
-ColumbiaTrib,Hanford Reach,535,2022,unknown,unknown,28887.1807767769,10862,P2,p2_block_ratio,2.6594716237135794
-ColumbiaTrib,Hanford Reach,535,2023,unknown,unknown,8902.330282157154,5931,P2,p2_block_ratio,1.500983018404511
-ColumbiaTrib,Hanford Reach,535,2024,unknown,unknown,19724.21743944979,12676,P2,p2_block_ratio,1.5560285136833218
-ColumbiaTrib,Hanford Reach,536,2022,unknown,unknown,25044.24428051078,9417,P2,p2_block_ratio,2.6594716237135794
-ColumbiaTrib,Hanford Reach,536,2023,unknown,unknown,13627.424824094553,9079,P2,p2_block_ratio,1.5009830184045108
-ColumbiaTrib,Hanford Reach,536,2024,unknown,unknown,11005.789677282135,7073,P2,p2_block_ratio,1.5560285136833218
 ColumbiaTrib,Hanford Reach,NA,2022,unknown,boat,28268.918845931716,11462.474383419303,P1,R3_external,2.46621435305655
 ColumbiaTrib,Hanford Reach,NA,2023,unknown,boat,27650.140219436187,11105.097007998453,P1,R3_external,2.4898603046439987
 ColumbiaTrib,Hanford Reach,NA,2024,unknown,boat,23070.355439536208,11266.035013728306,P1,R3_external,2.0477794904261937
 ColumbiaTrib,Hanford Reach,NA,2025,unknown,boat,18502.854001943706,7935.650270241007,P1,R3_external,2.3316115720636175
 ColumbiaTrib,Lower Cowlitz,507,2024,unknown,unknown,20.228370677883184,13,P2,p2_block_ratio,1.5560285136833218
+ColumbiaTrib,Lower Cowlitz,507,2025,unknown,unknown,54.149792276179596,34.8,P3,crc_harvest_projection,1.5560285136833218
 ColumbiaTrib,Lower Cowlitz,561,2022,unknown,unknown,18267.910583288576,6869,P2,p2_block_ratio,2.6594716237135794
 ColumbiaTrib,Lower Cowlitz,561,2023,unknown,unknown,9929.002666745839,6615,P2,p2_block_ratio,1.5009830184045108
 ColumbiaTrib,Lower Cowlitz,561,2024,unknown,unknown,5936.248779701873,3815,P2,p2_block_ratio,1.5560285136833218
+ColumbiaTrib,Lower Cowlitz,561,2025,unknown,unknown,8571.383067624578,5508.5,P3,crc_harvest_projection,1.5560285136833218
 ColumbiaTrib,McNary Reservoir,533,2022,unknown,unknown,1023.896575129728,385,P2,p2_block_ratio,2.6594716237135794
 ColumbiaTrib,McNary Reservoir,533,2023,unknown,combined,1562.26385472027,62.6927679409378,P1,R3_external,24.919363206168573
 ColumbiaTrib,McNary Reservoir,533,2024,unknown,combined,2767.180410962862,135.85087958914121,P1,R3_external,20.369249130603695
@@ -35,6 +28,7 @@ ColumbiaTrib,McNary Reservoir,533,2025,unknown,combined,1975.7572160449931,42.61
 ColumbiaTrib,Yakima,690,2022,unknown,bank,7902.836007067821,2907.310291902091,P1,R3_external,2.718263691729112
 ColumbiaTrib,Yakima,690,2023,unknown,unknown,618.4050035826584,412,P2,p2_block_ratio,1.5009830184045108
 ColumbiaTrib,Yakima,690,2024,unknown,unknown,1121.896558365675,721,P2,p2_block_ratio,1.5560285136833218
+ColumbiaTrib,Yakima,690,2025,unknown,unknown,717.5884828936253,461.1666666666667,P3,crc_harvest_projection,1.5560285136833218
 PugetSound,Cascade,826,2022,unguided,bank,1658.0873264483816,954.6986333333333,P1,creel_pe,1.7367651618596798
 PugetSound,Cascade,826,2023,unguided,bank,2897.708266862889,2749.89550563722,P1,creel_pe,1.0537521374621894
 PugetSound,Cascade,826,2024,unguided,bank,2619.075307144715,1357.3284345238096,P1,creel_pe,1.9295811098686393

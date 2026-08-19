@@ -1,4 +1,5 @@
 source_id,block,severity,detail
+crosswalk,ColumbiaMainstem,note,3 ColumbiaMainstem crosswalk row(s) filtered at load. Run analysis/pst/02_ingest/patch_crosswalk_areas.R to remove them permanently.
 ColumbiaMainstem,ColumbiaMainstem,note,out of delivery scope - Buoy 10 / LCR / Bonneville-McNary were transmitted to us by the consultant via ODFW; not ingested and not written to the output.
 creel_pe,NA,note,stacks pe_period = week/month; keeping 'month' only - summing both would double every estimate
 creel_pe,NA,defect,"Lower Chehalis salmon 2023: strata emitted TWICE, once with a catch_area_code and once with NA, same total_effort_hrs. Dropping the NA copies (60,827 effort-hrs / 16,541 trips of double-count). FIX UPSTREAM in multi_fishery_creel_summary.R - the section_num -> crc_area join is not matching for every section."
@@ -9,12 +10,6 @@ district_creel,ColumbiaTrib,defect,4 rows where year column disagrees with fishe
 R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2023: no usable total_trips_est despite 4,393 effort-hrs - expansion failed, DROPPED"
 R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2024: no usable total_trips_est despite 5,529 effort-hrs - expansion failed, DROPPED"
 R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2025: no usable total_trips_est despite 3,533 effort-hrs - expansion failed, DROPPED"
-R1_external,NA,gap,"Snake River spring Chinook 2022: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
-R1_external,NA,gap,"Snake River spring Chinook 2023: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
-R1_external,NA,gap,"Snake River spring Chinook 2024: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
-R1_external,NA,gap,"Snake River spring Chinook 2025: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
-R1_external,NA,gap,"Snake River fall Chinook 2023: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
-R1_external,NA,gap,"Snake River fall Chinook 2024: no crosswalk row for source_id='R1_external' - block unresolved, coded 'unknown' and excluded from DELIVER_BLOCKS rollups until pst_river_block_crosswalk.csv is patched"
 nepa_workbook,PugetSound,note,2025 PS values are a projection; must be labeled method='projection'
 coastal_2025,WACoast,gap,no 2025 fallback identified for coastal freshwater - open item
 p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2022: 2.58 trips/salmon (creel-denominated) from 3 creel fisheries (50,303 trips / 19,486 salmon)"
@@ -31,68 +26,6 @@ p2_ratio,WACoast,note,"WACoast 2024: 1.93 trips/salmon (creel-denominated) from 
 p2_ratio,WACoast,note,"WACoast 2025: 2.19 trips/salmon (creel-denominated) from 5 creel fisheries (60,127 trips / 27,409 salmon)"
 crc_harvest,NA,note,license-year basis (Apr 1 - Mar 31): calendar 2025 has only Jan-Mar coverage and calendar 2022 depends on the FW 2022-23 file. Confirm with Heidi before P2 is used for edge years.
 track_b_join,NA,note,apply_track_b() resolved 54.7% of splittable trips.
-p2_expansion,NA,gap,area 305 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 311 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 321 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 321 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 323 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 323 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 323 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 325 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 325 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 333 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 333 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 335 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 335 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 335 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 337 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 337 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 337 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 339 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 339 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 339 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 342 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 342 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 345 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 352 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 352 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 355 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 355 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 367 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 367 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 367 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 370 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 371 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 382 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 382 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 382 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 384 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 384 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 384 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 392 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 392 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 394 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 394 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 394 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 396 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 396 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 408 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 408 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 410 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 410 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 410 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 418 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 501 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 501 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 508 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 508 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 508 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 515 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 515 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 515 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 517 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 517 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 517 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 519 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 519 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 519 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -126,182 +59,38 @@ p2_expansion,NA,gap,area 545 2022: CRC stream_code not present in pst_river_bloc
 p2_expansion,NA,gap,area 545 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 545 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 549 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 555 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 555 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 555 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 557 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 559 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 559 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 559 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 563 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 563 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 563 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 565 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 565 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 565 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 566 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 566 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 566 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 569 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 571 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 571 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 571 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 573 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 573 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 573 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 575 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 575 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 575 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 580 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 584 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 584 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 584 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 586 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 586 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 586 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 589 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 594 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 595 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 595 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 602 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 602 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 602 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 603 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 603 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 603 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 604 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 604 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 604 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 604 2025: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 607 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 607 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 607 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 607 2025: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 608 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 608 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 608 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 609 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 609 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 611 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 611 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 611 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 615 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 615 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 615 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 615 2025: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 621 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 621 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 625 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 627 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 627 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 629 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 635 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 638 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 640 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 640 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 640 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 642 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 644 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 644 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 644 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 646 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 646 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 646 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 648 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 648 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 648 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 650 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 650 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 650 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 661 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 665 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 667 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 667 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 667 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 668 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 668 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 668 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 670 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 670 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 670 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 672 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 672 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 672 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 674 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 674 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 677 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 677 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 677 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 680 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 680 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 680 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 710 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 710 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 714 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 714 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 718 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 718 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 724 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 726 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 726 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 728 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 728 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 732 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 736 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 736 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 754 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 754 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 762 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 762 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 762 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 766 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 766 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 768 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 768 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 770 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 788 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 788 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 788 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 790 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 790 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 790 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 810 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 814 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 818 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 824 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 824 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 824 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 828 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 828 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 832 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 834 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 834 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 840 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 854 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 858 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 866 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 866 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 884 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 884 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 884 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2025: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 547 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 547 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 600 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 764 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 764 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 764 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+p2_expansion,PugetSound,gap,area 710 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 724 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 726 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 728 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 736 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 738 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 746 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 754 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 762 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 766 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 778 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 786 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 788 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 790 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 792 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 812 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 814 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 816 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 818 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 824 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 825 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 828 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 834 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 854 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 884 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 764 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,ColumbiaTrib,gap,"area 534 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 534 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 534 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
@@ -312,89 +101,38 @@ p2_expansion,ColumbiaTrib,gap,"area 535 2025: area covered by an unpartitioned s
 p2_expansion,ColumbiaTrib,gap,"area 536 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 536 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 536 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-crc_projection,NA,gap,area 305: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 311: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 321: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 323: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 325: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 333: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 335: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 337: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 339: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 342: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 345: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 352: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 355: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 367: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+p2_expansion,ColumbiaTrib,gap,"area 640 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 640 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 640 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 642 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 644 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 644 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 644 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 646 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 646 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 646 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 648 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 648 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 648 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 650 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 650 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaTrib,gap,"area 650 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 crc_projection,NA,gap,area 369: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 370: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 371: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 373: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 377: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 382: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 384: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 388: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 389: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 390: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 392: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 394: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 396: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 408: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 410: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 418: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 419: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 706: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 501: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 515: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 517: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 519: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 521: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 555: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 557: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 559: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 563: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 565: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 566: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 569: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 571: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 573: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 575: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 580: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 583: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 584: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 589: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 594: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 595: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 596: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 600: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 602: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 603: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 604: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 609: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 611: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 615: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 625: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 635: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 638: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 661: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 665: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 667: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 668: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 508: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 527: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 529: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 531: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 607: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 608: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 677: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 680: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 592: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 640: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 642: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 644: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 646: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 648: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 650: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 537: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 539: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 541: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -402,47 +140,24 @@ crc_projection,NA,gap,area 543: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 545: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 547: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 549: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 586: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 621: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 627: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 629: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 670: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 672: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 674: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 710: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 714: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 718: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 724: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 726: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 728: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 732: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 734: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 736: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 754: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 762: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 764: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 766: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 768: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 770: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 774: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 782: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 788: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 790: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 808: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 810: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 814: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 818: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 824: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 828: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 832: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 834: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 840: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 854: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 858: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 866: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 878: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 884: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 192: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+crc_projection,WACoast,gap,area 418: only 2 of 6 history year(s) present (2023|2024); need 3
+crc_projection,ColumbiaTrib,gap,area 557: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaTrib,gap,area 600: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaTrib,gap,area 635: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaTrib,gap,area 638: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaTrib,gap,area 661: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaTrib,gap,"area 640: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaTrib,gap,"area 642: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaTrib,gap,"area 644: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaTrib,gap,"area 646: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaTrib,gap,"area 648: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaTrib,gap,"area 650: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
 crc_projection,ColumbiaTrib,gap,"area 534: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
 crc_projection,ColumbiaTrib,gap,"area 535: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
 crc_projection,ColumbiaTrib,gap,"area 536: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"

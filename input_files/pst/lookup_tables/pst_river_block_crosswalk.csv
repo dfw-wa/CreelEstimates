@@ -63,7 +63,7 @@ R3_external,Yakima fall salmon 2024,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,desig
 R3_external,Yakima fall salmon 2025,Yakima,ColumbiaTrib,690,P1,UNAVAILABLE,design_stratum,no guided/unguided field collected - structural gap,standard
 CRC_only,Green-Duwamish - no creel survey,Green-Duwamish,PugetSound,746,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
 CRC_only,Samish - no creel survey,Samish,PugetSound,816,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
-CRC_only,Baker - no creel survey,Baker,PugetSound,825,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
+CRC_only,Baker - no creel survey,Baker,PugetSound,825|824,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely. 824 (Baker River) added alongside 825 (Baker Lake, the reservoir on that river) as the same system",standard
 CRC_only,Minter Creek - no creel survey,Minter Creek,PugetSound,778,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
 CRC_only,Quilcene - no creel survey,Quilcene,PugetSound,812,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
 CRC_only,Dungeness - no creel survey,Dungeness,PugetSound,738,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
@@ -71,3 +71,95 @@ CRC_only,Nooksack South Fork - no creel survey,Nooksack South Fork,PugetSound,79
 CRC_only,Naselle - no creel survey,Naselle,WACoast,375,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
 CRC_only,Willapa - no creel survey,Willapa,WACoast,424,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
 CRC_only,Nemah - no creel survey,Nemah,WACoast,379,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program on this river; added so its CRC harvest reaches P2 block-ratio expansion instead of sitting outside the crosswalk entirely",standard
+CRC_only,California Creek - no creel survey,California Creek,PugetSound,710,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Chambers Creek - no creel survey,Chambers Creek,PugetSound,714,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Clallam River - no creel survey,Clallam River,PugetSound,718,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Dakota Creek - no creel survey,Dakota Creek,PugetSound,724,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Deep Creek (Clallam Co) - no creel survey,Deep Creek (Clallam Co),PugetSound,726,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Deschutes River - no creel survey,Deschutes River,PugetSound,728,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Dewatto River - no creel survey,Dewatto River,PugetSound,732,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Duckabush River - no creel survey,Duckabush River,PugetSound,736,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Kennedy Creek - no creel survey,Kennedy Creek,PugetSound,754,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Lake Washington - no creel survey,Lake Washington,PugetSound,762,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Lake Sammamish - no creel survey,Lake Sammamish,PugetSound,764,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; distinct lake from Lake Washington (762) despite sharing a CRC 'system' grouping",standard
+CRC_only,Little Quilcene River - no creel survey,Little Quilcene River,PugetSound,766,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; distinct from the existing Quilcene row (812)",standard
+CRC_only,Lyre River - no creel survey,Lyre River,PugetSound,768,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,McAllister Creek - no creel survey,McAllister Creek,PugetSound,770,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; a distinct waterbody from the Nisqually River (786, creel_pe) despite sharing a CRC 'Nisqually R. System' grouping",standard
+CRC_only,Nooksack Mainstem - no creel survey,Nooksack Mainstem,PugetSound,788,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; a third distinct Nooksack reach alongside the existing Nooksack (794, below North Fork, creel_pe) and Nooksack South Fork (792) rows - CRC's own stream text does not distinguish which reach this is beyond 'Nooksack River'",standard
+CRC_only,Nooksack North Fork - no creel survey,Nooksack North Fork,PugetSound,790,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Pysht River - no creel survey,Pysht River,PugetSound,810,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Salt Creek (Clallam Co) - no creel survey,Salt Creek (Clallam Co),PugetSound,814,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Sekiu River - no creel survey,Sekiu River,PugetSound,818,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Sauk River - no creel survey,Sauk River,PugetSound,828,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Suiattle River - no creel survey,Suiattle River,PugetSound,832,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Skokomish River - no creel survey,Skokomish River,PugetSound,834,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Pilchuck River - no creel survey,Pilchuck River,PugetSound,840,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Sultan River - no creel survey,Sultan River,PugetSound,854,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Tolt River - no creel survey,Tolt River,PugetSound,858,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Canyon Creek (Snohomish Co) - no creel survey,Canyon Creek (Snohomish Co),PugetSound,866,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Whatcom Creek - no creel survey,Whatcom Creek,PugetSound,884,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Bear River (Pacific Co) - no creel survey,Bear River (Pacific Co),WACoast,305,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Cedar Creek (Jefferson Co) - no creel survey,Cedar Creek (Jefferson Co),WACoast,311,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Cloquallum Creek - no creel survey,Cloquallum Creek,WACoast,321,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Joe Creek - no creel survey,Joe Creek,WACoast,323,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Newaukum River - no creel survey,Newaukum River,WACoast,325,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Skookumchuck River - no creel survey,Skookumchuck River,WACoast,333,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Wishkah River - no creel survey,Wishkah River,WACoast,335,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Wynoochee River - no creel survey,Wynoochee River,WACoast,337,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Copalis River - no creel survey,Copalis River,WACoast,339,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Elk River - no creel survey,Elk River,WACoast,342,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Goodman Creek - no creel survey,Goodman Creek,WACoast,345,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Hoh South Fork - no creel survey,Hoh South Fork,WACoast,352,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; distinct reach from the existing Hoh row (348|350, creel_pe)",standard
+CRC_only,Hoquiam River - no creel survey,Hoquiam River,WACoast,355,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Johns River - no creel survey,Johns River,WACoast,367,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Quigg Lake - no creel survey,Quigg Lake,WACoast,370,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Moclips River - no creel survey,Moclips River,WACoast,371,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,North River - no creel survey,North River,WACoast,382,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Smith Creek (Pacific Co) - no creel survey,Smith Creek (Pacific Co),WACoast,384,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Clearwater River - no creel survey,Clearwater River,WACoast,392,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Queets River - no creel survey,Queets River,WACoast,394,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Salmon River (Jefferson Co) - no creel survey,Salmon River (Jefferson Co),WACoast,396,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Cook Creek - no creel survey,Cook Creek,WACoast,408,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Quinault River - no creel survey,Quinault River,WACoast,410,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Sooes River - no creel survey,Sooes River,WACoast,418,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Big White Salmon River - no creel survey,Big White Salmon River,ColumbiaTrib,508,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Klickitat River - no creel survey,Klickitat River,ColumbiaTrib,607|608,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Cispus River - no creel survey,Cispus River,ColumbiaTrib,555,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Coweeman River - no creel survey,Coweeman River,ColumbiaTrib,557,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Upper Cowlitz River - no creel survey,Upper Cowlitz River,ColumbiaTrib,559|563,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; mainstem Cowlitz above the dams, distinct from the existing Lower Cowlitz row (507|561, NO_DATA)",standard
+CRC_only,Green River (Cowlitz Co) - no creel survey,Green River (Cowlitz Co),ColumbiaTrib,565|566,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; distinct from Green-Duwamish (Puget Sound block)",standard
+CRC_only,Olequa Creek - no creel survey,Olequa Creek,ColumbiaTrib,569,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Tilton River - no creel survey,Tilton River,ColumbiaTrib,571,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Toutle River - no creel survey,Toutle River,ColumbiaTrib,573|575,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Mill Creek (Lewis Co) - no creel survey,Mill Creek (Lewis Co),ColumbiaTrib,625,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Cedar Creek (Clark Co) - no creel survey,Cedar Creek (Clark Co),ColumbiaTrib,609,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; distinct from Cedar Creek (Jefferson Co, WACoast block)",standard
+CRC_only,Lewis River - no creel survey,Lewis River,ColumbiaTrib,611|615,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Abernathy Creek - no creel survey,Abernathy Creek,ColumbiaTrib,501,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Chinook River - no creel survey,Chinook River,ColumbiaTrib,515,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Coal Creek (Cowlitz Co) - no creel survey,Coal Creek (Cowlitz Co),ColumbiaTrib,517,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Deep River (Wahkiakum Co) - no creel survey,Deep River (Wahkiakum Co),ColumbiaTrib,580,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Elochoman River - no creel survey,Elochoman River,ColumbiaTrib,584,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Germany Creek - no creel survey,Germany Creek,ColumbiaTrib,589,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Grays River - no creel survey,Grays River,ColumbiaTrib,594|595,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Kalama River - no creel survey,Kalama River,ColumbiaTrib,600|602|603|604,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; four CRC areas covering different reaches, combined into one river_label",standard
+CRC_only,Salmon Creek (Clark Co) - no creel survey,Salmon Creek (Clark Co),ColumbiaTrib,635,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Little Washougal River - no creel survey,Little Washougal River,ColumbiaTrib,661,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Washougal River - no creel survey,Washougal River,ColumbiaTrib,665|667|668,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; West Fork, mainstem, and above-County-Line-Access reaches combined",standard
+CRC_only,Skamokawa Creek - no creel survey,Skamokawa Creek,ColumbiaTrib,638,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program",standard
+CRC_only,Wind River - no creel survey,Wind River,ColumbiaTrib,677|680,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; above and below Shipherd Falls reaches combined",standard
+CRC_only,Entiat River - no creel survey,Entiat River,ColumbiaTrib,586,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Methow River - no creel survey,Methow River,ColumbiaTrib,621,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Okanogan River - no creel survey,Okanogan River,ColumbiaTrib,627,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Similkameen River - no creel survey,Similkameen River,ColumbiaTrib,629,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Lake Wenatchee - no creel survey,Lake Wenatchee,ColumbiaTrib,670,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Icicle Creek - no creel survey,Icicle Creek,ColumbiaTrib,672,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+CRC_only,Wenatchee River - no creel survey,Wenatchee River,ColumbiaTrib,674,NO_SURVEY,UNAVAILABLE,UNAVAILABLE,"no creel/interview program; part of the Upper Columbia (Chad Jackson, R2) district pending outreach - see _22_status_and_gaps.qmd",standard
+R1_external,Snake River fall Chinook 2023,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"Jeremy Trump's R1 annual summary gives a single whole-river trip total per species-year (boat/shore split, no guided/unguided, no per-CRC-area breakdown - crc_area is NA in district_creel_summary.csv). Combined here across all six Snake R. System CRC areas so P2 does not also try to ratio-expand them individually and double-count against this real total",covered_unpartitioned
+R1_external,Snake River fall Chinook 2024,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"see the fall Chinook 2023 row above for the full explanation",covered_unpartitioned
+R1_external,Snake River spring Chinook 2022,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"see the fall Chinook 2023 row above for the full explanation",covered_unpartitioned
+R1_external,Snake River spring Chinook 2023,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"see the fall Chinook 2023 row above for the full explanation",covered_unpartitioned
+R1_external,Snake River spring Chinook 2024,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"see the fall Chinook 2023 row above for the full explanation",covered_unpartitioned
+R1_external,Snake River spring Chinook 2025,Snake River,ColumbiaTrib,640|642|644|646|648|650,P1,UNAVAILABLE,boat_shore_split,"see the fall Chinook 2023 row above for the full explanation",covered_unpartitioned
+ColumbiaMainstem,Columbia Mainstem - Buoy 10 / below Bonneville - out of scope,Columbia Mainstem Lower,ColumbiaMainstem,519|521,OUT_OF_SCOPE,UNAVAILABLE,UNAVAILABLE,"out of scope for delivery - consultant-supplied via ODFW (see README). Filtered at crosswalk load; kept here for documentation only, per the pipeline registry's stated intent",standard
+ColumbiaMainstem,Columbia Mainstem - Bonneville to McNary - out of scope,Columbia Mainstem Middle,ColumbiaMainstem,527|529|531,OUT_OF_SCOPE,UNAVAILABLE,UNAVAILABLE,"out of scope for delivery - consultant-supplied via ODFW (see README). Filtered at crosswalk load; kept here for documentation only, per the pipeline registry's stated intent",standard
+ColumbiaMainstem,Columbia Mainstem - above McNary (Priest Rapids to Grand Coulee) - out of scope,Columbia Mainstem Upper,ColumbiaMainstem,537|539|541|543|545|547|549,OUT_OF_SCOPE,UNAVAILABLE,UNAVAILABLE,"out of scope for delivery - consultant-supplied via ODFW (see README). Filtered at crosswalk load; kept here for documentation only, per the pipeline registry's stated intent",standard

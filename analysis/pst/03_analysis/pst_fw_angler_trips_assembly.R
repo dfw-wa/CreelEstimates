@@ -684,6 +684,7 @@ build_block_ratios <- function(trips_p1) {
   crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                  "crc_harvest")
   crc_yr <- NULL
+  crc_month <- NULL
   if (!is.null(crc)) {
     crc_lut <- read_csv(here("input_files", "pst", "lookup_tables", "crc_area_lut.csv"),
                         show_col_types = FALSE) |>
@@ -697,13 +698,30 @@ build_block_ratios <- function(trips_p1) {
       group_by(catch_area_region, stream_code, calendar_year) |>
       summarise(harvest = sum(harvest_count, na.rm = TRUE), .groups = "drop")
 
+    # Month grain, kept alongside crc_yr rather than replacing it: apply_p2()
+    # still expands a TARGET area's full-year CRC harvest (that's the point -
+    # a full-year trip estimate for an area with no survey at all), but the
+    # DONOR ratio in build_p2_donors() must not divide creel trips by CRC
+    # harvest from months the creel survey never ran - that inflates the
+    # denominator with harvest the trips side had no chance to explain and
+    # biases the ratio low. build_p2_donors() uses this table to restrict CRC
+    # harvest to the same months effort_long actually has creel trips in, per
+    # area-year - driven off effort_long's own month field so it self-corrects
+    # as more creel months arrive rather than needing a season list maintained
+    # by hand.
+    crc_month <- crc |>
+      filter(calendar_year %in% YEARS_SCOPE) |>
+      mutate(stream_code = as.character(stream_code)) |>
+      group_by(stream_code, calendar_year, calendar_month) |>
+      summarise(harvest = sum(harvest_count, na.rm = TRUE), .groups = "drop")
+
     log_gap("crc_harvest", NA, "note",
             paste("license-year basis (Apr 1 - Mar 31): calendar 2025 has only",
                   "Jan-Mar coverage and calendar 2022 depends on the FW 2022-23",
                   "file. Confirm with Heidi before P2 is used for edge years."))
   }
 
-  list(ratios = ratios, crc = crc_yr)
+  list(ratios = ratios, crc = crc_yr, crc_month = crc_month)
 }
 
 # ---- 4. Track B: mode x location -------------------------------------------
@@ -844,6 +862,7 @@ p2x <- if (is.null(crosswalk)) {
   run_p2_extrapolation(
     effort_long    = effort_long,
     crc_yr         = p2$crc,
+    crc_month      = p2$crc_month,
     crosswalk      = crosswalk,
     deliver_blocks = DELIVER_BLOCKS,
     years_scope    = YEARS_SCOPE

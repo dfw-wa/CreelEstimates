@@ -324,7 +324,7 @@ p2_expansion,NA,gap,area 600 2024: CRC stream_code not present in pst_river_bloc
 p2_expansion,NA,gap,area 764 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 764 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 764 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,ColumbiaTrib,gap,area 561 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,PugetSound,gap,area 786 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,ColumbiaTrib,gap,"area 534 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 534 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 p2_expansion,ColumbiaTrib,gap,"area 534 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"

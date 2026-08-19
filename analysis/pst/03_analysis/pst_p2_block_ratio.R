@@ -153,18 +153,34 @@ expand_crosswalk_areas <- function(crosswalk) {
 #' Area-years with BOTH design-based creel trips and a CRC harvest figure.
 #'
 #' @param effort_long  assembly output: block, river_label, catch_area_code,
-#'                     year, angler_trips, total_salmon_harvest, tier
-#' @param crc_yr       p2$crc: stream_code (chr), calendar_year, harvest
+#'                     year, month, angler_trips, total_salmon_harvest, tier
+#' @param crc_month    p2$crc_month: stream_code (chr), calendar_year,
+#'                     calendar_month, harvest
 #' @param xw_area      output of expand_crosswalk_areas()
 #'
 #' Two ratios are carried. ratio_crc_denom is the estimator; ratio_creel_denom
 #' exists only so the gap between the two is inspectable per area-year.
-build_p2_donors <- function(effort_long, crc_yr, xw_area,
+#'
+#' CRC harvest is restricted to the SAME months effort_long has creel trips
+#' in, per area-year, before it becomes the denominator. Confirmed empirically
+#' (2024 PugetSound donors): every donor area has creel coverage narrower than
+#' its CRC-reported months - e.g. area 830 has creel trips in 3 months
+#' (Sep-Nov) but CRC harvest reported across 9 (Apr-Dec). Dividing trips by the
+#' full-year CRC total would let months with zero survey presence dilute the
+#' denominator, biasing the ratio low. The restriction is driven off
+#' effort_long's own month column, not a hardcoded season, so it widens
+#' automatically as more creel months are ingested. apply_p2() deliberately
+#' does NOT use this restriction - a target area with no survey at all still
+#' gets its full-year CRC harvest expanded; only the ratio's construction
+#' needs the matched months.
+build_p2_donors <- function(effort_long, crc_month, xw_area,
                             deliver_blocks, control = P2_CONTROL) {
 
-  creel_area <- effort_long |>
+  p1_rows <- effort_long |>
     filter(block %in% deliver_blocks, tier == "P1", !is.na(catch_area_code)) |>
-    mutate(catch_area_code = as.character(catch_area_code)) |>
+    mutate(catch_area_code = as.character(catch_area_code))
+
+  creel_area <- p1_rows |>
     group_by(block, catch_area_code, year) |>
     summarise(
       creel_trips   = sum(angler_trips,         na.rm = TRUE),
@@ -173,13 +189,20 @@ build_p2_donors <- function(effort_long, crc_yr, xw_area,
       .groups = "drop"
     )
 
-  donors <- creel_area |>
+  crc_matched <- p1_rows |>
+    distinct(catch_area_code, year, month) |>
     inner_join(
-      crc_yr |> transmute(catch_area_code = as.character(stream_code),
-                          year            = calendar_year,
-                          crc_harvest     = harvest),
-      by = c("catch_area_code", "year")
+      crc_month |> transmute(catch_area_code = as.character(stream_code),
+                             year            = calendar_year,
+                             month           = calendar_month,
+                             harvest),
+      by = c("catch_area_code", "year", "month")
     ) |>
+    group_by(catch_area_code, year) |>
+    summarise(crc_harvest = sum(harvest, na.rm = TRUE), .groups = "drop")
+
+  donors <- creel_area |>
+    inner_join(crc_matched, by = c("catch_area_code", "year")) |>
     filter(crc_harvest > 0, creel_trips > 0) |>
     mutate(
       ratio_crc_denom   = creel_trips / crc_harvest,
@@ -408,17 +431,17 @@ p2_loo_summary <- function(loo) {
 
 # --- 6. Driver ----------------------------------------------------------------
 #' @return list(trips, gaps, ratios, donors, loo, loo_summary) or NULL
-run_p2_extrapolation <- function(effort_long, crc_yr, crosswalk,
+run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
                                  deliver_blocks, years_scope,
                                  control = P2_CONTROL) {
 
-  if (is.null(crc_yr)) {
+  if (is.null(crc_yr) || is.null(crc_month)) {
     message("[gap] p2_expansion: no CRC harvest table; P2 skipped entirely.")
     return(NULL)
   }
 
   xw_area <- expand_crosswalk_areas(crosswalk)
-  donors  <- build_p2_donors(effort_long, crc_yr, xw_area, deliver_blocks, control)
+  donors  <- build_p2_donors(effort_long, crc_month, xw_area, deliver_blocks, control)
 
   if (nrow(donors) == 0) {
     message("[blocker] p2_expansion: no donor area-years -- no CRC/creel overlap.")
@@ -466,6 +489,7 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crosswalk,
 #   p2x <- run_p2_extrapolation(
 #     effort_long    = effort_long,
 #     crc_yr         = p2$crc,
+#     crc_month      = p2$crc_month,
 #     crosswalk      = crosswalk,
 #     deliver_blocks = DELIVER_BLOCKS,
 #     years_scope    = YEARS_SCOPE

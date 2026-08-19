@@ -74,12 +74,24 @@ source(here("analysis", "pst", "03_analysis", "pst_crc_harvest_projection.R"))
 
 YEARS_SCOPE <- 2022:2025
 
-# ColumbiaMainstem (Buoy 10 / LCR / Bonneville-McNary) came to us as ODFW files
-# that Northern Economics itself transmitted - they already have this data, so
-# we do not redeliver it. patch_crosswalk_areas.R removes those rows from the
-# crosswalk entirely; until it has been run they may still be present, so they
-# are filtered here rather than asserted away.
-DELIVER_BLOCKS <- c("PugetSound", "WACoast", "ColumbiaTrib")
+# ColumbiaMainstem (Buoy 10 / LCR / Bonneville-McNary specifically - NOT every
+# mainstem-shaped CRC reach) came to us as ODFW files that Northern Economics
+# itself transmitted - they already have this data, so we do not redeliver it.
+# patch_crosswalk_areas.R removes those rows from the crosswalk entirely; until
+# it has been run they may still be present, so they are filtered here rather
+# than asserted away.
+#
+# ColumbiaTrib split into four region-derived blocks (2026-08-19): the single
+# "ColumbiaTrib" label masked that Hanford Reach and McNary are, by the CRC
+# file's own region/system fields, in the same "Columbia - Upper"/"Upper
+# Columbia" mainstem-reach territory as several areas that WERE correctly
+# excluded as ColumbiaMainstem - a real inconsistency, not just a naming
+# preference. Blocks now follow CRC's own region field directly: ColumbiaLower
+# (Cowlitz/Lewis/small Lower-Columbia tributaries), ColumbiaMiddle (Drano,
+# Klickitat, Wind, Big White Salmon), ColumbiaUpper (Hanford, McNary, Yakima,
+# Wenatchee/Entiat/Methow/Okanogan), ColumbiaSnake (Snake River, R1_external).
+DELIVER_BLOCKS <- c("PugetSound", "WACoast",
+                    "ColumbiaLower", "ColumbiaMiddle", "ColumbiaUpper", "ColumbiaSnake")
 
 OUT_DIR <- here("analysis", "pst", "outputs")
 PST_DIR <- here("input_files", "pst", "lookup_tables")
@@ -517,7 +529,7 @@ ingest_creel_pe <- function() {
 
 ingest_district_creel <- function() {
   d <- read_if(file.path(OUT_DIR, "district_creel_summary.csv"),
-               "district_creel", block = "ColumbiaTrib")
+               "district_creel")
   if (is.null(d)) return(NULL)
 
   if (!"district" %in% names(d)) {
@@ -535,7 +547,7 @@ ingest_district_creel <- function() {
              as.integer(str_extract(fishery_name, "\\d{4}(?=\\s*$)")))) |>
     mutate(year_mismatch = !is.na(year_from_name) & year_from_name != year)
   if (any(d$year_mismatch, na.rm = TRUE)) {
-    log_gap("district_creel", "ColumbiaTrib", "defect",
+    log_gap("district_creel", NA, "defect",
             glue("{sum(d$year_mismatch, na.rm = TRUE)} rows where year column ",
                  "disagrees with fishery_name year token; using name token. ",
                  "Patch district_creel_ingestion.R."))
@@ -556,7 +568,7 @@ ingest_district_creel <- function() {
     filter(trips_ok == 0)
   if (nrow(district_lost) > 0) {
     pwalk(district_lost, function(source_id, fishery_name, trips_ok, effort_hrs)
-      log_gap(source_id, "ColumbiaTrib",
+      log_gap(source_id, NA,
               if (effort_hrs > 0) "blocker" else "gap",
               glue("{fishery_name}: no usable total_trips_est",
                    if (effort_hrs > 0) glue(" despite {format(round(effort_hrs), big.mark = ',')} effort-hrs - expansion failed, DROPPED")

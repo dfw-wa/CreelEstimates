@@ -22,10 +22,12 @@
 # has its own projection derived from NEPA analysis, averaging by even/odd
 # year back to 2014 - a longer, methodologically distinct series this 6-year
 # CRC-only average is not a substitute for. This module only ever targets
-# DELIVER_BLOCKS minus control$nepa_blocks (WACoast, ColumbiaTrib as of this
-# writing) - see CRC_PROJECTION_CONTROL$nepa_blocks below. Any Puget Sound
-# candidate area is logged as excluded, not silently dropped, so the reason
-# it's missing from this module's output is visible.
+# DELIVER_BLOCKS minus control$nepa_blocks (WACoast plus the four Columbia
+# blocks - ColumbiaLower/Middle/Upper/Snake, split from a single "ColumbiaTrib"
+# 2026-08-19, see pst_fw_angler_trips_assembly.R's DELIVER_BLOCKS comment) -
+# see CRC_PROJECTION_CONTROL$nepa_blocks below. Any Puget Sound candidate area
+# is logged as excluded, not silently dropped, so the reason it's missing from
+# this module's output is visible.
 #
 # WHY THE RATIO NEVER COMES FROM control$target_year's OWN block_year DONORS
 # apply_p2() borrows a block-year ratio from OTHER donor areas in the same
@@ -35,25 +37,38 @@
 # 2025 CRC data that exists), which has a small denominator and biases the
 # ratio HIGH - exactly pst_p2_block_ratio.R's own STANDING CAVEAT 1 (season
 # alignment), reintroduced through the back door. Confirmed empirically, not
-# just in theory: the first real run of this module found ColumbiaTrib's own
-# 2025 block-year ratio at 750 and WACoast's at 82, both correctly rejected
-# by validate_ratios()'s plausible-range guardrail (their 2022-2024 values
-# run 1.3-3.0). Applying either to a full-year PROJECTED harvest would have
+# just in theory: an early run of this module (under the single-block
+# "ColumbiaTrib" scheme, since split) found that block's own 2025 block-year
+# ratio at 750 and WACoast's at 82, both correctly rejected by
+# validate_ratios()'s plausible-range guardrail (their 2022-2024 values run
+# 1.3-3.0). Applying either to a full-year PROJECTED harvest would have
 # compounded that distortion rather than being caught by it.
 #
-# The fix is NOT to fall back straight to block_pooled, though - block_pooled
-# pools 2022-2024 donors together per block, and for ColumbiaTrib and WACoast
-# that pooled ratio fails validate_ratios()'s own CV guardrail ("donor ratios
-# incoherent within block"): PugetSound's pooled ratio is coherent (CV passes)
-# but ColumbiaTrib's and WACoast's are not, and those two are this module's
-# ONLY targets (PugetSound is NEPA's). Falling back to block_pooled here would
-# have made the projection produce nothing for either target block. Instead,
-# the ratio comes from the most recent COMPLETE history year's block-year
-# ratio - max(control$history_years), i.e. 2024, which excludes target_year by
-# construction and is a real, complete, already-validated season-aligned
-# number (ColumbiaTrib 1.56, WACoast 1.44 in the first real run). block_pooled
-# is kept only as the final fallback if even that specific year's ratio is
-# unusable for a given block.
+# The fix is NOT to fall back straight to block_pooled, though - a pooled
+# ratio can fail validate_ratios()'s own CV guardrail ("donor ratios
+# incoherent within block") for a target block even when a more recent
+# single-year ratio is coherent, and some Columbia blocks have too few donor
+# area-years for either grouping to ever pass alone (see build_p2_donors()'s
+# docstring in pst_p2_block_ratio.R for the concrete donor-count picture).
+# Instead, the ratio comes from the most recent COMPLETE history year's
+# block-year ratio - max(control$history_years), i.e. 2024, which excludes
+# target_year by construction and is real, season-aligned data - falling back
+# to block_pooled only if that specific year's ratio is unusable for a given
+# block.
+#
+# HARVEST-SCALE GUARDRAIL (added 2026-08-19)
+# A ratio can be well-calibrated and still not be safe to apply this far
+# outside the harvest scale it was calibrated on. Confirmed necessary, not
+# theoretical: reclassifying CRC areas 537-549 out of ColumbiaMainstem the
+# same day (they're in-scope Upper Columbia tributary-district territory, not
+# the actual out-of-scope Buoy 10/LCR/Bonneville-McNary reaches) exposed area
+# 545 (CRC harvest over 100,000 in 2024) getting expanded through a ratio
+# calibrated on Yakima/McNary donors whose largest area-year is under 800 -
+# producing a single area-year of "trips" larger than the rest of the
+# pipeline combined. P2_CONTROL$max_target_harvest_multiple (pst_p2_block_
+# ratio.R) now refuses to apply a ratio when the target's harvest exceeds that
+# multiple of the largest donor area's harvest, logged as a distinct gap
+# reason rather than silently producing an implausible number.
 #
 # Design rules: R1 tier+source_id on every row; R2 gaps logged not fatal;
 # R3 mode/location "unknown" not zero; R4 no cross-block ratios; R5 basis
@@ -233,21 +248,36 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
   most_recent_complete_year <- max(control$history_years)
 
   ry <- ratios$block_year |> filter(usable, year == most_recent_complete_year) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv)
+    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv,
+           max_donor_area_harvest)
   rp <- ratios$block_pooled |> filter(usable) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv)
+    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv,
+           max_donor_area_harvest)
 
   resolved <- targets |>
     left_join(ry, by = "block") |>
     left_join(rp, by = "block", suffix = c("", "_pooled")) |>
     mutate(
-      ratio          = coalesce(ratio, ratio_pooled),
-      ratio_basis    = coalesce(ratio_basis, ratio_basis_pooled),
-      n_donor_areas  = coalesce(n_donor_areas, n_donor_areas_pooled),
-      donor_areas    = coalesce(donor_areas, donor_areas_pooled),
-      donor_ratio_cv = coalesce(donor_ratio_cv, donor_ratio_cv_pooled)
+      ratio                  = coalesce(ratio, ratio_pooled),
+      ratio_basis            = coalesce(ratio_basis, ratio_basis_pooled),
+      n_donor_areas          = coalesce(n_donor_areas, n_donor_areas_pooled),
+      donor_areas            = coalesce(donor_areas, donor_areas_pooled),
+      donor_ratio_cv         = coalesce(donor_ratio_cv, donor_ratio_cv_pooled),
+      max_donor_area_harvest = coalesce(max_donor_area_harvest, max_donor_area_harvest_pooled)
     ) |>
     select(-ends_with("_pooled"))
+
+  # Same harvest-scale guardrail apply_p2() uses (pst_p2_block_ratio.R) - a
+  # ratio calibrated on small donor areas should not be extrapolated onto a
+  # projected mean harvest many times larger than anything it was validated
+  # against. P2_CONTROL is passed in unchanged (see run_crc_projection()),
+  # not CRC_PROJECTION_CONTROL, so this reuses the same tunable.
+  resolved <- resolved |>
+    mutate(
+      out_of_scale = !is.na(ratio) &
+        mean_harvest > P2_CONTROL$max_target_harvest_multiple * max_donor_area_harvest,
+      ratio = if_else(out_of_scale, NA_real_, ratio)
+    )
 
   p3_trips <- resolved |>
     filter(!is.na(ratio)) |>
@@ -282,10 +312,19 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
     no_history |> transmute(
       block, catch_area_code, mean_harvest, reason = fail_reason
     ),
-    resolved |> filter(is.na(ratio)) |> transmute(
+    resolved |> filter(is.na(ratio), !out_of_scale) |> transmute(
       block, catch_area_code, mean_harvest,
       reason = glue("no usable ratio for {most_recent_complete_year} or pooled ",
                     "(guardrails failed - see pst_fw_p2_area_ratios.csv)")
+    ),
+    resolved |> filter(is.na(ratio), out_of_scale) |> transmute(
+      block, catch_area_code, mean_harvest,
+      reason = glue(
+        "projected CRC harvest {round(mean_harvest)} exceeds ",
+        "{P2_CONTROL$max_target_harvest_multiple}x the largest donor area's ",
+        "harvest ({round(max_donor_area_harvest)}) - ratio not extrapolated ",
+        "this far outside its calibration range"
+      )
     ),
     excluded_unpart |> transmute(
       block, catch_area_code, mean_harvest,

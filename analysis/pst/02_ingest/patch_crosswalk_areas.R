@@ -132,6 +132,11 @@ cli::cli_alert_success(
 
 # --- 4. Validate and write ------------------------------------------------------
 
+# This DELIVER_BLOCKS predates the 2026-08-19 region-based block split (see
+# pst_fw_angler_trips_assembly.R's own DELIVER_BLOCKS for the current 6-block
+# set). Left as-is here since this is a one-shot script, already run, not
+# part of the live pipeline (see the header) - re-running it against the
+# current crosswalk would need this list updated first.
 DELIVER_BLOCKS <- c("PugetSound", "WACoast", "ColumbiaTrib")
 stopifnot(all(xw_patched$block %in% DELIVER_BLOCKS))
 

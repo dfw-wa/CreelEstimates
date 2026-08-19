@@ -881,16 +881,14 @@ SNAKE_CRC_AREAS <- c(640L, 642L, 644L, 646L, 648L, 650L)  # not used as crc_area
 #' numbers really are angler-days for some species/year, they must NOT be
 #' row-bound with everything else here as if they were trips.
 #'
-#' CROSSWALK GAP: as of this writing, pst_river_block_crosswalk.csv has no
-#' rows for Snake River fisheries. Until it does,
-#' pst_fw_angler_trips_assembly.R's attach_crosswalk_block() will fail to
-#' resolve a block for every row this function produces — coded
-#' block = "unknown" [R3] and logged as a gap, per that function's own
-#' unmatched-row check, rather than silently excluded. Add source_id =
-#' "R1_external" rows to the crosswalk (river_label = "Snake River"; block is
-#' presumably "ColumbiaTrib" — it is a Columbia tributary geographically,
-#' consistent with Hanford/Yakima/McNary) to surface this data in the
-#' deliverable.
+#' CROSSWALK GAP: RESOLVED 2026-08-19. pst_river_block_crosswalk.csv now has
+#' six source_id = "R1_external" rows (river_label = "Snake River",
+#' block = "ColumbiaSnake" — its own region-derived block, split from the
+#' single "ColumbiaTrib" the same day, since Snake River geographically and
+#' administratively has nothing to do with Hanford/Yakima/McNary's
+#' Columbia - Upper region), one per fishery_name, area_coverage =
+#' "covered_unpartitioned" since this function's totals have no per-CRC-area
+#' breakdown (crc_area is NA - see SNAKE_CRC_AREAS below).
 #'
 #' DATA QUALITY: the source workbook flags its own Fall CH 2023 row with an
 #' inline note — Boat (4827) + Shore (173) = 5000, but the Total Angler Days

@@ -1,21 +1,25 @@
 source_id,block,severity,detail
-crosswalk,ColumbiaMainstem,note,3 ColumbiaMainstem crosswalk row(s) filtered at load. Run analysis/pst/02_ingest/patch_crosswalk_areas.R to remove them permanently.
+crosswalk,ColumbiaMainstem,note,2 ColumbiaMainstem crosswalk row(s) filtered at load. Run analysis/pst/02_ingest/patch_crosswalk_areas.R to remove them permanently.
 ColumbiaMainstem,ColumbiaMainstem,note,out of delivery scope - Buoy 10 / LCR / Bonneville-McNary were transmitted to us by the consultant via ODFW; not ingested and not written to the output.
 creel_pe,NA,note,stacks pe_period = week/month; keeping 'month' only - summing both would double every estimate
 creel_pe,NA,defect,"Lower Chehalis salmon 2023: strata emitted TWICE, once with a catch_area_code and once with NA, same total_effort_hrs. Dropping the NA copies (60,827 effort-hrs / 16,541 trips of double-count). FIX UPSTREAM in multi_fishery_creel_summary.R - the section_num -> crc_area join is not matching for every section."
 creel_pe,NA,defect,"4 rows with angler_final = 'fail' (Drano Lake salmon and steelhead 2024) carrying 1,745 effort-hrs. This is a failed bank/boat classification, not a location - recoded 'unknown'. Fix in the Drano PE branch."
 creel_harvest,NA,note,stacks pe_period = week/month; keeping 'month' only - summing both would double every estimate
 creel_harvest,NA,note,"37 strata have effort/trips but no TotalSalmon row - treated as zero harvest, trips retained. Trips-per-salmon is undefined for these and they are excluded from ratio derivation, not from the trip totals."
-district_creel,ColumbiaTrib,defect,4 rows where year column disagrees with fishery_name year token; using name token. Patch district_creel_ingestion.R.
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2023: no usable total_trips_est despite 4,393 effort-hrs - expansion failed, DROPPED"
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2024: no usable total_trips_est despite 5,529 effort-hrs - expansion failed, DROPPED"
-R3_external,ColumbiaTrib,blocker,"Yakima fall salmon 2025: no usable total_trips_est despite 3,533 effort-hrs - expansion failed, DROPPED"
+district_creel,NA,defect,4 rows where year column disagrees with fishery_name year token; using name token. Patch district_creel_ingestion.R.
+R3_external,NA,blocker,"Yakima fall salmon 2023: no usable total_trips_est despite 4,393 effort-hrs - expansion failed, DROPPED"
+R3_external,NA,blocker,"Yakima fall salmon 2024: no usable total_trips_est despite 5,529 effort-hrs - expansion failed, DROPPED"
+R3_external,NA,blocker,"Yakima fall salmon 2025: no usable total_trips_est despite 3,533 effort-hrs - expansion failed, DROPPED"
 nepa_workbook,PugetSound,note,2025 PS values are a projection; must be labeled method='projection'
 coastal_2025,WACoast,gap,no 2025 fallback identified for coastal freshwater - open item
-p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2022: 2.58 trips/salmon (creel-denominated) from 3 creel fisheries (50,303 trips / 19,486 salmon)"
-p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2023: 2.3 trips/salmon (creel-denominated) from 3 creel fisheries (45,624 trips / 19,858 salmon)"
-p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2024: 2.25 trips/salmon (creel-denominated) from 3 creel fisheries (39,916 trips / 17,727 salmon)"
-p2_ratio,ColumbiaTrib,note,"ColumbiaTrib 2025: 2.06 trips/salmon (creel-denominated) from 3 creel fisheries (40,715 trips / 19,810 salmon)"
+p2_ratio,ColumbiaMiddle,note,"ColumbiaMiddle 2022: 2.76 trips/salmon (creel-denominated) from 1 creel fisheries (14,131 trips / 5,117 salmon)"
+p2_ratio,ColumbiaMiddle,note,"ColumbiaMiddle 2023: 1.89 trips/salmon (creel-denominated) from 1 creel fisheries (16,412 trips / 8,691 salmon)"
+p2_ratio,ColumbiaMiddle,note,"ColumbiaMiddle 2024: 2.23 trips/salmon (creel-denominated) from 1 creel fisheries (14,079 trips / 6,326 salmon)"
+p2_ratio,ColumbiaMiddle,note,"ColumbiaMiddle 2025: 1.71 trips/salmon (creel-denominated) from 1 creel fisheries (20,237 trips / 11,831 salmon)"
+p2_ratio,ColumbiaUpper,note,"ColumbiaUpper 2022: 2.52 trips/salmon (creel-denominated) from 2 creel fisheries (36,172 trips / 14,370 salmon)"
+p2_ratio,ColumbiaUpper,note,"ColumbiaUpper 2023: 2.62 trips/salmon (creel-denominated) from 2 creel fisheries (29,212 trips / 11,168 salmon)"
+p2_ratio,ColumbiaUpper,note,"ColumbiaUpper 2024: 2.27 trips/salmon (creel-denominated) from 2 creel fisheries (25,838 trips / 11,402 salmon)"
+p2_ratio,ColumbiaUpper,note,"ColumbiaUpper 2025: 2.57 trips/salmon (creel-denominated) from 2 creel fisheries (20,479 trips / 7,978 salmon)"
 p2_ratio,PugetSound,note,"PugetSound 2022: 4.24 trips/salmon (creel-denominated) from 7 creel fisheries (100,793 trips / 23,777 salmon)"
 p2_ratio,PugetSound,note,"PugetSound 2023: 1.45 trips/salmon (creel-denominated) from 9 creel fisheries (263,320 trips / 181,670 salmon)"
 p2_ratio,PugetSound,note,"PugetSound 2024: 3.15 trips/salmon (creel-denominated) from 7 creel fisheries (107,875 trips / 34,227 salmon)"
@@ -43,28 +47,104 @@ p2_expansion,NA,gap,area 529 2025: CRC stream_code not present in pst_river_bloc
 p2_expansion,NA,gap,area 531 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 531 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 531 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 537 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 537 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 537 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 539 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 539 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 539 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 541 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 541 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 541 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 543 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 543 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 543 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 545 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 545 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 545 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 549 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2023: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 p2_expansion,NA,gap,area 192 2025: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 547 2022: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-p2_expansion,NA,gap,area 547 2024: CRC stream_code not present in pst_river_block_crosswalk crc_areas
+p2_expansion,ColumbiaLower,gap,area 501 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 501 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 507 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 508 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 508 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 508 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 515 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 515 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 515 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 517 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 517 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 517 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 555 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 555 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 555 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 557 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 559 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 559 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 559 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 561 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 561 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 561 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 561 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 563 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 563 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 563 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 565 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 565 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 565 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 566 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 566 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 566 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 569 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 571 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 571 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 571 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 573 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 573 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 573 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 575 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 575 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 575 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 580 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 584 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 584 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 584 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 589 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 594 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 595 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 595 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 602 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 602 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 602 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 603 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 603 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 603 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 604 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 604 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 604 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 604 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 607 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 607 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 607 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 607 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 608 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 608 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 608 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 609 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 609 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 611 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 611 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 611 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 615 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 615 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 615 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 615 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 618 2025: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 625 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 635 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 638 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 661 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 665 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 667 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 667 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 667 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 668 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 668 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 668 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 677 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 677 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 677 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 680 2022: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 680 2023: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaMiddle,gap,area 680 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 710 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 724 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 726 2024: no usable block ratio (block-year and pooled both failed guardrails)
@@ -90,33 +170,42 @@ p2_expansion,PugetSound,gap,area 828 2024: no usable block ratio (block-year and
 p2_expansion,PugetSound,gap,area 834 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 854 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 884 2024: no usable block ratio (block-year and pooled both failed guardrails)
+p2_expansion,ColumbiaLower,gap,area 600 2024: no usable block ratio (block-year and pooled both failed guardrails)
 p2_expansion,PugetSound,gap,area 764 2024: no usable block ratio (block-year and pooled both failed guardrails)
-p2_expansion,ColumbiaTrib,gap,"area 534 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 534 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 534 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 535 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 535 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 535 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 535 2025: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 536 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 536 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 536 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 640 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 640 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 640 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 642 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 644 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 644 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 644 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 646 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 646 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 646 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 648 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 648 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 648 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 650 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 650 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
-p2_expansion,ColumbiaTrib,gap,"area 650 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,area 543 2023: CRC harvest 7890 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 543 2024: CRC harvest 11056 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 545 2022: CRC harvest 51201 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 545 2023: CRC harvest 46082 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 545 2024: CRC harvest 105247 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 670 2022: CRC harvest 23717 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 670 2023: CRC harvest 23207 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,area 670 2024: CRC harvest 31447 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+p2_expansion,ColumbiaUpper,gap,"area 534 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 534 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 534 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 535 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 535 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 535 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 535 2025: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 536 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 536 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaUpper,gap,"area 536 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 640 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 640 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 640 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 642 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 644 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 644 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 644 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 646 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 646 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 646 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 648 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 648 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 648 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 650 2022: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 650 2023: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
+p2_expansion,ColumbiaSnake,gap,"area 650 2024: area covered by an unpartitioned source (trips already in deliverable, no per-area split) -- excluded to avoid double-counting"
 crc_projection,NA,gap,area 369: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 373: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 377: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -133,13 +222,6 @@ crc_projection,NA,gap,area 527: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 529: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 531: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 592: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 537: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 539: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 541: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 543: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 545: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 547: CRC stream_code not present in pst_river_block_crosswalk crc_areas
-crc_projection,NA,gap,area 549: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 734: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 774: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 782: CRC stream_code not present in pst_river_block_crosswalk crc_areas
@@ -147,19 +229,55 @@ crc_projection,NA,gap,area 808: CRC stream_code not present in pst_river_block_c
 crc_projection,NA,gap,area 878: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,NA,gap,area 192: CRC stream_code not present in pst_river_block_crosswalk crc_areas
 crc_projection,WACoast,gap,area 418: only 2 of 6 history year(s) present (2023|2024); need 3
-crc_projection,ColumbiaTrib,gap,area 557: only 1 of 6 history year(s) present (2024); need 3
-crc_projection,ColumbiaTrib,gap,area 600: only 1 of 6 history year(s) present (2024); need 3
-crc_projection,ColumbiaTrib,gap,area 635: only 1 of 6 history year(s) present (2024); need 3
-crc_projection,ColumbiaTrib,gap,area 638: only 1 of 6 history year(s) present (2024); need 3
-crc_projection,ColumbiaTrib,gap,area 661: only 1 of 6 history year(s) present (2024); need 3
-crc_projection,ColumbiaTrib,gap,"area 640: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 642: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 644: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 646: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 648: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 650: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 534: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 535: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
-crc_projection,ColumbiaTrib,gap,"area 536: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaLower,gap,area 557: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaLower,gap,area 600: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaLower,gap,area 635: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaLower,gap,area 638: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaLower,gap,area 661: only 1 of 6 history year(s) present (2024); need 3
+crc_projection,ColumbiaLower,gap,area 501: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 507: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 515: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 517: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 555: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 559: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 561: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 563: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 565: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 566: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 569: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 571: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 573: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 575: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 580: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 584: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 589: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 594: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 595: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 602: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 603: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 604: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 609: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 611: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 615: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 625: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 665: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 667: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaLower,gap,area 668: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaMiddle,gap,area 508: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaMiddle,gap,area 607: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaMiddle,gap,area 608: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaMiddle,gap,area 677: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaMiddle,gap,area 680: no usable ratio for 2024 or pooled (guardrails failed - see pst_fw_p2_area_ratios.csv)
+crc_projection,ColumbiaUpper,gap,area 545: projected CRC harvest 41117 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+crc_projection,ColumbiaUpper,gap,area 670: projected CRC harvest 20061 exceeds 10x the largest donor area's harvest (748) - ratio not extrapolated this far outside its calibration range
+crc_projection,ColumbiaSnake,gap,"area 640: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaSnake,gap,"area 642: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaSnake,gap,"area 644: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaSnake,gap,"area 646: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaSnake,gap,"area 648: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaSnake,gap,"area 650: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaUpper,gap,"area 534: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaUpper,gap,"area 535: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
+crc_projection,ColumbiaUpper,gap,"area 536: area covered by an unpartitioned source (trips already in deliverable, no per-area split) - excluded to avoid double-counting"
 crc_vs_creel,NA,note,16 area-years have creel harvest but zero CRC harvest - CRC is published through license year 2024 only. Excluded from the median ratio and flagged comparable=FALSE.
 crc_vs_creel,NA,note,"62 comparable CRC area-years paired with creel; median CRC/creel harvest ratio 0.77. Below 1 means CRC reports less harvest than the design-based creel estimate for the same area-year. Basis differs (CRC license-year vs creel calendar) - indicative, not a reconciliation."

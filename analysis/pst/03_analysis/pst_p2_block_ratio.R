@@ -71,7 +71,27 @@ P2_CONTROL <- list(
                                  # Loosened from 1.0: the observed CRC/creel IQR
                                  # (0.52-1.93) shows real area-level scatter is
                                  # wide, and 1.0 rejected coherent blocks.
-  allow_pooled_fallback = TRUE
+  allow_pooled_fallback = TRUE,
+  max_target_harvest_multiple = 10   # a target area's CRC harvest can be at
+                                 # most this many times the largest single
+                                 # DONOR area's harvest before the ratio is
+                                 # refused, not applied. ratio_plausible_range
+                                 # only checks the ratio's own value, which
+                                 # says nothing about whether extrapolating it
+                                 # this far outside its calibration range is
+                                 # sound. Confirmed necessary, not theoretical:
+                                 # reclassifying areas 537-549 out of
+                                 # ColumbiaMainstem (2026-08-19) exposed area
+                                 # 545 (Columbia River above McNary, CRC
+                                 # harvest 105,247 in 2024) getting expanded
+                                 # through a ratio calibrated on Yakima/McNary
+                                 # donors whose largest is 748 - a 141x
+                                 # extrapolation producing 1.15M "trips" for
+                                 # one area-year, 60% of the entire pipeline's
+                                 # total. The ratio itself (10.9) passed
+                                 # ratio_plausible_range fine; the harvest
+                                 # scale it was applied to was never validated
+                                 # at anything remotely like that size.
 )
 
 
@@ -235,6 +255,7 @@ estimate_block_ratios <- function(donors, control = P2_CONTROL) {
         donor_ratio_cv = if (n() > 1) {
           sd(ratio_crc_denom) / mean(ratio_crc_denom)
         } else NA_real_,
+        max_donor_area_harvest = max(crc_harvest, na.rm = TRUE),
         .groups = "drop"
       ) |>
       mutate(
@@ -323,9 +344,10 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
 
   ry <- ratios$block_year |> filter(usable) |>
     select(block, year, ratio, ratio_basis, n_donor_areas, donor_areas,
-           donor_ratio_cv)
+           donor_ratio_cv, max_donor_area_harvest)
   rp <- ratios$block_pooled |> filter(usable) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv)
+    select(block, ratio, ratio_basis, n_donor_areas, donor_areas,
+           donor_ratio_cv, max_donor_area_harvest)
 
   resolved <- targets |> left_join(ry, by = c("block", "year"))
 
@@ -333,14 +355,25 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
     resolved <- resolved |>
       left_join(rp, by = "block", suffix = c("", "_pooled")) |>
       mutate(
-        ratio          = coalesce(ratio, ratio_pooled),
-        ratio_basis    = coalesce(ratio_basis, ratio_basis_pooled),
-        n_donor_areas  = coalesce(n_donor_areas, n_donor_areas_pooled),
-        donor_areas    = coalesce(donor_areas, donor_areas_pooled),
-        donor_ratio_cv = coalesce(donor_ratio_cv, donor_ratio_cv_pooled)
+        ratio                  = coalesce(ratio, ratio_pooled),
+        ratio_basis            = coalesce(ratio_basis, ratio_basis_pooled),
+        n_donor_areas          = coalesce(n_donor_areas, n_donor_areas_pooled),
+        donor_areas            = coalesce(donor_areas, donor_areas_pooled),
+        donor_ratio_cv         = coalesce(donor_ratio_cv, donor_ratio_cv_pooled),
+        max_donor_area_harvest = coalesce(max_donor_area_harvest, max_donor_area_harvest_pooled)
       ) |>
       select(-ends_with("_pooled"))
   }
+
+  # A ratio can be well-calibrated and still not be safe to apply this far
+  # outside the harvest scale it was calibrated on. See max_target_harvest_
+  # multiple's comment in P2_CONTROL for the real case (area 545) this guards.
+  resolved <- resolved |>
+    mutate(
+      out_of_scale = !is.na(ratio) &
+        crc_harvest > control$max_target_harvest_multiple * max_donor_area_harvest,
+      ratio = if_else(out_of_scale, NA_real_, ratio)
+    )
 
   p2_trips <- resolved |>
     filter(!is.na(ratio)) |>
@@ -368,9 +401,17 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
       block = NA_character_, catch_area_code, year, crc_harvest,
       reason = "CRC stream_code not present in pst_river_block_crosswalk crc_areas"
     ),
-    resolved |> filter(is.na(ratio)) |> transmute(
+    resolved |> filter(is.na(ratio), !out_of_scale) |> transmute(
       block, catch_area_code, year, crc_harvest,
       reason = "no usable block ratio (block-year and pooled both failed guardrails)"
+    ),
+    resolved |> filter(is.na(ratio), out_of_scale) |> transmute(
+      block, catch_area_code, year, crc_harvest,
+      reason = glue(
+        "CRC harvest {round(crc_harvest)} exceeds {control$max_target_harvest_multiple}x ",
+        "the largest donor area's harvest ({round(max_donor_area_harvest)}) - ratio not ",
+        "extrapolated this far outside its calibration range"
+      )
     ),
     excluded_unpart |> transmute(
       block, catch_area_code, year, crc_harvest,

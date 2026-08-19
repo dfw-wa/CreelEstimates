@@ -106,4 +106,4 @@ used interchangeably in correspondence. Conversion to calendar year is a
 documented step in the assembly script, not an assumption.
 
 **Block.** The geographic/management unit within which a ratio is assumed
-portable. Defined by `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv`. The four blocks are PugetSound, WACoast, ColumbiaTrib, and ColumbiaMainstem (documented but not delivered).
+portable. Defined by `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv`, following CRC's own `region` field. The delivered blocks are PugetSound, WACoast, and four Columbia-tributary blocks split by CRC region - ColumbiaLower, ColumbiaMiddle, ColumbiaUpper, ColumbiaSnake (a single "ColumbiaTrib" until 2026-08-19, split because it masked that Hanford Reach/McNary sit in a different CRC region than Cowlitz/Lewis). ColumbiaMainstem (the actual Buoy 10/LCR/Bonneville-McNary reaches) is documented in the crosswalk but not delivered - filtered out at load.

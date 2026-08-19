@@ -24,9 +24,8 @@
 #
 # Usage:
 #   Rscript analysis/pst/02_ingest/multi_fishery_creel_summary.R
-#   Requires VPN / internal DB access for creelutils::fetch_data() and
-#   creelutils::fishery_lut(); the public Socrata endpoint used by
-#   fetch_fishery_names() must also be reachable.
+#   Requires VPN / internal DB access for creelutils::connect_creel_db(),
+#   creelutils::fishery_lut(), and creelutils::fetch_data().
 #
 # Outputs (analysis/pst/outputs/):
 #   multi_fishery_creel_trips.csv          / .rds
@@ -145,10 +144,33 @@ EXCLUDE_LIFE_STAGES <- c("Smolt")
 REGEX_METACHARS <- "[.\\\\+*?\\[\\]^$(){}=!<>|:-]"
 
 
-# 1. Fishery list from public Socrata endpoint --------------------------------
+# 1. Fishery list from the internal DB, filtered to real salmon harvest ------
+#
+# Previously this pulled names from the public Socrata endpoint
+# (fetch_fishery_names()) and kept only names containing the literal
+# substring "salmon" -- a naming-convention guess, not a data check. That
+# silently dropped every real salmon fishery whose name doesn't happen to
+# contain "salmon", e.g. "Skagit spring Chinook 2024 upper" and "Skagit
+# summer sockeye 2023" -- and did so BEFORE the run ledger existed for them,
+# so the gap was invisible rather than logged. fishery_lut() is the internal
+# DB's own name list (same call used successfully in
+# analysis/pst/02_ingest/interview_proportions.qmd), and salmon-harvest
+# membership below is now decided by looking at dwg$catch$species directly --
+# the same species x fate predicate [S1]/[S2] use downstream in
+# build_est_catch_groups() -- so every rejection is an actual data fact, not a
+# string match, and every rejection is recorded.
 
-cli::cli_alert_info("Fetching fishery names from public Socrata endpoint...")
-all_fishery_names <- creelutils::fetch_fishery_names()
+cli::cli_alert_info("Connecting to internal DB and fetching fishery_lut()...")
+conn <- creelutils::connect_creel_db()
+
+all_fishery_names <- tryCatch(
+  creelutils::fishery_lut(conn = conn) |> dplyr::pull(fishery_name) |> unique(),
+  error = function(e) {
+    DBI::dbDisconnect(conn)
+    cli::cli_abort(c("Could not query internal fishery_lut.",
+                     "x" = "{conditionMessage(e)}"))
+  }
+)
 
 year_extracted <- stringr::str_extract(all_fishery_names, "\\d{4}")
 no_year_mask   <- is.na(year_extracted)
@@ -161,11 +183,12 @@ if (any(no_year_mask)) {
   purrr::walk(all_fishery_names[no_year_mask], ~ cli::cli_bullets(c("*" = .x)))
 }
 
-fisheries <- all_fishery_names[
+candidate_fisheries <- all_fishery_names[
   !no_year_mask & dplyr::between(as.integer(year_extracted), 2022L, 2025L)
 ]
 cli::cli_alert_success(
-  "Retained {length(fisheries)} fisheries with a year in 2022\u20132025."
+  "Retained {length(candidate_fisheries)} DB fisheries with a year in \\
+   2022\u20132025."
 )
 
 # Known non-starters. Lower Cowlitz is here because it lacks the underlying data
@@ -180,46 +203,75 @@ KNOWN_FAILED <- c(
   "Lower Cowlitz salmon and steelhead 2023-24"
 )
 
-fisheries <- fisheries[
-  !fisheries %in% KNOWN_FAILED &
-  stringr::str_detect(fisheries, stringr::regex("salmon", ignore_case = TRUE))
-]
+candidate_fisheries <- candidate_fisheries[!candidate_fisheries %in% KNOWN_FAILED]
 cli::cli_alert_info(
-  "After excluding known failures and non-salmon: {length(fisheries)} fisheries retained."
+  "After excluding known failures: {length(candidate_fisheries)} candidate \\
+   fisheries remain for the salmon-harvest pre-check."
 )
 
 
-# 2. Cross-check public vs. internal (DB) name lists -------------------------
+# 2. Harvest pre-check: keep only fisheries with real salmon harvest ---------
+#
+# A lightweight catch-only fetch_data() pull per candidate (mirroring the
+# tables = "catch" pattern in interview_proportions.qmd), tested against the
+# same species x fate predicate as [S1] (SALMON_SPECIES) and [S2]
+# (HARVEST_FATE = "Kept"). This replaces the old name-substring filter. Every
+# candidate's outcome -- kept, no salmon harvest, or a fetch failure -- is
+# recorded in harvest_precheck so nothing can disappear before the run
+# ledger the way the name filter's rejects used to.
 
-cli::cli_alert_info("Cross-checking public Socrata names vs. internal DB (fishery_lut)...")
-
-db_names <- tryCatch(
-  creelutils::fishery_lut() |> dplyr::pull(fishery_name),
-  error = function(e) {
-    cli::cli_abort(c("Could not query internal fishery_lut.",
-                     "x" = "{conditionMessage(e)}"))
-  }
+cli::cli_alert_info(
+  "Pre-checking {length(candidate_fisheries)} candidate fisheries for salmon \\
+   harvest..."
 )
 
-public_not_in_db <- dplyr::setdiff(fisheries, db_names)
+harvest_precheck <- purrr::map(candidate_fisheries, function(fn) {
+  res <- tryCatch(
+    {
+      dat <- creelutils::fetch_data(conn = conn, fishery_name = fn,
+                                    tables = "catch", data_source = "internal")
+      has_harvest <- !is.null(dat$catch) && nrow(dat$catch) > 0 && {
+        dat$catch |>
+          dplyr::mutate(
+            species = tidyr::replace_na(as.character(species), "NA"),
+            fate    = tidyr::replace_na(as.character(fate), "NA")
+          ) |>
+          dplyr::filter(species %in% SALMON_SPECIES,
+                        stringr::str_detect(fate, HARVEST_FATE)) |>
+          nrow() > 0
+      }
 
-if (length(public_not_in_db) > 0) {
-  cli::cli_alert_warning(
-    "{length(public_not_in_db)} of {length(fisheries)} target fisheries appear \\
-     in the public list but not in fishery_lut. They will likely fail at \\
-     fetch_data() and be skipped:"
+      list(status = if (has_harvest) "ok" else "skipped",
+           reason = if (has_harvest) NA_character_ else
+             "No salmon harvest (species in SALMON_SPECIES with fate matching HARVEST_FATE) in catch table.")
+    },
+    error = function(e) {
+      list(status = "error",
+           reason = paste0("[harvest_precheck] ", conditionMessage(e)))
+    }
   )
-  purrr::walk(public_not_in_db, ~ cli::cli_bullets(c("!" = .x)))
+  tibble::tibble(fishery_name = fn, status = res$status, reason = res$reason)
+}) |> dplyr::bind_rows()
 
-  if (length(public_not_in_db) > length(fisheries) * 0.5) {
-    cli::cli_abort(
-      c("Stopping: more than half the target fisheries \\
-         ({length(public_not_in_db)}/{length(fisheries)}) are absent from the \\
-         internal DB.",
-        "i" = "The public and internal name lists may not correspond.")
-    )
-  }
+DBI::dbDisconnect(conn)
+
+precheck_excluded <- harvest_precheck |> dplyr::filter(status != "ok")
+if (nrow(precheck_excluded) > 0) {
+  cli::cli_alert_warning(
+    "{nrow(precheck_excluded)} fishery/fisheries excluded at the harvest \\
+     pre-check (no salmon harvest, or the pre-check fetch itself failed):"
+  )
+  print(precheck_excluded, n = 50)
 }
+
+fisheries <- harvest_precheck |>
+  dplyr::filter(status == "ok") |>
+  dplyr::pull(fishery_name)
+
+cli::cli_alert_success(
+  "{length(fisheries)} fishery/fisheries retained for full processing after \\
+   the salmon-harvest pre-check."
+)
 
 
 # 2b. Per-fishery study design ------------------------------------------------

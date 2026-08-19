@@ -11,7 +11,7 @@ prep_dwg_census_expan <- function(
   
   eff |> 
     dplyr::filter( # filter to only dates specified in params and described in dwg$days object
-      location_type == "Site",
+      location_type == "Section", 
       event_date >= min(days$event_date),
       event_date <= max(days$event_date)
     ) |> 

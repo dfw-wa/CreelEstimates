@@ -37,3 +37,13 @@ catch_area_code,block,river_label,source_id,tier
 536,ColumbiaTrib,Hanford Reach,R3_external,P1
 533,ColumbiaTrib,McNary Reservoir,R3_external,P1
 690,ColumbiaTrib,Yakima,R3_external,P1
+746,PugetSound,Green-Duwamish,CRC_only,NO_SURVEY
+816,PugetSound,Samish,CRC_only,NO_SURVEY
+825,PugetSound,Baker,CRC_only,NO_SURVEY
+778,PugetSound,Minter Creek,CRC_only,NO_SURVEY
+812,PugetSound,Quilcene,CRC_only,NO_SURVEY
+738,PugetSound,Dungeness,CRC_only,NO_SURVEY
+792,PugetSound,Nooksack South Fork,CRC_only,NO_SURVEY
+375,WACoast,Naselle,CRC_only,NO_SURVEY
+424,WACoast,Willapa,CRC_only,NO_SURVEY
+379,WACoast,Nemah,CRC_only,NO_SURVEY

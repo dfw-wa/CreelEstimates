@@ -60,3 +60,7 @@ analysis/pst/outputs/all_interviews.rds
 
 # Local scratch cache (interview_proportions.qmd DB pull; regenerable)
 .cache/
+
+# Rendered output of the PST parent doc; regenerable via
+# `quarto render analysis/pst/pst_fw_angler_trips.qmd`
+analysis/pst/pst_fw_angler_trips.html

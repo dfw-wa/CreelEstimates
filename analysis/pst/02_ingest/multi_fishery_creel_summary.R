@@ -210,6 +210,40 @@ cli::cli_alert_info(
 )
 
 
+# 1b. Exclude steelhead-primary fisheries -------------------------------------
+#
+# [S1] already excludes steelhead as a SPECIES from every catch group. This is
+# a separate, name-based decision to drop steelhead-PRIMARY FISHERIES
+# entirely -- even when they carry incidental Kept salmon that would otherwise
+# pass the harvest pre-check below, e.g. "Humptulips winter steelhead 2024-25"
+# turning up Kept Coho/Chinook alongside its steelhead interviews. That
+# incidental catch is not what this deliverable is estimating. Fisheries
+# naming BOTH salmon and steelhead (e.g. "Lower Cowlitz salmon and steelhead")
+# are mixed-target surveys, not steelhead-primary, and are exempted from this
+# exclusion -- they still go through the harvest pre-check like any other
+# candidate.
+
+steelhead_primary <- stringr::str_detect(
+  candidate_fisheries, stringr::regex("steelhead", ignore_case = TRUE)
+) & !stringr::str_detect(
+  candidate_fisheries, stringr::regex("salmon", ignore_case = TRUE)
+)
+
+if (any(steelhead_primary)) {
+  cli::cli_alert_warning(
+    "{sum(steelhead_primary)} steelhead-primary fishery/fisheries excluded \\
+     (name contains \"steelhead\" but not \"salmon\"):"
+  )
+  purrr::walk(candidate_fisheries[steelhead_primary], ~ cli::cli_bullets(c("!" = .x)))
+}
+
+candidate_fisheries <- candidate_fisheries[!steelhead_primary]
+cli::cli_alert_info(
+  "After excluding steelhead-primary fisheries: {length(candidate_fisheries)} \\
+   candidate fisheries remain for the salmon-harvest pre-check."
+)
+
+
 # 2. Harvest pre-check: keep only fisheries with real salmon harvest ---------
 #
 # A lightweight catch-only fetch_data() pull per candidate (mirroring the

@@ -198,13 +198,15 @@ check_projection_vs_partial_actual <- function(proj, control = CRC_PROJECTION_CO
 #'
 #' @param proj           output of project_crc_harvest()
 #' @param effort_long    assembly's running table, AFTER P1 + real P2 merge
-#' @param ratios         list(block_year, block_pooled) from
+#' @param ratios         list(system_year, block_year, system_pooled,
+#'                       block_pooled, columbia_pooled) from
 #'                       estimate_block_ratios() on REAL donor pairs - not
 #'                       recomputed here [R4]: a projected harvest gets
 #'                       exactly the ratio a real one would.
 #' @param xw_area        output of expand_crosswalk_areas()
+#' @param area_system    catch_area_code -> CRC system, all areas not just donors
 #' @param target_blocks  DELIVER_BLOCKS minus control$nepa_blocks
-apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
+apply_crc_projection <- function(proj, effort_long, ratios, xw_area, area_system,
                                  target_blocks, control = CRC_PROJECTION_CONTROL) {
 
   already_covered <- effort_long |>
@@ -215,6 +217,7 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
   candidates <- proj$coverage |>
     left_join(xw_area, by = c("stream_code" = "catch_area_code")) |>
     rename(catch_area_code = stream_code) |>
+    left_join(area_system, by = "catch_area_code") |>
     left_join(already_covered, by = "catch_area_code") |>
     filter(is.na(is_covered)) |>
     select(-is_covered)
@@ -240,32 +243,29 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
   no_history <- targets |> filter(!usable)
   targets    <- targets |> filter(usable)
 
-  # Most recent COMPLETE history year's block-year ratio first (real,
-  # season-aligned, excludes target_year by construction since target_year is
-  # never in history_years), block_pooled only as fallback if that specific
-  # year's ratio is unusable for a block. See the header note for why this
-  # order, not block_pooled alone.
+  # Most recent COMPLETE history year's ratio first (real, season-aligned,
+  # excludes target_year by construction since target_year is never in
+  # history_years), finest tier (system_year) before coarser ones, pooled
+  # tiers only as fallback if no single-year ratio is usable for a block.
+  # See the header note for why this order, not block_pooled alone. Uses
+  # fill_ratio_tier() (pst_p2_block_ratio.R) - the same cascade helper
+  # apply_p2() uses, restricted here to most_recent_complete_year for the
+  # two single-year tiers.
   most_recent_complete_year <- max(control$history_years)
 
-  ry <- ratios$block_year |> filter(usable, year == most_recent_complete_year) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv,
-           max_donor_area_harvest)
-  rp <- ratios$block_pooled |> filter(usable) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas, donor_ratio_cv,
-           max_donor_area_harvest)
+  system_year_recent <- ratios$system_year |> filter(year == most_recent_complete_year)
+  block_year_recent  <- ratios$block_year  |> filter(year == most_recent_complete_year)
 
   resolved <- targets |>
-    left_join(ry, by = "block") |>
-    left_join(rp, by = "block", suffix = c("", "_pooled")) |>
-    mutate(
-      ratio                  = coalesce(ratio, ratio_pooled),
-      ratio_basis            = coalesce(ratio_basis, ratio_basis_pooled),
-      n_donor_areas          = coalesce(n_donor_areas, n_donor_areas_pooled),
-      donor_areas            = coalesce(donor_areas, donor_areas_pooled),
-      donor_ratio_cv         = coalesce(donor_ratio_cv, donor_ratio_cv_pooled),
-      max_donor_area_harvest = coalesce(max_donor_area_harvest, max_donor_area_harvest_pooled)
-    ) |>
-    select(-ends_with("_pooled"))
+    mutate(ratio = NA_real_, ratio_basis = NA_character_,
+           n_donor_areas = NA_integer_, donor_areas = NA_character_,
+           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_)
+
+  resolved <- resolved |> fill_ratio_tier(system_year_recent, c("block", "system"))
+  resolved <- resolved |> fill_ratio_tier(block_year_recent,  c("block"))
+  resolved <- resolved |> fill_ratio_tier(ratios$system_pooled,   c("block", "system"))
+  resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,    c("block"))
+  resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block"))
 
   # Same harvest-scale guardrail apply_p2() uses (pst_p2_block_ratio.R) - a
   # ratio calibrated on small donor areas should not be extrapolated onto a
@@ -314,8 +314,9 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area,
     ),
     resolved |> filter(is.na(ratio), !out_of_scale) |> transmute(
       block, catch_area_code, mean_harvest,
-      reason = glue("no usable ratio for {most_recent_complete_year} or pooled ",
-                    "(guardrails failed - see pst_fw_p2_area_ratios.csv)")
+      reason = glue("no usable ratio at any tier for {most_recent_complete_year} or ",
+                    "pooled (system_year, block_year, system_pooled, block_pooled, ",
+                    "columbia_pooled all failed guardrails - see pst_fw_p2_area_ratios.csv)")
     ),
     resolved |> filter(is.na(ratio), out_of_scale) |> transmute(
       block, catch_area_code, mean_harvest,
@@ -368,7 +369,16 @@ run_crc_projection <- function(crc_hist, effort_long, donors, crosswalk,
   xw_area <- expand_crosswalk_areas(crosswalk)
   ratios  <- estimate_block_ratios(donors, P2_CONTROL)
 
-  applied <- apply_crc_projection(proj, effort_long, ratios, xw_area,
+  # crc_hist carries region/system directly (parse_crc_freshwater_harvest.R's
+  # own output columns) - same squish/CRLF cleanup build_block_ratios() does
+  # in pst_fw_angler_trips_assembly.R, needed here too since this is a
+  # separate read of the same raw file.
+  area_system <- crc_hist |>
+    mutate(system = stringr::str_squish(stringr::str_replace_all(system, "[\r\n]+", " "))) |>
+    distinct(stream_code, system) |>
+    transmute(catch_area_code = as.character(stream_code), system)
+
+  applied <- apply_crc_projection(proj, effort_long, ratios, xw_area, area_system,
                                   target_blocks, control)
 
   n_flagged <- sum(sanity$flag, na.rm = TRUE)

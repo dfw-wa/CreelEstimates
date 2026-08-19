@@ -723,8 +723,16 @@ build_block_ratios <- function(trips_p1) {
     # by hand.
     crc_month <- crc |>
       filter(calendar_year %in% YEARS_SCOPE) |>
-      mutate(stream_code = as.character(stream_code)) |>
-      group_by(stream_code, calendar_year, calendar_month) |>
+      mutate(
+        stream_code = as.character(stream_code),
+        # Raw region/system text carries CRLF and double-space noise (e.g.
+        # "Columbia -  Middle" vs "Columbia - Middle" for the same
+        # stream_code) - squish before using either as a grouping key, or
+        # identical systems silently split into separate donor groups.
+        region      = str_squish(str_replace_all(region, "[\r\n]+", " ")),
+        system      = str_squish(str_replace_all(system, "[\r\n]+", " "))
+      ) |>
+      group_by(stream_code, calendar_year, calendar_month, region, system) |>
       summarise(harvest = sum(harvest_count, na.rm = TRUE), .groups = "drop")
 
     log_gap("crc_harvest", NA, "note",

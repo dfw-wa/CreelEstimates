@@ -175,7 +175,7 @@ expand_crosswalk_areas <- function(crosswalk) {
 #' @param effort_long  assembly output: block, river_label, catch_area_code,
 #'                     year, month, angler_trips, total_salmon_harvest, tier
 #' @param crc_month    p2$crc_month: stream_code (chr), calendar_year,
-#'                     calendar_month, harvest
+#'                     calendar_month, region, system, harvest
 #' @param xw_area      output of expand_crosswalk_areas()
 #'
 #' Two ratios are carried. ratio_crc_denom is the estimator; ratio_creel_denom
@@ -215,11 +215,15 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
       crc_month |> transmute(catch_area_code = as.character(stream_code),
                              year            = calendar_year,
                              month           = calendar_month,
+                             system,
                              harvest),
       by = c("catch_area_code", "year", "month")
     ) |>
     group_by(catch_area_code, year) |>
-    summarise(crc_harvest = sum(harvest, na.rm = TRUE), .groups = "drop")
+    # system is 1:1 with catch_area_code (same CRC "system" field regardless
+    # of month), so first() is a constant, not an arbitrary pick.
+    summarise(crc_harvest = sum(harvest, na.rm = TRUE),
+              system      = first(system), .groups = "drop")
 
   donors <- creel_area |>
     inner_join(crc_matched, by = c("catch_area_code", "year")) |>
@@ -238,9 +242,35 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
 
 
 # --- 3. Block ratios ----------------------------------------------------------
-#' Ratio of sums within block, not mean of area ratios: the sum form weights
+#' Ratio of sums within group, not mean of area ratios: the sum form weights
 #' donors by harvest so a small area with a thin denominator can't swing the
-#' block. Per-area ratios survive only as a coherence diagnostic.
+#' group. Per-area ratios survive only as a coherence diagnostic.
+#'
+#' Five tiers, tried in priority order by apply_p2()/apply_crc_projection()
+#' (finest first, each falling back to the next if it fails validate_ratios()):
+#'   1. system_year    - (block, system, year): CRC's own "system" field
+#'                       (e.g. "Cowlitz R. System"), the finest grouping with
+#'                       any real data behind it.
+#'   2. block_year      - (block, year): today's original grouping, now block
+#'                       = a CRC-region-derived block (see DELIVER_BLOCKS).
+#'   3. system_pooled   - (block, system), pooled across years.
+#'   4. block_pooled     - (block), pooled across years - today's original.
+#'   5. columbia_pooled - ALL FOUR Columbia blocks pooled together, no block
+#'                       or system split at all. Necessary, not optional: the
+#'                       real donor pairs behind the pre-split "ColumbiaTrib"
+#'                       ratio are Drano (ColumbiaMiddle) paired with Yakima
+#'                       or McNary (ColumbiaUpper) - never two donors in the
+#'                       same region in the same year. Splitting the block
+#'                       without this bottom rung would leave ColumbiaMiddle
+#'                       with a single ever-donor area (fails min_donor_areas
+#'                       at every other tier) and ColumbiaUpper with no real
+#'                       block_year ratio at all, regressing a currently-
+#'                       working ratio into nothing. PugetSound/WACoast never
+#'                       reach this tier - they have real system_year/
+#'                       block_year coverage already.
+#' Every tier reuses the SAME validate_ratios() guardrails - no guardrail
+#' loosens; the cascade just gives a row more chances to find a donor set
+#' that already passes them.
 estimate_block_ratios <- function(donors, control = P2_CONTROL) {
 
   summarise_ratios <- function(d, basis) {
@@ -268,13 +298,61 @@ estimate_block_ratios <- function(donors, control = P2_CONTROL) {
       )
   }
 
+  columbia_blocks <- c("ColumbiaLower", "ColumbiaMiddle", "ColumbiaUpper", "ColumbiaSnake")
+  donors_columbia <- donors |> filter(block %in% columbia_blocks)
+
+  # One donor set, but a target still joins on ITS OWN real block name - so
+  # the single pooled-across-all-four-blocks row is replicated to one row
+  # per Columbia block rather than left under a synthetic group label.
+  columbia_pooled_row <- if (nrow(donors_columbia) > 0) {
+    donors_columbia |> summarise_ratios("columbia_pooled") |> validate_ratios(control)
+  } else {
+    tibble()
+  }
+  columbia_pooled <- if (nrow(columbia_pooled_row) > 0) {
+    tidyr::crossing(block = columbia_blocks, columbia_pooled_row)
+  } else {
+    columbia_pooled_row
+  }
+
   list(
-    block_year   = donors |> group_by(block, year) |>
-                     summarise_ratios("block_year")   |> validate_ratios(control),
-    block_pooled = donors |> group_by(block) |>
-                     summarise_ratios("block_pooled") |> validate_ratios(control)
+    system_year     = donors |> group_by(block, system, year) |>
+                         summarise_ratios("system_year")     |> validate_ratios(control),
+    block_year      = donors |> group_by(block, year) |>
+                         summarise_ratios("block_year")       |> validate_ratios(control),
+    system_pooled   = donors |> group_by(block, system) |>
+                         summarise_ratios("system_pooled")    |> validate_ratios(control),
+    block_pooled    = donors |> group_by(block) |>
+                         summarise_ratios("block_pooled")     |> validate_ratios(control),
+    columbia_pooled = columbia_pooled
   )
 }
+
+#' Fill still-unresolved rows of `resolved` from one ratio tier, joining on
+#' `join_cols`. Only fills what's still NA - never overwrites a match already
+#' found by a finer (earlier-tried) tier. Shared by apply_p2() and P3's
+#' apply_crc_projection() (pst_crc_harvest_projection.R) so the cascade logic
+#' exists in exactly one place.
+fill_ratio_tier <- function(resolved, tier, join_cols) {
+  if (is.null(tier) || nrow(tier) == 0) return(resolved)
+
+  candidate <- tier |> filter(usable) |>
+    select(all_of(join_cols), ratio, ratio_basis, n_donor_areas,
+           donor_areas, donor_ratio_cv, max_donor_area_harvest)
+
+  resolved |>
+    left_join(candidate, by = join_cols, suffix = c("", "_new")) |>
+    mutate(
+      ratio                  = coalesce(ratio, ratio_new),
+      ratio_basis            = coalesce(ratio_basis, ratio_basis_new),
+      n_donor_areas          = coalesce(n_donor_areas, n_donor_areas_new),
+      donor_areas            = coalesce(donor_areas, donor_areas_new),
+      donor_ratio_cv         = coalesce(donor_ratio_cv, donor_ratio_cv_new),
+      max_donor_area_harvest = coalesce(max_donor_area_harvest, max_donor_area_harvest_new)
+    ) |>
+    select(-ends_with("_new"))
+}
+
 
 #' Guardrails. Failures are marked, not dropped -- the reason must reach the
 #' gap register.
@@ -301,7 +379,7 @@ validate_ratios <- function(x, control = P2_CONTROL) {
 # --- 4. Apply to uncovered areas ----------------------------------------------
 #' Returns list(trips, gaps). Both always returned; an empty gap tibble is a
 #' real result and should be written as one.
-apply_p2 <- function(crc_yr, donors, ratios, xw_area,
+apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
                      deliver_blocks, years_scope, control = P2_CONTROL) {
 
   covered <- donors |> distinct(catch_area_code, year) |> mutate(is_covered = TRUE)
@@ -312,6 +390,7 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
               crc_harvest     = harvest) |>
     filter(year %in% years_scope, crc_harvest > 0) |>
     left_join(xw_area, by = "catch_area_code") |>
+    left_join(area_system, by = "catch_area_code") |>
     left_join(covered, by = c("catch_area_code", "year")) |>
     filter(is.na(is_covered)) |>
     select(-is_covered)
@@ -342,27 +421,21 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
     ))
   }
 
-  ry <- ratios$block_year |> filter(usable) |>
-    select(block, year, ratio, ratio_basis, n_donor_areas, donor_areas,
-           donor_ratio_cv, max_donor_area_harvest)
-  rp <- ratios$block_pooled |> filter(usable) |>
-    select(block, ratio, ratio_basis, n_donor_areas, donor_areas,
-           donor_ratio_cv, max_donor_area_harvest)
+  # Cascade through tiers finest-first (see estimate_block_ratios()'s
+  # docstring for why all five exist). Each step only fills rows still NA
+  # from the previous step - a target that already resolved at system_year
+  # never gets overwritten by a coarser tier.
+  resolved <- targets |>
+    mutate(ratio = NA_real_, ratio_basis = NA_character_,
+           n_donor_areas = NA_integer_, donor_areas = NA_character_,
+           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_)
 
-  resolved <- targets |> left_join(ry, by = c("block", "year"))
-
+  resolved <- resolved |> fill_ratio_tier(ratios$system_year, c("block", "system", "year"))
+  resolved <- resolved |> fill_ratio_tier(ratios$block_year,  c("block", "year"))
   if (control$allow_pooled_fallback) {
-    resolved <- resolved |>
-      left_join(rp, by = "block", suffix = c("", "_pooled")) |>
-      mutate(
-        ratio                  = coalesce(ratio, ratio_pooled),
-        ratio_basis            = coalesce(ratio_basis, ratio_basis_pooled),
-        n_donor_areas          = coalesce(n_donor_areas, n_donor_areas_pooled),
-        donor_areas            = coalesce(donor_areas, donor_areas_pooled),
-        donor_ratio_cv         = coalesce(donor_ratio_cv, donor_ratio_cv_pooled),
-        max_donor_area_harvest = coalesce(max_donor_area_harvest, max_donor_area_harvest_pooled)
-      ) |>
-      select(-ends_with("_pooled"))
+    resolved <- resolved |> fill_ratio_tier(ratios$system_pooled, c("block", "system"))
+    resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,  c("block"))
+    resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block"))
   }
 
   # A ratio can be well-calibrated and still not be safe to apply this far
@@ -403,7 +476,7 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area,
     ),
     resolved |> filter(is.na(ratio), !out_of_scale) |> transmute(
       block, catch_area_code, year, crc_harvest,
-      reason = "no usable block ratio (block-year and pooled both failed guardrails)"
+      reason = "no usable ratio at any tier (system_year, block_year, system_pooled, block_pooled, columbia_pooled all failed guardrails)"
     ),
     resolved |> filter(is.na(ratio), out_of_scale) |> transmute(
       block, catch_area_code, year, crc_harvest,
@@ -495,8 +568,14 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
     "creel area-years; the remainder have no CRC counterpart)."
   ))
 
+  # Every CRC area's system, not just donor areas' - targets need it too, to
+  # try the system_year/system_pooled tiers before falling back to block.
+  area_system <- crc_month |>
+    distinct(stream_code, system) |>
+    transmute(catch_area_code = as.character(stream_code), system)
+
   ratios  <- estimate_block_ratios(donors, control)
-  applied <- apply_p2(crc_yr, donors, ratios, xw_area,
+  applied <- apply_p2(crc_yr, donors, ratios, xw_area, area_system,
                       deliver_blocks, years_scope, control)
   loo     <- p2_loo_check(donors, control)
 
@@ -508,7 +587,9 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
   list(
     trips       = applied$trips,
     gaps        = applied$gaps,
-    ratios      = bind_rows(ratios$block_year, ratios$block_pooled),
+    ratios      = bind_rows(ratios$system_year, ratios$block_year,
+                            ratios$system_pooled, ratios$block_pooled,
+                            ratios$columbia_pooled),
     donors      = donors,
     loo         = loo,
     loo_summary = if (nrow(loo) > 0) p2_loo_summary(loo) else tibble()

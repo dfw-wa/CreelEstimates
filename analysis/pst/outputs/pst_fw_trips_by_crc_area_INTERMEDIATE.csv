@@ -1,4 +1,112 @@
 block,river_label,catch_area_code,year,mode,location,angler_trips,total_salmon_harvest,tier,source_id,trips_per_salmon
+ColumbiaLower,Abernathy Creek,501,2022,unknown,unknown,141.17286665262287,48,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Abernathy Creek,501,2023,unknown,unknown,49.99872360613727,17,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Abernathy Creek,501,2025,unknown,unknown,45.881181662102435,15.6,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Cedar Creek (Clark Co),609,2022,unknown,unknown,67.64533193771513,23,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Cedar Creek (Clark Co),609,2024,unknown,unknown,114.7029541552561,39,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Cedar Creek (Clark Co),609,2025,unknown,unknown,142.3493072080614,48.4,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Chinook River,515,2022,unknown,unknown,35.29321666315572,12,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Chinook River,515,2023,unknown,unknown,249.99361803068635,85,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Chinook River,515,2024,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Chinook River,515,2025,unknown,unknown,71.76287388174995,24.4,P3,crc_harvest_projection,2.9411013885963095
+ColumbiaLower,Cispus River,555,2022,unknown,unknown,502.92833744996904,171,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Cispus River,555,2023,unknown,unknown,47.05762221754096,16,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Cispus River,555,2024,unknown,unknown,1999.9489442454908,680,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Cispus River,555,2025,unknown,unknown,876.9383973664665,298.1666666666667,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Coal Creek (Cowlitz Co),517,2022,unknown,unknown,282.34573330524574,96,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Coal Creek (Cowlitz Co),517,2023,unknown,unknown,149.9961708184118,51,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Coal Creek (Cowlitz Co),517,2024,unknown,unknown,702.9232318745181,239,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Coal Creek (Cowlitz Co),517,2025,unknown,unknown,284.796651129076,96.83333333333333,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Coweeman River,557,2024,unknown,unknown,76.46863610350405,26,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Deep River (Wahkiakum Co),580,2022,unknown,unknown,70.58643332631144,24,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Deep River (Wahkiakum Co),580,2025,unknown,unknown,27.205187844515866,9.25,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Elochoman River,584,2022,unknown,unknown,35.29321666315572,12,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Elochoman River,584,2023,unknown,unknown,199.99489442454907,68,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Elochoman River,584,2024,unknown,unknown,194.11269164735646,66,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Elochoman River,584,2025,unknown,unknown,148.231509985254,50.4,P3,crc_harvest_projection,2.9411013885963095
+ColumbiaLower,Germany Creek,589,2024,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Germany Creek,589,2025,unknown,unknown,91.17414304648561,31,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Grays River,594,2023,unknown,unknown,299.9923416368236,102,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Grays River,594,2025,unknown,unknown,99.99744721227454,34,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Grays River,595,2023,unknown,unknown,49.99872360613727,17,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Grays River,595,2024,unknown,unknown,1167.617251272735,397,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Grays River,595,2025,unknown,unknown,358.2261491310305,121.8,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),565,2022,unknown,unknown,179.4071847043749,61,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),565,2023,unknown,unknown,529.3982499473358,180,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),565,2024,unknown,unknown,191.17159025876015,65,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),565,2025,unknown,unknown,556.8485295742347,189.33333333333334,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),566,2022,unknown,unknown,1688.192197054282,574,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),566,2023,unknown,unknown,97.05634582367823,33,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),566,2024,unknown,unknown,1576.4303442876221,536,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Green River (Cowlitz Co),566,2025,unknown,unknown,621.5527601233536,211.33333333333334,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Kalama River,600,2024,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Kalama River,602,2022,unknown,unknown,355.8732680201535,121,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,602,2023,unknown,unknown,149.9961708184118,51,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,602,2024,unknown,unknown,155.87837359560442,53,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Kalama River,602,2025,unknown,unknown,209.99463914577655,71.4,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Kalama River,603,2022,unknown,unknown,2496.995078918267,849,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,603,2023,unknown,unknown,1891.1281928674273,643,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,603,2024,unknown,unknown,4591.05926759884,1561,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,603,2025,unknown,unknown,2305.3333050947413,783.8333333333334,P3,crc_harvest_projection,2.9411013885963104
+ColumbiaLower,Kalama River,604,2022,unknown,unknown,1597.0180540077963,543,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,604,2023,unknown,unknown,7405.693296485509,2518,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,604,2024,unknown,unknown,5170.456241152313,1758,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Kalama River,604,2025,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Lewis River,611,2022,unknown,unknown,3852.842819061166,1310,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lewis River,611,2023,unknown,unknown,3541.0860718699573,1204,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lewis River,611,2024,unknown,unknown,2599.933627519138,884,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lewis River,611,2025,unknown,unknown,2608.756931684927,887,P3,crc_harvest_projection,2.9411013885963104
+ColumbiaLower,Lewis River,615,2022,unknown,unknown,20446.536853521546,6952,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lewis River,615,2023,unknown,unknown,27078.720484806225,9207,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lewis River,615,2024,unknown,unknown,21358.278283986405,7262,P2,p2_block_ratio,2.9411013885963104
+ColumbiaLower,Lewis River,615,2025,unknown,unknown,191.17159025876015,65,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Little Washougal River,661,2024,unknown,unknown,117.6440555438524,40,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lower Cowlitz,507,2024,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Lower Cowlitz,507,2025,unknown,unknown,102.35032832315157,34.8,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Lower Cowlitz,561,2022,unknown,unknown,20202.425438268052,6869,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lower Cowlitz,561,2023,unknown,unknown,19455.38568556459,6615,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Lower Cowlitz,561,2024,unknown,unknown,11220.301797494923,3815,P2,p2_block_ratio,2.9411013885963104
+ColumbiaLower,Lower Cowlitz,561,2025,unknown,unknown,94.11524443508192,32,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Mill Creek (Lewis Co),625,2022,unknown,unknown,70.58643332631144,24,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Mill Creek (Lewis Co),625,2025,unknown,unknown,23.52881110877048,8,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Olequa Creek,569,2024,unknown,unknown,38.23431805175203,13,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Olequa Creek,569,2025,unknown,unknown,29.99923416368236,10.2,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Salmon Creek (Clark Co),635,2024,unknown,unknown,349.9910652429609,119,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Skamokawa Creek,638,2024,unknown,unknown,47.05762221754096,16,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Tilton River,571,2022,unknown,unknown,9408.583342119595,3199,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Tilton River,571,2023,unknown,unknown,8364.492349167906,2844,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Tilton River,571,2024,unknown,unknown,6343.95569520224,2157,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Tilton River,571,2025,unknown,unknown,7592.94341822614,2581.6666666666665,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Toutle River,573,2022,unknown,unknown,70.58643332631144,24,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Toutle River,573,2023,unknown,unknown,94.11524443508192,32,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Toutle River,573,2024,unknown,unknown,76.46863610350405,26,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Toutle River,573,2025,unknown,unknown,123.52625832104502,42,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Toutle River,575,2022,unknown,unknown,3196.977209404189,1087,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Toutle River,575,2023,unknown,unknown,3752.8453718488913,1276,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Toutle River,575,2024,unknown,unknown,1191.1460623815055,405,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Toutle River,575,2025,unknown,unknown,1870.0502995824872,635.8333333333334,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,559,2022,unknown,unknown,5138.104125877753,1747,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,559,2023,unknown,unknown,6970.410290973255,2370,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,559,2024,unknown,unknown,2729.342088617376,928,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,559,2025,unknown,unknown,4075.3861574649536,1385.6666666666667,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,563,2022,unknown,unknown,211.7592999789343,72,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,563,2023,unknown,unknown,47.05762221754096,16,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,563,2024,unknown,unknown,191.17159025876015,65,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Upper Cowlitz River,563,2025,unknown,unknown,173.5249819271823,59,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Washougal River,665,2023,unknown,unknown,49.99872360613727,17,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,665,2025,unknown,unknown,16.666241202045757,5.666666666666667,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Washougal River,667,2022,unknown,unknown,1279.3791040393949,435,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,667,2023,unknown,unknown,952.9168499052045,324,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,667,2024,unknown,unknown,1049.9731957288827,357,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,667,2025,unknown,unknown,1039.1891573040295,353.3333333333333,P3,crc_harvest_projection,2.94110138859631
+ColumbiaLower,Washougal River,668,2022,unknown,unknown,285.2868346938421,97,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,668,2023,unknown,unknown,149.9961708184118,51,P2,p2_block_ratio,2.94110138859631
+ColumbiaLower,Washougal River,668,2024,unknown,unknown,76.46863610350405,26,P2,p2_block_ratio,2.9411013885963095
+ColumbiaLower,Washougal River,668,2025,unknown,unknown,146.07470230028338,49.666666666666664,P3,crc_harvest_projection,2.9411013885963095
+ColumbiaMiddle,Big White Salmon River,508,2022,unknown,unknown,464.694019398217,158,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Big White Salmon River,508,2023,unknown,unknown,535.2804527245285,182,P2,p2_block_ratio,2.9411013885963104
+ColumbiaMiddle,Big White Salmon River,508,2024,unknown,unknown,417.636397180676,142,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Big White Salmon River,508,2025,unknown,unknown,319.10950066269965,108.5,P3,crc_harvest_projection,2.94110138859631
 ColumbiaMiddle,Drano Lake,618,2022,unknown,bank,2487.182995122373,340.93743452380954,P1,creel_pe,7.295130259298879
 ColumbiaMiddle,Drano Lake,618,2022,unknown,boat,11643.703400276816,4775.606703571429,P1,creel_pe,2.4381621274568306
 ColumbiaMiddle,Drano Lake,618,2023,unguided,bank,2178.2193192009877,431.1322916666667,P1,creel_pe,5.052322364396437
@@ -11,6 +119,23 @@ ColumbiaMiddle,Drano Lake,618,2024,unknown,unknown,331.95158667552386,0,P1,creel
 ColumbiaMiddle,Drano Lake,618,2025,unguided,bank,3684.9186605922378,613.14965,P1,creel_pe,6.009819398237018
 ColumbiaMiddle,Drano Lake,618,2025,guided,boat,2816.331590878735,1908.8042073786278,P1,creel_pe,1.4754428872233156
 ColumbiaMiddle,Drano Lake,618,2025,unguided,boat,13735.387676826618,9309.331995002325,P1,creel_pe,1.4754428872233154
+ColumbiaMiddle,Drano Lake,618,2025,unknown,unknown,79.40973749210038,27,P2,p2_block_ratio,2.9411013885963104
+ColumbiaMiddle,Klickitat River,607,2022,unknown,unknown,15252.551801260464,5186,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,607,2023,unknown,unknown,17111.32787885333,5818,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,607,2024,unknown,unknown,18878.929813399714,6419,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,607,2025,unknown,unknown,161.76057637279706,55,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,608,2022,unknown,unknown,1385.258754028862,471,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,608,2023,unknown,unknown,4664.586802313747,1586,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,608,2024,unknown,unknown,3596.9669982532873,1223,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Klickitat River,608,2025,unknown,unknown,3296.9746566164636,1121,P3,crc_harvest_projection,2.94110138859631
+ColumbiaMiddle,Wind River,677,2022,unknown,unknown,914.6825318534524,311,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,677,2023,unknown,unknown,391.16648468330925,133,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,677,2024,unknown,unknown,399.98978884909815,136,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,677,2025,unknown,unknown,459.7921837505565,156.33333333333334,P3,crc_harvest_projection,2.94110138859631
+ColumbiaMiddle,Wind River,680,2022,unknown,unknown,15987.82714840954,5436,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,680,2023,unknown,unknown,11279.123825266848,3835,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,680,2024,unknown,unknown,14640.80271243243,4978,P2,p2_block_ratio,2.94110138859631
+ColumbiaMiddle,Wind River,680,2025,unknown,unknown,9277.214146762295,3154.3333333333335,P3,crc_harvest_projection,2.9411013885963104
 ColumbiaSnake,Snake River,NA,2022,unknown,bank,2942,0,P1,R1_external,NA
 ColumbiaSnake,Snake River,NA,2022,unknown,boat,1378,0,P1,R1_external,NA
 ColumbiaSnake,Snake River,NA,2023,unknown,bank,1713,0,P1,R1_external,NA
@@ -69,13 +194,15 @@ ColumbiaUpper,Yakima,690,2022,unknown,bank,7902.836007067821,2907.310291902091,P
 ColumbiaUpper,Yakima,690,2023,unknown,unknown,4507.781281192659,412,P2,p2_block_ratio,10.94121670192393
 ColumbiaUpper,Yakima,690,2024,unknown,unknown,7888.6172420871535,721,P2,p2_block_ratio,10.94121670192393
 ColumbiaUpper,Yakima,690,2025,unknown,unknown,5045.724435703919,461.1666666666667,P3,crc_harvest_projection,10.94121670192393
-PugetSound,Baker,824,2022,unknown,unknown,980.6268066805127,164,P2,p2_block_ratio,5.979431748051907
-PugetSound,Baker,824,2023,unknown,unknown,390.79583872920745,180,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Baker,825,2022,unknown,unknown,34220.287894101064,5723,P2,p2_block_ratio,5.9794317480519075
-PugetSound,Baker,825,2023,unknown,unknown,27635.779062133784,12729,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Baker,824,2022,unknown,unknown,940.6907887176711,164,P2,p2_block_ratio,5.735919443400434
+PugetSound,Baker,824,2023,unknown,unknown,570.4506261605527,180,P2,p2_block_ratio,3.169170145336404
+PugetSound,Baker,824,2024,unknown,unknown,123.00056340120864,39,P2,p2_block_ratio,3.1538606000309906
+PugetSound,Baker,825,2022,unknown,unknown,32826.66697458068,5723,P2,p2_block_ratio,5.735919443400433
+PugetSound,Baker,825,2023,unknown,unknown,40340.36677998708,12729,P2,p2_block_ratio,3.1691701453364036
+PugetSound,Baker,825,2024,unknown,unknown,33736.846838531506,10697,P2,p2_block_ratio,3.1538606000309906
 PugetSound,California Creek,710,2023,unknown,unknown,175.85812742814335,81,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Canyon Creek (Snohomish Co),866,2022,unknown,unknown,71.75318097662287,12,P2,p2_block_ratio,5.979431748051906
-PugetSound,Canyon Creek (Snohomish Co),866,2023,unknown,unknown,314.807758976306,145,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Canyon Creek (Snohomish Co),866,2022,unknown,unknown,72.15209161582752,12,P2,p2_block_ratio,6.01267430131896
+PugetSound,Canyon Creek (Snohomish Co),866,2023,unknown,unknown,304.7912971583102,145,P2,p2_block_ratio,2.1020089459193807
 PugetSound,Cascade,826,2022,unguided,bank,1658.0873264483816,954.6986333333333,P1,creel_pe,1.7367651618596798
 PugetSound,Cascade,826,2023,unguided,bank,2897.708266862889,2749.89550563722,P1,creel_pe,1.0537521374621894
 PugetSound,Cascade,826,2024,unguided,bank,2619.075307144715,1357.3284345238096,P1,creel_pe,1.9295811098686393
@@ -117,7 +244,7 @@ PugetSound,Nooksack North Fork,790,2022,unknown,unknown,5853.863681342817,979,P2
 PugetSound,Nooksack North Fork,790,2023,unknown,unknown,1615.2894667473906,744,P2,p2_block_ratio,2.1710879929400413
 PugetSound,Nooksack South Fork,792,2022,unknown,unknown,2415.69042621297,404,P2,p2_block_ratio,5.979431748051907
 PugetSound,Nooksack South Fork,792,2023,unknown,unknown,2607.4766795209894,1201,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Pilchuck River,840,2023,unknown,unknown,662.1818378467126,305,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Pilchuck River,840,2023,unknown,unknown,641.1127285054112,305,P2,p2_block_ratio,2.1020089459193807
 PugetSound,Puyallup Carbon,802,2024,unknown,bank,11883.639947082502,3896.735833333333,P1,creel_pe,3.049639610010986
 PugetSound,Puyallup Carbon,802,2025,unknown,bank,14102.987767029652,5354.197371428571,P1,creel_pe,2.634005956203065
 PugetSound,Puyallup Carbon,804,2024,unknown,bank,31315.097499187777,10820.952666666666,P1,creel_pe,2.8939316586840054
@@ -131,7 +258,8 @@ PugetSound,Quilcene,812,2022,unknown,unknown,15600.337430667425,2609,P2,p2_block
 PugetSound,Quilcene,812,2023,unknown,unknown,6563.199002657745,3023,P2,p2_block_ratio,2.1710879929400413
 PugetSound,Samish,816,2022,unknown,unknown,55823.9747998126,9336,P2,p2_block_ratio,5.979431748051907
 PugetSound,Samish,816,2023,unknown,unknown,30636.222668376922,14111,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Sauk River,828,2023,unknown,unknown,106.38331165406203,49,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Sauk River,828,2023,unknown,unknown,155.28933712148378,49,P2,p2_block_ratio,3.1691701453364036
+PugetSound,Sauk River,828,2024,unknown,unknown,123.00056340120864,39,P2,p2_block_ratio,3.1538606000309906
 PugetSound,Skagit,826,2025,unguided,bank,3787.0997178020075,3187.9516129568506,P1,creel_pe,1.1879414048852022
 PugetSound,Skagit,826,2025,guided,boat,0,0,P1,creel_pe,NA
 PugetSound,Skagit,826,2025,unguided,boat,0,0,P1,creel_pe,NA
@@ -147,7 +275,7 @@ PugetSound,Skagit,830,2025,unguided,bank,34252.07941243892,8972.531678380137,P1,
 PugetSound,Skagit,830,2025,guided,boat,1564.5057619548681,871.3006671177945,P1,creel_pe,1.795598030620303
 PugetSound,Skagit,830,2025,unguided,boat,17927.697173876277,9984.248628120302,P1,creel_pe,1.795598030620303
 PugetSound,Skokomish River,834,2023,unknown,unknown,744.6831815784342,343,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Snohomish,844,2022,unknown,unknown,5327.673687514249,891,P2,p2_block_ratio,5.979431748051907
+PugetSound,Snohomish,844,2022,unknown,unknown,5357.292802475193,891,P2,p2_block_ratio,6.01267430131896
 PugetSound,Snohomish,844,2023,unknown,bank,2578.805559828028,223.77383333333336,P1,creel_pe,11.524160449924638
 PugetSound,Snohomish,844,2023,unknown,boat,604.3800466559296,113.842,P1,creel_pe,5.308937357529994
 PugetSound,Snohomish,844,2024,unknown,bank,1728.3155672375287,237.51,P1,creel_pe,7.276811785767037
@@ -164,7 +292,7 @@ PugetSound,Snohomish,850,2025,unguided,bank,24276.354587239486,9966.265799532164
 PugetSound,Snohomish,850,2025,unguided,boat,9854.192232093294,12429.317849560353,P1,creel_pe,0.7928184274764406
 PugetSound,Snohomish,852,2022,unknown,bank,638.6578316492385,144.418,P1,creel_pe,4.4222869147144985
 PugetSound,Snohomish,852,2022,unknown,boat,1453.0597921618973,682.4585000000001,P1,creel_pe,2.129154801591448
-PugetSound,Snohomish,852,2023,unknown,unknown,312.63667098336595,144,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Snohomish,852,2023,unknown,unknown,302.6892882123908,144,P2,p2_block_ratio,2.1020089459193807
 PugetSound,Snohomish,852,2024,unknown,bank,1029.7497014942662,40.24708333333333,P1,creel_pe,25.58569755143995
 PugetSound,Snohomish,852,2024,unknown,boat,394.0794739410613,156.52833333333334,P1,creel_pe,2.517623905838525
 PugetSound,Stillaguamish,872,2022,unknown,bank,840.468753702631,0,P1,creel_pe,NA
@@ -187,8 +315,8 @@ PugetSound,Stillaguamish,876,2024,unknown,bank,7876.43505258991,783.645873015873
 PugetSound,Stillaguamish,876,2024,unknown,boat,203.0401493623574,20.996,P1,creel_pe,9.670420525926719
 PugetSound,Stillaguamish,876,2025,unguided,bank,9686.817941206635,1838.8663935064935,P1,creel_pe,5.26782042208899
 PugetSound,Stillaguamish,876,2025,unknown,boat,291.23425155934194,19.076,P1,creel_pe,15.267050301915598
-PugetSound,Suiattle River,832,2023,unknown,unknown,71.64590376702137,33,P2,p2_block_ratio,2.1710879929400413
-PugetSound,Tolt River,858,2023,unknown,unknown,208.42444732224396,96,P2,p2_block_ratio,2.1710879929400413
+PugetSound,Suiattle River,832,2023,unknown,unknown,104.58261479610132,33,P2,p2_block_ratio,3.1691701453364036
+PugetSound,Tolt River,858,2023,unknown,unknown,201.79285880826055,96,P2,p2_block_ratio,2.1020089459193807
 PugetSound,Wallace,860,2022,unknown,bank,5716.1892026058695,2418.7564253246755,P1,creel_pe,2.3632760797063606
 PugetSound,Wallace,860,2023,unknown,bank,5649.527955348427,740.2523333333334,P1,creel_pe,7.631894829576257
 PugetSound,Wallace,860,2024,unknown,bank,2727.6753232354604,911.9333000000001,P1,creel_pe,2.9910908212645158
@@ -218,8 +346,8 @@ WACoast,Clearwater River,392,2023,unknown,unknown,164.00163004476923,98,P2,p2_bl
 WACoast,Clearwater River,392,2024,unknown,unknown,121.89960830957335,83,P2,p2_block_ratio,1.468669979633414
 WACoast,Clearwater River,392,2025,unknown,unknown,160.67249577189548,109.4,P3,crc_harvest_projection,1.468669979633414
 WACoast,Cloquallum Creek,321,2022,unknown,unknown,146.80388463449913,41,P2,p2_block_ratio,3.5805825520609544
-WACoast,Cloquallum Creek,321,2023,unknown,unknown,82.00081502238461,49,P2,p2_block_ratio,1.6734860208649922
-WACoast,Cloquallum Creek,321,2025,unknown,unknown,34.366877523421884,23.4,P3,crc_harvest_projection,1.468669979633414
+WACoast,Cloquallum Creek,321,2023,unknown,unknown,53.164245969941504,49,P2,p2_block_ratio,1.0849846116314592
+WACoast,Cloquallum Creek,321,2025,unknown,unknown,14.584595747570273,23.4,P3,crc_harvest_projection,0.6232733225457382
 WACoast,Cook Creek,408,2022,unknown,unknown,361.6388377581564,101,P2,p2_block_ratio,3.5805825520609544
 WACoast,Cook Creek,408,2023,unknown,unknown,33.46972041729985,20,P2,p2_block_ratio,1.6734860208649924
 WACoast,Cook Creek,408,2025,unknown,unknown,51.40344928716949,35,P3,crc_harvest_projection,1.468669979633414
@@ -247,7 +375,7 @@ WACoast,Hoh,350,2025,unguided,bank,459.5640272591643,102.55283333333333,P1,creel
 WACoast,Hoh,350,2025,guided,boat,421.43417106937665,464.5533415841584,P1,creel_pe,0.9071814436470472
 WACoast,Hoh,350,2025,unguided,boat,429.86285449076416,473.84440841584154,P1,creel_pe,0.9071814436470472
 WACoast,Hoh South Fork,352,2022,unknown,unknown,39.3864080726705,11,P2,p2_block_ratio,3.5805825520609544
-WACoast,Hoh South Fork,352,2023,unknown,unknown,28.449262354704867,17,P2,p2_block_ratio,1.6734860208649922
+WACoast,Hoh South Fork,352,2023,unknown,unknown,9.987295897823548,17,P2,p2_block_ratio,0.5874879939896205
 WACoast,Hoh South Fork,352,2025,unknown,unknown,13.70758647657853,9.333333333333334,P3,crc_harvest_projection,1.468669979633414
 WACoast,Hoquiam River,355,2023,unknown,unknown,105.4296193144945,63,P2,p2_block_ratio,1.6734860208649922
 WACoast,Hoquiam River,355,2024,unknown,unknown,358.355475030553,244,P2,p2_block_ratio,1.468669979633414
@@ -285,8 +413,8 @@ WACoast,Nemah,379,2023,unknown,unknown,1638.3428144268273,979,P2,p2_block_ratio,
 WACoast,Nemah,379,2024,unknown,unknown,3814.135937107976,2597,P2,p2_block_ratio,1.468669979633414
 WACoast,Nemah,379,2025,unknown,unknown,2824.7419274949325,1923.3333333333333,P3,crc_harvest_projection,1.4686699796334137
 WACoast,Newaukum River,325,2022,unknown,unknown,214.83495312365727,60,P2,p2_block_ratio,3.5805825520609544
-WACoast,Newaukum River,325,2023,unknown,unknown,26.775776333839875,16,P2,p2_block_ratio,1.6734860208649922
-WACoast,Newaukum River,325,2025,unknown,unknown,53.16585326272959,36.2,P3,crc_harvest_projection,1.468669979633414
+WACoast,Newaukum River,325,2023,unknown,unknown,17.359753786103347,16,P2,p2_block_ratio,1.0849846116314592
+WACoast,Newaukum River,325,2025,unknown,unknown,22.562494276155725,36.2,P3,crc_harvest_projection,0.6232733225457382
 WACoast,North River,382,2022,unknown,unknown,755.5029184848614,211,P2,p2_block_ratio,3.5805825520609544
 WACoast,North River,382,2023,unknown,unknown,594.0875374070722,355,P2,p2_block_ratio,1.6734860208649922
 WACoast,North River,382,2024,unknown,unknown,859.1719380855471,585,P2,p2_block_ratio,1.468669979633414
@@ -296,7 +424,7 @@ WACoast,Queets River,394,2023,unknown,unknown,217.553182712449,130,P2,p2_block_r
 WACoast,Queets River,394,2024,unknown,unknown,142.46098802444115,97,P2,p2_block_ratio,1.468669979633414
 WACoast,Queets River,394,2025,unknown,unknown,200.71823054989989,136.66666666666666,P3,crc_harvest_projection,1.468669979633414
 WACoast,Quigg Lake,370,2022,unknown,unknown,340.15534244579067,95,P2,p2_block_ratio,3.5805825520609544
-WACoast,Quigg Lake,370,2025,unknown,unknown,46.50788268839144,31.666666666666668,P3,crc_harvest_projection,1.468669979633414
+WACoast,Quigg Lake,370,2025,unknown,unknown,19.73698854728171,31.666666666666668,P3,crc_harvest_projection,0.6232733225457382
 WACoast,Quillayute,398,2022,unguided,bank,458.7805177983266,21.649189655172417,P1,creel_pe,21.191579227941908
 WACoast,Quillayute,398,2022,guided,boat,93.70469246597526,26.243039974084876,P1,creel_pe,3.570649305816288
 WACoast,Quillayute,398,2022,unguided,boat,199.3716860978197,55.83625526401037,P1,creel_pe,3.5706493058162883
@@ -324,14 +452,14 @@ WACoast,Quillayute,400,2025,unguided,boat,19.59726672262514,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2022,unguided,bank,99.47682239346263,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2022,guided,boat,5.6655500761376425,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2022,unguided,boat,12.054361864122642,0,P1,creel_pe,NA
-WACoast,Quillayute,402,2022,unknown,unknown,42.96699062473145,12,P2,p2_block_ratio,3.5805825520609544
+WACoast,Quillayute,402,2022,unknown,unknown,19.308825488759837,12,P2,p2_block_ratio,1.6090687907299863
 WACoast,Quillayute,402,2023,unguided,bank,41.94745309868764,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2023,guided,boat,36.1089839043901,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2023,unguided,boat,76.87719153837894,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2024,unguided,bank,223.9497449509528,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2024,guided,boat,59.17088385155647,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2024,unguided,boat,86.29087228351985,0,P1,creel_pe,NA
-WACoast,Quillayute,402,2024,unknown,unknown,58.746799185336556,40,P2,p2_block_ratio,1.468669979633414
+WACoast,Quillayute,402,2024,unknown,unknown,187.0819498161918,40,P2,p2_block_ratio,4.677048745404795
 WACoast,Quillayute,402,2025,unguided,bank,350.8470762865978,169.15301608910895,P1,creel_pe,2.0741402334899743
 WACoast,Quillayute,402,2025,guided,boat,13.724407162938517,0,P1,creel_pe,NA
 WACoast,Quillayute,402,2025,unguided,boat,28.926827404962722,0,P1,creel_pe,NA
@@ -359,7 +487,7 @@ WACoast,Quillayute,406,2024,unguided,boat,755.4588187764298,517.1838983050848,P1
 WACoast,Quillayute,406,2025,unguided,bank,2661.9949258476163,302.92726677667764,P1,creel_pe,8.787571202067054
 WACoast,Quillayute,406,2025,guided,boat,198.0798289991123,175.05346287128714,P1,creel_pe,1.1315390495574253
 WACoast,Quillayute,406,2025,unguided,boat,417.4913318904367,368.95883712871296,P1,creel_pe,1.1315390495574251
-WACoast,Quillayute,406,2025,unknown,unknown,72.95274371511157,40,P2,p2_block_ratio,1.8238185928777892
+WACoast,Quillayute,406,2025,unknown,unknown,88.99204162337503,40,P2,p2_block_ratio,2.2248010405843757
 WACoast,Quinault River,410,2022,unknown,unknown,100.25631145770673,28,P2,p2_block_ratio,3.5805825520609544
 WACoast,Quinault River,410,2023,unknown,unknown,234.2880429210989,140,P2,p2_block_ratio,1.6734860208649922
 WACoast,Quinault River,410,2024,unknown,unknown,23.498719674134623,16,P2,p2_block_ratio,1.468669979633414
@@ -375,9 +503,9 @@ WACoast,Satsop,329,2024,unguided,bank,6415.120173871222,3232.868833333333,P1,cre
 WACoast,Satsop,329,2024,unguided,boat,3077.20720103395,2585.0544549977385,P1,creel_pe,1.190383898909643
 WACoast,Satsop,329,2025,unguided,bank,6414.856747808881,1861.4283616883115,P1,creel_pe,3.446201250522808
 WACoast,Satsop,329,2025,unguided,boat,2268.3355050074656,1469.6480992559523,P1,creel_pe,1.543454862531969
-WACoast,Skookumchuck River,333,2023,unknown,unknown,26.775776333839875,16,P2,p2_block_ratio,1.6734860208649922
-WACoast,Skookumchuck River,333,2024,unknown,unknown,160.0850277800421,109,P2,p2_block_ratio,1.468669979633414
-WACoast,Skookumchuck River,333,2025,unknown,unknown,77.83950892057094,53,P3,crc_harvest_projection,1.468669979633414
+WACoast,Skookumchuck River,333,2023,unknown,unknown,17.359753786103347,16,P2,p2_block_ratio,1.0849846116314592
+WACoast,Skookumchuck River,333,2024,unknown,unknown,67.93679215748546,109,P2,p2_block_ratio,0.6232733225457381
+WACoast,Skookumchuck River,333,2025,unknown,unknown,33.03348609492412,53,P3,crc_harvest_projection,0.6232733225457382
 WACoast,Smith Creek (Pacific Co),384,2022,unknown,unknown,42.96699062473145,12,P2,p2_block_ratio,3.5805825520609544
 WACoast,Smith Creek (Pacific Co),384,2023,unknown,unknown,199.14483648293407,119,P2,p2_block_ratio,1.6734860208649922
 WACoast,Smith Creek (Pacific Co),384,2024,unknown,unknown,117.49359837067311,80,P2,p2_block_ratio,1.468669979633414
@@ -398,6 +526,6 @@ WACoast,Wishkah River,335,2023,unknown,unknown,420.04499123711304,251,P2,p2_bloc
 WACoast,Wishkah River,335,2024,unknown,unknown,120.43093832993995,82,P2,p2_block_ratio,1.468669979633414
 WACoast,Wishkah River,335,2025,unknown,unknown,200.9630088798388,136.83333333333334,P3,crc_harvest_projection,1.468669979633414
 WACoast,Wynoochee River,337,2022,unknown,unknown,895.1456380152387,250,P2,p2_block_ratio,3.5805825520609544
-WACoast,Wynoochee River,337,2023,unknown,unknown,681.1088104920518,407,P2,p2_block_ratio,1.6734860208649922
-WACoast,Wynoochee River,337,2024,unknown,unknown,892.9513476171156,608,P2,p2_block_ratio,1.468669979633414
-WACoast,Wynoochee River,337,2025,unknown,unknown,579.6350852953208,394.6666666666667,P3,crc_harvest_projection,1.4686699796334142
+WACoast,Wynoochee River,337,2023,unknown,unknown,441.5887369340039,407,P2,p2_block_ratio,1.0849846116314592
+WACoast,Wynoochee River,337,2024,unknown,unknown,378.9501801078088,608,P2,p2_block_ratio,0.6232733225457382
+WACoast,Wynoochee River,337,2025,unknown,unknown,245.98520463138468,394.6666666666667,P3,crc_harvest_projection,0.6232733225457382

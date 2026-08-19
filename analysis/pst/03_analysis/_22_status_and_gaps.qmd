@@ -203,6 +203,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | Yakima & McNary workbooks, 2023–2025 | Todd Miller (R3) | Received commitment 2026-08-12; not yet ingested |
 | Upper Columbia | Chad Jackson (R2) | Outreach 2026-08-11; pending |
 | Snake River | Jeremy Trump | Outreach 2026-08-11; pending |
+| Green River (Green-Duwamish) creel data | Nathanael Overman | Outreach 2026-08-19; pending. Until it lands, Green-Duwamish (CRC area 746) is a P2 candidate via the crosswalk row added the same day — real P1 trips from Overman's data would supersede that ratio estimate |
 | Columbia Basin empirical effort/catch 2022–2025 (to replace FEIS rates) | Mark S. / CRD | Team check pending |
 | Coastal freshwater 2025 | — | No fallback identified |
 | McNary 2022 | Todd Miller | Confirmed missing; no source |

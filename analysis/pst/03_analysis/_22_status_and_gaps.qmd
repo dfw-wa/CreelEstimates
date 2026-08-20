@@ -68,16 +68,21 @@ ODFW numbers.
   values), `area_coverage = "covered_unpartitioned"` so P2 doesn't also try to
   ratio-expand the six Snake R. System CRC areas independently. Real trips now
   flow into the deliverable instead of resolving `block = "unknown"`.
-  Confirmed with Jeremy (2026-08-20) that `covered_unpartitioned` is the
-  right treatment, not a stand-in for a future per-area split: the creel
-  covers specific open zones, not whole CRC areas (spring Chinook covers a
-  portion of 640/644, fall Chinook a portion of 644/648; 642/646/650 have no
-  creel presence in either season), so CRC harvest at the area-code grain
-  doesn't correspond 1:1 to creel-covered water even though the creel itself
-  covers all open water completely within those zones. A Snake-River-internal
-  trips/CRC-harvest ratio isn't a clean quantity here - ColumbiaSnake relies
-  on the `columbia_pooled` tier (`pst_p2_block_ratio.R`) for exactly this
-  reason, and that's expected to stay true, not a gap to close.
+  Asked Jeremy (2026-08-20) whether CRC harvest at 640/644 (spring Chinook's
+  open zones) and 644/648 (fall Chinook's) would align with the creel, given
+  the creel only covers specific open zones within each CRC area, not the
+  whole area. Confirmed clean, not a mismatch: harvest can only occur where
+  fishing is legally open, so CRC harvest for those area-pairs reflects the
+  same water the creel already covers completely - closed portions of a CRC
+  area produce no harvest to miss. 642/646/650 remain genuinely uncovered by
+  any creel, in any season. The real limitation is narrower than a spatial
+  gap: Jeremy's total is one combined number per season across whichever
+  areas were open (640+644 spring, 644+648 fall), not split area-by-area, so
+  a season-specific trips/CRC-harvest ratio using the matching combined area
+  harvest is a clean quantity in principle - not yet built as a real
+  ColumbiaSnake donor pair (still `covered_unpartitioned`, relying on the
+  `columbia_pooled` tier in `pst_p2_block_ratio.R` for now). Worth revisiting
+  as a real, Snake-calibrated ratio rather than a permanent limitation.
 - **`multi_fishery_creel_run_ledger.csv`** — 98 rows, all `ok` as of the
   2026-08-14 run. The previous 3 errors / 1 skip are resolved. Lower Cowlitz
   remains absent from the output entirely: it lacks the data needed for
@@ -213,7 +218,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | Yakima & McNary workbooks, 2023–2025 | Todd Miller (R3) | Received commitment 2026-08-12; not yet ingested |
 | Upper Columbia | Chad Jackson (R2) | Outreach 2026-08-11; pending |
 | Lake Wenatchee (CRC area 670) | Chad Jackson (R2), part of the Upper Columbia request above | Outreach 2026-08-11; pending. Currently excluded from P2 entirely — its CRC harvest is >25x the largest donor area's, past `max_target_harvest_multiple` (`pst_p2_block_ratio.R`), so no ratio is extrapolated onto it. Real P1 data from Chad would replace the need for a ratio at all |
-| Snake River | Jeremy Trump | Resolved 2026-08-20 — crosswalk added 2026-08-19; zone-coverage question (does creel cover all open water so a Snake-internal trips/CRC ratio would be clean?) answered 2026-08-20: no, CRC areas are coarser than the actual open zones, see the Known defects entry above |
+| Snake River | Jeremy Trump | Resolved 2026-08-20 — crosswalk added 2026-08-19; zone-coverage question (does creel cover all open water so a Snake-internal trips/CRC ratio would be clean?) answered 2026-08-20: yes, clean, see the Known defects entry above. A real Snake-calibrated donor pair (season-specific area harvest vs. Jeremy's trips) is now feasible but not yet built |
 | Green River (Green-Duwamish) creel data | Nathanael Overman | Outreach 2026-08-19; pending. Until it lands, Green-Duwamish (CRC area 746) is a P2 candidate via the crosswalk row added the same day — real P1 trips from Overman's data would supersede that ratio estimate |
 | Columbia Basin empirical effort/catch 2022–2025 (to replace FEIS rates) | Mark S. / CRD | Team check pending |
 | Coastal freshwater 2025 | — | No fallback identified |

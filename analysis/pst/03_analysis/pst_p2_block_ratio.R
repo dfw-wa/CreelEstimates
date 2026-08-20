@@ -268,14 +268,20 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
 #'                       working ratio into nothing. PugetSound/WACoast never
 #'                       reach this tier - they have real system_year/
 #'                       block_year coverage already. ColumbiaSnake reaches it
-#'                       on every row, structurally, not just for now: Snake
-#'                       River's own creel (R1_external, covered_
-#'                       unpartitioned - see pst_river_block_crosswalk.csv)
-#'                       can never be a donor at all, confirmed by Jeremy
-#'                       Trump (2026-08-20) - the creel's open zones are a
-#'                       subset of each CRC area, not the whole area, so even
-#'                       a future per-area trip breakdown wouldn't pair
-#'                       cleanly against CRC harvest at the same area code.
+#'                       on every row today: Snake River's own creel
+#'                       (R1_external, covered_unpartitioned - see
+#'                       pst_river_block_crosswalk.csv) is never a donor,
+#'                       NOT because trips and CRC harvest are spatially
+#'                       mismatched - Jeremy Trump confirmed (2026-08-20) the
+#'                       creel covers all open water completely and CRC
+#'                       harvest can only come from the same open water, so
+#'                       640/644 (spring) and 644/648 (fall) pair cleanly -
+#'                       but because his summary gives one combined trip
+#'                       total per season, not split by area, so there is no
+#'                       per-area donor pair to build yet. A real Snake-
+#'                       calibrated donor (season-specific combined area
+#'                       harvest vs. Jeremy's combined trip total) is a
+#'                       plausible future addition, not a structural dead end.
 #' Every tier reuses the SAME validate_ratios() guardrails - no guardrail
 #' loosens; the cascade just gives a row more chances to find a donor set
 #' that already passes them.

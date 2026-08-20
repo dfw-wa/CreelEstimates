@@ -861,19 +861,22 @@ build_target_schema <- function(df) {
 # ingest_hanford_boat() handles the same composite-area problem for Hanford
 # Reach. The six constituent areas are documented here for reference only.
 #
-# Per Jeremy Trump (2026-08-20): this isn't just a reporting gap - the creel
-# genuinely can't be broken out by CRC area cleanly, because the creel's open
-# zones are a SUBSET of each CRC area, not the whole area, and different
-# subsets by season. Spring Chinook covers a portion of 640 and 644; fall
-# Chinook a portion of 644 and 648; 642/646/650 have no creel presence in
-# either season. Within whatever zone IS open, the creel covers it completely
-# (confirmed explicitly - no under-sampling within a surveyed zone). So even
-# if a future source gave a per-CRC-area trip breakdown, that total still
-# wouldn't align 1:1 with CRC harvest reported at the same area code - the
-# area code is coarser than the actual fished water. This is why a Snake-
-# River-internal trips/CRC-harvest ratio (the pattern pst_p2_block_ratio.R
-# uses elsewhere) isn't attempted here; see pst_river_block_crosswalk.csv's
-# Snake River notes and analysis/pst/03_analysis/_22_status_and_gaps.qmd.
+# Per Jeremy Trump (2026-08-20): the creel's open zones are a SUBSET of each
+# CRC area, not the whole area, and a different subset by season - spring
+# Chinook covers a portion of 640 and 644; fall Chinook a portion of 644 and
+# 648; 642/646/650 have no creel presence in either season. Confirmed clean,
+# not a mismatch: harvest can only occur where fishing is legally open, so
+# CRC harvest for 640/644 (spring) or 644/648 (fall) reflects the same water
+# the creel already covers completely - the CRC area code being coarser than
+# the open zone doesn't matter, since the closed portion of the area
+# contributes no harvest to miss. What's still missing is a per-area (or at
+# least per-season area-pair) TRIP breakdown from Jeremy - the R1 summary
+# gives one combined total per species-year, not split by which of that
+# season's open areas it came from - so a season-specific Snake-River-
+# internal trips/CRC-harvest ratio (matching combined area harvest to
+# Jeremy's combined trip total) is feasible in principle but not yet built;
+# see pst_river_block_crosswalk.csv's Snake River notes and
+# analysis/pst/03_analysis/_22_status_and_gaps.qmd.
 SNAKE_CRC_AREAS <- c(640L, 642L, 644L, 646L, 648L, 650L)  # not used as crc_area
 
 #' Ingest the R1 Snake River annual angler-trip workbook.

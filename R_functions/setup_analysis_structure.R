@@ -5,17 +5,33 @@
 #' @param params List of parameters from Rmd YAML header
 #' @param analysis_lut Analysis lookup table with folder information
 #' @param est_dates Estimate dates resolved from the database fishery lookup table or manually entered by a user
+#' @param mapped_drive Drive letter (with colon) mapped to the OneDrive root,
+#'   used by `here_short()` to shorten output paths and avoid Windows
+#'   MAX_PATH issues. Defaults to `"O:"`. Set to `NULL` to skip shortening
+#'   and always use the full `here::here()` path.
 #' 
 #' @return List with paths to outputs folders
-setup_analysis_structure <- function(params, analysis_lut, est_dates) {
+setup_analysis_structure <- function(params, analysis_lut, est_dates, mapped_drive = "O:") {
   
-  # Define analysis folder path
-  analysis_folder_path <- here::here(
-    "fishery_analyses", 
-    params$project_name, 
-    params$fishery_name, 
-    analysis_lut$analysis_folder
-  )
+  # Define analysis folder path (shortened via mapped drive when available --
+  # see here_short(); falls back to here::here() if mapped_drive is NULL or
+  # the drive can't be confirmed)
+  analysis_folder_path <- if (!is.null(mapped_drive)) {
+    here_short(
+      "fishery_analyses", 
+      params$project_name, 
+      params$fishery_name, 
+      analysis_lut$analysis_folder,
+      mapped_drive = mapped_drive
+    )
+  } else {
+    here::here(
+      "fishery_analyses", 
+      params$project_name, 
+      params$fishery_name, 
+      analysis_lut$analysis_folder
+    )
+  }
   
   # Create analysis folder
   if (!dir.exists(analysis_folder_path)) {

@@ -53,10 +53,16 @@ config.yml
 .devcontainer/
 .devcontainer
 
-# Raw DB dumps regenerable by re-rendering analysis/pst/02_ingest/interview_proportions.qmd;
-# too large to track (31.6 MB / 3.3 MB vs. 1.4 MB for the next largest file in outputs/)
-analysis/pst/outputs/all_interviews.csv
-analysis/pst/outputs/all_interviews.rds
+# Every file in here is regenerable by re-running its producing script (see
+# analysis/pst/README.md's directory map - "Nothing here is hand-edited").
+# Untracked as of 2026-08-20: local pipeline runs were producing untracked
+# copies at the same paths as already-committed files, so `git pull` refused
+# to check out ("untracked working tree files would be overwritten by
+# checkout" on combined_proportions_*.csv etc. - it would have silently
+# clobbered the local copy). To commit a deliberate snapshot anyway (e.g.
+# alongside a logic change, as evidence of its effect), force past the
+# ignore: `git add -f analysis/pst/outputs/<file>`.
+analysis/pst/outputs/
 
 # Local scratch cache (interview_proportions.qmd DB pull; regenerable)
 .cache/

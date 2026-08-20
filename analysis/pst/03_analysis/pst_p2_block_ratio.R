@@ -267,7 +267,15 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
 #'                       block_year ratio at all, regressing a currently-
 #'                       working ratio into nothing. PugetSound/WACoast never
 #'                       reach this tier - they have real system_year/
-#'                       block_year coverage already.
+#'                       block_year coverage already. ColumbiaSnake reaches it
+#'                       on every row, structurally, not just for now: Snake
+#'                       River's own creel (R1_external, covered_
+#'                       unpartitioned - see pst_river_block_crosswalk.csv)
+#'                       can never be a donor at all, confirmed by Jeremy
+#'                       Trump (2026-08-20) - the creel's open zones are a
+#'                       subset of each CRC area, not the whole area, so even
+#'                       a future per-area trip breakdown wouldn't pair
+#'                       cleanly against CRC harvest at the same area code.
 #' Every tier reuses the SAME validate_ratios() guardrails - no guardrail
 #' loosens; the cascade just gives a row more chances to find a donor set
 #' that already passes them.

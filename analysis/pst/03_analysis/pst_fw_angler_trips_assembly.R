@@ -108,7 +108,8 @@ dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 CANON <- c("block", "river_label", "fishery_name", "catch_area_code",
            "year", "month",
            "location", "mode", "angler_trips", "total_salmon_harvest",
-           "tier", "source_id", "method", "location_basis", "mode_basis")
+           "tier", "source_id", "method", "location_basis", "mode_basis",
+           "n_strata", "n_strata_estimated", "prop_strata_estimated")
 
 canon <- function(df) {
   missing <- setdiff(CANON, names(df))
@@ -127,7 +128,18 @@ canon <- function(df) {
       # every P1 batch enters effort_long as double and the P2 append at 5b
       # fails bind_rows() on the type mismatch. Character is intentionally
       # chosen (not numeric) since it's the type CRC-side data can't avoid.
-      catch_area_code = as.character(catch_area_code)
+      catch_area_code = as.character(catch_area_code),
+      # Only creel_pe rows carry a real value (computed in
+      # multi_fishery_creel_summary.R's effort_monthly -- the share of
+      # section x period x day_type strata that actually got an
+      # interview-based estimate rather than defaulting to zero via
+      # na.rm = TRUE). Explicit numeric coercion so a source with no such
+      # concept (district_creel, P2, P3) contributes a real NA_real_, not a
+      # logical NA that would trip bind_rows() type-checking once combined
+      # with creel_pe's numeric values.
+      n_strata               = as.numeric(n_strata),
+      n_strata_estimated     = as.numeric(n_strata_estimated),
+      prop_strata_estimated  = as.numeric(prop_strata_estimated)
     )
 }
 
@@ -1056,19 +1068,33 @@ effort_by_mode_location <- effort_long |>
 
 crc_vs_creel <- NULL
 if (!is.null(p2$crc) && !is.null(p2$crc_month)) {
-  creel_area <- effort_long |>
+  # Same two data-quality filters as build_p2_donors() (pst_p2_block_ratio.R),
+  # for the same reasons: exclude_truncated_months() removes any fishery/
+  # year/month a human has CONFIRMED the creel program stopped before the
+  # legal season did (a no-op while that table is empty); min_prop_strata_
+  # estimated below surfaces the OTHER, automatically-detectable issue -- a
+  # month within the real survey window that had some strata default to
+  # zero effort. See exclude_truncated_months()'s header for the distinction.
+  p1_rows <- effort_long |>
     filter(block %in% DELIVER_BLOCKS, tier == "P1", !is.na(catch_area_code)) |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    exclude_truncated_months()
+
+  creel_area <- p1_rows |>
     group_by(catch_area_code, year) |>
     summarise(creel_trips   = sum(angler_trips, na.rm = TRUE),
               creel_harvest = sum(total_salmon_harvest, na.rm = TRUE),
               fisheries     = paste(sort(unique(fishery_name)), collapse = "|"),
+              min_prop_strata_estimated = suppressWarnings(
+                min(prop_strata_estimated, na.rm = TRUE)
+              ),
               .groups = "drop") |>
-    mutate(catch_area_code = as.character(catch_area_code))
+    mutate(min_prop_strata_estimated = if_else(
+      is.finite(min_prop_strata_estimated), min_prop_strata_estimated, NA_real_
+    ))
 
-  creel_months <- effort_long |>
-    filter(block %in% DELIVER_BLOCKS, tier == "P1", !is.na(catch_area_code),
-           !is.na(month)) |>
-    mutate(catch_area_code = as.character(catch_area_code)) |>
+  creel_months <- p1_rows |>
+    filter(!is.na(month)) |>
     distinct(catch_area_code, year, month)
 
   crc_matched <- creel_months |>
@@ -1159,6 +1185,78 @@ if (!is.null(p2$crc) && !is.null(p2$crc_month)) {
                  "not a license-year/calendar-year artifact (that conversion ",
                  "is exact; see parse_crc_freshwater_harvest.R)."))
   }
+}
+
+# ---- 6c. Creel season edges: candidates needing a regulatory check ----------
+# A month at the edge of a creel program's operating window can be
+# "incomplete" for two different reasons, and only one is visible here (see
+# exclude_truncated_months()'s header in pst_p2_block_ratio.R for the full
+# argument): a sampling gap within a fully-covered season (visible below as
+# low prop_strata_estimated), or the creel program itself stopping before
+# the legal harvest period -- and therefore CRC's own reporting window --
+# closed that year (NOT visible in any column here; a creel program that ran
+# flawlessly for the days it operated can show perfect stratum coverage and
+# still only measure part of the month's true activity). The second kind can
+# only be resolved by checking the fishery's actual season regulations
+# against its creel program's operating dates -- not something this pipeline
+# can determine on its own.
+#
+# This table does not resolve anything; it identifies WHERE to look: every
+# fishery-year's first and last surveyed month, which is exactly the set of
+# months a truncation would show up in if one exists. `truncation_confirmed`
+# reports whether SEASON_TRUNCATED_MONTHS (pst_p2_block_ratio.R) already has
+# an entry for that row -- FALSE for everything until the regulatory
+# cross-check below is actually done and a row is added there.
+
+creel_season_edges <- effort_long |>
+  filter(tier == "P1", source_id == "creel_pe", !is.na(month)) |>
+  group_by(fishery_name, year) |>
+  summarise(
+    first_month = min(month),
+    last_month  = max(month),
+    n_months_surveyed = n_distinct(month),
+    .groups = "drop"
+  ) |>
+  pivot_longer(cols = c(first_month, last_month),
+              names_to = "edge", values_to = "month") |>
+  distinct(fishery_name, year, n_months_surveyed, edge, month) |>
+  left_join(
+    effort_long |>
+      filter(tier == "P1", source_id == "creel_pe") |>
+      group_by(fishery_name, year, month) |>
+      summarise(prop_strata_estimated = suppressWarnings(
+                  min(prop_strata_estimated, na.rm = TRUE)
+                ), .groups = "drop"),
+    by = c("fishery_name", "year", "month")
+  ) |>
+  mutate(
+    prop_strata_estimated = if_else(is.finite(prop_strata_estimated),
+                                    prop_strata_estimated, NA_real_),
+    truncation_confirmed = purrr::pmap_lgl(
+      list(fishery_name, year, month),
+      function(fn, yr, mo) {
+        nrow(SEASON_TRUNCATED_MONTHS |>
+               filter(fishery_name == fn, year == yr, month == mo)) > 0
+      }
+    )
+  ) |>
+  arrange(fishery_name, year, edge)
+
+write_csv(creel_season_edges, file.path(OUT_DIR, "pst_fw_creel_season_edges.csv"))
+
+n_unconfirmed_edges <- creel_season_edges |>
+  filter(edge == "last_month", !truncation_confirmed) |>
+  nrow()
+if (n_unconfirmed_edges > 0) {
+  log_gap("creel_season_edges", NA, "gap",
+          glue("{n_unconfirmed_edges} fishery-year(s) have a last surveyed ",
+               "month not yet checked against that fishery's actual harvest ",
+               "regulations -- see pst_fw_creel_season_edges.csv. If the ",
+               "creel program stopped before the legal season (and CRC ",
+               "reporting) closed, that month understates real activity and ",
+               "should be added to SEASON_TRUNCATED_MONTHS ",
+               "(pst_p2_block_ratio.R) to exclude it from every creel-trips/",
+               "CRC-harvest ratio -- not just flagged."))
 }
 
 provenance <- effort_long |>

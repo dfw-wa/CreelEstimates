@@ -95,6 +95,57 @@ P2_CONTROL <- list(
 )
 
 
+# --- Manually verified creel-season truncation exclusions ---------------------
+#
+# A month at the edge of a creel program's operating window can be
+# "incomplete" for two entirely different reasons, and only one of them is
+# visible in the data:
+#
+#   (a) Sampling gap within a fully-covered season. Some section x period x
+#       day_type strata that month didn't get an interview-based estimate and
+#       defaulted to zero (see effort_monthly's na.rm = TRUE convention in
+#       multi_fishery_creel_summary.R). Visible as low prop_strata_estimated.
+#       Still a real, if noisy, measurement of that whole month.
+#
+#   (b) The creel program itself stopped running before the legal harvest
+#       period -- and therefore CRC's own reporting window -- closed that
+#       year. This is invisible in prop_strata_estimated: a creel program
+#       that operated flawlessly for the days it ran can show 100% stratum
+#       coverage and still only be measuring PART of the month's true
+#       activity, because harvest continued after the survey packed up.
+#       This can only be resolved by checking the fishery's actual
+#       regulations (season open/close dates) against the creel program's
+#       own operating window -- not derivable from any column in this
+#       pipeline. See the creel_season_edges diagnostic in
+#       pst_fw_angler_trips_assembly.R, which flags EVERY fishery-year's
+#       first/last surveyed month as a candidate needing this check, and
+#       analysis/pst/03_analysis/_22_status_and_gaps.qmd for the open task.
+#
+# This table is the mechanism for (b) once a human has actually done that
+# check: a row here means a specific fishery/year/month combination is
+# CONFIRMED truncated relative to the legal season, so its creel trips/
+# harvest are excluded -- not just flagged -- from every creel-trips/CRC-
+# harvest ratio construction (both build_p2_donors() below and the
+# crc_vs_creel bias comparison in the assembly script). Empty until that
+# verification work is done; adding a row here is the entire mechanism, no
+# other code change is needed to make an exclusion take effect.
+SEASON_TRUNCATED_MONTHS <- tibble::tibble(
+  fishery_name = character(),
+  year         = integer(),
+  month        = integer(),
+  reason       = character()
+)
+
+#' Drop any (fishery_name, year, month) row confirmed in
+#' SEASON_TRUNCATED_MONTHS. A no-op (returns df unchanged) while that table
+#' is empty, so this is safe to call unconditionally everywhere a
+#' creel-trips/CRC-harvest ratio gets built from monthly creel rows.
+exclude_truncated_months <- function(df, control = SEASON_TRUNCATED_MONTHS) {
+  if (nrow(control) == 0) return(df)
+  df |> dplyr::anti_join(control, by = c("fishery_name", "year", "month"))
+}
+
+
 # --- 1. Area-level crosswalk --------------------------------------------------
 #' Expand the pipe-delimited crc_areas column into one row per catch_area_code.
 #' Same expansion the assembly script's `coverage` step performs -- kept as a
@@ -193,12 +244,23 @@ expand_crosswalk_areas <- function(crosswalk) {
 #' does NOT use this restriction - a target area with no survey at all still
 #' gets its full-year CRC harvest expanded; only the ratio's construction
 #' needs the matched months.
+#'
+#' Two distinct data-quality filters apply before p1_rows becomes anything:
+#' exclude_truncated_months() removes fishery/year/months a human has
+#' CONFIRMED the creel program stopped before the legal season did (see that
+#' function's header) -- a no-op today since that table starts empty.
+#' min_prop_strata_estimated below is the OTHER, automatically-detectable
+#' issue: a month that IS within the survey's real operating window but had
+#' some strata default to zero effort. That one is surfaced, not excluded --
+#' it's still a real (if noisy) measurement of the month it covers, unlike a
+#' confirmed truncation.
 build_p2_donors <- function(effort_long, crc_month, xw_area,
                             deliver_blocks, control = P2_CONTROL) {
 
   p1_rows <- effort_long |>
     filter(block %in% deliver_blocks, tier == "P1", !is.na(catch_area_code)) |>
-    mutate(catch_area_code = as.character(catch_area_code))
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    exclude_truncated_months()
 
   creel_area <- p1_rows |>
     group_by(block, catch_area_code, year) |>
@@ -206,8 +268,21 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
       creel_trips   = sum(angler_trips,         na.rm = TRUE),
       creel_harvest = sum(total_salmon_harvest, na.rm = TRUE),
       fisheries     = paste(sort(unique(fishery_name)), collapse = "|"),
+      # Weakest single month/angler-type cell behind this area-year's totals
+      # (NA for non-creel_pe sources, e.g. district_creel -- correctly "not
+      # applicable", not a zero). Low values mean some of what's summed above
+      # defaulted to zero effort rather than a real interview-based estimate
+      # (effort_monthly's na.rm = TRUE convention in
+      # multi_fishery_creel_summary.R), understating creel_trips/creel_harvest
+      # in the same direction the ratio would otherwise be biased.
+      min_prop_strata_estimated = suppressWarnings(
+        min(prop_strata_estimated, na.rm = TRUE)
+      ),
       .groups = "drop"
-    )
+    ) |>
+    mutate(min_prop_strata_estimated = if_else(
+      is.finite(min_prop_strata_estimated), min_prop_strata_estimated, NA_real_
+    ))
 
   crc_matched <- p1_rows |>
     distinct(catch_area_code, year, month) |>
@@ -300,6 +375,14 @@ estimate_block_ratios <- function(donors, control = P2_CONTROL) {
           sd(ratio_crc_denom) / mean(ratio_crc_denom)
         } else NA_real_,
         max_donor_area_harvest = max(crc_harvest, na.rm = TRUE),
+        # Weakest area-year behind this tier's donor pool. NA if every donor
+        # is a non-creel_pe source (not applicable) or if data predates this
+        # column; a low value means this tier's ratio rests at least partly
+        # on a donor area-year with a real stratum-coverage gap, see
+        # build_p2_donors()'s min_prop_strata_estimated for what it measures.
+        min_prop_strata_estimated = suppressWarnings(
+          min(min_prop_strata_estimated, na.rm = TRUE)
+        ),
         .groups = "drop"
       ) |>
       mutate(
@@ -308,7 +391,10 @@ estimate_block_ratios <- function(donors, control = P2_CONTROL) {
                                     donor_trips / donor_creel, NA_real_),
         crc_over_creel    = if_else(donor_creel > 0,
                                     donor_crc / donor_creel, NA_real_),
-        ratio_basis       = basis
+        ratio_basis       = basis,
+        min_prop_strata_estimated = if_else(
+          is.finite(min_prop_strata_estimated), min_prop_strata_estimated, NA_real_
+        )
       )
   }
 

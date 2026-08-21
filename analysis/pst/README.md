@@ -58,7 +58,7 @@ and `lookup_tables/`.
 | Path | Contents |
 |---|---|
 | `01_intro_methods/` | `_`-prefixed Quarto fragments owning the framework: deliverable contract & scope (`_01_scope_and_contract.qmd`), the P1/P2/P3 tier hierarchy and Track A/B split (`_02_framework.qmd`), and the pipeline registry (`_03_pipeline_and_registry.qmd`). Never rendered standalone. |
-| `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. Also holds `patch_crosswalk_areas.R`, a one-shot maintenance script — see below. |
+| `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. |
 | `03_analysis/` | The two assembly scripts (`pst_fw_angler_trips_assembly.R`, `pst_fw_build_jim_workbook.R`), the P2/P3 helpers they source (`pst_p2_block_ratio.R`, `pst_crc_harvest_projection.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
 | `outputs/` | Every CSV/RDS/XLSX written by the pipeline. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
 | `correspondence/` | Point-in-time status write-ups (e.g. `PST_FW_Effort_Status_Brief_2026-08-06.md`) — snapshots for external audiences, not living documentation. |
@@ -79,13 +79,6 @@ script's header for exactly what it does and does not do.
 | 5 | `03_analysis/pst_fw_angler_trips_assembly.R` | no | reads 1–4 plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv`, `input_files/pst/lookup_tables/crc_area_lut.csv`, and (if present) the NEPA workbook under `input_files/pst/external_data/`; sources `pst_p2_block_ratio.R` and `pst_crc_harvest_projection.R`; writes the `pst_fw_*.csv` family, including the diagnostic `pst_fw_nepa_vs_pure_crc_comparison.csv` |
 | 6 | `03_analysis/pst_fw_build_jim_workbook.R` | no | reads step 5's CSVs; writes `PST_FW_Jim_Update.xlsx` |
 | 7 | `quarto render pst_fw_angler_trips.qmd` | no | reads everything above; renders the parent doc |
-
-`02_ingest/patch_crosswalk_areas.R` is **not** part of this run order. It is
-a one-shot, idempotent maintenance script that rewrites
-`input_files/pst/lookup_tables/pst_river_block_crosswalk.csv` in place (fills mid-Columbia
-CRC areas, drops ColumbiaMainstem rows, flags Hanford as
-covered-but-unpartitioned so P2 doesn't double-count it). Run it by hand,
-review the diff, and commit — never from the orchestrator.
 
 ## Parent/child Quarto structure
 

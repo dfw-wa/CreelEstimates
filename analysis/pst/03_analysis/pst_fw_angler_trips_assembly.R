@@ -77,9 +77,8 @@ YEARS_SCOPE <- 2022:2025
 # ColumbiaMainstem (Buoy 10 / LCR / Bonneville-McNary specifically - NOT every
 # mainstem-shaped CRC reach) came to us as ODFW files that Northern Economics
 # itself transmitted - they already have this data, so we do not redeliver it.
-# patch_crosswalk_areas.R removes those rows from the crosswalk entirely; until
-# it has been run they may still be present, so they are filtered here rather
-# than asserted away.
+# The rows stay in the crosswalk permanently, for documentation only, and are
+# filtered here rather than deleted from the source file.
 #
 # ColumbiaTrib split into four region-derived blocks (2026-08-19): the single
 # "ColumbiaTrib" label masked that Hanford Reach and McNary are, by the CRC
@@ -192,7 +191,7 @@ if (!is.null(crosswalk)) {
   if (n_mainstem > 0) {
     log_gap("crosswalk", "ColumbiaMainstem", "note",
             glue("{n_mainstem} ColumbiaMainstem crosswalk row(s) filtered at load. ",
-                 "Run analysis/pst/02_ingest/patch_crosswalk_areas.R to remove them permanently."))
+                 "Kept in the source file for documentation only; see the pipeline registry."))
     crosswalk <- crosswalk |> filter(block != "ColumbiaMainstem")
   }
 

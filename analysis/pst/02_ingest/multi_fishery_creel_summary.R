@@ -1004,6 +1004,20 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
   fail_counts <- effort_index_summ$index_angler_groups |>
     dplyr::filter(angler_final == "fail")
 
+  # Recorded to a file (not just the console) so an unrecognised count_type
+  # survives past the run that produced it. A "fail" here doesn't always clear
+  # the frac_fail > 0.5 skip threshold below -- Drano Lake salmon and steelhead
+  # 2024 slipped through with only 4 affected rows -- and the console warning
+  # alone had already been missed once (recoded silently to "unknown" three
+  # stages downstream, in pst_fw_angler_trips_assembly.R, with no trace of
+  # which count_type actually caused it). This is the trace.
+  fail_counts_diag <- tibble::tibble(
+    fishery_name = character(),
+    study_design = character(),
+    count_type   = character(),
+    n_rows       = integer()
+  )
+
   if (nrow(fail_counts) > 0) {
     bad_types <- sort(unique(fail_counts$count_type))
     frac_fail <- nrow(fail_counts) / nrow(effort_index_summ$index_angler_groups)
@@ -1021,6 +1035,11 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
       "  {nrow(fail_counts)} index count{?s} ({round(100 * frac_fail, 1)}%) map \\
        to 'fail' (count_type{?s} {.val {bad_types}}); their effort is excluded."
     )
+
+    fail_counts_diag <- fail_counts |>
+      dplyr::count(count_type, name = "n_rows") |>
+      dplyr::mutate(fishery_name = fishery_name, study_design = study_design) |>
+      dplyr::relocate(fishery_name, study_design)
   }
 
   dwg_summ <- list(
@@ -1125,13 +1144,27 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
   # no-op for monthly strata. crc_area joins via a section lookup derived from
   # interviews. Section-level breakdowns are not retained.
 
+  # NA-SHADOWING FIX (Lower Chehalis salmon 2023 defect, surfaced downstream in
+  # pst_fw_angler_trips_assembly.R): a section whose interviews carry crc_area
+  # = NA on some rows and a real value on others produced TWO distinct rows
+  # here (section_num, <real>) and (section_num, NA). The left_join below then
+  # fanned every stratum for that section out into a coded copy and an NA
+  # copy with byte-identical total_effort_hrs -- a silent doubling, not a
+  # duplicate-detection false positive. NA is dropped per section whenever a
+  # real crc_area is also present for that section; a section that is ONLY
+  # ever NA (genuinely unmappable) is left as-is and still flows through as a
+  # single NA row. The remaining multi_area check is therefore only tripped by
+  # a section mapping to >1 REAL crc_area, which is a genuine ambiguity.
   section_crc_area <- interview_angler_types |>
-    dplyr::distinct(section_num, crc_area)
+    dplyr::distinct(section_num, crc_area) |>
+    dplyr::group_by(section_num) |>
+    dplyr::filter(!(is.na(crc_area) & any(!is.na(crc_area)))) |>
+    dplyr::ungroup()
 
   multi_area <- section_crc_area |> dplyr::count(section_num) |> dplyr::filter(n > 1)
   if (nrow(multi_area) > 0) {
     cli::cli_alert_warning(
-      "  Section{?s} {.val {multi_area$section_num}} map to >1 crc_area; \\
+      "  Section{?s} {.val {multi_area$section_num}} map to >1 real crc_area; \\
        estimates will be duplicated across areas. Review."
     )
   }
@@ -1199,36 +1232,169 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     prep_trip_length_interviews(interview_angler_types, fishery_name)
   })
 
-  mean_trip_length_monthly <- trip_int$interviews |>
+  # TRIP-LENGTH DONOR HIERARCHY. Restored from
+  # analysis/archive/multi_fishery_trip_summary_superseded_20260817.R, which
+  # this merge had dropped -- silently reverting to "no trip length -> row
+  # dropped" for any month x area x angler-type cell with real estimated
+  # effort but no completed interview that month (Yakima 2023-2025 was the
+  # visible case: 13,455 effort-hrs with no total_trips_est). Downstream,
+  # pst_fw_angler_trips_assembly.R also assumes every trips row carries a
+  # trip_length_source label -- its absence here was a hard error, not just an
+  # undercount.
+  #
+  # Effort is estimated for every open stratum, but interviews only happen on
+  # sampled days, so a month-level trip length can be NA even though the
+  # stratum has real effort. Rather than drop that effort, trip length falls
+  # back to progressively coarser SEASON-LONG estimates from the SAME
+  # fishery:
+  #
+  #   1  month        year x month x crc_area x angler_final   (primary)
+  #   2  area_season  crc_area x angler_final, season-long
+  #   3  type_season  angler_final, season-long (pools areas)
+  #   4  fishery_season  season-long, all interviews (pools angler types)
+  #   -  none         no completed interviews at all -> stays NA
+  #
+  # Each tier pools the underlying interviews directly rather than averaging
+  # monthly means, so a month with three interviews isn't weighted the same as
+  # one with three hundred. The assumption -- that mean trip length is roughly
+  # stable across months within a fishery-season -- is weaker than assuming
+  # rates travel between rivers or blocks (which the project has established
+  # they do not), so every row records which tier produced its trip length
+  # (trip_length_source) and monthly stability is measured separately (below)
+  # so the assumption can be checked rather than asserted. Tier 4 pools bank
+  # and boat anglers, whose trip lengths commonly differ; rows resting on it
+  # are the weakest in the hierarchy.
+
+  tl_base <- trip_int$interviews |>
     dplyr::mutate(
       year  = as.integer(format(event_date, "%Y")),
       month = as.integer(format(event_date, "%m"))
-    ) |>
-    dplyr::group_by(year, month, crc_area, angler_final) |>
+    )
+
+  # Shared summary so every tier is computed identically.
+  # person_count_final, NOT total_group_count: prep_dwg_interview_fishing_time()
+  # sets person_count_final = total_group_count under "Standard" and
+  # angler_count under "Drano", and it is the count every downstream effort
+  # calculation uses. Reading total_group_count directly would report a group
+  # size inconsistent with the effort math for Drano and return NA wherever
+  # that column is unpopulated. No-op for Standard.
+  #
+  # na.rm on fishing_time: a single NA otherwise makes the whole cell NA, which
+  # reads downstream as "no interviews" and is indistinguishable from a real
+  # gap. n_trip_length_obs records how many times actually backed the mean.
+  summarise_tl <- function(df, ...) {
+    df |>
+      dplyr::group_by(...) |>
+      dplyr::summarize(
+        n_completed_angler_trips = dplyr::n(),
+        mean_trip_length         = mean(fishing_time, na.rm = TRUE),
+        n_trip_length_obs        = sum(!is.na(fishing_time)),
+        mean_group_size          = mean(person_count_final, na.rm = TRUE),
+        sd                       = sd(fishing_time, na.rm = TRUE),
+        .groups                  = "drop"
+      ) |>
+      # A cell where every fishing_time was NA yields NaN, which is not NA and
+      # would be treated as a usable donor. Normalise before it propagates.
+      dplyr::mutate(
+        mean_trip_length = dplyr::if_else(is.finite(mean_trip_length),
+                                          mean_trip_length, NA_real_)
+      ) |>
+      dplyr::filter(!is.na(mean_trip_length), mean_trip_length > 0)
+  }
+
+  tl_month <- summarise_tl(tl_base, year, month, crc_area, angler_final)
+  tl_area  <- summarise_tl(tl_base, crc_area, angler_final)
+  tl_type  <- summarise_tl(tl_base, angler_final)
+
+  # Tier 4 is a single season-long value. Built as an explicit one-row tibble
+  # so that a fishery with no usable interviews at all still yields NA columns
+  # to coalesce against, rather than a zero-row table that would silently wipe
+  # every effort row out of the output on the join.
+  tl_fish_raw <- summarise_tl(tl_base)
+  tl_fish <- if (nrow(tl_fish_raw) == 1) {
+    tl_fish_raw |> dplyr::rename_with(~ paste0(.x, ".f"))
+  } else {
+    tibble::tibble(
+      n_completed_angler_trips.f = NA_integer_,
+      mean_trip_length.f         = NA_real_,
+      n_trip_length_obs.f        = NA_integer_,
+      mean_group_size.f          = NA_real_,
+      sd.f                       = NA_real_
+    )
+  }
+
+  # --- Stability diagnostic -------------------------------------------------
+  # How much does monthly trip length actually vary within an area x type,
+  # where months DO have data? This is the empirical support (or not) for
+  # tiers 2-4. A high CV means the donor is a poor stand-in for the missing
+  # months and the affected rows should be treated with caution.
+  trip_length_stability <- tl_month |>
+    dplyr::group_by(crc_area, angler_final) |>
     dplyr::summarize(
-      n_completed_angler_trips = dplyr::n(),
-      # na.rm on fishing_time: a single NA otherwise makes the whole cell NA,
-      # which reads downstream as "no interviews" and is indistinguishable from
-      # a real gap. n_trip_length_obs shows how many times actually backed it.
-      mean_trip_length  = mean(fishing_time, na.rm = TRUE),
-      n_trip_length_obs = sum(!is.na(fishing_time)),
-      # person_count_final, NOT total_group_count. prep_dwg_interview_fishing_time()
-      # sets person_count_final = total_group_count under "Standard" and
-      # angler_count under "Drano", and it is the count every downstream effort
-      # calculation uses. Reading total_group_count directly would report a
-      # group size inconsistent with the effort math for Drano fisheries and
-      # return NA wherever that column is unpopulated. No-op for Standard.
-      mean_group_size   = mean(person_count_final, na.rm = TRUE),
-      sd                = sd(fishing_time, na.rm = TRUE),
-      .groups           = "drop"
+      n_months        = dplyr::n(),
+      mean_of_months  = mean(mean_trip_length),
+      sd_of_months    = sd(mean_trip_length),
+      min_month       = min(mean_trip_length),
+      max_month       = max(mean_trip_length),
+      .groups         = "drop"
     ) |>
-    dplyr::rename(angler_type = angler_final)
+    dplyr::mutate(
+      cv_across_months = dplyr::if_else(n_months > 1 & mean_of_months > 0,
+                                        sd_of_months / mean_of_months, NA_real_),
+      fishery_name     = .env$fishery_name
+    ) |>
+    dplyr::relocate(fishery_name)
+
+  worst_cv <- suppressWarnings(max(trip_length_stability$cv_across_months, na.rm = TRUE))
+  if (is.finite(worst_cv) && worst_cv > 0.30) {
+    cli::cli_alert_warning(
+      "  Monthly trip length varies by CV up to {round(worst_cv, 2)} within an \\
+       area/type. Season-long donors are correspondingly weak here."
+    )
+  }
+
+  # --- Apply the hierarchy --------------------------------------------------
+  # Joined widest-to-narrowest with distinct suffixes, then coalesced in tier
+  # order. Every tier's columns are carried so the chosen one can be labelled.
 
   trips_monthly <- effort_monthly |>
-    dplyr::left_join(
-      mean_trip_length_monthly,
-      by = c("year", "month", "crc_area", "angler_final" = "angler_type")
+    dplyr::left_join(tl_month, by = c("year", "month", "crc_area", "angler_final"),
+                     suffix = c("", ".m")) |>
+    dplyr::left_join(tl_area,  by = c("crc_area", "angler_final"),
+                     suffix = c("", ".a")) |>
+    dplyr::left_join(tl_type,  by = "angler_final",
+                     suffix = c("", ".t")) |>
+    # tl_fish is guaranteed exactly one row (see above), so cross_join simply
+    # broadcasts the season-long value onto every row.
+    dplyr::cross_join(tl_fish) |>
+    dplyr::mutate(
+      trip_length_source = dplyr::case_when(
+        !is.na(mean_trip_length)    ~ "month",
+        !is.na(mean_trip_length.a)  ~ "area_season",
+        !is.na(mean_trip_length.t)  ~ "type_season",
+        !is.na(mean_trip_length.f)  ~ "fishery_season",
+        TRUE                        ~ "none"
+      ),
+      mean_trip_length = dplyr::coalesce(mean_trip_length, mean_trip_length.a,
+                                         mean_trip_length.t, mean_trip_length.f),
+      mean_group_size  = dplyr::coalesce(mean_group_size, mean_group_size.a,
+                                         mean_group_size.t, mean_group_size.f),
+      sd               = dplyr::coalesce(sd, sd.a, sd.t, sd.f),
+      # n_completed_angler_trips stays the MONTH-LEVEL count and is left NA on
+      # donor rows. It documents the interview support for THIS cell; filling
+      # it with the donor's pooled n would imply interviews that were never
+      # collected in that month. The donor's own support is reported
+      # separately as n_donor_obs.
+      n_donor_obs = dplyr::case_when(
+        trip_length_source == "month"          ~ n_trip_length_obs,
+        trip_length_source == "area_season"    ~ n_trip_length_obs.a,
+        trip_length_source == "type_season"    ~ n_trip_length_obs.t,
+        trip_length_source == "fishery_season" ~ n_trip_length_obs.f,
+        TRUE                                   ~ NA_integer_
+      )
     ) |>
+    dplyr::select(-dplyr::ends_with(".a"), -dplyr::ends_with(".t"),
+                  -dplyr::ends_with(".f")) |>
     dplyr::mutate(
       # An estimated zero effort implies zero trips regardless of trip length,
       # so 0 / NA must not stay NA -- that reads as "unknown" when it is known
@@ -1241,24 +1407,41 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
       trip_expansion = dplyr::case_when(
         is.na(angler_final)                              ~ "no_effort_estimate",
         !is.na(total_effort_hrs) & total_effort_hrs == 0 ~ "zero_effort",
-        !is.na(total_trips_est)                          ~ "estimated",
+        trip_length_source == "month"                    ~ "estimated",
+        trip_length_source != "none"                     ~ "estimated_donor",
         TRUE                                             ~ "no_trip_length"
       ),
+      # Rows with no effort estimate at all have nothing to expand; a donor
+      # trip length there would manufacture trips from an absent stratum.
+      trip_length_source = dplyr::if_else(is.na(angler_final), "none",
+                                          trip_length_source),
       # .env$ pin: without it dplyr resolves against the data mask first and
       # would silently pick up a same-named column if one is added upstream.
       study_design    = .env$study_design,
       prev_int_status = trip_int$qa$prev_int_status
     ) |>
     dplyr::rename(catch_area_code = crc_area) |>
-    dplyr::relocate(study_design, .after = fishery_name)
+    dplyr::relocate(study_design, .after = fishery_name) |>
+    dplyr::relocate(trip_length_source, n_donor_obs, .after = mean_trip_length)
 
   n_gap <- sum(trips_monthly$trip_expansion == "no_trip_length")
   if (n_gap > 0) {
     hrs_gap <- sum(trips_monthly$total_effort_hrs[
       trips_monthly$trip_expansion == "no_trip_length"], na.rm = TRUE)
     cli::cli_alert_warning(
-      "  {n_gap} row{?s} with effort but no trip length \\
-       ({round(hrs_gap)} angler-hr{?s} unexpanded)."
+      "  {n_gap} row{?s} with effort but no trip length at ANY donor tier \\
+       ({round(hrs_gap)} angler-hr{?s} unexpanded) -- no completed interviews \\
+       anywhere in the season."
+    )
+  }
+
+  n_donor <- sum(trips_monthly$trip_expansion == "estimated_donor")
+  if (n_donor > 0) {
+    hrs_donor <- sum(trips_monthly$total_effort_hrs[
+      trips_monthly$trip_expansion == "estimated_donor"], na.rm = TRUE)
+    cli::cli_alert_info(
+      "  {n_donor} row{?s} expanded with a season-long donor trip length \\
+       ({round(hrs_donor)} angler-hr{?s}) -- would previously have dropped out."
     )
   }
 
@@ -1361,7 +1544,9 @@ process_fishery <- function(fishery_name, period_pe = PERIOD_PE) {
     "Done: {.val {fishery_name}} ({nrow(cg$est_catch_groups) - 1} species + total)"
   )
 
-  list(trips = trips_monthly, harvest = harvest_monthly, qa = qa)
+  list(trips = trips_monthly, harvest = harvest_monthly, qa = qa,
+       effort_index_fail_counts = fail_counts_diag,
+       trip_length_stability    = trip_length_stability)
 }
 
 
@@ -1491,6 +1676,20 @@ qa_combined <- dplyr::bind_rows(
   collect_batch(results_month, "month", "qa")
 )
 
+# Effort-index "fail" diagnostic (see EFFORT-SIDE DESIGN PREFLIGHT above).
+# Computed before period_pe branches, so it is identical between the week and
+# month runs for a given fishery -- collected from results_week only rather
+# than duplicated via both batches and a meaningless pe_period tag.
+effort_index_fail_counts <- collect_batch(results_week, "week", "effort_index_fail_counts") |>
+  dplyr::select(-pe_period)
+
+# Trip-length donor-hierarchy stability diagnostic (see [S4] in 5b above).
+# Derived from trip_int$interviews, which does not vary with period_pe, so
+# collected from results_week only for the same reason as the fail-count
+# diagnostic above.
+stability_combined <- collect_batch(results_week, "week", "trip_length_stability") |>
+  dplyr::select(-pe_period)
+
 # Filter out gamefish-primary fisheries from final output
 gamefish_filter <- stringr::regex("(winter|summer) gamefish", ignore_case = TRUE)
 
@@ -1501,6 +1700,12 @@ harvest_combined <- harvest_combined |>
   dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
 
 qa_combined <- qa_combined |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
+
+effort_index_fail_counts <- effort_index_fail_counts |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
+
+stability_combined <- stability_combined |>
   dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
 
 run_ledger <- run_ledger |>
@@ -1542,13 +1747,73 @@ unexpanded <- trips_combined |>
 
 if (nrow(unexpanded) > 0) {
   cli::cli_alert_warning(
-    "{nrow(unexpanded)} fishery/fisheries still have effort with no trip \\
-     length. Candidates for a donor trip length -- decide deliberately, do \\
-     not impute silently:"
+    "{nrow(unexpanded)} fishery/fisheries have effort with no trip length at \\
+     ANY donor tier -- no completed interviews anywhere in the season:"
   )
   print(unexpanded, n = 40)
 } else {
   cli::cli_alert_success("Every row with effort has a trip length.")
+}
+
+
+# --- Donor trip lengths -------------------------------------------------------
+# Effort expanded with a season-long donor rather than its own month's
+# interviews. This effort would previously have dropped out of the deliverable
+# entirely, so the donor is an improvement -- but it carries the assumption
+# that trip length is stable across months within the fishery, and the
+# consultant should be able to see which rows depend on it.
+
+cli::cli_h3("Trip length provenance")
+trips_combined |>
+  dplyr::group_by(trip_length_source) |>
+  dplyr::summarize(n_rows = dplyr::n(),
+                   angler_hrs = round(sum(total_effort_hrs, na.rm = TRUE)),
+                   trips = round(sum(total_trips_est, na.rm = TRUE)),
+                   .groups = "drop") |>
+  dplyr::mutate(pct_hrs = round(100 * angler_hrs / sum(angler_hrs), 2)) |>
+  print()
+
+donor_by_fishery <- trips_combined |>
+  dplyr::filter(trip_length_source %in% c("area_season", "type_season",
+                                          "fishery_season")) |>
+  dplyr::group_by(fishery_name, trip_length_source) |>
+  dplyr::summarize(n_rows = dplyr::n(),
+                   angler_hrs = round(sum(total_effort_hrs, na.rm = TRUE)),
+                   .groups = "drop") |>
+  dplyr::arrange(dplyr::desc(angler_hrs))
+
+if (nrow(donor_by_fishery) > 0) {
+  cli::cli_alert_info(
+    "{nrow(donor_by_fishery)} fishery/tier combination{?s} rely on a donor \\
+     trip length:"
+  )
+  print(donor_by_fishery, n = 40)
+
+  weak <- donor_by_fishery |> dplyr::filter(trip_length_source == "fishery_season")
+  if (nrow(weak) > 0) {
+    cli::cli_alert_warning(
+      "{nrow(weak)} of those fall back to the fishery-wide mean, which pools \\
+       bank and boat anglers. Treat those rows as weak."
+    )
+  }
+}
+
+# Empirical support for the donors: how stable is monthly trip length where
+# months DO have interviews? A high CV means the season-long donor is a poor
+# stand-in for the months that lack data.
+unstable <- stability_combined |>
+  dplyr::filter(!is.na(cv_across_months), cv_across_months > 0.30) |>
+  dplyr::arrange(dplyr::desc(cv_across_months)) |>
+  dplyr::distinct(fishery_name, catch_area_code = crc_area, angler_final,
+                  n_months, cv_across_months, min_month, max_month)
+
+if (nrow(unstable) > 0) {
+  cli::cli_alert_warning(
+    "{nrow(unstable)} fishery/area/type combination{?s} show monthly trip \\
+     length varying at CV > 0.30. Donor-expanded rows in these are the least \\
+     defensible in the deliverable:"
+  )
+  print(utils::head(unstable, 20))
 }
 
 assumed <- qa_combined |>
@@ -1748,11 +2013,19 @@ saveRDS(harvest_combined,  file.path(out_dir, "multi_fishery_creel_harvest.rds")
 saveRDS(qa_combined,       file.path(out_dir, "multi_fishery_creel_qa.rds"))
 saveRDS(run_ledger,        file.path(out_dir, "multi_fishery_creel_run_ledger.rds"))
 saveRDS(period_comparison, file.path(out_dir, "multi_fishery_creel_week_vs_month.rds"))
+saveRDS(effort_index_fail_counts,
+        file.path(out_dir, "multi_fishery_creel_effort_index_fail_counts.rds"))
+saveRDS(stability_combined,
+        file.path(out_dir, "multi_fishery_creel_trip_length_stability.rds"))
 
 readr::write_csv(trips_combined,    file.path(out_dir, "multi_fishery_creel_trips.csv"))
 readr::write_csv(harvest_combined,  file.path(out_dir, "multi_fishery_creel_harvest.csv"))
 readr::write_csv(qa_combined,       file.path(out_dir, "multi_fishery_creel_qa.csv"))
 readr::write_csv(run_ledger,        file.path(out_dir, "multi_fishery_creel_run_ledger.csv"))
+readr::write_csv(effort_index_fail_counts,
+                 file.path(out_dir, "multi_fishery_creel_effort_index_fail_counts.csv"))
+readr::write_csv(stability_combined,
+                 file.path(out_dir, "multi_fishery_creel_trip_length_stability.csv"))
 readr::write_csv(period_comparison, file.path(out_dir, "multi_fishery_creel_week_vs_month.csv"))
 
 cli::cli_alert_info(
@@ -1768,3 +2041,14 @@ cli::cli_alert_success(
    {dplyr::n_distinct(harvest_combined$catch_group)} catch groups to \\
    {.path {out_dir}}"
 )
+
+if (nrow(effort_index_fail_counts) > 0) {
+  cli::cli_h3("Unrecognised count_type values (angler_final = 'fail')")
+  cli::cli_alert_warning(
+    "{nrow(effort_index_fail_counts)} fishery/count_type combination{?s} had \\
+     index counts that no branch of prep_dwg_effort_index() recognised -- \\
+     see {.path multi_fishery_creel_effort_index_fail_counts.csv} for the \\
+     exact count_type values to patch upstream."
+  )
+  print(effort_index_fail_counts, n = 30)
+}

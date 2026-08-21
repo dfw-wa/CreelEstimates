@@ -93,12 +93,15 @@
 #                          raw pre-expansion. See TODO flag in ingest_yakima().
 #
 #   Yakima (2023–2025):  "20YY  Yakima River Fall Salmon Sport Fishery Harvest vers 2.xlsx"
-#     Sheet used:  "Summary" — weekly combined totals, sampled data only.
-#     NOTE: These files do NOT contain an expanded total angler trips column
-#     equivalent to the 2022 "Sheet1" (see Open Question 4). total_trips_est is
-#     set to NA and flagged. Do not silently treat sampled_anglers as total trips.
+#     Sheets used: "Prosser" and "Horn Rapids" — per-site weekly "Combined"
+#     tables, each with its own expanded Angler Trips / Effort Pole Hrs
+#     columns (see Open Question 4, RESOLVED 2026-08-21). Summed per week
+#     across both sites, then prorated to months.
 #     Sheets ignored:
-#       "Prosser"/"Horn Rapids" — section-level raw daily data; see TODO flag.
+#       "Summary"     — weekly combined totals, but SAMPLED data only; no
+#                        expansion. Kept as a cross-check candidate, not used
+#                        as the source (this is what the superseded parser
+#                        read, which is why OQ4 concluded no expansion existed).
 #       "Sheet1"      — year-over-year season summary table, not weekly input.
 #       "Other"/"Schedule"/"Flow"/"Flow2"/"Check"/"AFC" — model inputs/metadata.
 #
@@ -131,16 +134,26 @@
 #
 #   OQ3 Yakima boat component: Is the Yakima fishery bank-only by regulation
 #       or access? The 2022 Sheet1 has no boat column, and the 2023+ "Boat
-#       Summary" weekly totals are all zero. Confirm whether to label as
-#       angler_final = "bank" (done here) or whether a rare boat component
-#       should be captured separately.
+#       Summary" weekly totals are all zero -- at Horn Rapids because zero
+#       boats/anglers are ever sampled there (2023-2025, all weeks), at
+#       Prosser because its own Boat Summary Angler Trips formula is broken
+#       (workbook's own "No Boats=FIX FORMULA" note) even in the one week
+#       with boats actually sampled. Still open: confirm with Todd whether
+#       this reflects a real bank-only fishery/regulation or an undercounted
+#       boat mode; angler_final = "bank" is used here either way since the
+#       boat contribution is negligible in the data as recorded.
 #
-#   OQ4 Yakima 2023+ expansion: The 2023+ workbooks restructured around section-
-#       level (Prosser/Horn Rapids) sampled data and dropped the single "Total
-#       Angler Trips" column present in the 2022 Sheet1. Confirm the intended
-#       expansion method (same sampled% ratio as 2022, or different?), or provide
-#       the expanded season-level trips visible in Sheet1's historical table so
-#       that weekly proration is possible.
+#   OQ4 Yakima 2023+ expansion — RESOLVED 2026-08-21 (Evan, by direct
+#       inspection of the workbooks, not correspondence). The expansion was
+#       never dropped -- it was never read from the right sheet. The
+#       "Summary" sheet this parser used to read really is sampled-only, but
+#       the per-site "Prosser" and "Horn Rapids" tabs (previously ignored
+#       entirely) each carry a "Combined" table with the same expanded
+#       Angler Trips / Effort Pole Hrs columns 2022's Sheet1 has, verified
+#       present and identically laid out in the 2023, 2024, and 2025
+#       workbooks. ingest_yakima_site_combined() now reads both site tabs,
+#       sums them per week, and prorates to months exactly as the 2022
+#       parser does.
 #
 #   OQ5 McNary mode split: The "Print" sheet reports bank-and-boat combined
 #       ("Estimated Anglers" includes both modes). Confirm whether a mode-split
@@ -213,6 +226,22 @@ parse_week_label <- function(label, year) {
   label <- gsub("\\bSept\\b", "Sep", label, ignore.case = FALSE)  # Sept → Sep
   label <- gsub("\u2013|\u2014", "-", label)   # en/em dash → hyphen
   label <- gsub("\\s*-\\s*", " - ", label)      # pad hyphens consistently
+
+  # A single-date label with no range (e.g. "Sept 15", seen in the Yakima
+  # Prosser/Horn Rapids tabs as a partial first week when the season opens
+  # mid-month) has no " - " to split on. Treated as a one-day week rather
+  # than failing to parse -- the alternative is silently dropping that
+  # week's real effort/trips via the caller's is.na(week_start) filter,
+  # which is a worse failure than a one-day week.
+  if (!grepl(" - ", label, fixed = TRUE)) {
+    single_date <- tryCatch(as.Date(paste(label, year), format = "%b %d %Y"),
+                            error = function(e) NA_Date_)
+    if (is.na(single_date)) {
+      cli::cli_warn("Cannot parse week label: {.val {label}}")
+      return(NULL)
+    }
+    return(list(start = single_date, end = single_date))
+  }
 
   # Split on the central " - "
   parts <- strsplit(label, " - ", fixed = TRUE)[[1]]
@@ -468,8 +497,7 @@ ingest_hanford_bank <- function(path, year) {
 #'
 #' @param path   Full path to the xlsx file.
 #' @param year   Integer calendar year.
-#' @return A data frame in the target schema, or NULL if no expansion is
-#'   available (2023+ format with sampled data only).
+#' @return A data frame in the target schema.
 ingest_yakima <- function(path, year) {
 
   fishery_label <- sprintf("Yakima fall salmon %d", year)
@@ -481,14 +509,14 @@ ingest_yakima <- function(path, year) {
     # ── 2022 format: Sheet1 has a weekly table with expanded total trips ──────
     ingest_yakima_2022(path, year, fishery_label)
   } else {
-    # ── 2023+ format: Summary sheet has weekly sampled data only ─────────────
-    # total_trips_est is not available; flag and return sampled-only output.
-    # RESOLVE Open Question 4 before using this output in any analysis.
-    cli::cli_alert_warning(
-      "Yakima {year}: no expanded total trips column found (2023+ workbook \\
-       format). total_trips_est set to NA. Resolve Open Question 4."
-    )
-    ingest_yakima_sampled_only(path, year, fishery_label)
+    # ── 2023+ format: OQ4 RESOLVED 2026-08-21. The "Summary" sheet this
+    # branch used to read really does carry sampled-only totals -- but the
+    # workbook was never restructured to drop the expansion, as OQ4 assumed.
+    # The per-site "Prosser" and "Horn Rapids" tabs (ignored entirely by the
+    # old code) each carry their own Combined table with the SAME expanded
+    # Angler Trips / Effort Pole Hrs columns the 2022 Sheet1 has, just at
+    # different column positions. See ingest_yakima_site_combined().
+    ingest_yakima_site_combined(path, year, fishery_label)
   }
 }
 
@@ -607,66 +635,137 @@ ingest_yakima_2022 <- function(path, year, fishery_label) {
 }
 
 
-# 2023+ Yakima: "Summary" sheet has sampled counts only.
-# Column layout as read by readxl (1-indexed):
-#   col 1:  Week label (e.g. "Sept 1-3") — data rows, and "Combined"/
-#           "Bank Summary"/"Boat Summary" are section headers to skip
-#   col 3:  Sampled Boats
-#   col 4:  Sampled Anglers   → n_completed_angler_trips (sampled only)
-#   col 5:  Sampled Hours     → total_effort_hrs (sampled; NOT expanded)
-# total_trips_est = NA — expansion not available (OQ4).
-ingest_yakima_sampled_only <- function(path, year, fishery_label) {
+# 2023+ Yakima: per-site Combined tables carry the real expansion (OQ4 RESOLVED
+# 2026-08-21).
+#
+# The "Summary" sheet the old parser read genuinely has sampled-only totals --
+# that observation in the superseded version of this function was correct.
+# What was wrong was concluding from it that the 2023+ workbooks dropped the
+# expansion entirely. They didn't: two other sheets, "Prosser" and "Horn
+# Rapids" (one per physical creel site), were never read by this parser and
+# each carries its own "Combined" weekly table with the SAME expanded Angler
+# Trips / Effort Pole Hrs columns the 2022 Sheet1 has -- just at different
+# column positions, and split per-site rather than pooled. Verified present,
+# non-error, and identically laid out across the 2023, 2024, and 2025
+# workbooks by direct inspection (openpyxl) before writing this parser.
+#
+# "Combined" column layout (1-indexed, verified 2023-2025):
+#   col 3:  Week label
+#   col 6:  Sampled Anglers        → n_completed_angler_trips (informational)
+#   col 8-9, 10-11:  Chinook kept  Adults NM/AD, Jacks NM/AD
+#   col 14-15, 16-17: Coho kept    Adults NM/AD, Jacks NM/AD
+#   (cols 12-13, 18-27 are Released/Steelhead/incidental catch -- excluded
+#   per PST scope [S1]/[S2])
+#   col 29: Angler Trips    (expanded) → total_trips_est
+#   col 30: Effort Pole Hrs (expanded) → total_effort_hrs
+#
+# Horn Rapids reports zero sampled anglers/boats in EVERY week of all three
+# years -- no creel coverage at that site in this data. Summing it with
+# Prosser is a no-op today but keeps the code correct if that changes.
+#
+# Prosser's own "Boat Summary" sub-table is broken: the workbook itself flags
+# this with a "No Boats=FIX FORMULA" note (row 2), and its Angler Trips column
+# reads 0 even in the one week with boats actually sampled. "Combined" already
+# includes that (effectively zero) boat contribution, so reading it under
+# angler_final = "bank" is consistent with the existing OQ3 framing (Yakima
+# treated as bank-only), not a new assumption layered on top.
+ingest_yakima_site_combined <- function(path, year, fishery_label) {
 
-  raw <- suppressMessages(readxl::read_excel(
-    path,
-    sheet     = "Summary",
-    col_names = FALSE,
-    .name_repair = "unique"
-  ))
+  SITE_SHEETS  <- c("Prosser", "Horn Rapids")
+  COL_LABEL    <- 3L
+  COL_SMP_ANG  <- 6L
+  COL_TRIPS    <- 29L
+  COL_POLE_HRS <- 30L
+  HARVEST_COLS_KEPT <- c(8L, 9L, 10L, 11L, 14L, 15L, 16L, 17L)
 
-  COL_LABEL   <- 1L
-  COL_SMP_ANG <- 4L
-  COL_SMP_HRS <- 5L
-  # Sampled kept harvest (not expanded). Column layout confirmed from 2023 workbook:
-  #   R6-R9   = Chinook Adults NM/AD + Jacks NM/AD (Kept)
-  #   R12-R15 = Coho Adults NM/AD + Jacks NM/AD (Kept)
-  #   R10-R11 = Chinook C&R (excluded); R16-R17 = Coho C&R (excluded)
-  #   R18-R20 = Steelhead + incidental (excluded per PST scope)
-  HARVEST_COLS_KEPT <- c(6L, 7L, 8L, 9L, 12L, 13L, 14L, 15L)
-
-  # Data rows: col 1 is a string matching a month name (week label pattern).
-  # Skip header rows ("Combined", "Bank Summary", "Boat Summary", title).
   MONTH_RE <- "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Sep|Oct|Nov|Dec)"
-  lbl_col  <- as.character(unlist(raw[[COL_LABEL]]))
-  is_data_row <- grepl(MONTH_RE, trimws(lbl_col), ignore.case = TRUE)
 
-  if (!any(is_data_row)) {
+  site_weekly <- purrr::map_dfr(SITE_SHEETS, function(sheet_name) {
+    raw <- suppressMessages(readxl::read_excel(
+      path, sheet = sheet_name, col_names = FALSE, .name_repair = "unique"
+    ))
+
+    lbl_col <- as.character(unlist(raw[[COL_LABEL]]))
+
+    # RESTRICT TO THE "Combined" BLOCK. Each sheet stacks three tables in this
+    # same column -- Combined, Bank Summary, Boat Summary -- reusing the exact
+    # same week-label text for all three ("Sept 1-3" appears once per block).
+    # A plain regex match on the label column across the whole sheet would
+    # therefore match rows from all three blocks and TRIPLE-COUNT every week
+    # (caught by cross-checking a prototype against the sheet's own season-
+    # total row before trusting this parser -- the season total came out at
+    # roughly 2x the true "Combined" total). Only rows strictly between the
+    # "Combined" and "Bank Summary" section labels are read.
+    combined_row <- which(tolower(trimws(lbl_col)) == "combined")[1]
+    bank_row     <- which(tolower(trimws(lbl_col)) == "bank summary")[1]
+
+    if (is.na(combined_row) || is.na(bank_row) || bank_row <= combined_row) {
+      cli::cli_alert_warning(
+        "Could not locate the Combined/Bank Summary block boundary in \\
+         {.val {sheet_name}} of {.path {basename(path)}} — skipping this \\
+         sheet."
+      )
+      return(tibble::tibble())
+    }
+
+    in_combined_block <- seq_along(lbl_col) > combined_row &
+      seq_along(lbl_col) < bank_row
+    is_data_row <- in_combined_block &
+      grepl(MONTH_RE, trimws(lbl_col), ignore.case = TRUE)
+
+    if (!any(is_data_row)) {
+      cli::cli_alert_warning(
+        "No weekly data rows found in the Combined block of {.val {sheet_name}} \\
+         of {.path {basename(path)}}."
+      )
+      return(tibble::tibble())
+    }
+
+    safe_num <- function(col_idx) {
+      suppressWarnings(as.numeric(unlist(raw[[col_idx]])[is_data_row]))
+    }
+
+    tibble::tibble(
+      week_label     = trimws(lbl_col[is_data_row]),
+      sampled_ang    = safe_num(COL_SMP_ANG),
+      total_trips    = safe_num(COL_TRIPS),
+      effort_hrs     = safe_num(COL_POLE_HRS),
+      salmon_harvest = purrr::pmap_dbl(
+        purrr::map(HARVEST_COLS_KEPT, safe_num) |>
+          purrr::set_names(paste0("h", HARVEST_COLS_KEPT)),
+        ~ sum(c(...), na.rm = TRUE)
+      )
+    )
+  })
+
+  if (nrow(site_weekly) == 0) {
     cli::cli_alert_warning(
-      "No weekly data rows detected in Summary of {.path {basename(path)}} \\
-       — skipping Yakima {year}."
+      "No usable weekly data in Prosser/Horn Rapids for {fishery_label} \\
+       — skipping."
     )
     return(NULL)
   }
 
-  safe_num <- function(col_idx) {
-    suppressWarnings(as.numeric(unlist(raw[[col_idx]])[is_data_row]))
-  }
-
-  weekly <- tibble::tibble(
-    week_label        = lbl_col[is_data_row],
-    sampled_ang       = safe_num(COL_SMP_ANG),
-    sampled_hrs       = safe_num(COL_SMP_HRS),
-    salmon_harvest_smp = purrr::pmap_dbl(
-      purrr::map(HARVEST_COLS_KEPT, safe_num) |>
-        purrr::set_names(paste0("h", HARVEST_COLS_KEPT)),
-      ~ sum(c(...), na.rm = TRUE)
+  # Weeks with nothing sampled read back as NA (Excel #DIV/0! or a blank cell
+  # on the Trips/Pole Hrs formulas), not 0 -- coalesce so an unsampled
+  # site-week contributes zero to the cross-site sum below instead of
+  # propagating NA through it.
+  site_weekly <- site_weekly |>
+    dplyr::mutate(
+      sampled_ang    = dplyr::coalesce(sampled_ang, 0),
+      total_trips    = dplyr::coalesce(total_trips, 0),
+      effort_hrs     = dplyr::coalesce(effort_hrs, 0),
+      salmon_harvest = dplyr::coalesce(salmon_harvest, 0)
     )
-  ) |>
-    dplyr::filter(!is.na(sampled_hrs))
 
-  parsed_dates <- purrr::map(weekly$week_label, parse_week_label, year = year)
+  # Parse dates PER SITE ROW before combining: week-label text is not
+  # guaranteed byte-identical between the Prosser and Horn Rapids tabs, but
+  # the calendar week is. Grouping on parsed dates rather than the raw label
+  # string avoids silently splitting one week into two groups over a
+  # formatting difference between sheets.
+  parsed_dates <- purrr::map(site_weekly$week_label, parse_week_label, year = year)
 
-  weekly <- weekly |>
+  site_weekly <- site_weekly |>
     dplyr::mutate(
       week_start = purrr::map_vec(parsed_dates,
                                   ~ if (is.null(.x)) NA_Date_ else .x$start,
@@ -674,9 +773,20 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
       week_end   = purrr::map_vec(parsed_dates,
                                   ~ if (is.null(.x)) NA_Date_ else .x$end,
                                   .ptype = as.Date(NA))
+    ) |>
+    dplyr::filter(!is.na(week_start))
+
+  weekly <- site_weekly |>
+    dplyr::group_by(week_start, week_end) |>
+    dplyr::summarize(
+      sampled_ang    = sum(sampled_ang,    na.rm = TRUE),
+      total_trips    = sum(total_trips,    na.rm = TRUE),
+      effort_hrs     = sum(effort_hrs,     na.rm = TRUE),
+      salmon_harvest = sum(salmon_harvest, na.rm = TRUE),
+      .groups = "drop"
     )
 
-  effort_cols <- c("sampled_hrs", "sampled_ang", "salmon_harvest_smp")
+  effort_cols <- c("effort_hrs", "total_trips", "sampled_ang", "salmon_harvest")
 
   monthly <- purrr::pmap_dfr(weekly, function(...) {
     row <- list(...)
@@ -684,23 +794,26 @@ ingest_yakima_sampled_only <- function(path, year, fishery_label) {
   }) |>
     dplyr::group_by(year, month) |>
     dplyr::summarize(
-      total_effort_hrs         = sum(sampled_hrs,        na.rm = TRUE),
-      n_completed_angler_trips = sum(sampled_ang,        na.rm = TRUE),
-      total_salmon_harvest     = sum(salmon_harvest_smp, na.rm = TRUE),
+      total_effort_hrs         = sum(effort_hrs,     na.rm = TRUE),
+      total_trips_est          = sum(total_trips,    na.rm = TRUE),
+      n_completed_angler_trips = sum(sampled_ang,    na.rm = TRUE),
+      total_salmon_harvest     = sum(salmon_harvest, na.rm = TRUE),
+      mean_trip_length         = dplyr::if_else(
+        sum(total_trips, na.rm = TRUE) > 0,
+        sum(effort_hrs,  na.rm = TRUE) / sum(total_trips, na.rm = TRUE),
+        NA_real_
+      ),
       .groups = "drop"
     ) |>
     dplyr::mutate(
       fishery_name      = fishery_label,
       crc_area          = CRC_AREA_LUT[["yakima"]],
       angler_final      = "bank",
-      total_trips_est   = NA_real_,   # expansion not available — see OQ4
-      mean_trip_length  = NA_real_,
       mean_group_size   = NA_real_,
       sd                = NA_real_,
       pe_period         = "week",
-      # Harvest is sampled (not expanded) — same limitation as trips for 2023+.
-      harvest_expansion = "sampled",
-      data_provider     = "Todd Miller / R-district weekly summary",
+      harvest_expansion = "expanded",
+      data_provider     = "Todd Miller / R-district weekly summary (Prosser + Horn Rapids Combined tabs)",
       district          = "R3"
     )
 

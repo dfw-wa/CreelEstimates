@@ -215,7 +215,8 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 
 | Gap | Owner | Status |
 |---|---|---|
-| Yakima & McNary workbooks, 2023–2025 | Todd Miller (R3) | Received commitment 2026-08-12; not yet ingested |
+| Yakima workbooks, 2023–2025 | Todd Miller (R3) | **Resolved 2026-08-21.** Files received; now ingested via `ingest_yakima_site_combined()` (see Known defects/Open gaps entry below) |
+| McNary workbooks, 2023–2025 | Todd Miller (R3) | This row appears stale as of 2026-08-21: `ingest_mcnary()` already exists, is wired into `ingest_r3_mid_columbia()`, and all three files (2023-2025) are already present in `input_files/pst/R3_creel/`. Not verified this session (out of scope of the Yakima fix) — confirm output is actually landing in `district_creel_summary.csv` before treating this as still open |
 | Upper Columbia | Chad Jackson (R2) | Outreach 2026-08-11; pending |
 | Lake Wenatchee (CRC area 670) | Chad Jackson (R2), part of the Upper Columbia request above | Outreach 2026-08-11; pending. Currently excluded from P2 entirely — its CRC harvest is >25x the largest donor area's, past `max_target_harvest_multiple` (`pst_p2_block_ratio.R`), so no ratio is extrapolated onto it. Real P1 data from Chad would replace the need for a ratio at all |
 | Snake River | Jeremy Trump / Mike Gembala | Resolved 2026-08-20 — crosswalk added 2026-08-19; zone-coverage question (does creel cover all open water so a Snake-internal trips/CRC ratio would be clean?) answered 2026-08-20: yes, clean, see the Known defects entry above. Data refresh 2026-08-20 also filled in the previously-blank Fall CH 2025 row (5023 boat / 87 shore); added the matching crosswalk row the same day. A real Snake-calibrated donor pair (season-specific area harvest vs. Jeremy's trips) is now feasible but not yet built |
@@ -226,7 +227,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | 2025 CRC harvest | Heidi / Harvest Data Team | Publishes October — binding constraint on 2025 |
 | NEPA odd/even ratio misapplication | Christina Iverson | Call pending; affects 2022/2024 columns |
 | Lower Cowlitz | — | Genuine data gap, not a bug; `KNOWN_FAILED` |
-| Yakima 2023–2025 trip expansion | Evan / Todd | **Blocker.** 4,393 / 5,529 / 3,533 effort-hrs present, `total_trips_est` NA for every row (OQ4 — 2023+ workbooks dropped the expanded trips column). ColumbiaUpper totals are undercounts until resolved |
+| Yakima 2023–2025 trip expansion | Evan | **Resolved 2026-08-21.** OQ4's premise was wrong — the expansion was never dropped from the 2023+ workbooks, it was never read from the right sheet. The `Summary` sheet this parser used to read really is sampled-only, but the per-site `Prosser`/`Horn Rapids` tabs (previously ignored) each carry a `Combined` weekly table with the same expanded Angler Trips / Effort Pole Hrs columns 2022's `Sheet1` has. `ingest_yakima_site_combined()` now reads both site tabs (`Horn Rapids` is all-zero in every week of all three years — no coverage at that site in this data), sums per week, and prorates to months. Expanded totals: 3,854 / 3,634 / 3,675 trips and 7,781 / 8,609 / 6,428 effort-hrs for 2023/2024/2025 respectively, verified against each sheet's own season-total row before trusting the parser. Caught and fixed a real bug along the way: the `Combined`, `Bank Summary`, and `Boat Summary` blocks in each sheet reuse identical week-label text, so an unscoped label match would have summed all three blocks together (triple-counting); the parser now bounds rows strictly between the `Combined` and `Bank Summary` section labels |
 | Lower Chehalis 2023 NA-area shadow rows | Evan | **Resolved 2026-08-21.** `section_crc_area` in `multi_fishery_creel_summary.R` now drops the NA variant for a section whenever a real `crc_area` is also present for that section, instead of only warning about the resulting fan-out |
 | Drano `angler_final = "fail"` | Evan | **Follow-up task.** Failed bank/boat classification recoded `"unknown"` downstream; root cause is an unrecognised `count_type` value in `prep_dwg_effort_index()`'s Drano branch (4 rows, Drano Lake salmon and steelhead 2024, 1,745 effort-hrs). `multi_fishery_creel_summary.R` now writes `multi_fishery_creel_effort_index_fail_counts.csv`/`.rds`, recording every unrecognised `count_type` by fishery — next DB-connected run of the pipeline will surface the exact value(s) so the Drano branch's `case_when()` can be patched precisely instead of guessed at |
 | Additivity check, 122 strata | Evan | Relative differences ~1e-4 — floating-point, not a missing species. Consider raising the tolerance so the check stops crying wolf |
@@ -252,14 +253,14 @@ not design-based.
 | Step | Owner | Blocking |
 |---|---|---|
 | 1. Land manual runs (Puyallup/Carbon, Nisqually, Drano) | Evan | No |
-| 2. Ingest Todd's 2023–2025 workbooks | Evan | Todd |
+| 2. Ingest Todd's 2023–2025 workbooks | Evan | Yakima done 2026-08-21 (see step 9); McNary status unverified this session |
 | 3. Resolve odd/even ratio with Christina | Evan | Christina call |
 | 4. Confirm D5 (upriver spring Chinook) | Jim | Jim |
 | 5. Replace FEIS rates with CRD empirical where available | Evan | Mark / CRD |
 | 6. Freeze 2022–2024; flag 2025 as provisional | Evan | CRC October |
 | 7. ~~Reconcile A1–A4 wording between this doc and `PST_ANALYSIS.md`~~ — done 2026-08-17; `PST_ANALYSIS.md` folded into the intro/methods children and retired | — | — |
 | 8. Wire the coverage map | Evan | Spatial layer |
-| 9. Recover Yakima 2023–2025 trip expansion | Evan | Todd (OQ4) |
+| 9. ~~Recover Yakima 2023–2025 trip expansion~~ — done 2026-08-21; `ingest_yakima_site_combined()` reads the Prosser/Horn Rapids Combined tables directly, no correspondence with Todd needed (OQ4 resolved) | Evan | — |
 | 10. Decide `PE_PERIOD` (week vs. month) on the record | Jim | No |
 
 ::: {.callout-warning}

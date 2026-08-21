@@ -10,8 +10,10 @@
 # outstanding before anything goes to Northern Economics:
 #   - Fisheries currently DROPPED for failed trip expansion (see the blocker
 #     entries in pst_fw_gap_register.csv) have to be recovered - right now
-#     their effort is simply missing from block totals. Yakima 2023-2025 is
-#     the live case: 13,455 effort-hrs with no total_trips_est (OQ4).
+#     their effort is simply missing from block totals. Yakima 2023-2025 was
+#     the live case (13,455 effort-hrs with no total_trips_est) - RESOLVED
+#     2026-08-21 in district_creel_ingestion.R's ingest_yakima_site_combined()
+#     (OQ4); re-run that ingestion and this pipeline to pick up the fix.
 #   - mode = "unknown" rows are unresolved, not a finished answer. Note that
 #     P2 and district_creel rows can NEVER be resolved by Track B - neither
 #     source collects the field - so this figure will not reach zero.

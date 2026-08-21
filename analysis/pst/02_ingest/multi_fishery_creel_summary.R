@@ -244,6 +244,32 @@ cli::cli_alert_info(
 )
 
 
+# 1c. Exclude gamefish-primary fisheries ----------------------------------------
+#
+# Winter gamefish and summer gamefish fisheries are out of scope for the PST
+# economic valuation, which focuses on PST salmon species only. Exclude
+# fisheries with these names entirely.
+
+gamefish_primary <- stringr::str_detect(
+  candidate_fisheries,
+  stringr::regex("(winter|summer) gamefish", ignore_case = TRUE)
+)
+
+if (any(gamefish_primary)) {
+  cli::cli_alert_warning(
+    "{sum(gamefish_primary)} gamefish-primary fishery/fisheries excluded \\
+     (name contains \"winter gamefish\" or \"summer gamefish\"):"
+  )
+  purrr::walk(candidate_fisheries[gamefish_primary], ~ cli::cli_bullets(c("!" = .x)))
+}
+
+candidate_fisheries <- candidate_fisheries[!gamefish_primary]
+cli::cli_alert_info(
+  "After excluding gamefish-primary fisheries: {length(candidate_fisheries)} \\
+   candidate fisheries remain for the salmon-harvest pre-check."
+)
+
+
 # 2. Harvest pre-check: keep only fisheries with real salmon harvest ---------
 #
 # A lightweight catch-only fetch_data() pull per candidate (mirroring the
@@ -1464,6 +1490,21 @@ qa_combined <- dplyr::bind_rows(
   collect_batch(results_week,  "week",  "qa"),
   collect_batch(results_month, "month", "qa")
 )
+
+# Filter out gamefish-primary fisheries from final output
+gamefish_filter <- stringr::regex("(winter|summer) gamefish", ignore_case = TRUE)
+
+trips_combined <- trips_combined |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
+
+harvest_combined <- harvest_combined |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
+
+qa_combined <- qa_combined |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
+
+run_ledger <- run_ledger |>
+  dplyr::filter(!stringr::str_detect(fishery_name, gamefish_filter))
 
 # Fail loudly rather than writing an empty deliverable. An all-zero run almost
 # always means a connectivity or credentials problem, and an empty CSV is far

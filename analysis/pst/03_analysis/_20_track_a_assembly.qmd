@@ -124,14 +124,41 @@ if (is.null(p2_loo)) {
 }
 ```
 
+::: {.callout-note}
+**The ratio's own construction is already season-matched.** An earlier version
+of this document warned that the numerator (creel trips for a surveyed
+season) and denominator (CRC harvest for the calendar year) didn't line up,
+biasing the ratio low. That's no longer how the donor side works:
+`build_p2_donors()` restricts CRC harvest to the SAME calendar months the
+creel survey actually covered, per donor area-year — the same construction
+now used for the CRC-vs-creel bias comparison above. Both sides of the ratio
+are measured over the same window.
+:::
+
 ::: {.callout-warning}
-**Two biases to keep visible.** The numerator is creel trips for a *surveyed
-season*; the denominator is CRC harvest for the *calendar year*. Where the
-creel season is materially shorter than the CRC window, the ratio is biased
-low and P2 understates trips. Separately, a block ratio built on
-coho-dominated donors and applied to a Chinook-dominated river transports the
-wrong catch rate — holding species mix roughly constant is much of what the
-block definition is doing, and why R4 forbids crossing them.
+**What's still imperfect, and deliberately so: applying that ratio to a
+target's full-year CRC harvest.** The ratio is calibrated on the donor's own
+season; the target (by definition, uncovered by any creel program) gets that
+ratio applied against its ENTIRE calendar year of CRC harvest, not just the
+donor's matched months. Restricting the target side to the donor's months
+was considered and rejected: CRC harvest can only occur when a river's
+fishery is actually open, so a target's "full-year" total is already
+concentrated in whatever months that river's own season runs — which we have
+no independent way to know matches the donor's timing. Discarding target
+harvest outside the donor's window wouldn't correct for a timing mismatch,
+it would just arbitrarily drop real harvest the ratio was never given a
+chance to explain, making the estimate more incomplete without making it
+more accurate. The risk that remains is narrower and unavoidable: the
+donor-calibrated trips-per-fish RATE may not transfer perfectly to however
+the target's own season is timed, regulated, or fished — the same kind of
+risk as the species-mix caveat below, not a fixable bookkeeping error.
+LOO (below) cannot catch this either way, since every donor shares whatever
+timing they have in common.
+
+Separately: a block ratio built on coho-dominated donors and applied to a
+Chinook-dominated river transports the wrong catch rate — holding species
+mix roughly constant is much of what the block definition is doing, and why
+R4 forbids crossing them.
 
 P2 produces a **total only**. Mode and location are `"unknown"` until Track B
 supplies a block-level conditional proportion; where none exists they stay
@@ -152,11 +179,22 @@ shape, area grain for this comparison. Their ratio is the empirical handle on
 reporting bias, and it is computable only because `catch_area_code` survives to
 the end of the pipeline instead of being collapsed to river early.
 
-Current run: **median CRC/creel = 0.77 across 62 comparable area-years**, IQR
-0.52–1.93. CRC reports less harvest than the design-based estimate at the
-median, but the spread is wide enough that the direction is not stable per
-area — another instance of R4: the bias doesn't travel between systems any
-better than the ratios do.
+**Season-matched as of 2026-08-21.** CRC harvest in this comparison is now
+restricted to the same calendar months the creel survey actually covered for
+that area-year — the identical construction `build_p2_donors()` uses for the
+P2 ratio's own denominator (see the P2 section above). Previously this
+compared creel harvest for a surveyed season against CRC's FULL calendar
+year for the same area-year, which conflated two different things: genuine
+CRC-vs-creel reporting bias, and the mechanical fact that CRC counts months
+nobody was creeling at all. The full-year CRC total is retained in the
+output as `crc_harvest_full_year` so the size of that season-coverage gap
+stays visible, but it is no longer part of the ratio itself.
+
+The **0.77 across 62 comparable area-years** figure quoted in earlier
+versions of this document was computed under the old, full-year methodology
+and is stale — it will change once the pipeline is re-run under the fix
+above, and the new number is not yet in hand. Until a fresh run produces it,
+treat any specific CRC/creel ratio figure in this document as provisional.
 
 This is what forces the P2 estimator to be **CRC-denominated**. A ratio built as
 creel-trips / creel-harvest and then applied to CRC harvest would inherit that
@@ -165,27 +203,27 @@ puts the bias inside the ratio, where it cancels against the CRC numerator it
 is applied to.
 
 ::: {.callout-note}
-Basis differs — CRC is license-year (Apr 1 – Mar 31), creel is calendar-month.
-The comparison is indicative at annual grain and is not a month-for-month
-reconciliation. 2025 pairs return zero CRC harvest because CRC publishes
-through license year 2024 only; those rows join but are flagged
-`comparable = FALSE` and excluded from the median, so a coverage artifact
-isn't misread as a reporting collapse.
+License-year vs. calendar-year is NOT a live concern here — resolved already,
+and at the finest possible grain: `parse_crc_freshwater_harvest.R` converts
+every monthly cell from the raw license-year layout (Apr–Dec of
+`license_year`, Jan–Mar of `license_year + 1`) to a genuine `calendar_year`
+and `calendar_month`, so both sides of this comparison already share real
+calendar time. 2025 pairs return zero matched-month CRC harvest because CRC
+publishes through license year 2024 only (calendar 2025 has just Jan–Mar
+coverage); those rows join but are flagged `comparable = FALSE` and excluded
+from the median, so a coverage artifact isn't misread as a reporting
+collapse.
 :::
 
 ::: {.callout-warning}
-**Figure discrepancy, not yet reconciled.** An earlier documentation layer
-(`PST_ANALYSIS.md` §8.6, being retired into this document) reported **median
-CRC/creel ≈ 0.60 across 74 paired area-years**, and illustrated the
-non-uniformity with two examples: area 618 (Drano) running *above* 1.0 in
-2023–2024 while area 358 (Humptulips) sat near 0.35. The figure carried
-forward above — **0.77 across 62 comparable area-years** — comes from the
-current parent document and from `pst_p2_block_ratio.R`, and is treated here
-as the newer of the two, but the two runs disagree on both the ratio (0.60 vs
-0.77) and the pair count (74 vs 62). That gap is large enough to matter for
-anyone using this number to correct P2, and it has not been reconciled. Do
-not treat either figure as settled until it is checked against a fresh
-assembly run.
+**Figure discrepancy, superseded by the methodology change above, not yet
+re-measured.** An earlier documentation layer (`PST_ANALYSIS.md` §8.6, being
+retired into this document) reported median CRC/creel ≈ 0.60 across 74
+paired area-years; a later run of the full-year methodology reported 0.77
+across 62. Neither figure used the season-matched construction now in code,
+so reconciling the two against each other is moot — both need to be
+superseded by a fresh run under the current methodology, not compared to one
+another.
 :::
 
 This matters for P2 directly: if CRC is the harvest denominator for
@@ -201,13 +239,19 @@ if (!is.null(crc_bias)) {
   crc_bias |>
     filter(comparable) |>
     summarise(
-      n_area_years = n(),
-      median_ratio = median(crc_over_creel, na.rm = TRUE),
-      q25          = quantile(crc_over_creel, 0.25, na.rm = TRUE),
-      q75          = quantile(crc_over_creel, 0.75, na.rm = TRUE)
+      n_area_years         = n(),
+      avg_pct_year_covered = mean(pct_year_covered_by_creel, na.rm = TRUE),
+      median_ratio         = median(crc_over_creel, na.rm = TRUE),
+      q25                  = quantile(crc_over_creel, 0.25, na.rm = TRUE),
+      q75                  = quantile(crc_over_creel, 0.75, na.rm = TRUE)
     ) |>
     gt() |>
     fmt_number(columns = c(median_ratio, q25, q75), decimals = 2) |>
-    tab_header(title = "CRC harvest / creel harvest, same area-year")
+    fmt_number(columns = avg_pct_year_covered, decimals = 1) |>
+    cols_label(avg_pct_year_covered = "Avg % of year covered by creel") |>
+    tab_header(
+      title = "CRC harvest / creel harvest, same area-year AND same matched creel months",
+      subtitle = "crc_harvest_full_year (in the CSV) carries the unrestricted total for comparison, not used in the ratio"
+    )
 }
 ```

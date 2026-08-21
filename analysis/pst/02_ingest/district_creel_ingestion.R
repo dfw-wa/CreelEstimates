@@ -26,13 +26,35 @@
 # assumption held when this file was Todd-Miller-only; it stopped holding the
 # moment a second district's data landed in the same output.
 #
-# R1 — Snake River (Jeremy Trump), added 2026-08-18:
+# R1 — Snake River (Jeremy Trump / Mike Gembala), added 2026-08-18, data
+# refreshed 2026-08-20:
 #   Source file:  input_files/pst/R1_creel/Salmon Angler Days 2022-2025.xlsx
 #   One small annual summary, not a weekly model — see ingest_snake_river()
 #   for the full parsing notes, including the "Angler Days" label issue
-#   (Jeremy confirms these are trips, not days — see the LABEL NOTE there)
-#   and the crosswalk gap (Snake River has no pst_river_block_crosswalk.csv
-#   rows yet, so these rows currently resolve block = "unknown" downstream).
+#   (Jeremy confirms these are trips, not days — see the LABEL NOTE there).
+#   The crosswalk gap noted here originally is RESOLVED (2026-08-19) — see the
+#   CROSSWALK GAP note in ingest_snake_river()'s docstring.
+#
+# R4 — Green/Duwamish (Nathanael Overman), added 2026-08-21:
+#   Source files:
+#     input_files/pst/R4_creel/GreenDuwamish Creel Survey Raw Interviews .xlsx
+#     input_files/pst/R4_creel/GreenDuwamish Creel Survey Estimated Anglers .xlsx
+#   Unlike R1/R3, R4 does NOT supply a finished trip total. The "Estimated
+#   Anglers" workbook gives only ANGLER HOURS (total effort, boat/shore, by
+#   year) that we trust as-is, plus an ANGLERS block that looks like it could
+#   be a trip count but is NOT used as one here — see ingest_green_duwamish()
+#   for why it's kept strictly as a cross-check. We derive total_trips_est
+#   ourselves: mean angler-hours-per-angler-trip is computed from the paired
+#   Raw Interviews workbook (completed trips only), then
+#   total_trips_est = total_effort_hrs / mean_trip_length. Trip length is
+#   pooled across the full year (not by sub-period) per Evan's call
+#   2026-08-21. See ingest_green_duwamish_interviews() for the five
+#   different raw-interview column layouts (one per sheet/year) and a real
+#   data-quality find in the 2023 sheet: its "Duration (hrs)" column is
+#   already angler-hours (verified against Start/End timestamps: Duration ==
+#   (End-Start) x #Angler for every row), not per-trip length as the header
+#   implies — treating it as per-trip length would double-multiply by
+#   #Angler and inflate 2023 boat trip length ~2.7x.
 #
 # R2 — anticipated, not yet received:
 #   No workbook has arrived from R2 as of this writing. R2_DIR is declared
@@ -148,8 +170,9 @@ library(here)
 
 # Input directories, one per contributing district.
 R3_DIR <- here("input_files", "pst", "R3_creel")   # Todd Miller: mid-Columbia/Yakima
-R1_DIR <- here("input_files", "pst", "R1_creel")    # Jeremy Trump: Snake River
+R1_DIR <- here("input_files", "pst", "R1_creel")    # Jeremy Trump / Mike Gembala: Snake River
 R2_DIR <- here("input_files", "pst", "R2_creel")    # anticipated, not yet received
+R4_DIR <- here("input_files", "pst", "R4_creel")    # Nathanael Overman: Green/Duwamish
 
 # Target years — mirrors the 2022–2025 window in multi_fishery_trip_summary.R
 TARGET_YEARS <- 2022L:2025L
@@ -917,7 +940,9 @@ SNAKE_CRC_AREAS <- c(640L, 642L, 644L, 646L, 648L, 650L)  # not used as crc_area
 #' @return A data frame in the target schema — one row per species x year x
 #'   angler_final (boat/bank) with a usable value. Rows where the source is
 #'   blank or "N/A" are dropped, not coded as zero (Fall CH 2022 is all
-#'   "N/A"; Fall CH 2025 is a fully blank row as of this writing).
+#'   "N/A"). Fall CH 2025 was a blank row as of 2026-08-18 but is now
+#'   populated in the 2026-08-20 refresh from Jeremy Trump / Mike Gembala —
+#'   see the matching new crosswalk row added the same day.
 ingest_snake_river <- function(path) {
 
   cli::cli_alert_info("Ingesting Snake River (R1): {.path {basename(path)}}")
@@ -1014,8 +1039,277 @@ ingest_snake_river <- function(path) {
       pe_period         = "year",
       total_salmon_harvest = NA_real_,   # source has no harvest column
       harvest_expansion = NA_character_, # not applicable — trips only
-      data_provider     = "Jeremy Trump / R1 annual angler-trip summary",
+      data_provider     = "Jeremy Trump / Mike Gembala / R1 annual angler-trip summary",
       district          = "R1"
+    ) |>
+    build_target_schema()
+}
+
+
+# 6b. Green/Duwamish (R4) interview + effort parser ---------------------------
+
+# Unlike R1/R3, R4 does not hand us a finished trip total. We derive
+# total_trips_est ourselves from two paired workbooks:
+#   - Raw Interviews: individual creel interviews, one sheet per year (two
+#     for 2025, split Aug-Oct / Nov-Dec) — used ONLY to compute mean
+#     angler-hours per angler-trip ("mean_trip_length") from COMPLETED
+#     trips.
+#   - Estimated Anglers ("Creel Survey" sheet): boat/shore ANGLER HOURS
+#     totals by year, already expanded by R4 — trusted as total_effort_hrs.
+#     Also carries an ANGLERS block that looks like it could be a trip
+#     count; it is deliberately NOT used as one — see
+#     ingest_green_duwamish()'s docstring for why — only as a cross-check
+#     against what we derive.
+#
+#     total_trips_est = total_effort_hrs / mean_trip_length
+#
+# Green/Duwamish is CRC area 746, a single non-composite area (unlike
+# Hanford or Snake River) per crc_area_lut.csv ("Green/Duwamish River
+# (King Co.)"). No per-section split is applied even though the raw
+# interviews carry Location/MA codes — the whole survey area (mouth to
+# Hwy 18, expanded to Flaming Geyser SP in 2025) sits inside CRC 746.
+
+GREEN_DUWAMISH_CRC_AREA <- 746L
+
+# Each Raw Interviews sheet has its own column layout AND, in one case, a
+# misleadingly-named column. The one invariant across all five sheets:
+# there IS a column that is already angler-hours (a per-interview total
+# already multiplied by #Angler), just under a different name/position
+# each time. No sheet needs an angler-hours DERIVATION — 2022's "Total
+# Time Fished" and 2024/2025's "Angler Hours" are self-explanatory, but
+# 2023's "Duration (hrs)" is ALSO already angler-hours despite the header
+# implying per-trip length: verified against Start/End timestamps
+# (Duration (hrs) == (End-Start span) x #Angler for every one of 754
+# checked rows, 2026-08-21). Treating it as per-trip length and dividing
+# by #Angler again would double-count group size and inflate 2023 boat
+# trip length ~2.7x — caught by the cross-check against the workbook's own
+# ANGLERS block before this was fixed.
+#
+# Columns given as 1-indexed positions (sheet read with col_names = FALSE,
+# matching the R3 parsers above) rather than names, because 2022 and 2023
+# each carry trailing junk/summary rows below the real data (43 rows in
+# 2022, 1 in 2023) that would otherwise contaminate readxl's per-column
+# type guessing under col_names = TRUE.
+GD_SHEET_MAP <- list(
+  list(sheet = "2022", year = 2022L,
+       col_date = 1L, col_mode = 6L, col_n = 7L, col_ah = 12L, col_ct = 13L),
+  list(sheet = "2023", year = 2023L,
+       col_date = 2L, col_mode = 7L, col_n = 8L, col_ah = 11L, col_ct = 12L),
+  list(sheet = "2024", year = 2024L,
+       col_date = 1L, col_mode = 8L, col_n = 9L, col_ah = 14L, col_ct = 15L),
+  list(sheet = "2025 (Aug-Oct)", year = 2025L,
+       col_date = 1L, col_mode = 8L, col_n = 9L, col_ah = 14L, col_ct = 15L),
+  list(sheet = "2025 (Nov-Dec)", year = 2025L,
+       col_date = 1L, col_mode = 8L, col_n = 9L, col_ah = 14L, col_ct = 15L)
+)
+
+#' Read and filter one Raw Interviews sheet to completed-trip angler-hours.
+#'
+#' Filters to rows with a real date (Excel serial > 40000, same threshold
+#' used by ingest_hanford_boat() — this is what drops the trailing
+#' summary/junk blocks) and to completed trips only (CT / Completed Trip ==
+#' "y", case-insensitive; an interview taken mid-trip is not a valid
+#' trip-length sample). Also drops rows with negative angler-hours (one bad
+#' Start/End entry found in 2023), logging how many were dropped.
+gd_read_interview_sheet <- function(path, spec) {
+  raw <- suppressMessages(readxl::read_excel(
+    path, sheet = spec$sheet, col_names = FALSE, .name_repair = "unique"
+  ))
+
+  date_serial   <- suppressWarnings(as.numeric(unlist(raw[[spec$col_date]])))
+  is_valid_date <- !is.na(date_serial) & date_serial > 40000
+
+  mode_raw <- tolower(trimws(as.character(unlist(raw[[spec$col_mode]]))))
+  mode <- dplyr::case_when(
+    mode_raw == "b" ~ "boat",
+    mode_raw == "s" ~ "bank",
+    TRUE ~ NA_character_
+  )
+  ct <- tolower(trimws(as.character(unlist(raw[[spec$col_ct]])))) == "y"
+
+  n_anglers    <- suppressWarnings(as.numeric(unlist(raw[[spec$col_n]])))
+  angler_hours <- suppressWarnings(as.numeric(unlist(raw[[spec$col_ah]])))
+
+  base_keep <- is_valid_date & !is.na(ct) & ct & !is.na(mode) &
+    !is.na(n_anglers) & !is.na(angler_hours)
+
+  n_dropped_negative <- sum(base_keep & angler_hours < 0)
+  if (n_dropped_negative > 0) {
+    cli::cli_alert_warning(
+      "Green-Duwamish {spec$sheet}: {n_dropped_negative} completed-trip \\
+       row(s) with negative angler-hours (bad Start/End entry) dropped."
+    )
+  }
+
+  keep <- base_keep & angler_hours >= 0
+
+  tibble::tibble(
+    year         = spec$year,
+    mode         = mode[keep],
+    n_anglers    = n_anglers[keep],
+    angler_hours = angler_hours[keep]
+  )
+}
+
+#' Ingest all five Raw Interviews sheets and compute annual mean trip length
+#' per mode (boat/bank), pooled across sub-periods within a year — both 2025
+#' sheets (Aug-Oct, Nov-Dec) combine into one 2025 estimate per Evan's call
+#' 2026-08-21, rather than being kept as separate period-level estimates.
+#'
+#' @param path  Full path to the Raw Interviews workbook.
+#' @return A tibble: year, mode, n_completed_angler_trips, mean_trip_length.
+ingest_green_duwamish_interviews <- function(path) {
+
+  cli::cli_alert_info("Ingesting Green-Duwamish interviews: {.path {basename(path)}}")
+
+  purrr::map_dfr(GD_SHEET_MAP, ~ gd_read_interview_sheet(path, .x)) |>
+    dplyr::group_by(year, mode) |>
+    dplyr::summarize(
+      n_completed_angler_trips = sum(n_anglers),
+      sample_angler_hours      = sum(angler_hours),
+      mean_trip_length         = sample_angler_hours / n_completed_angler_trips,
+      .groups = "drop"
+    )
+}
+
+#' Ingest the Estimated Anglers ("Creel Survey") workbook: the ANGLER HOURS
+#' block (trusted as total_effort_hrs) and the ANGLERS block (cross-check
+#' only — see ingest_green_duwamish()'s docstring).
+#'
+#' Sheet layout (1-indexed, col_names = FALSE): col 1 is a row label (block
+#' header text, or a year for data rows); cols 2-3 are Boat/Shore for the
+#' Aug20-Oct31 period; cols 6-7 are Boat/Shore for the Nov1-Dec31 period
+#' (the cell reads "Not surveyed" for years without a second period —
+#' coerced to NA, not 0, so it doesn't zero out the sum); cols 10-11 are a
+#' Boat/Shore "Total" column that the workbook only actually populates for
+#' 2025 (blank formulas for 2022-2024). total_effort_hrs is therefore
+#' always computed here as period1 + period2 ourselves, never read from
+#' that Total column; where it IS populated (2025) it's used only as an
+#' internal cross-check, logged if it disagrees.
+#'
+#' @param path  Full path to the Estimated Anglers workbook.
+#' @return A tibble: year, mode, total_effort_hrs, angler_est (cross-check).
+ingest_green_duwamish_effort <- function(path) {
+
+  cli::cli_alert_info("Ingesting Green-Duwamish effort estimates: {.path {basename(path)}}")
+
+  raw  <- suppressMessages(readxl::read_excel(
+    path, sheet = "Creel Survey", col_names = FALSE, .name_repair = "unique"
+  ))
+  col1 <- as.character(unlist(raw[[1]]))
+
+  parse_block <- function(label) {
+    start_row <- which(col1 == label)
+    if (length(start_row) == 0) {
+      cli::cli_abort("No '{label}' block found in Creel Survey sheet.")
+    }
+    start_row <- start_row[1]
+    safe_num  <- function(x) suppressWarnings(as.numeric(x))
+
+    rows <- list()
+    r <- start_row + 1L
+    while (r <= nrow(raw) && !is.na(suppressWarnings(as.integer(col1[r])))) {
+      rows[[length(rows) + 1L]] <- tibble::tibble(
+        year      = as.integer(col1[r]),
+        p1_boat   = safe_num(raw[[2]][r]),  p1_shore  = safe_num(raw[[3]][r]),
+        p2_boat   = safe_num(raw[[6]][r]),  p2_shore  = safe_num(raw[[7]][r]),
+        tot_boat  = safe_num(raw[[10]][r]), tot_shore = safe_num(raw[[11]][r])
+      )
+      r <- r + 1L
+    }
+    dplyr::bind_rows(rows) |>
+      dplyr::mutate(
+        boat  = dplyr::coalesce(p1_boat, 0)  + dplyr::coalesce(p2_boat, 0),
+        shore = dplyr::coalesce(p1_shore, 0) + dplyr::coalesce(p2_shore, 0)
+      )
+  }
+
+  angler_hours <- parse_block("ANGLER HOURS")
+  anglers      <- parse_block("ANGLERS")
+
+  mismatch <- angler_hours |>
+    dplyr::filter(!is.na(tot_boat),
+                  abs(boat - tot_boat) > 0.5 | abs(shore - tot_shore) > 0.5)
+  if (nrow(mismatch) > 0) {
+    cli::cli_alert_warning(
+      "Green-Duwamish ANGLER HOURS: {nrow(mismatch)} year(s) where the \\
+       workbook's own Total column disagrees with period1+period2. Using \\
+       the computed sum; Total column ignored."
+    )
+  }
+
+  dplyr::bind_rows(
+    angler_hours |> dplyr::transmute(year, mode = "boat", total_effort_hrs = boat),
+    angler_hours |> dplyr::transmute(year, mode = "bank", total_effort_hrs = shore),
+    anglers      |> dplyr::transmute(year, mode = "boat", angler_est = boat),
+    anglers      |> dplyr::transmute(year, mode = "bank", angler_est = shore)
+  ) |>
+    dplyr::group_by(year, mode) |>
+    dplyr::summarize(
+      total_effort_hrs = sum(total_effort_hrs, na.rm = TRUE),
+      angler_est        = sum(angler_est, na.rm = TRUE),
+      .groups = "drop"
+    )
+}
+
+#' Combine Green-Duwamish interview-derived trip length with R4's own
+#' effort-hours estimate to derive total_trips_est.
+#'
+#' total_trips_est = total_effort_hrs / mean_trip_length. The workbook's own
+#' ANGLERS block (angler_est) is deliberately NOT used as total_trips_est —
+#' Evan's call 2026-08-21 was to derive trips from effort divided by
+#' interview-based trip length rather than trust a source-provided count of
+#' uncertain accounting basis, unlike R1/R3 where the district hands us a
+#' finished trip total directly (see MD1 vs. the R4-specific deviation note
+#' in _22_status_and_gaps.qmd). angler_est is carried through only as a
+#' cross-check, printed below: derived trips landed within ~2-9% of
+#' angler_est across all 8 year x mode combinations in the 2026-08-21 run,
+#' boat consistently a little low — reasonable agreement for two
+#' independently-derived quantities, not proof they should match exactly.
+#'
+#' @param interviews_path  Full path to the Raw Interviews workbook.
+#' @param effort_path      Full path to the Estimated Anglers workbook.
+#' @return A data frame in the target schema.
+ingest_green_duwamish <- function(interviews_path, effort_path) {
+
+  trip_length <- ingest_green_duwamish_interviews(interviews_path)
+  effort      <- ingest_green_duwamish_effort(effort_path)
+
+  combined <- effort |>
+    dplyr::left_join(trip_length, by = c("year", "mode"))
+
+  missing_trip_length <- combined |> dplyr::filter(is.na(mean_trip_length))
+  if (nrow(missing_trip_length) > 0) {
+    purrr::pwalk(missing_trip_length, function(year, mode, ...)
+      cli::cli_alert_warning(
+        "Green-Duwamish {year} {mode}: no completed-trip interviews found — \\
+         total_trips_est cannot be derived, left NA."
+      ))
+  }
+
+  combined <- combined |>
+    dplyr::mutate(total_trips_est = total_effort_hrs / mean_trip_length)
+
+  cli::cli_h3("Green-Duwamish: derived trips vs. workbook's own ANGLERS cross-check")
+  combined |>
+    dplyr::mutate(pct_diff = round(100 * (total_trips_est - angler_est) / angler_est, 1)) |>
+    dplyr::select(year, mode, total_effort_hrs, mean_trip_length,
+                  total_trips_est, angler_est, pct_diff) |>
+    print(n = 20)
+
+  combined |>
+    dplyr::mutate(
+      fishery_name             = sprintf("Green-Duwamish salmon %d", year),
+      month                    = NA_integer_,
+      crc_area                 = GREEN_DUWAMISH_CRC_AREA,
+      angler_final             = mode,
+      mean_group_size          = NA_real_,
+      sd                       = NA_real_,
+      pe_period                = "year",
+      total_salmon_harvest     = NA_real_,   # effort workbook has no harvest column
+      harvest_expansion        = NA_character_,
+      data_provider            = "Nathanael Overman / R4 creel interviews + effort estimates",
+      district                 = "R4"
     ) |>
     build_target_schema()
 }
@@ -1194,6 +1488,30 @@ ingest_district_creel_files <- function() {
       }
     )
     if (!is.null(r1)) results <- c(results, list(r1))
+  }
+
+  r4_files <- list.files(R4_DIR, pattern = "\\.xlsx$", full.names = TRUE,
+                        ignore.case = TRUE)
+  interviews_file <- r4_files[grepl("Raw Interviews", basename(r4_files),
+                                    ignore.case = TRUE)]
+  effort_file     <- r4_files[grepl("Estimated Anglers", basename(r4_files),
+                                    ignore.case = TRUE)]
+  if (length(interviews_file) == 0 || length(effort_file) == 0) {
+    cli::cli_alert_warning(
+      "R4 (Green-Duwamish): expected both a 'Raw Interviews' and an \\
+       'Estimated Anglers' workbook in {.path {R4_DIR}}; found \\
+       {length(interviews_file)} and {length(effort_file)} respectively. \\
+       Skipping."
+    )
+  } else {
+    r4 <- tryCatch(
+      ingest_green_duwamish(interviews_file[1], effort_file[1]),
+      error = function(e) {
+        cli::cli_alert_danger("R4 (Green-Duwamish) ingestion failed: {conditionMessage(e)}")
+        NULL
+      }
+    )
+    if (!is.null(r4)) results <- c(results, list(r4))
   }
 
   # R2 — anticipated, not yet received. See header note for what to do when

@@ -932,28 +932,53 @@ if (!is.null(p2x)) {
 # ---- 5c. P3 CRC-harvest projection -------------------------------------------
 # Runs AFTER P2 on purpose: "already covered?" for this tier means covered by
 # EITHER P1 or real P2, so effort_long must already carry the P2 merge above.
-# Never touches PugetSound - that block's 2025 projection is NEPA-derived,
-# a separate longer even/odd series back to 2014, not this 6-year CRC mean.
+# Two calls to the SAME run_crc_projection(), differing only in control and
+# deliver_blocks: the 6-year trailing mean for WACoast/Columbia (unchanged),
+# and PugetSound's own same-parity (odd-year) 5-year mean (added 2026-08-21 -
+# see pst_crc_harvest_projection.R's header and CRC_PROJECTION_CONTROL_PS for
+# why PS needed a different projection basis, not just a different control
+# value). Provisional pending Jim's sign-off per _22_status_and_gaps.qmd.
 #
 # crc_hist is read independently here rather than reusing p2$crc: p2$crc is
-# filtered to YEARS_SCOPE (2022-2025), which drops 2019-2021 - too late for a
-# 6-year mean. This re-reads the same file build_block_ratios() already read
-# once internally; the duplicate read is deliberate so build_block_ratios()
-# itself stays untouched.
+# filtered to YEARS_SCOPE (2022-2025), which drops 2019-2021/2015-2018 - too
+# late for either module's history window. This re-reads the same file
+# build_block_ratios() already read once internally; the duplicate read is
+# deliberate so build_block_ratios() itself stays untouched.
 crc_hist <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                     "crc_harvest_history")
 
-p3x <- if (is.null(p2x)) {
+if (is.null(p2x)) {
   message(paste("[gap] crc_projection: P2 did not run, so no donor pairs are",
-               "available to derive a ratio from; P3 projection skipped."))
-  NULL
+               "available to derive a ratio from; P3 projection (both",
+               "variants) skipped."))
+  p3x_main <- NULL
+  p3x_ps   <- NULL
 } else {
-  run_crc_projection(
+  p3x_main <- run_crc_projection(
     crc_hist       = crc_hist,
     effort_long    = effort_long,
     donors         = p2x$donors,
     crosswalk      = crosswalk,
     deliver_blocks = DELIVER_BLOCKS
+  )
+  p3x_ps <- run_crc_projection(
+    crc_hist       = crc_hist,
+    effort_long    = effort_long,
+    donors         = p2x$donors,
+    crosswalk      = crosswalk,
+    deliver_blocks = "PugetSound",
+    control        = CRC_PROJECTION_CONTROL_PS
+  )
+}
+
+p3x <- if (is.null(p3x_main) && is.null(p3x_ps)) {
+  NULL
+} else {
+  list(
+    trips        = bind_rows(p3x_main$trips,        p3x_ps$trips),
+    gaps         = bind_rows(p3x_main$gaps,         p3x_ps$gaps),
+    sanity_check = bind_rows(p3x_main$sanity_check, p3x_ps$sanity_check),
+    coverage     = bind_rows(p3x_main$coverage,     p3x_ps$coverage)
   )
 }
 

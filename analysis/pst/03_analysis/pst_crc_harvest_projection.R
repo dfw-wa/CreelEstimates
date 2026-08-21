@@ -2,10 +2,17 @@
 # pst_crc_harvest_projection.R
 # Location: analysis/pst/03_analysis/pst_crc_harvest_projection.R
 #
-# Tier P3: project 2025 CRC harvest from a 6-year mean (2019-2024) for CRC
-# areas with no 2025 creel coverage and no real 2025 P2 donor, then expand it
-# to angler trips through the SAME creel-trips/CRC-harvest ratio machinery
-# pst_p2_block_ratio.R already uses for real CRC harvest.
+# Tier P3: project 2025 CRC harvest for CRC areas with no 2025 creel coverage
+# and no real 2025 P2 donor, then expand it to angler trips through the SAME
+# creel-trips/CRC-harvest ratio machinery pst_p2_block_ratio.R already uses
+# for real CRC harvest. Two variants of the SAME functions run today, differing
+# only in their CRC_PROJECTION_CONTROL (history_years / nepa_blocks /
+# variant_label) and which blocks they target - see PART 1b below:
+#
+#   WACoast + the four Columbia blocks: 6-year TRAILING mean (2019-2024).
+#   PugetSound: same-parity (odd-year) 5-year mean (2015-2023), added
+#     2026-08-21 - see that section's own header for why PS needed a
+#     different projection basis, not just a different control value.
 #
 # WHY THIS EXISTS
 # CRC publishes through license year 2024 only - calendar 2025 has just
@@ -13,21 +20,23 @@
 # NOT EXPANDABLE ... P2 will produce almost nothing for 2025"). For river-years
 # with no P1 and no real P2 for 2025, there is currently no trip estimate at
 # all. This module fills exactly that hole: PROJECT what 2025 CRC harvest
-# would be (6-year mean per CRC area), then run the projection through the
-# same ratio P2 already validated, so a projected number is estimated the
-# same way a real one would be, not by a second, different method.
+# would be, then run the projection through the same ratio P2 already
+# validated, so a projected number is estimated the same way a real one
+# would be, not by a second, different method.
 #
-# SCOPE - WHAT THIS DOES NOT COVER
-# Puget Sound 2025 is out of scope, deliberately and permanently. It already
-# has its own projection derived from NEPA analysis, averaging by even/odd
-# year back to 2014 - a longer, methodologically distinct series this 6-year
-# CRC-only average is not a substitute for. This module only ever targets
-# DELIVER_BLOCKS minus control$nepa_blocks (WACoast plus the four Columbia
-# blocks - ColumbiaLower/Middle/Upper/Snake, split from a single "ColumbiaTrib"
-# 2026-08-19, see pst_fw_angler_trips_assembly.R's DELIVER_BLOCKS comment) -
-# see CRC_PROJECTION_CONTROL$nepa_blocks below. Any Puget Sound candidate area
-# is logged as excluded, not silently dropped, so the reason it's missing from
-# this module's output is visible.
+# SCOPE - WHAT PART 1 (THE 6-YEAR TRAILING MEAN) DOES NOT COVER
+# PugetSound is excluded from the trailing-mean variant, deliberately and
+# permanently - its own even/odd Pink-salmon dominance would have a trailing
+# mean average an odd year's inflated harvest together with even years' near-
+# absence of it, understating any odd target year (2025 included). See PART
+# 1b for what covers PugetSound instead. This module's PART 1 call only ever
+# targets DELIVER_BLOCKS minus control$nepa_blocks (WACoast plus the four
+# Columbia blocks - ColumbiaLower/Middle/Upper/Snake, split from a single
+# "ColumbiaTrib" 2026-08-19, see pst_fw_angler_trips_assembly.R's
+# DELIVER_BLOCKS comment) - see CRC_PROJECTION_CONTROL$nepa_blocks below. Any
+# Puget Sound candidate area reaching PART 1's call is logged as excluded, not
+# silently dropped, so the reason it's missing from THAT call's output is
+# visible (it should show up in PART 1b's output instead).
 #
 # WHY THE RATIO NEVER COMES FROM control$target_year's OWN block_year DONORS
 # apply_p2() borrows a block-year ratio from OTHER donor areas in the same
@@ -91,9 +100,31 @@ CRC_PROJECTION_CONTROL <- list(
   target_year       = 2025L,
   min_history_years = 3,            # a mean from 1-2 years is that year's value
                                      # wearing an average's name
-  nepa_blocks       = "PugetSound"  # blocks this module must NEVER touch -
-                                     # owned by the separate NEPA 2014+
-                                     # even/odd-year projection
+  nepa_blocks       = "PugetSound", # blocks this call must NEVER touch - see
+                                     # PART 1b for what covers them instead
+  variant_label     = "6-yr trailing mean"  # carried into every row's method
+                                     # string (R5) so a reader can tell which
+                                     # projection basis produced it without
+                                     # cross-referencing this file
+)
+
+# PART 1b: PugetSound's own variant - see that section below for why. Same
+# functions, same P2_CONTROL guardrails, only history_years/nepa_blocks/
+# variant_label differ. min_history_years stays at 3: with 5 candidate odd
+# years instead of 6, that is still "needs data in a majority of the
+# candidate years," the same floor logic as the trailing-mean variant, not a
+# separately chosen number.
+CRC_PROJECTION_CONTROL_PS <- list(
+  history_years     = c(2015L, 2017L, 2019L, 2021L, 2023L),  # matches NEPA's
+                                     # own "odd 5 yr" window - see PART 2's
+                                     # NEPA_COMPARISON_CONTROL$odd_years,
+                                     # reused here as the actual projection
+                                     # basis rather than only a diagnostic
+  target_year       = 2025L,
+  min_history_years = 3,
+  nepa_blocks       = character(0), # this call targets PugetSound directly;
+                                     # nothing to exclude from within it
+  variant_label     = "same-parity (odd-year) 5-yr mean"
 )
 
 
@@ -288,13 +319,12 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area, area_system
       tier                 = "P3",
       source_id            = "crc_harvest_projection",
       method = glue(
-        "P3 projected: {length(control$history_years)}-yr mean CRC harvest ",
-        "{round(mean_harvest)} ({n_years} of {length(control$history_years)} ",
-        "years: {years_present}) x {ratio_basis} ratio {round(ratio, 3)} ",
-        "({n_donor_areas} donor area(s) [{donor_areas}]) from ",
-        "{if_else(ratio_basis == 'block_year', as.character(most_recent_complete_year), 'pooled 2022-2024')}. ",
-        "Excludes {paste(control$nepa_blocks, collapse = ', ')}, which use a ",
-        "separate NEPA-derived 2014+ even/odd-year projection."
+        "P3 projected ({control$variant_label}): {length(control$history_years)}-yr ",
+        "mean CRC harvest {round(mean_harvest)} ({n_years} of ",
+        "{length(control$history_years)} years: {years_present}) x ",
+        "{ratio_basis} ratio {round(ratio, 3)} ({n_donor_areas} donor area(s) ",
+        "[{donor_areas}]) from {if_else(ratio_basis == 'block_year', ",
+        "as.character(most_recent_complete_year), 'pooled 2022-2024')}."
       ),
       mode           = "unknown",
       location       = "unknown",

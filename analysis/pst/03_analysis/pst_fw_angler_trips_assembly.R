@@ -1032,12 +1032,30 @@ effort_by_mode_location <- effort_long |>
 # P1 ONLY. P2 rows take their harvest straight from the CRC file, so including
 # them would compare CRC against itself and drag the ratio toward 1.
 #
-# Basis mismatch is real and not a bug: CRC is license-year (Apr 1 - Mar 31)
-# while creel is calendar-month. Indicative at annual grain, not a
-# month-for-month reconciliation.
+# License-year vs. calendar-year is NOT the live issue here -- resolved
+# already, and at the finest possible grain: parse_crc_freshwater_harvest.R
+# converts every monthly cell from the raw license-year layout (Apr-Dec of
+# license_year, Jan-Mar of license_year+1) to a real calendar_year and
+# calendar_month, so p2$crc's `calendar_year` is genuine calendar time, same
+# as creel's. Comparing year-to-year between the two is already apples to
+# apples on THAT axis.
+#
+# SEASON COVERAGE is the axis that still matters, and matching on it is the
+# only construction that makes this a bias measurement rather than a coverage
+# artifact. Creel harvest here is necessarily restricted to the months a
+# creel program actually ran; a raw full-year CRC total for the same area-year
+# includes months nobody was creeling at all. Comparing the two would not
+# isolate reporting bias -- it would blend reporting bias with "CRC counts a
+# longer season than creel does," and there is no way to tell how much of any
+# gap is which. So CRC harvest is restricted here to the SAME calendar months
+# the creel survey covered, per area-year -- exactly the construction
+# build_p2_donors() (pst_p2_block_ratio.R) already uses for the P2 ratio's
+# denominator, and for the identical reason. The full-year CRC total is still
+# carried alongside (crc_harvest_full_year) purely so the size of the
+# season-coverage gap itself is visible, not because it belongs in the ratio.
 
 crc_vs_creel <- NULL
-if (!is.null(p2$crc)) {
+if (!is.null(p2$crc) && !is.null(p2$crc_month)) {
   creel_area <- effort_long |>
     filter(block %in% DELIVER_BLOCKS, tier == "P1", !is.na(catch_area_code)) |>
     group_by(catch_area_code, year) |>
@@ -1047,13 +1065,51 @@ if (!is.null(p2$crc)) {
               .groups = "drop") |>
     mutate(catch_area_code = as.character(catch_area_code))
 
+  creel_months <- effort_long |>
+    filter(block %in% DELIVER_BLOCKS, tier == "P1", !is.na(catch_area_code),
+           !is.na(month)) |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    distinct(catch_area_code, year, month)
+
+  crc_matched <- creel_months |>
+    inner_join(
+      p2$crc_month |>
+        transmute(catch_area_code = as.character(stream_code),
+                  year  = calendar_year,
+                  month = calendar_month,
+                  harvest),
+      by = c("catch_area_code", "year", "month")
+    ) |>
+    group_by(catch_area_code, year) |>
+    summarise(crc_harvest    = sum(harvest, na.rm = TRUE),
+              n_creel_months = n_distinct(month),
+              .groups = "drop")
+
+  # Creel area-years with NO overlapping CRC month at all (as opposed to an
+  # overlap that resolves to zero harvest) never reach the inner_join below.
+  # That is a distinct failure mode from the "joined but zero" case comparable
+  # already flags, and worth its own count rather than a silent drop.
+  no_crc_overlap <- creel_area |>
+    anti_join(crc_matched, by = c("catch_area_code", "year"))
+  if (nrow(no_crc_overlap) > 0) {
+    log_gap("crc_vs_creel", NA, "gap",
+            glue("{nrow(no_crc_overlap)} creel area-year(s) have no CRC harvest ",
+                 "record in ANY of the calendar months the creel survey covered ",
+                 "-- excluded from the bias comparison entirely (not just ",
+                 "flagged), since there is no matched-month CRC figure to pair ",
+                 "against."))
+  }
+
+  crc_full_year <- p2$crc |>
+    transmute(catch_area_code = as.character(stream_code),
+              year                  = calendar_year,
+              crc_harvest_full_year = harvest)
+
   crc_vs_creel <- creel_area |>
-    inner_join(p2$crc |>
-                 select(catch_area_code = stream_code,
-                        year = calendar_year,
-                        crc_harvest = harvest),
-               by = c("catch_area_code", "year")) |>
+    inner_join(crc_matched, by = c("catch_area_code", "year")) |>
+    left_join(crc_full_year, by = c("catch_area_code", "year")) |>
     mutate(
+      pct_year_covered_by_creel = round(100 * n_creel_months / 12, 1),
       crc_minus_creel = crc_harvest - creel_harvest,
       crc_over_creel  = if_else(creel_harvest > 0,
                                 crc_harvest / creel_harvest, NA_real_),
@@ -1061,13 +1117,16 @@ if (!is.null(p2$crc)) {
                                        creel_trips / creel_harvest, NA_real_),
       trips_per_salmon_crc   = if_else(crc_harvest > 0,
                                        creel_trips / crc_harvest, NA_real_),
-      # CRC is published on a license year and stops at license year 2024, so
-      # calendar 2025 rows join but carry ~zero harvest. That is a coverage
-      # artifact, not a real reporting collapse - flag it rather than let a
-      # 0.00 ratio be read as a finding. [R3]
+      # A matched-months CRC total can still land on exactly zero (e.g. those
+      # specific months are recorded but genuinely had no reported harvest),
+      # which is a real value, not a coverage artifact -- but zero against
+      # positive creel harvest for the SAME months is implausible enough
+      # (a design-based on-the-ground estimate found kept fish that no angler
+      # anywhere reported that season) to flag rather than let a 0.00 ratio
+      # pass as a finding. [R3]
       comparable = !(crc_harvest == 0 & creel_harvest > 0),
       note = if_else(comparable, NA_character_,
-                     "CRC coverage absent for this year - ratio not meaningful")
+                     "CRC harvest is zero for the matched creel months - ratio not meaningful")
     ) |>
     arrange(desc(abs(crc_minus_creel)))
 
@@ -1075,8 +1134,8 @@ if (!is.null(p2$crc)) {
   if (n_incomp > 0) {
     log_gap("crc_vs_creel", NA, "note",
             glue("{n_incomp} area-years have creel harvest but zero CRC ",
-                 "harvest - CRC is published through license year 2024 only. ",
-                 "Excluded from the median ratio and flagged comparable=FALSE."))
+                 "harvest in the matched creel months. Excluded from the ",
+                 "median ratio and flagged comparable=FALSE."))
   }
 
   if (nrow(crc_vs_creel) == 0) {
@@ -1087,13 +1146,18 @@ if (!is.null(p2$crc)) {
   } else {
     med <- median(crc_vs_creel$crc_over_creel[crc_vs_creel$comparable],
                   na.rm = TRUE)
+    mean_pct_covered <- round(mean(crc_vs_creel$pct_year_covered_by_creel), 1)
     log_gap("crc_vs_creel", NA, "note",
             glue("{sum(crc_vs_creel$comparable)} comparable CRC area-years ",
-                 "paired with creel; median CRC/creel harvest ratio ",
-                 "{round(med, 2)}. Below 1 means CRC reports less harvest than ",
-                 "the design-based creel estimate for the same area-year. ",
-                 "Basis differs (CRC license-year vs creel calendar) - ",
-                 "indicative, not a reconciliation."))
+                 "paired with creel, CRC harvest restricted to the same ",
+                 "calendar months the creel survey ran each area-year ",
+                 "(averaging {mean_pct_covered}% of the calendar year); ",
+                 "median CRC/creel harvest ratio {round(med, 2)}. Below 1 ",
+                 "means CRC reports less harvest than the design-based creel ",
+                 "estimate for the SAME season, in the SAME area-year -- this ",
+                 "isolates reporting-method bias from season-coverage, it is ",
+                 "not a license-year/calendar-year artifact (that conversion ",
+                 "is exact; see parse_crc_freshwater_harvest.R)."))
   }
 }
 
@@ -1211,17 +1275,22 @@ if (nrow(gaps)) {
 }
 
 if (!is.null(crc_vs_creel) && nrow(crc_vs_creel) > 0) {
-  message("\nCRC vs creel harvest, same area-year (P1 only, bias check):")
+  message("\nCRC vs creel harvest, same area-year AND same matched creel \\
+           months (P1 only, bias check):")
   print(crc_vs_creel |>
           filter(comparable) |>
           summarise(
             n_area_years          = n(),
+            avg_pct_year_covered  = round(mean(pct_year_covered_by_creel), 1),
             median_crc_over_creel = round(median(crc_over_creel, na.rm = TRUE), 2),
             q25 = round(quantile(crc_over_creel, 0.25, na.rm = TRUE), 2),
             q75 = round(quantile(crc_over_creel, 0.75, na.rm = TRUE), 2)
           ))
-  message("  (<1 = CRC reports less than design-based creel. Basis differs: ",
-          "CRC license-year vs creel calendar.)")
+  message("  (<1 = CRC reports less than design-based creel, for the SAME ",
+          "months in the SAME area-year. This isolates reporting-method ",
+          "bias from season-coverage -- CRC harvest here excludes months ",
+          "the creel survey didn't run, see crc_harvest_full_year in the ",
+          "CSV for the unrestricted comparison.)")
 }
 
 message("\nThis output is an INTERMEDIATE. See the header comment for what ",

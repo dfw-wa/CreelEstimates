@@ -46,8 +46,9 @@ if (!is.null(effort)) {
 | # | Item | Owner | Effect if unresolved |
 |---|---|---|---|
 | 1 | Guided/unguided absent for all mid-Columbia (ColumbiaUpper: Hanford, Yakima, McNary) | Todd Miller | Those rivers deliver `mode = "unknown"` |
-| 2 | 2025 coastal freshwater has no fallback identified | — | 2025 coastal is empty; PS covered by NEPA projection |
+| 2 | 2025 coastal freshwater has no fallback identified | — | WACoast 2025 rows come only from P3's 6-yr trailing mean where history allows; areas failing `min_history_years` have nothing at all. **Note this row changed meaning 2026-08-21:** it used to also say "PS covered by NEPA projection," which is no longer true — Puget Sound 2025 is now covered by our own same-parity P3 (`CRC_PROJECTION_CONTROL_PS`), not by any NEPA-derived figure |
 | 3 | Upper Columbia district (Wenatchee/Entiat/Methow/Okanogan, ColumbiaUpper) | Chad Jackson, pending since 8/11 | No P1 at all; CRC-only P2 candidates until his data lands |
+| 4 | **Nothing in this document's numbers has been re-verified against a post-2026-08-21 pipeline run** | Evan | A large batch of correctness fixes landed 2026-08-21/22 (donor hierarchy restored, NA-shadow strata, Green-Duwamish P2 double-count, Yakima 2023–25 expansion, season-matched CRC/creel comparison, PS P3). Every count, ratio, and total quoted below predates them. Treat specific figures here as provisional until a clean end-to-end run is done — see delivery plan step 1 |
 
 Resolved by scope cut: the LCR undocumented scalar, the Bonneville–McNary
 totals-only split, and the Buoy 10 Charter Boat mode question are no longer
@@ -116,6 +117,11 @@ ODFW numbers.
   2026-08-14 run. The previous 3 errors / 1 skip are resolved. Lower Cowlitz
   remains absent from the output entirely: it lacks the data needed for
   effort estimation, a genuine gap rather than a pipeline bug.
+  **Stale as of 2026-08-21:** the row count will change on the next run —
+  winter/summer gamefish fisheries are now filtered out of the ledger along
+  with the estimates, and the restored `[S4]` donor hierarchy changes which
+  fisheries produce usable trips. Re-read the ledger after the next run
+  rather than carrying 98 forward.
 - **Superseded files on disk — RESOLVED (2026-08-17).** `multi_fishery_trip_summary.csv`
   was stale but still present, and had already caused one analysis to be run
   against wrong numbers; `results.csv` is no longer anywhere in the repo. The
@@ -127,8 +133,17 @@ ODFW numbers.
   assembly script still logs a `defect` if it finds a superseded file.
 - **CRC compile** — region labels lost for 2023–2024; subtotal blocks
   retained as leaf rows causing ~2× double-count. Confirm the current
-  `crc_freshwater_harvest_2010_2024_tidy.csv` postdates the fix.
+  `crc_freshwater_harvest_2010_2024_tidy.csv` postdates the fix. Still
+  unverified as of 2026-08-22 — worth closing out, since this file is now
+  the sole harvest basis for P2, P3 (both variants), and the CRC-vs-creel
+  bias comparison.
 - **NEPA workbook** — fill-right errors in the 2022/2024 even-year columns.
+  **Downgraded 2026-08-21 from a delivery concern to a diagnostic-only
+  one:** no NEPA-derived figure feeds any deliverable row. The workbook is
+  read only by `run_nepa_pure_crc_comparison()` (PART 2 of
+  `pst_crc_harvest_projection.R`), whose output
+  (`pst_fw_nepa_vs_pure_crc_comparison.csv`) is explicitly diagnostic. These
+  errors matter for interpreting that comparison, not for our numbers.
 
 ## Why the assembly output is not yet the deliverable
 
@@ -139,23 +154,46 @@ assembly in practice above; the unresolved `mode = "unknown"` share is
 covered in Track B results above. Three more stand between the two, covered
 here.
 
-### Trip expansion — resolved
+### Trip expansion — resolved, then silently regressed, then restored
 
 An earlier version of this document reported that 29% of measured effort was
 being silently dropped (Nisqually, Puyallup/Carbon). **That finding was an
 artifact of reading a superseded file** (`multi_fishery_trip_summary.csv`).
-Against the current `multi_fishery_creel_trips.csv`:
+Against `multi_fishery_creel_trips.csv` at that time:
 
-- All 49 fisheries expand cleanly — **zero** with `NA` trips.
-- The run ledger is 98 rows, **all `ok`** — no errors, no skips.
+- All 49 fisheries expanded cleanly — **zero** with `NA` trips.
+- The run ledger was 98 rows, **all `ok`** — no errors, no skips.
 - Nisqually 2022 *and* 2023, all four Puyallup/Carbon years, and all four
-  Drano years now carry trip estimates. The `[S4]` donor hierarchy is doing
-  the work: 778 rows use own-month trip length, 166 `area_season`, 66
+  Drano years carried trip estimates. The `[S4]` donor hierarchy was doing
+  the work: 778 rows on own-month trip length, 166 `area_season`, 66
   `type_season`, 8 `fishery_season`.
 - Lower Cowlitz is absent entirely — the one genuine, confirmed data gap.
 
-The assembly script still logs expansion failures if they reappear, but
-there are none today.
+::: {.callout-important}
+**Those figures describe the PREDECESSOR script, and the fix they describe
+was lost for a while.** When `multi_fishery_trip_summary.R` and
+`multi_fishery_harvest_summary.R` were merged into
+`multi_fishery_creel_summary.R`, the entire `[S4]` donor hierarchy was
+dropped in the process — the merged script computed only a plain monthly
+mean and went back to dropping any month × area × angler-type cell with real
+effort but no completed interview. That regression surfaced 2026-08-21 not
+as bad numbers but as a hard error: `pst_fw_angler_trips_assembly.R` expects
+a `trip_length_source` column on every trips row, and the merged script no
+longer produced one.
+
+The hierarchy (month → `area_season` → `type_season` → `fishery_season` →
+none), the `trip_length_source` / `n_donor_obs` labelling, and the
+`trip_length_stability` diagnostic were restored to
+`multi_fishery_creel_summary.R` on 2026-08-21, ported from
+`analysis/archive/multi_fishery_trip_summary_superseded_20260817.R`.
+
+**The tier counts above have not been re-measured since.** They are the
+predecessor's numbers, carried here for shape only — expect the restored
+run to differ, because the merged script also fixed the Lower Chehalis
+NA-shadow duplication and now excludes gamefish fisheries. Replace these
+four numbers from `multi_fishery_creel_trips.csv`'s own
+`trip_length_source` breakdown after the next clean run.
+:::
 
 ::: {.callout-warning}
 **The real hazard in the new file is the opposite of a drop — it's a
@@ -167,17 +205,35 @@ the design grain afterward — but any ad hoc query against the raw file that
 skips that filter will silently double every number in it.
 :::
 
-### P3 fallbacks not yet ingested
+### P3 fallbacks — Puget Sound now covered internally; coastal still open
 
-`ingest_published_fallback()` only logs notes today. The NEPA projection for
-Puget Sound 2025 and any coastal 2025 fallback are not yet read.
+**Superseded in part, 2026-08-21.** This section used to say Puget Sound
+2025 was waiting on an external NEPA projection. It no longer is: PS 2025 is
+now produced inside this pipeline by `pst_crc_harvest_projection.R`'s second
+control variant (`CRC_PROJECTION_CONTROL_PS`) — a same-parity (odd-year)
+5-year mean over 2015/2017/2019/2021/2023 pure CRC harvest, expanded through
+PS's own real 2023 block-year creel/CRC ratio. Chosen over the 6-year
+trailing mean used elsewhere because PS's odd-year Pink dominance makes a
+trailing mean average an odd year's inflated harvest against even years'
+near-absence of it, understating an odd target year. Provisional pending
+Jim's sign-off.
 
-Separately, the year-specific **historical** NEPA estimates for 2022–2025 have
-not been located. The workbook in hand projects 2026/2027 and carries
-historical base-year data, but not final per-season estimates for the four
-years the consultant asked for. Either locate the previously-reported figures
-or re-run the projection logic for those years. (Carried over from the Track B
-producer's open-issues list, which is retired into this document.)
+What that leaves genuinely open:
+
+- **Coastal 2025** — no fallback identified. WACoast gets P3's 6-year
+  trailing mean where an area has enough history; areas failing
+  `min_history_years` have nothing.
+- **`ingest_published_fallback()` is still a stub** — it logs notes and
+  returns `NULL`. That is now a *deliberate* state rather than a gap: no
+  external published figure feeds any deliverable row, and the ratio
+  question that motivated it is closed (see the struck-through odd/even row
+  in Open gaps). Keep the stub only as the hook for a genuinely new
+  published source; it is not a missing PS input any more.
+
+The year-specific **historical** NEPA estimates for 2022–2025 were never
+located. That is no longer a delivery dependency for the same reason — but
+it does still matter for the `pst_fw_nepa_vs_pure_crc_comparison.csv`
+diagnostic, which can only compare what the workbook actually contains.
 
 ### Trips vs. angler-days — still open
 
@@ -227,6 +283,27 @@ blocked on the data, not on the code below.
 
 ## Open gaps
 
+Both tables below are long by design — the gap register is the audit trail,
+not a summary — so each is scrollable rather than pushing the rest of the
+document down the page.
+
+```{=html}
+<style>
+.gap-scroll {
+  max-height: 30rem;
+  overflow: auto;               /* vertical AND horizontal - the gt gap
+                                   register is wide as well as long */
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--bs-body-bg, #fff);
+}
+.gap-scroll table { margin-top: 0.25rem; }
+</style>
+```
+
+::: {.gap-scroll}
 ```{r}
 #| label: gap-table
 
@@ -239,9 +316,11 @@ if (is.null(gaps)) {
     tab_header(title = "Logged gaps (R2)")
 }
 ```
+:::
 
 Gaps tracked outside the ledger, because they are outreach rather than code:
 
+::: {.gap-scroll}
 | Gap | Owner | Status |
 |---|---|---|
 | Yakima workbooks, 2023–2025 | Todd Miller (R3) | **Resolved 2026-08-21.** Files received; now ingested via `ingest_yakima_site_combined()` (see Known defects/Open gaps entry below) |
@@ -254,7 +333,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | Coastal freshwater 2025 | — | No fallback identified |
 | McNary 2022 | Todd Miller | Confirmed missing; no source |
 | 2025 CRC harvest | Heidi / Harvest Data Team | Publishes October — binding constraint on 2025 |
-| NEPA odd/even ratio misapplication | Christina Iverson | Call pending; affects 2022/2024 columns |
+| ~~NEPA odd/even ratio misapplication~~ | ~~Christina Iverson~~ | **Closed 2026-08-22, no call needed.** This pipeline never consumed NEPA's 3.44/8.65 ratio: `ingest_published_fallback()` only ever logged notes, and every trips-per-salmon figure here is derived empirically from our own paired creel/CRC data (P1 design-based, P2 CRC-denominated block ratios). The workbook's "applies 3.44 to every year regardless of parity" defect is real but belongs to that external deliverable, not to ours. Retained in the intro/methods children as reference context for why R4 forbids cross-block ratio transfer |
 | Lower Cowlitz | — | Genuine data gap, not a bug; `KNOWN_FAILED` |
 | Yakima 2023–2025 trip expansion | Evan | **Resolved 2026-08-21.** OQ4's premise was wrong — the expansion was never dropped from the 2023+ workbooks, it was never read from the right sheet. The `Summary` sheet this parser used to read really is sampled-only, but the per-site `Prosser`/`Horn Rapids` tabs (previously ignored) each carry a `Combined` weekly table with the same expanded Angler Trips / Effort Pole Hrs columns 2022's `Sheet1` has. `ingest_yakima_site_combined()` now reads both site tabs (`Horn Rapids` is all-zero in every week of all three years — no coverage at that site in this data), sums per week, and prorates to months. Expanded totals: 3,854 / 3,634 / 3,675 trips and 7,781 / 8,609 / 6,428 effort-hrs for 2023/2024/2025 respectively, verified against each sheet's own season-total row before trusting the parser. Caught and fixed a real bug along the way: the `Combined`, `Bank Summary`, and `Boat Summary` blocks in each sheet reuse identical week-label text, so an unscoped label match would have summed all three blocks together (triple-counting); the parser now bounds rows strictly between the `Combined` and `Bank Summary` section labels |
 | Lower Chehalis 2023 NA-area shadow rows | Evan | **Resolved 2026-08-21.** `section_crc_area` in `multi_fishery_creel_summary.R` now drops the NA variant for a section whenever a real `crc_area` is also present for that section, instead of only warning about the resulting fan-out |
@@ -267,6 +346,8 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | 2025 CRC harvest projection vs. actual season closures | Evan / Jim | **Open, needs regulatory verification per CRC area.** A quirk worth stating plainly: 2025 is not a future year we're forecasting -- it already happened. We're only "projecting" it because paper-based CRC card processing runs 2+ years behind, so calendar 2025 harvest isn't published yet even though the season itself is over. That means the question "was this fishery actually open in 2025?" is a checkable FACT sitting in WDFW's own regulations, not a forecasting uncertainty -- and right now nothing in `project_crc_harvest()`/`apply_crc_projection()` (pst_crc_harvest_projection.R) checks it. A stream with a real regulatory closure in 2025 (low return, conservation closure, etc.) would still get a nonzero historical-mean harvest projected onto it, silently overstating that stream's contribution -- we'd be projecting into fishery space we may already know, from the regs alone, produced no legal harvest at all. Needed: cross-reference every CRC area this pipeline projects (both the 6-year trailing mean for WACoast/Columbia and Puget Sound's own same-parity 5-year mean, implemented 2026-08-21 in `pst_crc_harvest_projection.R`'s `CRC_PROJECTION_CONTROL_PS`) against actual 2025 season regulations, and zero out (or cap, if a partial-season closure) any area confirmed closed. The reverse case is just as real and currently unhandled the other direction: an area EXCLUDED by `min_history_years` for having too little historical data (see that control's own note above) but CONFIRMED open in 2025 by regulation has independent, non-statistical evidence a real harvest happened -- discarding it as "insufficient history" in that case throws away information we actually have. No elegant mechanism for that second case is built yet; a plausible shape (not yet designed in code) would be a regulatory-status table (CRC area/stream x year x open/closed/restricted) that acts as a hard override (force projected harvest to 0 for a confirmed closure) where confirmed closed, and either relaxes `min_history_years` or falls back to a coarser regional/pooled mean where confirmed open despite thin history -- but the verification work has to happen first; there's nothing to wire in without it |
 | Illegal/erroneous harvest in CRC records: keep or exclude? | Evan / Jim | **Open, needs a policy decision plus a data-QA task -- two different questions, don't conflate them.** Every CRC card is currently taken at face value in `parse_crc_freshwater_harvest.R` -- there is no mechanism anywhere in this pipeline that identifies, flags, or distinguishes (a) harvest that was genuinely illegal (an angler really did keep a fish, but doing so violated regs -- closed season/area, over limit, wrong size or sex) from (b) harvest that's simply erroneous (a card mis-filled, mis-dated, or mis-coded -- not a real event at all). These need different handling and different owners: (a) is a POLICY call, not a data fix -- an illegal-but-real trip still generated real economic activity (travel, lodging, guide spend), so there's a legitimate argument for keeping it in an economic valuation; equally there's a legitimate argument that WDFW should not implicitly certify illegal harvest as legitimate effort in a deliverable going to a PST treaty partner/co-manager audience. That call belongs to Jim, not a pipeline default. (b) is a correctness issue, not a judgment call -- an erroneous record should be excluded once identified, the only question is how to identify it. Distinct from (but related to) the "2025 CRC harvest projection vs. actual season closures" gap above: that one is about verifying whether a PROJECTED year's fishery was open before trusting a statistical projection onto it; this one is about whether ACTUAL, already-reported historical CRC harvest (2022-2024, feeding P2 ratio construction, the CRC-vs-creel bias comparison, and P2's real target-area expansion, not just the 2025 projection) might already include harvest that shouldn't count at all. Needed before either can be acted on: does CRC (or WDFW enforcement records) carry any existing violation/flag field this pipeline isn't reading, or does identifying (a) and (b) require a manual cross-reference against regulations and enforcement data the same way the season-closure check does? |
 | Some P3 2025 projections look unrealistic next to the most recent real years | Evan / Jim | **Open, needs a plausibility check beyond what's currently run.** Worked example: Whatcom Creek (CRC area 884, PugetSound) shows real (P2-expanded, ratio-based on real donor areas) harvest of 61 (2022), 135 (2023), and 13 (2024) -- then a projected 2025 harvest of **728.4**, 5-30x every one of the three most recent real years, via the same-parity 5-yr mean (`CRC_PROJECTION_CONTROL_PS`). The existing sanity check (`check_projection_vs_partial_actual()`, `pst_fw_crc_projection_sanity.csv`) only compares the projection's implied Jan-Mar share against 2025's own partial actual -- it does NOT compare against the stream's own recent (2022-2024) full-year real harvest, so a case like this can sail through unflagged if the tiny bit of 2025 Jan-Mar data happens not to contradict it. Two non-exclusive explanations, and they call for different responses: (1) Whatcom Creek's true harvest genuinely declined between the 2015-2021 window the mean is built from and 2022-2024 -- run decline, habitat change, regulation tightening -- in which case the 5-yr mean is averaging in a baseline that no longer reflects current reality, related to but distinct from the closure-verification gap above (this isn't necessarily a full closure, just a lower baseline); or (2) one or more of the 5 historical odd years (2015/2017/2019/2021/2023) has a data problem (miscoded stream/area, a genuine one-year spike) inflating the mean by itself, which `min_history_years` doesn't catch since it only checks HOW MANY years are present, not whether an individual year's value is itself an outlier. Needed: an additional sanity check comparing each area's projected mean against its own most recent 1-3 real years (not just partial 2025 actuals), flagging anything outside a defensible multiple (a `p90_ape`-style or ratio-band check, mirroring how P2's own guardrails already do this for the ratio -- the projected HARVEST itself currently has no equivalent check against recent real harvest) -- and manually reviewing every stream this flags before treating its 2025 figure as final |
+| Gamefish fisheries excluded from scope | Evan | **Applied 2026-08-21, worth a confirmation.** Winter/summer gamefish fisheries are now filtered out of `multi_fishery_creel_summary.R` at both ingest and final output, on the same PST-salmon-scope basis as the existing steelhead-primary exclusion. Mixed-target surveys naming both (e.g. `Skykomish summer Chinook and gamefish`) are deliberately NOT excluded — same carve-out logic the steelhead filter uses for `Lower Cowlitz salmon and steelhead`. Confirm the retained mixed-target set is what's intended before delivery |
+:::
 
 ## Documented methodology deviations
 
@@ -275,6 +356,8 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | MD1 | Mid-Columbia and Snake River Track A totals accepted as **pre-computed** inputs (`district_creel` source_ids: `R3_external`, `R1_external`), bypassing the P1 hierarchy | Todd Miller's (R3) and Jeremy Trump's (R1) spreadsheet totals are the only expansion that exists for these systems; unvetted external calculations, not design-based PE runs | Hanford Reach, Yakima, McNary (ColumbiaUpper), Snake River (ColumbiaSnake) — all delivering as of 2026-08-19. **Not generalizable**; R2 will need the same call when it arrives. |
 | MD2 | Guided/unguided coded `"unknown"` for all mid-Columbia | Field not collected by R3 programs | Per R3 |
 | MD3 | Green-Duwamish Track A totals are **derived, not sourced** — unlike MD1's R1/R3 rows, R4 (Nathanael Overman) does not hand us a finished trip count. `ingest_green_duwamish()` computes `total_trips_est` itself as R4's own angler-hours effort estimate ÷ mean trip length computed from R4's raw creel interviews | R4 supplies effort (angler-hours) and raw interview microdata but no trip total; the workbook's own ANGLERS block is present but of uncertain accounting basis, so it's kept as a cross-check only rather than used as the source of `total_trips_est` (Evan's call, 2026-08-21) | Green-Duwamish (PugetSound) — 2022-2025. **Not generalizable**; this is a different kind of unvetted calculation than MD1's "accept the district's own total," worth flagging separately in review |
+| MD4 | Puget Sound 2025 harvest is projected on a **same-parity (odd-year) 5-year mean**, not the 6-year trailing mean every other block uses (`CRC_PROJECTION_CONTROL_PS` vs. `CRC_PROJECTION_CONTROL` in `pst_crc_harvest_projection.R`) | PS Pink salmon return almost exclusively in odd years. A trailing mean averages an odd year's Pink-inflated harvest together with even years' near-absence of it, systematically understating an odd target year — 2025 is odd. Same-parity averaging is the mechanic NEPA's own workbook uses and that this file's PART 2 diagnostic already reconstructs; MD4 promotes it from diagnostic to projection basis for PS only. Window is 2015/2017/2019/2021/2023 over **pure** (pre-creel-substitution) CRC | PugetSound 2025 only. Ratio comes from PS's own real 2023 block-year creel/CRC pair (`max(history_years)` resolves to 2023 automatically), **not** from NEPA's 3.44/8.65 — those external ratios are referenced in the intro/methods children for context but are consumed nowhere. Provisional pending Jim's sign-off (2026-08-21) |
+| MD5 | Winter/summer **gamefish** fisheries excluded from ingest and output | Same PST-salmon-scope basis as the pre-existing steelhead-primary exclusion [S1]. Mixed-target surveys naming both salmon and gamefish (e.g. `Skykomish summer Chinook and gamefish`) are deliberately retained, matching the carve-out the steelhead filter already makes for `Lower Cowlitz salmon and steelhead` | All blocks, applied in `multi_fishery_creel_summary.R` at both the candidate-fishery stage and the final output filter (2026-08-21) |
 
 For reference, the 2022 Hanford Reach figures accepted under MD1:
 26,342 boat trips and 2,103 bank trips (92.6 / 7.4). Track B location is
@@ -283,18 +366,29 @@ not design-based.
 
 # Delivery plan
 
+Re-ordered 2026-08-22 to put the verification work first: a batch of
+correctness fixes landed 2026-08-21/22 and **none of their output has been
+seen yet**, so every downstream judgment is waiting on one clean run.
+
 | Step | Owner | Blocking |
 |---|---|---|
-| 1. Land manual runs (Puyallup/Carbon, Nisqually, Drano) | Evan | No |
-| 2. Ingest Todd's 2023–2025 workbooks | Evan | Yakima done 2026-08-21 (see step 9); McNary status unverified this session |
-| 3. Resolve odd/even ratio with Christina | Evan | Christina call |
-| 4. Confirm D5 (upriver spring Chinook) | Jim | Jim |
-| 5. Replace FEIS rates with CRD empirical where available | Evan | Mark / CRD |
-| 6. Freeze 2022–2024; flag 2025 as provisional | Evan | CRC October |
-| 7. ~~Reconcile A1–A4 wording between this doc and `PST_ANALYSIS.md`~~ — done 2026-08-17; `PST_ANALYSIS.md` folded into the intro/methods children and retired | — | — |
-| 8. Wire the coverage map | Evan | Spatial layer |
-| 9. ~~Recover Yakima 2023–2025 trip expansion~~ — done 2026-08-21; `ingest_yakima_site_combined()` reads the Prosser/Horn Rapids Combined tables directly, no correspondence with Todd needed (OQ4 resolved) | Evan | — |
-| 10. Decide `PE_PERIOD` (week vs. month) on the record | Jim | No |
+| 1. **Clean end-to-end re-run + verify.** `multi_fishery_creel_summary.R` (needs VPN/DB) → `district_creel_ingestion.R` → `pst_fw_angler_trips_assembly.R` → render. Then re-read: run-ledger row count, `trip_length_source` tier breakdown, the season-matched CRC/creel median, and whether any P1 row still draws a duplicate P2 row | Evan | **Gates almost everything below** — DB/VPN access |
+| 2. Confirm no other P1 source hits the Green-Duwamish failure mode (NA `month` or NA `total_salmon_harvest` → invisible to `build_p2_donors()` → wrongly treated as uncovered) | Evan | Step 1 |
+| 3. Review P3 2025 projections against each area's own recent real years; Whatcom Creek (884: 61/135/13 real → 728 projected) is the worked example | Evan / Jim | Step 1 |
+| 4. Verify 2025 season regulations per projected CRC area — zero out confirmed closures, and decide the thin-history-but-confirmed-open case | Evan / Jim | Regulations review |
+| 5. Verify creel season truncation vs. legal harvest period; populate `SEASON_TRUNCATED_MONTHS` where confirmed | Evan | Regulations review |
+| 6. Decide illegal/erroneous CRC harvest handling — policy call (keep/exclude) plus whether any violation flag exists to key on | Jim / Evan | Jim |
+| 7. Sign off on the PS 2025 projection basis (MD4: same-parity 5-yr mean, our own 2023 ratio) | Jim | Jim |
+| 8. Confirm McNary 2023–2025 output actually lands in `district_creel_summary.csv` — `ingest_mcnary()` exists and is wired in, so the "not yet ingested" gap row looks stale | Evan | Step 1 |
+| 9. Confirm D5 (upriver spring Chinook) | Jim | Jim |
+| 10. Replace FEIS rates with CRD empirical where available | Evan | Mark / CRD |
+| 11. Decide `PE_PERIOD` (week vs. month) on the record | Jim | No |
+| 12. Freeze 2022–2024; flag 2025 as provisional | Evan | CRC October |
+| 13. Wire the coverage map | Evan | Spatial layer |
+| 14. ~~Land manual runs (Puyallup/Carbon, Nisqually, Drano)~~ — superseded; all three carry trip estimates through the restored `[S4]` hierarchy, no manual runs outstanding | — | — |
+| 15. ~~Ingest Todd's 2023–2025 Yakima workbooks~~ — done 2026-08-21; `ingest_yakima_site_combined()` reads the Prosser/Horn Rapids `Combined` tables directly, no correspondence with Todd needed (OQ4 resolved) | — | — |
+| 16. ~~Resolve odd/even ratio with Christina~~ — dropped 2026-08-22; this pipeline derives every trips-per-salmon figure from its own paired creel/CRC data and never consumed NEPA's 3.44/8.65 | — | — |
+| 17. ~~Reconcile A1–A4 wording between this doc and `PST_ANALYSIS.md`~~ — done 2026-08-17; `PST_ANALYSIS.md` folded into the intro/methods children and retired | — | — |
 
 ::: {.callout-warning}
 **2025 cannot be complete before October.** The 2025 CRC harvest file is the

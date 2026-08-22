@@ -1034,9 +1034,16 @@ effort_by_area <- effort_long |>
     source_id = paste(sort(unique(source_id)), collapse = "|"),
     .groups = "drop"
   ) |>
-  mutate(trips_per_salmon = if_else(total_salmon_harvest > 0,
-                                    angler_trips / total_salmon_harvest,
-                                    NA_real_)) |>
+  mutate(
+    # Rounded to whole trips for the deliverable -- a fractional trip isn't
+    # a real quantity. Rounded BEFORE trips_per_salmon so that ratio matches
+    # what a reader gets dividing the two displayed columns by hand, rather
+    # than reflecting a precision the trip count itself no longer carries.
+    angler_trips     = round(angler_trips),
+    trips_per_salmon = if_else(total_salmon_harvest > 0,
+                               angler_trips / total_salmon_harvest,
+                               NA_real_)
+  ) |>
   arrange(block, river_label, catch_area_code, year, location, mode)
 
 # Fallback for rivers with NO row-level catch_area_code at all (Hanford Reach,
@@ -1088,9 +1095,16 @@ effort_by_mode_location <- effort_long |>
                                catch_area_codes)
   ) |>
   select(-crosswalk_crc_areas) |>
-  mutate(trips_per_salmon = if_else(total_salmon_harvest > 0,
-                                    angler_trips / total_salmon_harvest,
-                                    NA_real_)) |>
+  mutate(
+    # Rounded to whole trips for the deliverable -- a fractional trip isn't
+    # a real quantity. Rounded BEFORE trips_per_salmon so that ratio matches
+    # what a reader gets dividing the two displayed columns by hand, rather
+    # than reflecting a precision the trip count itself no longer carries.
+    angler_trips     = round(angler_trips),
+    trips_per_salmon = if_else(total_salmon_harvest > 0,
+                               angler_trips / total_salmon_harvest,
+                               NA_real_)
+  ) |>
   arrange(block, river_label, year, location, mode)
 
 # ---- 6b. CRC vs creel: the bias question ------------------------------------

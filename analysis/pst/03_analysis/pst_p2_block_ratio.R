@@ -479,10 +479,31 @@ validate_ratios <- function(x, control = P2_CONTROL) {
 # --- 4. Apply to uncovered areas ----------------------------------------------
 #' Returns list(trips, gaps). Both always returned; an empty gap tibble is a
 #' real result and should be written as one.
+#'
+#' "Already covered" MUST be checked against effort_long's real P1 rows
+#' directly, not against `donors`. Confirmed as a real double-count, not a
+#' theoretical one: Green-Duwamish (R4_external, area 746) has real P1
+#' trips/harvest for 2022-2025, but its month column is NA (ingest_green_
+#' duwamish() pools trip length across the full year, not by month -- see
+#' district_creel_ingestion.R) and its total_salmon_harvest is NA (the R4
+#' effort workbook has no harvest column). Both mean it can NEVER pass
+#' build_p2_donors()'s month-matched-CRC-harvest join, so it never appears
+#' in `donors` regardless of how much real trip data exists for it -- and a
+#' `covered` check built from `donors` would therefore treat area 746 as
+#' UNCOVERED and expand it via P2 on top of the real R4_external rows already
+#' in the deliverable. apply_crc_projection() (pst_crc_harvest_projection.R)
+#' already gets this right for the P3 tier by checking effort_long's own
+#' catch_area_code directly ("ANY tier already present... not just P1 donor
+#' pairs") -- apply_p2() needed the identical fix for P2.
 apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
-                     deliver_blocks, years_scope, control = P2_CONTROL) {
+                     deliver_blocks, years_scope, effort_long,
+                     control = P2_CONTROL) {
 
-  covered <- donors |> distinct(catch_area_code, year) |> mutate(is_covered = TRUE)
+  covered <- effort_long |>
+    filter(tier == "P1", !is.na(catch_area_code)) |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    distinct(catch_area_code, year) |>
+    mutate(is_covered = TRUE)
 
   targets <- crc_yr |>
     transmute(catch_area_code = as.character(stream_code),
@@ -676,7 +697,7 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
 
   ratios  <- estimate_block_ratios(donors, control)
   applied <- apply_p2(crc_yr, donors, ratios, xw_area, area_system,
-                      deliver_blocks, years_scope, control)
+                      deliver_blocks, years_scope, effort_long, control)
   loo     <- p2_loo_check(donors, control)
 
   message(glue(

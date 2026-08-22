@@ -1039,6 +1039,33 @@ effort_by_area <- effort_long |>
                                     NA_real_)) |>
   arrange(block, river_label, catch_area_code, year, location, mode)
 
+# Fallback for rivers with NO row-level catch_area_code at all (Hanford Reach,
+# Snake River - district-external sources whose totals are already covered by
+# a source that can't attribute them to a single CRC area; see
+# area_coverage == "covered_unpartitioned" in pst_river_block_crosswalk.csv).
+# Without this, catch_area_codes below comes out blank for these rivers even
+# though the crosswalk itself knows the composite area set (534|535|536 for
+# Hanford, 640|642|644|646|648|650 for Snake) - the same information Quillayute
+# (398|400|402|404|406) shows because ITS rows carry a real per-stratum
+# catch_area_code. Re-split and re-join rather than trust a single crc_areas
+# string is constant per river: robust if a river's crosswalk rows ever
+# disagree slightly across fisheries/years, not just when they don't.
+river_crc_areas_fallback <- if (is.null(crosswalk)) {
+  tibble(river_label = character(), block = character(),
+        crosswalk_crc_areas = character())
+} else {
+  crosswalk |>
+    filter(!is.na(crc_areas), crc_areas != "") |>
+    distinct(river_label, block, crc_areas) |>
+    group_by(river_label, block) |>
+    summarise(
+      crosswalk_crc_areas = paste(sort(unique(unlist(
+        strsplit(crc_areas, "\\|")
+      ))), collapse = "|"),
+      .groups = "drop"
+    )
+}
+
 effort_by_mode_location <- effort_long |>
   filter(block %in% DELIVER_BLOCKS) |>
   group_by(block, river_label, year, mode, location) |>
@@ -1054,6 +1081,13 @@ effort_by_mode_location <- effort_long |>
     method    = paste(sort(unique(method)), collapse = "; "),
     .groups = "drop"
   ) |>
+  left_join(river_crc_areas_fallback, by = c("river_label", "block")) |>
+  mutate(
+    catch_area_codes = if_else(catch_area_codes == "",
+                               coalesce(crosswalk_crc_areas, ""),
+                               catch_area_codes)
+  ) |>
+  select(-crosswalk_crc_areas) |>
   mutate(trips_per_salmon = if_else(total_salmon_harvest > 0,
                                     angler_trips / total_salmon_harvest,
                                     NA_real_)) |>

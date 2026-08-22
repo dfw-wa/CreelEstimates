@@ -58,6 +58,35 @@ ODFW numbers.
 
 ## Known defects
 
+- **`pst_p2_block_ratio.R`'s `apply_p2()` — RESOLVED 2026-08-22.** Real
+  double-counting, not theoretical: Green-Duwamish (R4_external, area 746)
+  has real P1 trips/harvest for 2022-2025 in the deliverable, but its
+  `month` column is NA (`ingest_green_duwamish()` pools trip length across
+  the full year, not by month) and `total_salmon_harvest` is NA (the R4
+  effort workbook has no harvest column) — both mean it can never pass
+  `build_p2_donors()`'s month-matched-CRC-harvest join, so it never appears
+  in `donors` regardless of how much real trip data exists. `apply_p2()`'s
+  "already covered" check was built from `donors`, so it incorrectly
+  treated area 746 as uncovered and expanded it via P2 on top of the real
+  R4_external rows already present — visible in the output as Green-Duwamish
+  2022/2023 carrying both a P1/`R4_external` row and a P2/`p2_block_ratio`
+  row for the same year. Fixed by checking `effort_long`'s real P1 rows
+  directly (`apply_p2()` now takes `effort_long` as a parameter), mirroring
+  the pattern `apply_crc_projection()` (P3) already used correctly. Worth
+  checking the fresh output for any other P1 source that similarly lacks a
+  real `month` or `total_salmon_harvest` value — the same failure mode
+  would apply.
+- **`pst_fw_angler_trips_assembly.R`'s `catch_area_codes` — RESOLVED
+  2026-08-22.** Hanford Reach and Snake River (both `covered_unpartitioned`,
+  no per-row `catch_area_code` since their district sources give one
+  combined total) came out with a blank `catch_area_codes` in
+  `pst_fw_trips_by_mode_location_INTERMEDIATE.csv`, unlike Quillayute
+  (`398|400|402|404|406`) which shows its composite area list because its
+  rows carry a real per-stratum `catch_area_code`. The crosswalk already
+  knows the composite set for both (534|535|536 for Hanford,
+  640|642|644|646|648|650 for Snake) — it just wasn't being surfaced.
+  `effort_by_mode_location` now falls back to the crosswalk's own
+  `crc_areas` value when the row-level aggregation is empty.
 - **`district_creel_ingestion.R`** — `Hanford Reach fall Chinook
   2025` rows carry `year = 2024`. The assembly script works around it by
   trusting the year token in `fishery_name` and logging every corrected row,

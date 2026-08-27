@@ -1594,6 +1594,19 @@ if (resolved_params$export == "database") {
 # Note for interactive/by-chunk runs: resolved_params (and therefore analysis_lut$params_json)
 # is snapshot in build_resolved_params. Editing params$export after that chunk is not 
 # reflected here or in params_json unless build_resolved_params chunk is re-run.
+  connection_alive <- tryCatch({
+    DBI::dbGetQuery(con, "SELECT 1")
+    TRUE
+  }, error = function(error) FALSE)
+
+  if (!connection_alive) {
+    cli::cli_alert_warning("Database connection went stale during analysis; reconnecting before export.")
+    if (DBI::dbIsValid(con)) {
+      try(DBI::dbDisconnect(con), silent = TRUE)
+    }
+    con <- creelutils::connect_creel_db(db_env = "prod")
+  }
+
   creelutils::export_estimates(
     resolved_params,
     est_catch_groups, 

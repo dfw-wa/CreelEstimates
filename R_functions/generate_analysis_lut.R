@@ -11,10 +11,17 @@ generate_analysis_lut <- function(resolved_params, current_file_path = NULL) {
   if (is.null(current_file_path)) {
     current_file_path <- tryCatch({
       if (!is.null(knitr::current_input()) && knitr::current_input() != "") {
-        here::here("template_scripts", knitr::current_input())
+        # knitr::current_input(dir = TRUE) returns the full path to the file
+        # actually being knit — i.e. the analysis-folder copy of the script —
+        # rather than a path reconstructed under template_scripts/, which is
+        # always wrong once a session is running from its own analysis folder.
+        knitr::current_input(dir = TRUE)
       } else if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
         rstudioapi::getSourceEditorContext()$path
       } else {
+        # Headless (Rscript / cron / CI) invocation: no reliable script-path
+        # API exists here. Left as NULL intentionally — making this branch
+        # work is separate follow-up work, not part of this fix.
         NULL
       }
     }, error = function(e) NULL)
@@ -28,7 +35,7 @@ generate_analysis_lut <- function(resolved_params, current_file_path = NULL) {
     # Check if current directory matches analysis folder pattern
     # Pattern: IDENTIFIER_XXXX_YYYYMMDD (e.g., SFS25_ABCD_20241222)
     folder_name <- basename(current_dir)
-    analysis_pattern <- "^[A-Z0-9]+_[A-Z0-9]{4}_\\d{8}$"
+    analysis_pattern <- "^[A-Z0-9]+_[0-9a-f]{4}_\\d{8}$"
     
     if (grepl(analysis_pattern, folder_name)) {
       # Look for existing analysis_lut RDS file

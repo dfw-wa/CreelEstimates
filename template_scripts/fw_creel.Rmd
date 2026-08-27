@@ -230,7 +230,7 @@ path_components |>
 current_file <- tryCatch({
   # CASE 1: Knitting
   if (!is.null(knitr::current_input())) {
-    file.path(getwd(), knitr::current_input())
+    knitr::current_input(dir = TRUE)
   # CASE 2: Interactive RStudio
   } else if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     rstudioapi::getSourceEditorContext()$path
@@ -238,7 +238,6 @@ current_file <- tryCatch({
     NULL
   }
 }, error = function(e) NULL)
-
 ## Generate or load analysis_lut (uses existing function as-is)
 generate_analysis_lut(resolved_params, current_file_path = current_file)
 

@@ -1,397 +1,1057 @@
 catch_area_code,river_label,month,license_year,status,verified_source,verified_by,verified_date,notes
-501,Abernathy Creek,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-501,Abernathy Creek,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-507,Lower Cowlitz,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-508,Big White Salmon River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-515,Chinook River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-517,Coal Creek (Cowlitz Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-547,Columbia River (above McNary),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-549,Columbia River (above McNary),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-555,Cispus River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-559,Upper Cowlitz River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-563,Upper Cowlitz River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-565,Green River (Cowlitz Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-566,Green River (Cowlitz Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-569,Olequa Creek,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-571,Tilton River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-573,Toutle River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-575,Toutle River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-580,Deep River (Wahkiakum Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-584,Elochoman River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-589,Germany Creek,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-594,Grays River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-595,Grays River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-602,Kalama River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-603,Kalama River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-608,Klickitat River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-609,Cedar Creek (Clark Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-611,Lewis River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-621,Methow River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-625,Mill Creek (Lewis Co),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-665,Washougal River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-667,Washougal River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-668,Washougal River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-677,Wind River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-680,Wind River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
+305,Bear River (Pacific Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+305,Bear River (Pacific Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+311,Cedar Creek (Jefferson Co),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+321,Cloquallum Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+323,Joe Creek,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+325,Newaukum River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+333,Skookumchuck River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+335,Wishkah River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+337,Wynoochee River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+339,Copalis River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+342,Elk River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+345,Goodman Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+352,Hoh South Fork,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+355,Hoquiam River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+367,Johns River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+370,Quigg Lake,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+371,Moclips River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+375,Naselle,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+379,Nemah,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+382,North River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+384,Smith Creek (Pacific Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+392,Clearwater River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+394,Queets River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+396,Salmon River (Jefferson Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+408,Cook Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+410,Quinault River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+424,Willapa,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+501,Abernathy Creek,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+507,Blue Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+507,Blue Creek,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Lower Cowlitz
+508,Big White Salmon River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+508,Big White Salmon River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,Change name to White Salmon River
+515,Chinook River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+515,Chinook River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+517,Coal Creek (Cowlitz Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+547,Columbia River (above McNary),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+547,Columbia River (above McNary),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+549,Columbia River (above McNary),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,CRC not listed in regs
+555,Cispus River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+555,Cispus River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+559,Upper Cowlitz River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+559,Upper Cowlitz River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
+563,Upper Cowlitz River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+563,Upper Cowlitz River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
+565,Green River (Cowlitz Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+565,Green River (Cowlitz Co),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+566,Green River (Cowlitz Co),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+569,Olequa Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+571,Tilton River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+573,Toutle River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+575,Toutle River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+580,Deep River (Wahkiakum Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+584,Elochoman River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+589,Germany Creek,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+594,Grays River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+595,Grays River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+602,Kalama River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+603,Kalama River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+608,Klickitat River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+609,Cedar Creek (Clark Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+611,Lewis River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+621,Methow River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+625,Mill Creek (Lewis Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+665,Wenaha River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+665,Wenaha River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,was listed as Washougal - fix elsewhere in project
+667,Washougal River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+667,Washougal River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+668,Washougal River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+677,Wind River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+680,Wind River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+710,California Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+714,Chambers Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+718,Clallam River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+724,Dakota Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+726,Deep Creek (Clallam Co),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,1,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,2,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,3,2024-25,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,4,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,5,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,6,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+728,Deschutes River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+732,Dewatto River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+736,Duckabush River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+738,Dungeness,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+754,Kennedy Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+762,Lake Washington,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+764,Lake Sammamish,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+768,Lyre River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+778,Minter Creek,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+786,Nisqually,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+788,Nooksack Mainstem,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+810,Pysht River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Quilcene,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+816,Samish,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+824,Baker,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,7,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+825,Baker,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+832,Suiattle River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+834,Skokomish River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+840,Pilchuck River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+852,Snohomish,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+854,Sultan River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+858,Tolt River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+860,Wallace,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+884,Whatcom Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA

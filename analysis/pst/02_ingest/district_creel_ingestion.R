@@ -56,17 +56,18 @@
 #   implies — treating it as per-trip length would double-multiply by
 #   #Angler and inflate 2023 boat trip length ~2.7x.
 #
-# R2 — anticipated, not yet received:
-#   No workbook has arrived from R2 as of this writing. R2_DIR is declared
-#   below (input_files/pst/R2_creel/) so a future ingest_r2_*() function has
-#   somewhere to read from without another repath, but no parser exists
-#   because the format is unknown. ingest_district_creel_files() checks
-#   R2_DIR at run time and warns (rather than silently doing nothing) if
-#   files show up there before a parser is written. When R2's file arrives:
-#   inspect its structure, write ingest_r2_<fishery>() following the pattern
-#   of ingest_snake_river() (annual/simple) or the R3 ingest_*() functions
-#   (weekly/expanded), set district = "R2", and call it from
-#   ingest_district_creel_files().
+# R2 — Upper Columbia (Chad Jackson), received 2026-08-28:
+#   Source file:  input_files/pst/R2_creel/R2_Angler_Trips_2022-2025.pdf
+#   Unlike R1/R3/R4, this arrived as a PDF capture of an email table (four
+#   rows: 2022-2025 combined district trip totals), not a workbook — there
+#   is nothing to parse cell-by-cell, so ingest_r2_upper_columbia() hardcodes
+#   the table directly. It is also the coarsest source in the pipeline: one
+#   combined total per year for the whole "Upper Columbia" district (mainstem
+#   Priest Rapids-Chief Joseph Dam, Icicle River, Lake Wenatchee, and several
+#   named tributaries per Chad's own footnote), no river/mode/location split
+#   at all. See ingest_r2_upper_columbia()'s header for the real scope
+#   mismatches this raises against the existing crosswalk (Methow/Chelan/
+#   mainstem boundary) — logged as open gaps, not resolved silently.
 #
 # Source files used (in input_files/pst/R3_creel/):
 #   Hanford Reach (2022–2025):  "20YY Hanford Reach Boat Harvest Model.xlsx"
@@ -1428,6 +1429,112 @@ ingest_green_duwamish <- function(interviews_path, effort_path) {
 }
 
 
+# 6c. Upper Columbia (R2) annual angler-trip total ----------------------------
+
+# Source: Chad Jackson (WDFW Region 2 Fish Program Manager), email to Evan
+# Booher 2026-08-27, replying to outreach sent 2026-08-11 (see
+# input_files/pst/R2_creel/R2_Angler_Trips_2022-2025.pdf for the full email
+# chain, including Jim Scott's original 2026-06-09 data request). Unlike
+# every other district source (R1/R3/R4), no workbook exists here at all -
+# the data arrived as a four-row table pasted into an email body, captured
+# as a PDF because there was nothing else to attach. This function therefore
+# hardcodes the table rather than parsing a file; R2_PDF_PATH below exists
+# only so the function can confirm its source document is still on disk
+# before returning numbers attributed to it - if the file goes missing, that
+# is a provenance problem worth erroring on loudly, not silently ignoring [R2].
+#
+# Chad's own footnote on "Upper Columbia": "the mainstem between Priest
+# Rapids Dam and Chief Joseph Dam, Icicle River, Lake Wenatchee, and select
+# mainstem tributaries that may or may not be open depending upon the year
+# (Wenatchee, Entiat, Chelan, Okanogan, and Similkameen)." This is a SINGLE
+# COMBINED total per year across that entire footprint - no river, mode
+# (private/guided), or location (boat/bank) breakdown, the coarsest of any
+# district source in this pipeline (R1/R3/R4 at least split boat vs. bank).
+# angler_final is set to "combined" throughout, matching the precedent
+# ingest_mcnary() already uses for an unsplittable bank+boat total (OQ5).
+#
+# SCOPE MISMATCH — logged as an open gap in _22_status_and_gaps.qmd, not
+# resolved here. Chad's footprint does not line up exactly with
+# pst_river_block_crosswalk.csv's existing ColumbiaUpper CRC_only rows for
+# this district:
+#   - Methow River (621) is in our crosswalk but ABSENT from Chad's footnote.
+#   - Chelan (CRC 552, confirmed via crc_area_lut.csv - "Chelan River") is in
+#     Chad's footnote but has NO crosswalk row at all; never added.
+#   - Chad's mainstem boundary stops at Chief Joseph Dam; the crosswalk's
+#     existing mainstem CRC_only row spans Priest Rapids all the way to
+#     Grand Coulee (7 areas: 537|539|541|543|545|547|549). Per
+#     crc_area_lut.csv, 537/539/541/543/545 fall between Priest Rapids and
+#     Chief Joseph Dam (matches Chad's stated boundary exactly); 547 and 549
+#     (Roosevelt Lake, i.e. above Grand Coulee) are further upstream than
+#     Chad's own definition claims to cover.
+# The new R2_external crosswalk rows mark ONLY the unambiguous subset
+# (Entiat 586, Okanogan 627, Similkameen 629, Lake Wenatchee 670, Icicle
+# Creek 672, Wenatchee River 674, and mainstem 537|539|541|543|545) as
+# covered_unpartitioned. Methow (621) and mainstem 547|549 are left as-is
+# (still CRC_only, still eligible for independent P2 expansion) rather than
+# guessed into either "covered" (risking a silent double-count if Chad's
+# number secretly includes them) or "excluded" (risking a silently discarded
+# real signal if it doesn't). Chelan (552) has no crosswalk row to mark
+# either way and stays invisible to P2 until one is added.
+#
+# UNITS: the table's own column header is "ANGLER TRIPS" (matches this
+# pipeline's own unit) - unlike Jeremy Trump's R1 workbook, no trips-vs-days
+# relabeling question here. Per Evan's instruction (2026-08-28), treated as
+# PST-scope salmon trips per the original request (Jim Scott's email: "the
+# U.S. has contracted...to assess the economic value of PST salmon...
+# fisheries"); Chad's reply does not itself reconfirm the species scope, so
+# this is an assumption carried from the original request, not an explicit
+# confirmation from Chad — logged as an open gap.
+R2_PDF_PATH <- here("input_files", "pst", "R2_creel", "R2_Angler_Trips_2022-2025.pdf")
+R2_UPPER_COLUMBIA_CRC_AREAS <- c(586L, 627L, 629L, 670L, 672L, 674L,
+                                 537L, 539L, 541L, 543L, 545L)  # documented; not used as crc_area
+
+#' Return Chad Jackson's (R2) Upper Columbia annual angler-trip totals.
+#'
+#' Hardcoded, not parsed — see the section header above for why. Confirms
+#' the source PDF is still present before returning anything, so a moved or
+#' deleted source document surfaces as a loud failure rather than orphaned
+#' numbers with no traceable origin.
+#'
+#' @return A data frame in the target schema, one row per year 2022-2025.
+ingest_r2_upper_columbia <- function() {
+
+  if (!file.exists(R2_PDF_PATH)) {
+    cli::cli_abort(
+      "R2 source document not found at {.path {R2_PDF_PATH}} - the ",
+      "hardcoded totals in ingest_r2_upper_columbia() are attributed to ",
+      "this file. Restore it or update this function's provenance."
+    )
+  }
+
+  cli::cli_alert_info(
+    "Ingesting Upper Columbia (R2): hardcoded from {.path {basename(R2_PDF_PATH)}}"
+  )
+
+  tibble::tibble(
+    year            = 2022L:2025L,
+    total_trips_est = c(55036, 53647, 55868, 19770)
+  ) |>
+    dplyr::mutate(
+      fishery_name             = sprintf("Upper Columbia salmon %d", year),
+      month                    = NA_integer_,   # annual grain, no month breakdown
+      crc_area                 = NA_integer_,   # composite; see R2_UPPER_COLUMBIA_CRC_AREAS
+      angler_final             = "combined",    # no boat/bank split in source
+      total_effort_hrs         = NA_real_,      # not provided in source
+      n_completed_angler_trips = NA_real_,
+      mean_trip_length         = NA_real_,
+      mean_group_size          = NA_real_,
+      sd                       = NA_real_,
+      pe_period                = "year",
+      total_salmon_harvest     = NA_real_,      # source has no harvest column
+      harvest_expansion        = NA_character_, # not applicable — trips only
+      data_provider            = "Chad Jackson / WDFW Region 2, email 2026-08-27",
+      district                 = "R2"
+    ) |>
+    build_target_schema()
+}
+
+
 # 7. Combining wrapper --------------------------------------------------------
 
 #' Discover and ingest all R3 mid-Columbia/Yakima workbooks for a given set
@@ -1561,9 +1668,8 @@ ingest_r3_mid_columbia <- function(dir = R3_DIR, years = TARGET_YEARS) {
 
 # 8. Top-level wrapper: all districts -----------------------------------------
 
-#' Discover and ingest every district-supplied creel workbook this script
-#' knows how to parse (currently R3, R1), and warn — rather than silently
-#' doing nothing — if R2 files have arrived but no parser exists for them yet.
+#' Discover and ingest every district-supplied creel source this script knows
+#' how to handle (R3, R1, R4, R2).
 #'
 #' @return A data frame with all successfully ingested records across every
 #'   district, each row carrying `district`.
@@ -1627,22 +1733,18 @@ ingest_district_creel_files <- function() {
     if (!is.null(r4)) results <- c(results, list(r4))
   }
 
-  # R2 — anticipated, not yet received. See header note for what to do when
-  # a file shows up here: this is a visible warning, not silent inaction, so
-  # a dropped-in R2 file doesn't sit unnoticed until someone asks why R2's
-  # numbers aren't in the deliverable.
-  if (dir.exists(R2_DIR)) {
-    r2_files <- list.files(R2_DIR, pattern = "\\.xlsx$", full.names = TRUE,
-                           ignore.case = TRUE)
-    if (length(r2_files) > 0) {
-      cli::cli_alert_warning(
-        "{length(r2_files)} file(s) found in {.path {R2_DIR}} but no R2 \\
-         parser exists yet — NOT ingested. Write ingest_r2_*() following the \\
-         pattern of ingest_snake_river() or the R3 ingest_*() functions, set \\
-         district = \"R2\", and call it from ingest_district_creel_files()."
-      )
+  # R2 — Upper Columbia (Chad Jackson), received 2026-08-28 as a PDF, not a
+  # workbook. ingest_r2_upper_columbia() hardcodes the four-row table it
+  # contains — see that function's header for the real scope-mismatch gaps
+  # this data raises (Methow/Chelan/mainstem-boundary).
+  r2 <- tryCatch(
+    ingest_r2_upper_columbia(),
+    error = function(e) {
+      cli::cli_alert_danger("R2 (Upper Columbia) ingestion failed: {conditionMessage(e)}")
+      NULL
     }
-  }
+  )
+  if (!is.null(r2)) results <- c(results, list(r2))
 
   if (length(results) == 0) {
     cli::cli_abort("No district workbooks were successfully ingested.")

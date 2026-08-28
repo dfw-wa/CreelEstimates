@@ -29,7 +29,7 @@ build can be re-run without re-running the tier hierarchy.
 | `input_files/pst/lookup_tables/pst_input_manifest.csv` | Registered inputs — one row per source file/table, with tier, block, and expected coverage |
 | `input_files/pst/lookup_tables/pst_river_block_crosswalk.csv` | Fishery → river → block mapping (164 rows) |
 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | Merged effort + harvest; single DB fetch, one `est_pe_effort()` and one `est_pe_catch()` per fishery, so trips and harvest are identical by construction |
-| `analysis/pst/02_ingest/district_creel_ingestion.R` | Pre-computed district totals not run through this repo's PE estimators — R3 (Todd Miller: Hanford/Yakima/McNary) and R1 (Jeremy Trump: Snake River); R2 anticipated |
+| `analysis/pst/02_ingest/district_creel_ingestion.R` | Pre-computed district totals not run through this repo's PE estimators — R3 (Todd Miller: Hanford/Yakima/McNary), R1 (Jeremy Trump: Snake River), R4 (Nathanael Overman: Green-Duwamish), and R2 (Chad Jackson: Upper Columbia, received 2026-08-28 as a single combined district-wide total, not a workbook) |
 | `analysis/pst/02_ingest/interview_proportions.qmd` | Track B engine — conditional mode proportions from interviews |
 | `analysis/archive/integrate_manual_runs.R` | Archived — not part of the current run order. Reconciles per-fishery `fw_creel.Rmd` runs to the monthly batch grain |
 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | Reads the manifest, applies the tier hierarchy, writes deliverable + three ledgers |
@@ -39,11 +39,13 @@ build can be re-run without re-running the tier hierarchy.
 ::: {.callout-note}
 `input_files/pst/` is organized by provider rather than by file type:
 `CRC/` (the CRC freshwater harvest workbooks), `R1_creel/` (Jeremy Trump's
-Snake River annual summary), `R3_creel/` (Todd Miller's mid-Columbia and
-Yakima workbooks), `external_data/` (JSR tables, FEIS, NEPA, ODFW/LCR), and
-`lookup_tables/` (the manifest and crosswalk above, plus `crc_area_lut.csv`
-and `creel_fishery_catch_group_lut.csv`). An `R2_creel/` directory is
-anticipated but no file has arrived from R2 yet.
+Snake River annual summary), `R2_creel/` (Chad Jackson's Upper Columbia
+total, received 2026-08-28 as a PDF-captured email table, not a workbook),
+`R3_creel/` (Todd Miller's mid-Columbia and Yakima workbooks), `R4_creel/`
+(Nathanael Overman's Green-Duwamish raw interviews and effort estimates),
+`external_data/` (JSR tables, FEIS, NEPA, ODFW/LCR), and `lookup_tables/`
+(the manifest and crosswalk above, plus `crc_area_lut.csv` and
+`creel_fishery_catch_group_lut.csv`).
 :::
 
 `input_files/pst/lookup_tables/pst_input_manifest.csv` is one row per input,
@@ -76,7 +78,7 @@ correctly excluded as mainstem, and different regions from Cowlitz/Lewis/Drano:
 | WA Coast | 46 | mix of `creel_pe` and `CRC_only` (P2 candidates) | Yes |
 | Columbia Lower | 24 | `creel_pe` (Lower Cowlitz — `NO_DATA`), `CRC_only` (Cowlitz/Lewis system and small Lower-Columbia tributaries) | Yes |
 | Columbia Middle | 7 | `creel_pe` (Drano Lake), `CRC_only` (Klickitat, Wind, Big White Salmon) | Yes |
-| Columbia Upper | 19 | `R3_external` (Hanford Reach, McNary, Yakima), `CRC_only` (Wenatchee/Entiat/Methow/Okanogan district, plus the CRC areas above McNary reclassified from ColumbiaMainstem the same day) | Yes |
+| Columbia Upper | 24 | `R3_external` (Hanford Reach, McNary, Yakima), `R2_external` (Chad Jackson's combined Upper Columbia total, added 2026-08-28 — see MD6 in status/gaps), `CRC_only` (Methow — deliberately left active pending an R2 scope question — plus the mainstem stretch above Chief Joseph Dam, split 2026-08-28 from the row reclassified from ColumbiaMainstem) | Yes |
 | Columbia Snake | 6 | `R1_external` (Snake River, resolving the crosswalk gap this doc used to flag) | Yes |
 | Columbia mainstem | 2 | ODFW (Buoy 10 / below Bonneville, Bonneville–McNary) | **No — consultant-supplied, out of scope; rows exist for documentation only and are filtered at load** |
 

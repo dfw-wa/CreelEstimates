@@ -47,7 +47,7 @@ if (!is.null(effort)) {
 |---|---|---|---|
 | 1 | Guided/unguided absent for all mid-Columbia (ColumbiaUpper: Hanford, Yakima, McNary) | Todd Miller | Those rivers deliver `mode = "unknown"` |
 | 2 | 2025 coastal freshwater has no fallback identified | — | WACoast 2025 rows come only from P3's 6-yr trailing mean where history allows; areas failing `min_history_years` have nothing at all. **Note this row changed meaning 2026-08-21:** it used to also say "PS covered by NEPA projection," which is no longer true — Puget Sound 2025 is now covered by our own same-parity P3 (`CRC_PROJECTION_CONTROL_PS`), not by any NEPA-derived figure |
-| 3 | Upper Columbia district (Wenatchee/Entiat/Methow/Okanogan, ColumbiaUpper) | Chad Jackson, pending since 8/11 | No P1 at all; CRC-only P2 candidates until his data lands |
+| 3 | ~~Upper Columbia district (Wenatchee/Entiat/Methow/Okanogan, ColumbiaUpper)~~ | ~~Chad Jackson, pending since 8/11~~ | **Resolved 2026-08-28.** Chad Jackson replied with a single combined district-wide angler-trip total (2022-2025), ingested via the new `R2_external` source — see the "Upper Columbia" row in Open gaps and the MD6 deviation below. Not a design-based P1 run and not split by river/mode/location; genuine scope-mismatch open questions remain (Methow/Chelan/mainstem boundary, species scope) — see the three R2 scope-mismatch rows in Open gaps |
 | 4 | **Nothing in this document's numbers has been re-verified against a post-2026-08-21 pipeline run** | Evan | A large batch of correctness fixes landed 2026-08-21/22 (donor hierarchy restored, NA-shadow strata, Green-Duwamish P2 double-count, Yakima 2023–25 expansion, season-matched CRC/creel comparison, PS P3). Every count, ratio, and total quoted below predates them. Treat specific figures here as provisional until a clean end-to-end run is done — see delivery plan step 1 |
 
 Resolved by scope cut: the LCR undocumented scalar, the Bonneville–McNary
@@ -59,6 +59,40 @@ ODFW numbers.
 
 ## Known defects
 
+- **`pst_p2_block_ratio.R`'s `expand_crosswalk_areas()` — RESOLVED
+  2026-08-28.** Real double-counting, found while wiring in R2_external
+  (below): when a CRC area maps to more than one crosswalk row — e.g. a new
+  district-wide covered_unpartitioned row (R2_external's Upper Columbia
+  total) colliding with that same area's pre-existing standalone `CRC_only`
+  row (Entiat, Okanogan, Similkameen, Wenatchee River, Icicle Creek, and the
+  Priest Rapids-Chief Joseph mainstem areas) — the area-collapsing step
+  picked `area_coverage = "standard"` unless every colliding row agreed,
+  silently discarding the `covered_unpartitioned` flag. Effect: P2
+  independently re-expanded all six named tributaries plus five mainstem
+  areas on top of R2's own combined total for the same years, inflating
+  ColumbiaUpper by roughly 412K trips (727,352 vs. the corrected 315,603).
+  Fixed by making `covered_unpartitioned` win any collision, unanimous or
+  not, since that flag specifically means "some P1 source already reports
+  this area's trips in aggregate" — collapsing a disagreement toward
+  `"standard"` was always the double-counting direction. This is the general
+  shape of the Green-Duwamish bug below (a coarse, unpartitioned P1 total
+  going unrecognized by a check keyed on per-area attribution), just in the
+  crosswalk-merge step rather than `apply_p2()`'s coverage check — worth
+  remembering if a future district-wide source collides with existing
+  per-river `CRC_only` rows again.
+- **`pst_p2_block_ratio.R`'s `p2_loo_check()` — RESOLVED 2026-08-28.**
+  Latent crash, also surfaced while wiring in R2_external: if no block/year
+  has more than `control$min_donor_areas` distinct donor areas, the
+  `group_modify()` step runs zero times and never creates the
+  `predicted`/`observed`/`loo_ratio`/`n_donors` columns, so the following
+  `mutate(abs_error = predicted - observed)` fails with "object 'predicted'
+  not found" instead of returning the empty result callers already handle
+  (`p2_loo_summary()` is only called when `nrow(loo) > 0`). Triggered here
+  because marking six ColumbiaUpper tributaries `covered_unpartitioned`
+  shrank that block's donor pool to fewer than `min_donor_areas` per year.
+  Fixed by returning a correctly-typed zero-row tibble up front when no
+  block/year is eligible, instead of letting the group-and-mutate pipeline
+  run past its non-existent output.
 - **`pst_p2_block_ratio.R`'s `apply_p2()` — RESOLVED 2026-08-22.** Real
   double-counting, not theoretical: Green-Duwamish (R4_external, area 746)
   has real P1 trips/harvest for 2022-2025 in the deliverable, but its
@@ -325,8 +359,12 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 |---|---|---|
 | Yakima workbooks, 2023–2025 | Todd Miller (R3) | **Resolved 2026-08-21.** Files received; now ingested via `ingest_yakima_site_combined()` (see Known defects/Open gaps entry below) |
 | McNary workbooks, 2023–2025 | Todd Miller (R3) | This row appears stale as of 2026-08-21: `ingest_mcnary()` already exists, is wired into `ingest_r3_mid_columbia()`, and all three files (2023-2025) are already present in `input_files/pst/R3_creel/`. Not verified this session (out of scope of the Yakima fix) — confirm output is actually landing in `district_creel_summary.csv` before treating this as still open |
-| Upper Columbia | Chad Jackson (R2) | Outreach 2026-08-11; pending |
-| Lake Wenatchee (CRC area 670) | Chad Jackson (R2), part of the Upper Columbia request above | Outreach 2026-08-11; pending. Currently excluded from P2 entirely — its CRC harvest is >25x the largest donor area's, past `max_target_harvest_multiple` (`pst_p2_block_ratio.R`), so no ratio is extrapolated onto it. Real P1 data from Chad would replace the need for a ratio at all |
+| Upper Columbia | Chad Jackson (R2) | **Received 2026-08-28.** Chad replied (email, PDF captured at `input_files/pst/R2_creel/R2_Angler_Trips_2022-2025.pdf`) with a single combined district-wide angler-trip total per year — no river, mode, or location split, the coarsest source in the pipeline. Ingested via `ingest_r2_upper_columbia()`/`R2_external`. See the three new gap rows below for what this doesn't resolve |
+| Lake Wenatchee (CRC area 670) | Chad Jackson (R2), part of the Upper Columbia request above | **Received 2026-08-28**, as part of Chad's combined total (his footnote explicitly names Lake Wenatchee). No longer excluded by the P2 harvest-scale guardrail (`max_target_harvest_multiple`) — that guardrail only ever applied to a *ratio-based* P2 extrapolation, and this area's trips now arrive via R2's district total instead, which sidesteps the guardrail rather than resolving whatever made it fire in the first place |
+| R2 (Chad Jackson) scope mismatch: Methow River (621) | Evan / Chad | **Open.** Methow is grouped under this district in `pst_river_block_crosswalk.csv` but is NOT named in Chad's footnote (which lists Wenatchee, Entiat, Chelan, Okanogan, Similkameen, plus the Priest Rapids-Chief Joseph mainstem and Icicle River/Lake Wenatchee). Left `CRC_only`/active for independent P2 expansion rather than guessed either way — if Chad's total secretly includes Methow, this double-counts; if it doesn't, leaving it active is correct. Needs a direct question back to Chad |
+| R2 (Chad Jackson) scope mismatch: Chelan (CRC 552) | Evan / Chad | **Open.** Chelan is named in Chad's footnote but has no `pst_river_block_crosswalk.csv` row at all (confirmed via `crc_area_lut.csv` — "Chelan River" exists as CRC 552, never added to the crosswalk). Invisible to P2 either way until a row is added; unclear whether Chad's total already includes it |
+| R2 (Chad Jackson) scope mismatch: mainstem boundary | Evan / Chad | **Open, mostly resolved by inference.** Chad's footnote bounds the mainstem at Chief Joseph Dam; the crosswalk's pre-existing mainstem row spanned Priest Rapids all the way to Grand Coulee (7 areas). Per `crc_area_lut.csv`'s own dam-to-dam descriptions, areas 537/539/541/543/545 fall exactly within Priest Rapids-to-Chief-Joseph (marked covered by R2_external); 547 and 549 (Roosevelt Lake) are above Chief Joseph and were split into their own still-open `CRC_only` row. Confident in the split itself; not confident Chad's total is silent on 547/549 rather than simply forgetting to mention them |
+| R2 (Chad Jackson) species scope | Evan / Chad | **Open, assumed not confirmed.** Per Evan's instruction (2026-08-28), R2's total is assumed to be PST-scope salmon per the original request (Jim Scott's email explicitly excludes steelhead) — Chad's reply doesn't itself restate the species scope, so this is an assumption carried from the original ask, not an explicit confirmation |
 | Snake River | Jeremy Trump / Mike Gembala | Resolved 2026-08-20 — crosswalk added 2026-08-19; zone-coverage question (does creel cover all open water so a Snake-internal trips/CRC ratio would be clean?) answered 2026-08-20: yes, clean, see the Known defects entry above. Data refresh 2026-08-20 also filled in the previously-blank Fall CH 2025 row (5023 boat / 87 shore); added the matching crosswalk row the same day. A real Snake-calibrated donor pair (season-specific area harvest vs. Jeremy's trips) is now feasible but not yet built |
 | Green River (Green-Duwamish) creel data | Nathanael Overman | **Received and ingested 2026-08-20/21.** Raw interviews + effort-estimate workbooks landed; `ingest_green_duwamish()` in `district_creel_ingestion.R` derives `total_trips_est` as R4's own angler-hours effort ÷ mean trip length computed from the raw interviews (completed trips only, pooled across the full year — see MD3 below). Four `R4_external` crosswalk rows added 2026-08-21 (2022-2025), superseding the `CRC_only` placeholder for those years. Cross-check against the workbook's own ANGLERS block: derived trips land within ~2-9% of it across all 8 year × mode combinations, boat consistently a little low. Asked Nathanael (2026-08-21) whether he could summarize the effort totals by month instead of by the current two-period split — would let this go from annual to monthly `pe_period` grain and give period-specific rather than pooled trip lengths; a potential future refinement, not blocking |
 | Columbia Basin empirical effort/catch 2022–2025 (to replace FEIS rates) | Mark S. / CRD | Team check pending |
@@ -353,11 +391,12 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 
 | # | Deviation | Rationale | Scope |
 |---|---|---|---|
-| MD1 | Mid-Columbia and Snake River Track A totals accepted as **pre-computed** inputs (`district_creel` source_ids: `R3_external`, `R1_external`), bypassing the P1 hierarchy | Todd Miller's (R3) and Jeremy Trump's (R1) spreadsheet totals are the only expansion that exists for these systems; unvetted external calculations, not design-based PE runs | Hanford Reach, Yakima, McNary (ColumbiaUpper), Snake River (ColumbiaSnake) — all delivering as of 2026-08-19. **Not generalizable**; R2 will need the same call when it arrives. |
+| MD1 | Mid-Columbia and Snake River Track A totals accepted as **pre-computed** inputs (`district_creel` source_ids: `R3_external`, `R1_external`), bypassing the P1 hierarchy | Todd Miller's (R3) and Jeremy Trump's (R1) spreadsheet totals are the only expansion that exists for these systems; unvetted external calculations, not design-based PE runs | Hanford Reach, Yakima, McNary (ColumbiaUpper), Snake River (ColumbiaSnake) — all delivering as of 2026-08-19. Upper Columbia (R2) got the same call 2026-08-28 — see MD6, which documents the extra caveats R2's data raises beyond what MD1 covers for R1/R3. |
 | MD2 | Guided/unguided coded `"unknown"` for all mid-Columbia | Field not collected by R3 programs | Per R3 |
 | MD3 | Green-Duwamish Track A totals are **derived, not sourced** — unlike MD1's R1/R3 rows, R4 (Nathanael Overman) does not hand us a finished trip count. `ingest_green_duwamish()` computes `total_trips_est` itself as R4's own angler-hours effort estimate ÷ mean trip length computed from R4's raw creel interviews | R4 supplies effort (angler-hours) and raw interview microdata but no trip total; the workbook's own ANGLERS block is present but of uncertain accounting basis, so it's kept as a cross-check only rather than used as the source of `total_trips_est` (Evan's call, 2026-08-21) | Green-Duwamish (PugetSound) — 2022-2025. **Not generalizable**; this is a different kind of unvetted calculation than MD1's "accept the district's own total," worth flagging separately in review |
 | MD4 | Puget Sound 2025 harvest is projected on a **same-parity (odd-year) 5-year mean**, not the 6-year trailing mean every other block uses (`CRC_PROJECTION_CONTROL_PS` vs. `CRC_PROJECTION_CONTROL` in `pst_crc_harvest_projection.R`) | PS Pink salmon return almost exclusively in odd years. A trailing mean averages an odd year's Pink-inflated harvest together with even years' near-absence of it, systematically understating an odd target year — 2025 is odd. Same-parity averaging is the mechanic NEPA's own workbook uses and that this file's PART 2 diagnostic already reconstructs; MD4 promotes it from diagnostic to projection basis for PS only. Window is 2015/2017/2019/2021/2023 over **pure** (pre-creel-substitution) CRC | PugetSound 2025 only. Ratio comes from PS's own real 2023 block-year creel/CRC pair (`max(history_years)` resolves to 2023 automatically), **not** from NEPA's 3.44/8.65 — those external ratios are referenced in the intro/methods children for context but are consumed nowhere. Provisional pending Jim's sign-off (2026-08-21) |
 | MD5 | Winter/summer **gamefish** fisheries excluded from ingest and output | Same PST-salmon-scope basis as the pre-existing steelhead-primary exclusion [S1]. Mixed-target surveys naming both salmon and gamefish (e.g. `Skykomish summer Chinook and gamefish`) are deliberately retained, matching the carve-out the steelhead filter already makes for `Lower Cowlitz salmon and steelhead` | All blocks, applied in `multi_fishery_creel_summary.R` at both the candidate-fishery stage and the final output filter (2026-08-21) |
+| MD6 | Upper Columbia (R2) Track A total accepted as a **pre-computed, single combined district-wide** input (`R2_external`), following MD1's pattern but coarser than every other MD1 source — no river, mode, or location split at all (R1/R3 at least split boat vs. bank) | Chad Jackson's (WDFW Region 2) 2026-08-27 reply is the only data this district has ever produced for this request; unvetted, un-partitioned, but real. `area_coverage = "covered_unpartitioned"` marks the CRC areas it covers (Entiat 586, Okanogan 627, Similkameen 629, Lake Wenatchee 670, Icicle Creek 672, Wenatchee River 674, and mainstem Priest Rapids-Chief Joseph 537\|539\|541\|543\|545) so P2/P3 don't independently re-expand them | Upper Columbia (ColumbiaUpper) 2022-2025. **Not fully resolved** — Methow (621), Chelan (CRC 552), and the mainstem stretch above Chief Joseph (547\|549) are deliberately left OUT of the covered set pending clarification from Chad (see the three R2 scope-mismatch rows in Open gaps); species scope (salmon-only) is assumed, not confirmed |
 
 For reference, the 2022 Hanford Reach figures accepted under MD1:
 26,342 boat trips and 2,103 bank trips (92.6 / 7.4). Track B location is
@@ -372,7 +411,8 @@ seen yet**, so every downstream judgment is waiting on one clean run.
 
 | Step | Owner | Blocking |
 |---|---|---|
-| 1. **Clean end-to-end re-run + verify.** `multi_fishery_creel_summary.R` (needs VPN/DB) → `district_creel_ingestion.R` → `pst_fw_angler_trips_assembly.R` → render. Then re-read: run-ledger row count, `trip_length_source` tier breakdown, the season-matched CRC/creel median, and whether any P1 row still draws a duplicate P2 row | Evan | **Gates almost everything below** — DB/VPN access |
+| 1. **Clean end-to-end re-run + verify.** `multi_fishery_creel_summary.R` (needs VPN/DB) → `district_creel_ingestion.R` → `pst_fw_angler_trips_assembly.R` → render. Then re-read: run-ledger row count, `trip_length_source` tier breakdown, the season-matched CRC/creel median, and whether any P1 row still draws a duplicate P2 row. **Partially done 2026-08-28**: the non-DB half (`district_creel_ingestion.R` → `pst_fw_angler_trips_assembly.R` → `pst_fw_build_jim_workbook.R`) ran clean while wiring in R2 — found and fixed two real bugs in the process (see Known defects: `expand_crosswalk_areas()` double-count, `p2_loo_check()` crash). The DB-dependent half (`multi_fishery_creel_summary.R`) still has not run since the 2026-08-21/22 fixes landed | Evan | DB-dependent half still gates the P1 tier-count figures below |
+| 1b. Follow up with Chad Jackson on the three R2 scope-mismatch questions (Methow, Chelan, species scope) — see Open gaps | Evan | Chad |
 | 2. Confirm no other P1 source hits the Green-Duwamish failure mode (NA `month` or NA `total_salmon_harvest` → invisible to `build_p2_donors()` → wrongly treated as uncovered) | Evan | Step 1 |
 | 3. Review P3 2025 projections against each area's own recent real years; Whatcom Creek (884: 61/135/13 real → 728 projected) is the worked example | Evan / Jim | Step 1 |
 | 4. Verify 2025 season regulations per projected CRC area — zero out confirmed closures, and decide the thin-history-but-confirmed-open case | Evan / Jim | Regulations review |

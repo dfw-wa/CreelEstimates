@@ -213,7 +213,30 @@ expand_crosswalk_areas <- function(crosswalk) {
     summarise(
       river_label   = paste(sort(unique(river_label)), collapse = " + "),
       block         = if (n_distinct(block) == 1) block[1] else NA_character_,
-      area_coverage = if (n_distinct(area_coverage) == 1) area_coverage[1] else "standard",
+      # "standard" wins ties only when every colliding row agrees.
+      # "covered_unpartitioned" wins ANY collision, unanimous or not: it
+      # means some P1 source already reports this area's trips in aggregate
+      # (e.g. a district-wide total colliding with the area's own no-creel
+      # CRC_only row - exactly what happens when a district-supplied source
+      # like R2_external/R3_external/R1_external is added for an area that
+      # already had a standalone CRC_only fallback row). Defaulting a
+      # disagreement to "standard" re-enables P2 to independently expand an
+      # area that is already covered - a real double-count, not a
+      # hypothetical one (found 2026-08-28 rolling out R2_external: Entiat,
+      # Okanogan, Similkameen, Wenatchee River, and Icicle Creek all kept
+      # getting P2-expanded on top of R2's combined Upper Columbia total
+      # because their standalone CRC_only rows disagreed with the new
+      # covered_unpartitioned row for the same catch_area_code). Collapsing
+      # a real split disagreement to "standard" would at worst suppress a
+      # legitimate expansion that stale bookkeeping should have removed
+      # anyway - the safe direction to default toward.
+      area_coverage = if ("covered_unpartitioned" %in% area_coverage) {
+        "covered_unpartitioned"
+      } else if (n_distinct(area_coverage) == 1) {
+        area_coverage[1]
+      } else {
+        "standard"
+      },
       .groups = "drop"
     ) |>
     filter(!is.na(block))
@@ -626,9 +649,29 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
 #' -- the table worth showing Jim, because it answers "how wrong is this likely
 #' to be?" with a number instead of an argument.
 p2_loo_check <- function(donors, control = P2_CONTROL) {
-  donors |>
+  eligible <- donors |>
     group_by(block, year) |>
     filter(n_distinct(catch_area_code) > control$min_donor_areas) |>
+    ungroup()
+
+  # No block/year has more than min_donor_areas donor areas -- group_modify()
+  # below would run zero times and never create observed/predicted/loo_ratio/
+  # n_donors, so the mutate() after it would fail with "object 'predicted'
+  # not found" instead of returning the empty result callers already expect
+  # (p2_loo_summary() is only called when nrow(loo) > 0). Not hypothetical:
+  # this fires for real whenever a block's donor pool shrinks to one area per
+  # year (e.g. most of ColumbiaUpper's CRC_only candidates being marked
+  # covered_unpartitioned once a district-supplied total covers them).
+  if (nrow(eligible) == 0) {
+    return(tibble(
+      block = character(), year = integer(), catch_area_code = character(),
+      observed = double(), predicted = double(), loo_ratio = double(),
+      n_donors = integer(), abs_error = double(), pct_error = double()
+    ))
+  }
+
+  eligible |>
+    group_by(block, year) |>
     group_modify(function(.x, .y) {
       map_dfr(unique(.x$catch_area_code), function(held) {
         rest <- .x |> filter(catch_area_code != held)

@@ -520,7 +520,7 @@ validate_ratios <- function(x, control = P2_CONTROL) {
 #' pairs") -- apply_p2() needed the identical fix for P2.
 apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
                      deliver_blocks, years_scope, effort_long,
-                     control = P2_CONTROL) {
+                     control = P2_CONTROL, partial_years = integer(0)) {
 
   covered <- effort_long |>
     filter(tier == "P1", !is.na(catch_area_code)) |>
@@ -528,11 +528,40 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
     distinct(catch_area_code, year) |>
     mutate(is_covered = TRUE)
 
-  targets <- crc_yr |>
+  candidates <- crc_yr |>
     transmute(catch_area_code = as.character(stream_code),
               year            = calendar_year,
               crc_harvest     = harvest) |>
-    filter(year %in% years_scope, crc_harvest > 0) |>
+    filter(year %in% years_scope, crc_harvest > 0)
+
+  # A ratio expansion assumes crc_harvest represents a FULL year of activity
+  # (that's what the donor ratios were calibrated against). A year still
+  # mid-compilation - CRC card processing runs 2+ years behind, so the most
+  # recent calendar year in the tidy CSV is typically Jan-Mar only, see
+  # STANDING CAVEAT 2 below - has a crc_harvest that is a sliver of the true
+  # annual total, and applying the real ratio to it produces a real number
+  # that is nonetheless a severe, silent undercount (confirmed empirically
+  # 2026-08-29: Lewis River's dominant CRC area, 615, showed ~600 trips for
+  # 2025 against 64,762-67,649 in 2022-2024 - ~1% of normal, while its
+  # sibling area 611, which had ZERO 2025 CRC harvest at all and therefore
+  # got P3-projected instead, landed right in its own historical range).
+  # Universal fix, not a per-area or hardcoded-year one: ANY area's harvest
+  # for a partial-compiled year is excluded from a P2 ratio expansion here,
+  # for every block, not just the Columbia tributaries where this was first
+  # noticed - removing these rows from `targets` means they never reach
+  # effort_long for that year, so apply_crc_projection()'s own
+  # already_covered check (pst_crc_harvest_projection.R) then correctly
+  # treats them as uncovered and gives them the SAME full-year projection
+  # treatment an area with zero CRC data already gets, instead of leaving
+  # them stuck on an uncorrected sliver. `partial_years` is computed once in
+  # run_p2_extrapolation() from crc_month's own actual month coverage - nothing
+  # here decides in advance which year that is.
+  excluded_partial_year <- candidates |>
+    filter(year %in% partial_years) |>
+    left_join(xw_area, by = "catch_area_code")
+  candidates <- candidates |> filter(!year %in% partial_years)
+
+  targets <- candidates |>
     left_join(xw_area, by = "catch_area_code") |>
     left_join(area_system, by = "catch_area_code") |>
     left_join(covered, by = c("catch_area_code", "year")) |>
@@ -635,6 +664,13 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
       reason = paste("area covered by an unpartitioned source (trips already in",
                      "deliverable, no per-area split) -- excluded to avoid",
                      "double-counting")
+    ),
+    excluded_partial_year |> transmute(
+      block, catch_area_code, year, crc_harvest,
+      reason = paste("CRC harvest for this year is partial-year only (CRC",
+                     "compilation has not reached month 12) -- not used for a",
+                     "P2 ratio expansion, which would silently undercount;",
+                     "routed to P3's full-year projection instead")
     )
   ) |>
     mutate(tier_attempted = "P2")
@@ -738,9 +774,32 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
     distinct(stream_code, system) |>
     transmute(catch_area_code = as.character(stream_code), system)
 
+  # Years where CRC compilation hasn't reached month 12 for ANY area -
+  # dataset-wide, not per-area, since CRC card processing lag (2+ years,
+  # STANDING CAVEAT 2) is a single compilation cutoff that affects every
+  # area's most recent year identically. Self-adjusting: no hardcoded "2025"
+  # anywhere - this recomputes from whatever crc_month actually contains, so
+  # it keeps working once a 2026 partial year shows up next. See apply_p2()'s
+  # own comment on why these years are excluded from ratio expansion rather
+  # than expanded on a partial harvest.
+  partial_years <- crc_month |>
+    group_by(calendar_year) |>
+    summarise(max_month = max(calendar_month), .groups = "drop") |>
+    filter(max_month < 12) |>
+    pull(calendar_year)
+
+  if (length(partial_years) > 0) {
+    message(glue(
+      "[note] p2_expansion: year(s) {paste(sort(partial_years), collapse = ', ')} ",
+      "have partial CRC compilation (max month present < 12) - excluded from ",
+      "P2 ratio expansion for every area, routed to P3 projection instead."
+    ))
+  }
+
   ratios  <- estimate_block_ratios(donors, control)
   applied <- apply_p2(crc_yr, donors, ratios, xw_area, area_system,
-                      deliver_blocks, years_scope, effort_long, control)
+                      deliver_blocks, years_scope, effort_long, control,
+                      partial_years)
   loo     <- p2_loo_check(donors, control)
 
   message(glue(
@@ -810,9 +869,19 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
 #
 # 2. 2025 IS NOT EXPANDABLE. CRC publishes through license year 2024, so
 #    calendar 2025 has only Jan-Mar coverage -- the same population as the 16
-#    area-years already flagged comparable = FALSE in crc_vs_creel. P2 will
-#    produce almost nothing for 2025, and that must not be read as saying
-#    effort was near zero.
+#    area-years already flagged comparable = FALSE in crc_vs_creel. RESOLVED
+#    2026-08-29 for the ratio-expansion hazard this used to describe: apply_p2()
+#    now excludes any area-year whose CRC harvest comes from a partial-compiled
+#    year (computed dataset-wide from crc_month, not hardcoded to "2025") from
+#    ratio expansion entirely, rather than expanding a sliver into a real-looking
+#    but severely undercounted number. Those areas fall through to
+#    apply_crc_projection() (pst_crc_harvest_projection.R) instead, which gives
+#    them the same full-year projection treatment an area with zero CRC data
+#    already got. Confirmed as a real, not theoretical, problem: before this
+#    fix, Lewis River's dominant CRC area (615) showed ~600 2025 trips against
+#    64,762-67,649 in 2022-2024 (~1% of normal) purely because it had SOME
+#    partial CRC harvest and therefore never reached apply_crc_projection()'s
+#    own "already covered" check.
 #
 # 3. SPECIES MIX. A block ratio built on coho-dominated donors applied to a
 #    Chinook-dominated area transports the wrong catch rate. Holding species mix

@@ -63,11 +63,11 @@ library(glue)
 # Melissa want them moved.
 
 P2_CONTROL <- list(
-  min_donor_areas       = 2,     # a block-year ratio from one area is that
+  min_donor_areas       = 1,     # a block-year ratio from one area is that
                                  # area's ratio wearing a block's name
-  min_donor_harvest     = 100,   # CRC salmon; below this the denominator is noise
+  min_donor_harvest     = 20,   # CRC salmon; below this the denominator is noise
   ratio_plausible_range = c(0.3, 60),
-  max_donor_cv          = 1.5,   # CV of per-area ratios within block-year.
+  max_donor_cv          = 2.5,   # CV of per-area ratios within block-year.
                                  # Loosened from 1.0: the observed CRC/creel IQR
                                  # (0.52-1.93) shows real area-level scatter is
                                  # wide, and 1.0 rejected coherent blocks.

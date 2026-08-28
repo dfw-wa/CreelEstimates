@@ -1029,7 +1029,7 @@ effort_by_area <- effort_long |>
   group_by(block, river_label, catch_area_code, year, mode, location) |>
   summarise(
     angler_trips         = sum(angler_trips, na.rm = TRUE),
-    total_salmon_harvest = sum(total_salmon_harvest, na.rm = TRUE),
+    total_salmon_harvest = round(sum(total_salmon_harvest, na.rm = TRUE),0),
     tier      = paste(sort(unique(tier)), collapse = "|"),
     source_id = paste(sort(unique(source_id)), collapse = "|"),
     .groups = "drop"
@@ -1040,9 +1040,9 @@ effort_by_area <- effort_long |>
     # what a reader gets dividing the two displayed columns by hand, rather
     # than reflecting a precision the trip count itself no longer carries.
     angler_trips     = round(angler_trips),
-    trips_per_salmon = if_else(total_salmon_harvest > 0,
+    trips_per_salmon = round(if_else(total_salmon_harvest > 0,
                                angler_trips / total_salmon_harvest,
-                               NA_real_)
+                               NA_real_), 2)
   ) |>
   arrange(block, river_label, catch_area_code, year, location, mode)
 
@@ -1078,7 +1078,7 @@ effort_by_mode_location <- effort_long |>
   group_by(block, river_label, year, mode, location) |>
   summarise(
     angler_trips         = sum(angler_trips, na.rm = TRUE),
-    total_salmon_harvest = sum(total_salmon_harvest, na.rm = TRUE),
+    total_salmon_harvest = round(sum(total_salmon_harvest, na.rm = TRUE),0),
     # Preserved as a pipe-delimited list so the river row can still be traced
     # back to the areas behind it without re-running the assembly.
     catch_area_codes = paste(sort(unique(na.omit(catch_area_code))),
@@ -1101,9 +1101,9 @@ effort_by_mode_location <- effort_long |>
     # what a reader gets dividing the two displayed columns by hand, rather
     # than reflecting a precision the trip count itself no longer carries.
     angler_trips     = round(angler_trips),
-    trips_per_salmon = if_else(total_salmon_harvest > 0,
+    trips_per_salmon = round(if_else(total_salmon_harvest > 0,
                                angler_trips / total_salmon_harvest,
-                               NA_real_)
+                               NA_real_),2)
   ) |>
   arrange(block, river_label, year, location, mode)
 

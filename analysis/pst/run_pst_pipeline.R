@@ -74,13 +74,21 @@ library(glue)
 
 # ---- 0. Steps to run ---------------------------------------------------------
 # Edit this vector to run a subset. Names must match STEP_REGISTRY below.
-# Default is every automated step, in dependency order. Step 4 and step 7 are
-# not in this vector - see the header for why (interview_proportions.qmd and
-# the parent render are reported as manual steps instead).
+# Step 4 and step 7 are never in this vector - see the header for why
+# (interview_proportions.qmd and the parent render are reported as manual
+# steps instead).
+#
+# "02_multi_fishery_creel_summary" is commented out by default: it needs
+# DB/VPN (needs_db = TRUE below) and is the slowest step by far. Steps 5/6
+# don't care whether it ran THIS session - they read whatever CSVs are
+# already sitting in outputs/02_multi_fishery_creel/ (see [R2]: a missing
+# input is a logged gap, not a fatal error, and there's no session-state
+# check tying a file's freshness to whether its producer just ran). Add the
+# line back in whenever the DB data actually needs refreshing.
 
 STEPS <- c(
   "01_crc_freshwater_harvest",
-  "02_multi_fishery_creel_summary",
+  # "02_multi_fishery_creel_summary",  # needs DB/VPN - see comment above
   "03_district_creel",
   "05_effort_assembly",
   "06_jim_workbook"

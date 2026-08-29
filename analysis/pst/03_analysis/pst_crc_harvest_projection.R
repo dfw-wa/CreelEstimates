@@ -739,3 +739,232 @@ run_nepa_pure_crc_comparison <- function(crc_hist, crosswalk, nepa_dir,
 
   cmp
 }
+
+
+# ==============================================================================
+# PART 3: Season-status correction (WDFW regulatory verification)
+#
+# Wired into the assembly script's P3 step 2026-08-29, so every pipeline run
+# applies it automatically. Was originally a separate, manually-run script
+# (pst_crc_projection_season_check.R, archived the same day into
+# analysis/archive/ once this superseded it) - promoted to a real pipeline
+# step once Evan finished a full round of verification and asked for it to
+# apply on every run rather than as a one-off manual pass.
+#
+# WHY THIS IS A HUMAN-VERIFIED LOOKUP TABLE, NOT A LIVE SCRAPE
+# WDFW publishes no API for season open/closed status. The baseline pamphlet
+# is PDF prose; mid-season changes come via a free-text emergency-rules feed.
+# Auto-parsing either reliably enough to justify REMOVING dollars from an
+# economic valuation was judged too failure-prone - a wrongly-parsed "open"
+# would leave an already-wrong number looking checked, worse than an honest
+# gap. input_files/pst/lookup_tables/pst_season_status_lookup.csv is the
+# actual source of truth: one row per (CRC area, month of the target year),
+# `status` = open/closed/restricted/UNVERIFIED, hand-maintained by Evan
+# against the WDFW pamphlets. scaffold_season_status_lookup() below upserts
+# new candidate rows as UNVERIFIED but never touches an existing row - a
+# human's verification work always survives a re-run.
+#
+# WHAT THE CORRECTION DOES
+# An area verified closed for every one of the target year's 12 months has
+# its projected harvest/trips forced to zero. An area verified closed for
+# SOME months gets a prorated cut: the fraction of its OWN historical annual
+# harvest that typically falls in those specific closed months (from the
+# full CRC tidy history, SEASONALITY_HISTORY_YEARS below) is subtracted from
+# the projection - not a guess, the same per-area seasonality basis PART 1's
+# sanity check already computes for Jan-Mar, generalized to any month. An
+# area with ANY month still UNVERIFIED is left completely unchanged and
+# logged as a gap - never assumed open [R2]. "restricted" (e.g. a bag-limit
+# cut, not a closure) is treated as open for the arithmetic - there is no
+# reliable way to convert a bag-limit change into a harvest fraction from
+# this pipeline's own data.
+# ==============================================================================
+
+# Deliberately independent of either CRC_PROJECTION_CONTROL's own
+# history_years: the two projection variants (6-yr trailing vs. PS same-
+# parity) use different windows, and this check should rest on one stable,
+# wide "typical seasonality" basis rather than silently inheriting whichever
+# projection variant happened to produce a given area's row.
+SEASONALITY_HISTORY_YEARS <- 2019L:2024L
+
+VALID_SEASON_STATUSES <- c("UNVERIFIED", "open", "closed", "restricted")
+
+#' Historical month-of-year harvest share, per CRC area (stream_code).
+#' @return tibble(stream_code, calendar_month, month_share)
+compute_monthly_harvest_share <- function(crc_hist, history_years = SEASONALITY_HISTORY_YEARS) {
+  crc_hist |>
+    filter(calendar_year %in% history_years) |>
+    mutate(stream_code = as.character(stream_code)) |>
+    group_by(stream_code, calendar_month) |>
+    summarise(month_harvest = sum(harvest_count, na.rm = TRUE), .groups = "drop") |>
+    group_by(stream_code) |>
+    mutate(annual_harvest = sum(month_harvest, na.rm = TRUE),
+           month_share    = if_else(annual_harvest > 0,
+                                    month_harvest / annual_harvest, NA_real_)) |>
+    ungroup() |>
+    select(stream_code, calendar_month, month_share)
+}
+
+#' Upsert new (catch_area_code, month) candidates from this run's P3 output
+#' into the season status lookup table as UNVERIFIED. Writes the file back
+#' to lookup_path (an input_files/pst/lookup_tables/ path, not an output) -
+#' this is the one place in the assembly script that writes back to an
+#' input, because the lookup table IS the mechanism, same as
+#' SEASON_TRUNCATED_MONTHS in pst_p2_block_ratio.R being empty-until-a-human-
+#' fills-it-in.
+#'
+#' @return the full (existing + newly scaffolded) lookup table
+scaffold_season_status_lookup <- function(p3_trips, lookup_path, target_year) {
+  license_year_label <- function(calendar_month) {
+    start_year <- if_else(calendar_month <= 3L, target_year - 1L, target_year)
+    glue("{start_year}-{substr(start_year + 1L, 3, 4)}")
+  }
+
+  if (nrow(p3_trips) == 0) {
+    if (file.exists(lookup_path)) {
+      return(readr::read_csv(lookup_path, show_col_types = FALSE,
+                             col_types = readr::cols(.default = "c")) |>
+               mutate(month = as.integer(month)))
+    }
+    return(tibble())
+  }
+
+  scaffold <- p3_trips |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    distinct(catch_area_code, river_label) |>
+    tidyr::crossing(month = 1:12) |>
+    mutate(
+      license_year    = license_year_label(month),
+      status          = "UNVERIFIED",
+      verified_source = NA_character_,
+      verified_by     = NA_character_,
+      verified_date   = NA_character_,
+      notes           = NA_character_
+    )
+
+  if (file.exists(lookup_path)) {
+    existing <- readr::read_csv(lookup_path, show_col_types = FALSE,
+                                col_types = readr::cols(.default = "c")) |>
+      mutate(month = as.integer(month))
+    new_rows <- scaffold |> anti_join(existing, by = c("catch_area_code", "month"))
+    lookup <- bind_rows(existing, new_rows) |> arrange(catch_area_code, month)
+    if (nrow(new_rows) > 0) {
+      message(glue(
+        "[note] crc_projection_season: {nrow(new_rows)} new (area, month) row(s) ",
+        "added to {basename(lookup_path)} as UNVERIFIED - {nrow(existing)} ",
+        "existing row(s) (verified or not) left untouched."
+      ))
+    }
+  } else {
+    lookup <- scaffold
+    message(glue(
+      "[note] crc_projection_season: no {basename(lookup_path)} found - creating ",
+      "with {nrow(lookup)} UNVERIFIED rows. Nothing corrected until a human fills ",
+      "in `status`."
+    ))
+  }
+
+  bad_status <- lookup |> filter(!status %in% VALID_SEASON_STATUSES)
+  if (nrow(bad_status) > 0) {
+    cli::cli_abort(paste(
+      "{nrow(bad_status)} row(s) in {basename(lookup_path)} have a status not in",
+      "{paste(VALID_SEASON_STATUSES, collapse = ', ')}. Fix before re-running."
+    ))
+  }
+
+  readr::write_csv(lookup, lookup_path)
+  lookup
+}
+
+#' Apply verified season status to P3's projected trips/harvest.
+#'
+#' @param p3_trips  this run's combined P3 output (both control variants),
+#'                  before canon() - must still carry catch_area_code,
+#'                  river_label, block, year, total_salmon_harvest,
+#'                  angler_trips, method
+#' @param crc_hist  full, unfiltered CRC harvest tidy CSV
+#' @param lookup    output of scaffold_season_status_lookup()
+#' @param target_year  calendar year being corrected (matches control$target_year)
+#' @return list(trips = p3_trips with total_salmon_harvest/angler_trips
+#'   corrected in place (original values kept alongside as
+#'   total_salmon_harvest_uncorrected/angler_trips_uncorrected) and method
+#'   annotated where changed, gaps = tibble of areas still needing verification)
+apply_season_status_correction <- function(p3_trips, crc_hist, lookup, target_year,
+                                           history_years = SEASONALITY_HISTORY_YEARS) {
+  if (nrow(p3_trips) == 0 || nrow(lookup) == 0) {
+    return(list(
+      trips = p3_trips |> mutate(total_salmon_harvest_uncorrected = total_salmon_harvest,
+                                 angler_trips_uncorrected         = angler_trips),
+      gaps  = tibble()
+    ))
+  }
+
+  monthly_share <- compute_monthly_harvest_share(crc_hist, history_years)
+
+  area_status <- lookup |>
+    mutate(catch_area_code = as.character(catch_area_code), month = as.integer(month)) |>
+    group_by(catch_area_code) |>
+    summarise(
+      n_unverified  = sum(status == "UNVERIFIED"),
+      n_closed      = sum(status == "closed"),
+      n_restricted  = sum(status == "restricted"),
+      closed_months = list(sort(month[status == "closed"])),
+      .groups = "drop"
+    )
+
+  corrected <- p3_trips |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    left_join(area_status, by = "catch_area_code") |>
+    rowwise() |>
+    mutate(
+      season_status = case_when(
+        is.na(n_unverified) | n_unverified > 0 ~ "needs_verification",
+        n_closed == 12                         ~ "fully_closed",
+        n_closed > 0                            ~ "partially_closed",
+        TRUE                                     ~ "open"
+      ),
+      closed_month_share = if (season_status == "partially_closed") {
+        sub <- monthly_share |>
+          filter(stream_code == catch_area_code,
+                 calendar_month %in% unlist(closed_months))
+        if (nrow(sub) == 0 || any(is.na(sub$month_share))) NA_real_ else sum(sub$month_share)
+      } else {
+        NA_real_
+      },
+      total_salmon_harvest_uncorrected = total_salmon_harvest,
+      angler_trips_uncorrected         = angler_trips,
+      total_salmon_harvest = case_when(
+        season_status == "fully_closed" ~ 0,
+        season_status == "partially_closed" & !is.na(closed_month_share) ~
+          total_salmon_harvest * (1 - closed_month_share),
+        TRUE ~ total_salmon_harvest
+      ),
+      angler_trips = if_else(
+        total_salmon_harvest_uncorrected > 0,
+        angler_trips * (total_salmon_harvest / total_salmon_harvest_uncorrected),
+        angler_trips
+      ),
+      method = if (total_salmon_harvest != total_salmon_harvest_uncorrected) {
+        glue(
+          "{method} SEASON-CORRECTED ({season_status}, WDFW regulatory ",
+          "verification): harvest {round(total_salmon_harvest_uncorrected)} -> ",
+          "{round(total_salmon_harvest)} - see pst_season_status_lookup.csv."
+        )
+      } else {
+        method
+      }
+    ) |>
+    ungroup()
+
+  gaps <- corrected |>
+    filter(season_status == "needs_verification") |>
+    transmute(
+      block, catch_area_code, year,
+      reason = "P3 projection not yet verified against WDFW season regulations - see pst_season_status_lookup.csv"
+    )
+
+  corrected <- corrected |>
+    select(-n_unverified, -n_closed, -n_restricted, -closed_months,
+           -closed_month_share, -season_status)
+
+  list(trips = corrected, gaps = gaps)
+}

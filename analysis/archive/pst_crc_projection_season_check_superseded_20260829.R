@@ -1,4 +1,16 @@
 # ==============================================================================
+# SUPERSEDED 2026-08-29 - archived, not part of the run order.
+#
+# This script's logic (compute_monthly_harvest_share(),
+# scaffold_season_status_lookup(), apply_season_status_correction()) was
+# folded directly into pst_crc_harvest_projection.R (PART 3) and wired into
+# pst_fw_angler_trips_assembly.R's own P3 step, so the correction now runs
+# automatically on every pipeline run instead of as a separate manual pass -
+# Evan's request once a full round of verification was done. Kept here for
+# reference only; do not run this standalone anymore, it will drift from the
+# real mechanism.
+# ==============================================================================
+#
 # pst_crc_projection_season_check.R
 # Location: analysis/pst/03_analysis/pst_crc_projection_season_check.R
 #

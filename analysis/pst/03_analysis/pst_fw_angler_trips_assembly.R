@@ -982,6 +982,32 @@ p3x <- if (is.null(p3x_main) && is.null(p3x_ps)) {
   )
 }
 
+# ---- 5c-ii. Season-status correction (WDFW regulatory verification) --------
+# Runs automatically on every pipeline run as of 2026-08-29 - see PART 3 of
+# pst_crc_harvest_projection.R for the full mechanism and why this reads a
+# human-verified lookup table rather than a live WDFW scrape. Any new P3
+# candidate this run produces gets scaffolded into pst_season_status_
+# lookup.csv as UNVERIFIED (never overwriting an existing, possibly already-
+# verified, row) and is left with its original projected value plus a logged
+# gap until a human fills in `status` and re-runs.
+if (!is.null(p3x) && nrow(p3x$trips) > 0) {
+  season_lookup_path <- file.path(PST_DIR, "pst_season_status_lookup.csv")
+  season_lookup <- scaffold_season_status_lookup(
+    p3x$trips, season_lookup_path, CRC_PROJECTION_CONTROL$target_year
+  )
+  season_corrected <- apply_season_status_correction(
+    p3x$trips, crc_hist, season_lookup, CRC_PROJECTION_CONTROL$target_year
+  )
+  p3x$trips <- season_corrected$trips
+  if (nrow(season_corrected$gaps) > 0) {
+    walk(seq_len(nrow(season_corrected$gaps)), \(i) {
+      g <- season_corrected$gaps[i, ]
+      log_gap("crc_projection_season", g$block, "gap",
+              glue("area {g$catch_area_code}: {g$reason}"))
+    })
+  }
+}
+
 if (!is.null(p3x)) {
   effort_long <- bind_rows(effort_long, canon(p3x$trips))
 

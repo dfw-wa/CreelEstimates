@@ -419,18 +419,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 559,Upper Cowlitz River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
 559,Upper Cowlitz River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
 559,Upper Cowlitz River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,change name to Cowlitz River
-561,Lower Cowlitz,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-561,Lower Cowlitz,12,2025-26,UNVERIFIED,NA,NA,NA,NA
+561,Lower Cowlitz,1,2024-25,open,NA,NA,NA,NA
+561,Lower Cowlitz,2,2024-25,open,NA,NA,NA,NA
+561,Lower Cowlitz,3,2024-25,open,NA,NA,NA,NA
+561,Lower Cowlitz,4,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,5,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,6,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,7,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,8,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,9,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,10,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,11,2025-26,open,NA,NA,NA,NA
+561,Lower Cowlitz,12,2025-26,open,NA,NA,NA,NA
 563,Upper Cowlitz River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
 563,Upper Cowlitz River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
 563,Upper Cowlitz River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,"CRC not listed in regs, assuming closed"
@@ -599,30 +599,30 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 603,Kalama River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 603,Kalama River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 603,Kalama River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-604,Kalama River (mouth to Modrow Bridge),1,2024-25,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),2,2024-25,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),3,2024-25,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),4,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),5,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),6,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),7,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),8,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),9,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),10,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),11,2025-26,UNVERIFIED,NA,NA,NA,NA
-604,Kalama River (mouth to Modrow Bridge),12,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-607,Klickitat River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),1,2024-25,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),2,2024-25,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),3,2024-25,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),4,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),5,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),6,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),7,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),8,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),9,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),10,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),11,2025-26,open,NA,NA,NA,NA
+604,Kalama River (mouth to Modrow Bridge),12,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,1,2024-25,closed,NA,NA,NA,NA
+607,Klickitat River,2,2024-25,closed,NA,NA,NA,NA
+607,Klickitat River,3,2024-25,closed,NA,NA,NA,NA
+607,Klickitat River,4,2025-26,closed,NA,NA,NA,NA
+607,Klickitat River,5,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,6,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,7,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,8,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,9,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,10,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,11,2025-26,open,NA,NA,NA,NA
+607,Klickitat River,12,2025-26,open,NA,NA,NA,NA
 608,Klickitat River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 608,Klickitat River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 608,Klickitat River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -659,30 +659,30 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 611,Lewis River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 611,Lewis River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 611,Lewis River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-615,Lewis River,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-615,Lewis River,12,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,1,2024-25,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,2,2024-25,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,3,2024-25,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,4,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,5,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,6,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,7,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,8,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,9,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,10,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,11,2025-26,UNVERIFIED,NA,NA,NA,NA
-618,Drano Lake,12,2025-26,UNVERIFIED,NA,NA,NA,NA
+615,Lewis River,1,2024-25,open,NA,NA,NA,NA
+615,Lewis River,2,2024-25,open,NA,NA,NA,NA
+615,Lewis River,3,2024-25,open,NA,NA,NA,NA
+615,Lewis River,4,2025-26,open,NA,NA,NA,NA
+615,Lewis River,5,2025-26,open,NA,NA,NA,NA
+615,Lewis River,6,2025-26,open,NA,NA,NA,NA
+615,Lewis River,7,2025-26,open,NA,NA,NA,NA
+615,Lewis River,8,2025-26,open,NA,NA,NA,NA
+615,Lewis River,9,2025-26,open,NA,NA,NA,NA
+615,Lewis River,10,2025-26,open,NA,NA,NA,NA
+615,Lewis River,11,2025-26,open,NA,NA,NA,NA
+615,Lewis River,12,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,1,2024-25,open,NA,NA,NA,NA
+618,Drano Lake,2,2024-25,open,NA,NA,NA,NA
+618,Drano Lake,3,2024-25,open,NA,NA,NA,NA
+618,Drano Lake,4,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,5,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,6,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,7,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,8,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,9,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,10,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,11,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,12,2025-26,open,NA,NA,NA,NA
 621,Methow River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 621,Methow River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 621,Methow River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA

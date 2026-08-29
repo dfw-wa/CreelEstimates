@@ -13,9 +13,10 @@ framework itself.
 `analysis/pst/02_ingest/interview_proportions.qmd`, which queries the
 interview database directly and is **not** included by this parent — it needs
 live DB access that a rendered deliverable should not depend on. What follows
-reads only the committed artifacts that producer writes to `OUT_DIR`.
+reads only the committed artifacts that producer writes to
+`INTERVIEW_PROPS_DIR` (`analysis/pst/outputs/04_interview_proportions/`).
 
-As of this writing, `OUT_DIR` holds two of the producer's outputs:
+As of this writing, `INTERVIEW_PROPS_DIR` holds two of the producer's outputs:
 `interview_mode_location_props.csv` and `interview_batch_crosscheck.csv`. The
 producer also writes roughly two dozen additional per-fishery proportion and
 variability tables — guided/type proportions and their variability summaries
@@ -24,14 +25,15 @@ hours-weighted (`guide_proportions_fishery.csv`,
 `combined_proportions_weekly_hrs.csv`, `guide_variability_summary.csv`, and
 similar). Those were previously written to a repo-root `output/` directory
 that was never committed; `output_dir` in the producer now resolves to this
-same `OUT_DIR`, but the producer has not been re-run since that path fix, so
-those files are not yet present here. Every chunk below therefore degrades
-through `read_if()` exactly like the rest of this document.
+same `INTERVIEW_PROPS_DIR`, but the producer has not been re-run since that
+path fix, so those files are not yet present here. Every chunk below
+therefore degrades through `read_if()` exactly like the rest of this
+document.
 
 ```{r}
 #| label: trackb-mode-location-props
 
-props <- read_if(file.path(OUT_DIR, "interview_mode_location_props.csv"))
+props <- read_if(file.path(INTERVIEW_PROPS_DIR, "interview_mode_location_props.csv"))
 
 if (is.null(props)) {
   cat("Track B proportions table not found. Run analysis/pst/02_ingest/interview_proportions.qmd.\n")
@@ -84,7 +86,7 @@ join, not a QA finding), so the chunk below de-duplicates before summarizing.
 ```{r}
 #| label: trackb-batch-crosscheck
 
-crosscheck <- read_if(file.path(OUT_DIR, "interview_batch_crosscheck.csv"))
+crosscheck <- read_if(file.path(INTERVIEW_PROPS_DIR, "interview_batch_crosscheck.csv"))
 
 if (is.null(crosscheck)) {
   cat("Interview/batch crosscheck table not found.\n")

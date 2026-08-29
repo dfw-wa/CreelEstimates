@@ -2,18 +2,18 @@
 # pst_fw_build_jim_workbook.R
 # Location: analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
 #
-# Builds PST_FW_Jim_Update.xlsx: a seven-tab status workbook so a non-R reader
-# (Jim) can see what the PST freshwater effort pipeline currently supports
-# without running anything. This is a STATUS UPDATE, not the Northern
-# Economics deliverable - the filename and the cover tab both say so, and
-# every gap/blocker visible in pst_fw_angler_trips_assembly.R's console summary is
-# visible here too, not smoothed over for presentation.
+# Builds PST_FW_Status_Report.xlsx: a seven-tab status workbook so a non-R
+# reader (Jim) can see what the PST freshwater effort pipeline currently
+# supports without running anything. This is a STATUS UPDATE, not the
+# Northern Economics deliverable - the filename and the cover tab both say
+# so, and every gap/blocker visible in pst_fw_angler_trips_assembly.R's
+# console summary is visible here too, not smoothed over for presentation.
 #
 # MUST RUN AFTER pst_fw_angler_trips_assembly.R. This script does not compute
-# anything itself - it reads the CSVs that script writes to OUT_DIR and lays
+# anything itself - it reads the CSVs that script writes to IN_DIR and lays
 # them out into tabs. If the CSVs are stale, this workbook is stale.
 #
-# Inputs (all from OUT_DIR = analysis/pst/outputs, written by
+# Inputs (all from IN_DIR = analysis/pst/outputs/05_assembly, written by
 # pst_fw_angler_trips_assembly.R):
 #   pst_fw_trips_by_mode_location_INTERMEDIATE.csv  (effort_by_mode_location)
 #   pst_fw_trips_by_crc_area_INTERMEDIATE.csv       (effort_by_area)
@@ -25,7 +25,7 @@
 #   pst_fw_crc_vs_creel_bias.csv                    (crc_vs_creel)
 #
 # Output:
-#   analysis/pst/outputs/PST_FW_Jim_Update.xlsx
+#   analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx
 #
 # How to run:
 #   Rscript analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
@@ -42,8 +42,9 @@ library(here)
 library(glue)
 library(openxlsx)
 
-OUT_DIR <- here("analysis", "pst", "outputs")
-dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
+IN_DIR <- here("analysis", "pst", "outputs", "05_assembly")
+DELIVERABLES_DIR <- here("analysis", "pst", "outputs", "deliverables")
+dir.create(DELIVERABLES_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ---- 0. Defensive read helper ------------------------------------------------
 # Same convention as pst_fw_angler_trips_assembly.R's read_if(): a missing input is
@@ -68,28 +69,28 @@ read_if <- function(path, source_id, detail = NULL, reader = readr::read_csv) {
 # ---- 1. Load intermediate outputs --------------------------------------------
 
 effort_by_mode_location <- read_if(
-  file.path(OUT_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"),
+  file.path(IN_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"),
   "effort_by_mode_location"
 )
 effort_by_area <- read_if(
-  file.path(OUT_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"),
+  file.path(IN_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"),
   "effort_by_area"
 )
 p2_ratios <- read_if(
-  file.path(OUT_DIR, "pst_fw_p2_area_ratios.csv"), "p2_ratios",
+  file.path(IN_DIR, "pst_fw_p2_area_ratios.csv"), "p2_ratios",
   detail = "not found - P2 did not run in the assembly pass; P2 tabs omitted."
 )
-p2_donors <- read_if(file.path(OUT_DIR, "pst_fw_p2_donors.csv"), "p2_donors")
+p2_donors <- read_if(file.path(IN_DIR, "pst_fw_p2_donors.csv"), "p2_donors")
 p2_loo_summary <- read_if(
-  file.path(OUT_DIR, "pst_fw_p2_loo_summary.csv"), "p2_loo_summary",
+  file.path(IN_DIR, "pst_fw_p2_loo_summary.csv"), "p2_loo_summary",
   detail = paste(
     "not found - either P2 did not run, or no block-year had enough donor",
     "areas for the leave-one-out check. p2_median_error_pct will be absent."
   )
 )
-gaps <- read_if(file.path(OUT_DIR, "pst_fw_gap_register.csv"), "gaps")
-provenance <- read_if(file.path(OUT_DIR, "pst_fw_provenance_ledger.csv"), "provenance")
-crc_vs_creel <- read_if(file.path(OUT_DIR, "pst_fw_crc_vs_creel_bias.csv"), "crc_vs_creel")
+gaps <- read_if(file.path(IN_DIR, "pst_fw_gap_register.csv"), "gaps")
+provenance <- read_if(file.path(IN_DIR, "pst_fw_provenance_ledger.csv"), "provenance")
+crc_vs_creel <- read_if(file.path(IN_DIR, "pst_fw_crc_vs_creel_bias.csv"), "crc_vs_creel")
 
 if (is.null(effort_by_mode_location) || is.null(effort_by_area)) {
   log_note("workbook", paste(
@@ -115,7 +116,7 @@ p2_ran <- !is.null(p2_ratios)
 # (coverage before/after P2), then the two roll-ups, then the evidence for
 # trusting P2 (ratios + leave-one-out), then the open items.
 
-xlsx_path <- file.path(OUT_DIR, "PST_FW_Jim_Update.xlsx")
+xlsx_path <- file.path(DELIVERABLES_DIR, "PST_FW_Status_Report.xlsx")
 
 wb <- createWorkbook()
 

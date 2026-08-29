@@ -24,9 +24,10 @@ library(DT)
 
 # Create output directory for CSV exports
 # output_dir, persist_dir (below), and assembly_dir (later in this document)
-# all resolve to analysis/pst/outputs/ — kept as three separate names so the
-# code at each write site still reads the same and stays reviewable.
-output_dir <- here::here("analysis", "pst", "outputs")
+# all resolve to analysis/pst/outputs/04_interview_proportions/ — kept as
+# three separate names so the code at each write site still reads the same
+# and stays reviewable.
+output_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 
 # Cache directory for raw data pulls
@@ -107,7 +108,7 @@ cat(glue("{nrow(all_interviews)} total interview records across {n_distinct(all_
 # actually produces, and downstream users shouldn't have to know this
 # document has its own separate cache directory to find the underlying
 # interview data.
-persist_dir <- here::here("analysis", "pst", "outputs")
+persist_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
 if (!dir.exists(persist_dir)) dir.create(persist_dir, recursive = TRUE)
 
 saveRDS(all_interviews, file.path(persist_dir, "all_interviews.rds"))
@@ -1213,7 +1214,7 @@ Case is normalized to lowercase on both fields, because `angler_final` is
 ```{r}
 #| label: export-assembly-props
 
-assembly_dir <- here::here("analysis", "pst", "outputs")
+assembly_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
 if (!dir.exists(assembly_dir)) dir.create(assembly_dir, recursive = TRUE)
 
 mode_location_props <- interviews |>

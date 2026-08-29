@@ -28,10 +28,12 @@ library(gt)
 # It renders with partial outputs by design: anything missing is reported
 # as a gap rather than raising an error (design rule R2).
 
-# Paths mirror the assembly script exactly (OUT_DIR / PST_DIR). This file
-# renders from analysis/pst/; here::here() resolves from the repo root either
-# way. Child {{< include >}} paths, by contrast, are relative to this file.
-OUT_DIR <- here::here("analysis", "pst", "outputs")
+# Paths mirror the assembly script exactly (OUT_DIR / PST_DIR), now pointed
+# at the numbered-by-pipeline-step outputs subfolders. This file renders from
+# analysis/pst/; here::here() resolves from the repo root either way. Child
+# {{< include >}} paths, by contrast, are relative to this file.
+OUT_DIR <- here::here("analysis", "pst", "outputs", "05_assembly")
+INTERVIEW_PROPS_DIR <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
 PST_DIR <- here::here("input_files", "pst", "lookup_tables")
 
 read_if <- function(path, ...) {

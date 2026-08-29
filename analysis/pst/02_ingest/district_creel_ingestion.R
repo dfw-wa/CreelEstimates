@@ -17,7 +17,7 @@
 #   Requires no DB access — reads xlsx files from input_files/pst/R3_creel/
 #   and input_files/pst/R1_creel/.
 #
-#   Output: analysis/pst/outputs/district_creel_summary.csv
+#   Output: analysis/pst/outputs/03_district_creel/district_creel_summary.csv
 #           (A downstream step row-binds this with multi_fishery_creel_trips.csv.)
 #
 # Every row carries a `district` column (R1/R3, eventually R2) so that
@@ -1765,7 +1765,7 @@ ingest_district_creel_files <- function() {
 
 district_creel <- ingest_district_creel_files()
 
-out_dir  <- here("analysis", "pst", "outputs")
+out_dir  <- here("analysis", "pst", "outputs", "03_district_creel")
 out_path <- file.path(out_dir, "district_creel_summary.csv")
 
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)

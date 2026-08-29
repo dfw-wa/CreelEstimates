@@ -129,7 +129,7 @@ STEP_REGISTRY <- list(
 # tells the user how to produce them if not.
 
 check_step4_outputs <- function() {
-  out_dir <- here::here("analysis", "pst", "outputs")
+  out_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
   required <- c("interview_mode_location_props.csv", "interview_batch_crosscheck.csv",
                 "all_interviews.csv", "all_interviews.rds")
   present <- file.exists(file.path(out_dir, required))
@@ -240,7 +240,7 @@ cli::cli_alert_info(glue(
 if (n_failed > 0) {
   cli::cli_alert_warning(paste(
     "One or more steps failed. Per design rule [R2], later steps still ran.",
-    "Check analysis/pst/outputs/pst_fw_gap_register.csv (written by step",
+    "Check analysis/pst/outputs/05_assembly/pst_fw_gap_register.csv (written by step",
     "05_effort_assembly, if it ran) for what it was missing, and the",
     "messages above for why each failed step did not complete."
   ))

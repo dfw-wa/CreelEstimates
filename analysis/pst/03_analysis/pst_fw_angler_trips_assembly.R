@@ -45,7 +45,7 @@
 #   3. analysis/pst/02_ingest/district_creel_ingestion.R            -> district_creel_summary.csv
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
 #   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
-#   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Jim_Update.xlsx
+#   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Status_Report.xlsx
 #                                                                       (run AFTER this script)
 #
 # Design rules:
@@ -94,7 +94,17 @@ YEARS_SCOPE <- 2022:2025
 DELIVER_BLOCKS <- c("PugetSound", "WACoast",
                     "ColumbiaLower", "ColumbiaMiddle", "ColumbiaUpper", "ColumbiaSnake")
 
-OUT_DIR <- here("analysis", "pst", "outputs")
+# OUT_DIR is THIS script's own output folder (analysis/pst/outputs/05_assembly/,
+# organized 2026-08-29 into one subfolder per producing script, numbered to
+# match the run-order table in _03_pipeline_and_registry.qmd). Every upstream
+# producer this script reads from writes to its OWN numbered subfolder, hence
+# the four *_DIR constants below rather than one shared OUT_DIR the way it
+# used to work when everything landed in a single flat outputs/ directory.
+OUT_DIR             <- here("analysis", "pst", "outputs", "05_assembly")
+CRC_HARVEST_DIR      <- here("analysis", "pst", "outputs", "01_crc_harvest")
+MULTI_FISHERY_DIR    <- here("analysis", "pst", "outputs", "02_multi_fishery_creel")
+DISTRICT_CREEL_DIR   <- here("analysis", "pst", "outputs", "03_district_creel")
+INTERVIEW_PROPS_DIR  <- here("analysis", "pst", "outputs", "04_interview_proportions")
 PST_DIR <- here("input_files", "pst", "lookup_tables")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
@@ -305,7 +315,7 @@ attach_crosswalk_block <- function(df) {
 PE_PERIOD <- "month"   # week|month - a decision, not a default. See header.
 
 read_merged_creel <- function(file, source_id) {
-  d <- read_if(file.path(OUT_DIR, file), source_id,
+  d <- read_if(file.path(MULTI_FISHERY_DIR, file), source_id,
                detail = "run analysis/pst/02_ingest/multi_fishery_creel_summary.R first")
   if (is.null(d)) return(NULL)
 
@@ -541,7 +551,7 @@ ingest_creel_pe <- function() {
 # log until pst_river_block_crosswalk.csv is patched.
 
 ingest_district_creel <- function() {
-  d <- read_if(file.path(OUT_DIR, "district_creel_summary.csv"),
+  d <- read_if(file.path(DISTRICT_CREEL_DIR, "district_creel_summary.csv"),
                "district_creel")
   if (is.null(d)) return(NULL)
 
@@ -706,7 +716,7 @@ build_block_ratios <- function(trips_p1) {
   # numeric freshwater codes, which forces the whole column to character on
   # read. stream_code in the CRC harvest file is purely numeric and comes in as
   # a double. Coerce both sides explicitly - inferred types won't agree.
-  crc <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
+  crc <- read_if(file.path(CRC_HARVEST_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                  "crc_harvest")
   crc_yr <- NULL
   crc_month <- NULL
@@ -768,7 +778,7 @@ build_block_ratios <- function(trips_p1) {
 MIN_INTERVIEWS <- 30   # below this, fall back to block pooled proportions
 
 apply_track_b <- function(trips) {
-  props <- read_if(file.path(OUT_DIR, "interview_mode_location_props.csv"),
+  props <- read_if(file.path(INTERVIEW_PROPS_DIR, "interview_mode_location_props.csv"),
                    "interview_prop",
                    detail = paste("run analysis/pst/02_ingest/interview_proportions.qmd and",
                                   "export the fishery x year x location x mode",
@@ -944,7 +954,7 @@ if (!is.null(p2x)) {
 # late for either module's history window. This re-reads the same file
 # build_block_ratios() already read once internally; the duplicate read is
 # deliberate so build_block_ratios() itself stays untouched.
-crc_hist <- read_if(file.path(OUT_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
+crc_hist <- read_if(file.path(CRC_HARVEST_DIR, "crc_freshwater_harvest_2010_2024_tidy.csv"),
                     "crc_harvest_history")
 
 if (is.null(p2x)) {
@@ -1468,7 +1478,7 @@ if (nrow(gaps)) {
   message(glue("\n{sum(gaps$severity == 'blocker')} blockers, ",
                "{sum(gaps$severity == 'gap')} gaps, ",
                "{sum(gaps$severity == 'defect')} defects ",
-               "-> analysis/pst/outputs/pst_fw_gap_register.csv"))
+               "-> analysis/pst/outputs/05_assembly/pst_fw_gap_register.csv"))
 }
 
 if (!is.null(crc_vs_creel) && nrow(crc_vs_creel) > 0) {

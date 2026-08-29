@@ -9,12 +9,12 @@ order; each step can also be run standalone.
 
 | # | Script | Writes |
 |---|---|---|
-| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/crc_freshwater_harvest_2010_2024_tidy.csv` |
-| 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
-| 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/district_creel_summary.csv` |
-| 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/interview_mode_location_props.csv` |
-| 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | the deliverable + three ledgers |
-| 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `PST_FW_Jim_Update.xlsx` |
+| 1 | `analysis/pst/02_ingest/parse_crc_freshwater_harvest.R` | `analysis/pst/outputs/01_crc_harvest/crc_freshwater_harvest_2010_2024_tidy.csv` |
+| 2 | `analysis/pst/02_ingest/multi_fishery_creel_summary.R` | `analysis/pst/outputs/02_multi_fishery_creel/multi_fishery_creel_trips.csv` + harvest/QA/ledger |
+| 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/03_district_creel/district_creel_summary.csv` |
+| 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/04_interview_proportions/interview_mode_location_props.csv` |
+| 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | the deliverable + three ledgers, to `analysis/pst/outputs/05_assembly/` |
+| 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx` |
 
 Steps 1–4 are independent and parallelizable. Step 5 is the only writer of
 the deliverable, and it is re-runnable at any time — it reads whatever is
@@ -87,7 +87,8 @@ correctly excluded as mainstem, and different regions from Cowlitz/Lewis/Drano:
 ## Outputs
 
 Assembly emits the deliverable plus three ledgers, which is what lets the
-status children report status rather than assert it:
+status children report status rather than assert it. All files below live
+under `analysis/pst/outputs/05_assembly/`:
 
 | File | Grain | Purpose |
 |---|---|---|

@@ -76,7 +76,7 @@
 # path for 2017's actual layout.
 #
 # Output:
-#   analysis/pst/outputs/crc_freshwater_harvest_2010_2024_tidy.csv
+#   analysis/pst/outputs/01_crc_harvest/crc_freshwater_harvest_2010_2024_tidy.csv
 #
 # Validation (printed summary, not a separate file):
 #   1. Monthly leaf rows sum == stream-species "Total" row per file.
@@ -103,7 +103,7 @@ library(cli)
 
 # 0. Paths and file manifest --------------------------------------------------
 
-out_dir <- here("analysis", "pst", "outputs")
+out_dir <- here("analysis", "pst", "outputs", "01_crc_harvest")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 OUT_CSV <- file.path(out_dir, "crc_freshwater_harvest_2010_2024_tidy.csv")

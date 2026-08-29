@@ -27,7 +27,7 @@
 #   Requires VPN / internal DB access for creelutils::connect_creel_db(),
 #   creelutils::fishery_lut(), and creelutils::fetch_data().
 #
-# Outputs (analysis/pst/outputs/):
+# Outputs (analysis/pst/outputs/02_multi_fishery_creel/):
 #   multi_fishery_creel_trips.csv          / .rds
 #   multi_fishery_creel_harvest.csv        / .rds
 #   multi_fishery_creel_qa.csv             / .rds
@@ -2005,7 +2005,7 @@ if (nrow(big_divergence) > 0) {
 
 # --- Save --------------------------------------------------------------------
 
-out_dir <- here("analysis", "pst", "outputs")
+out_dir <- here("analysis", "pst", "outputs", "02_multi_fishery_creel")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 saveRDS(trips_combined,    file.path(out_dir, "multi_fishery_creel_trips.rds"))

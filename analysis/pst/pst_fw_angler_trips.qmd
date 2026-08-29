@@ -42,8 +42,8 @@ read_if <- function(path, ...) {
 
 manifest    <- read_if(file.path(PST_DIR, "pst_input_manifest.csv"))
 crosswalk   <- read_if(file.path(PST_DIR, "pst_river_block_crosswalk.csv"))
-effort      <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"))
-effort_area <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"))
+effort      <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_mode_location.csv"))
+effort_area <- read_if(file.path(OUT_DIR, "pst_fw_trips_by_crc_area.csv"))
 provenance  <- read_if(file.path(OUT_DIR, "pst_fw_provenance_ledger.csv"))
 gaps        <- read_if(file.path(OUT_DIR, "pst_fw_gap_register.csv"))
 coverage    <- read_if(file.path(OUT_DIR, "pst_fw_crc_coverage.csv"))

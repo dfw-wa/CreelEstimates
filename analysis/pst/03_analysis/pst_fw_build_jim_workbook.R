@@ -2,21 +2,31 @@
 # pst_fw_build_jim_workbook.R
 # Location: analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
 #
-# Builds PST_FW_Status_Report.xlsx: a seven-tab status workbook so a non-R
-# reader (Jim) can see what the PST freshwater effort pipeline currently
-# supports without running anything. This is a STATUS UPDATE, not the
-# Northern Economics deliverable - the filename and the cover tab both say
-# so, and every gap/blocker visible in pst_fw_angler_trips_assembly.R's
-# console summary is visible here too, not smoothed over for presentation.
+# Builds two Excel workbooks from the assembly script's outputs:
+#
+#   PST_FW_Status_Report.xlsx - a multi-tab internal status workbook so a
+#     non-R reader (Jim) can see what the PST freshwater effort pipeline
+#     currently supports without running anything. Every gap/blocker visible
+#     in pst_fw_angler_trips_assembly.R's console summary is visible here
+#     too, not smoothed over for presentation.
+#
+#   PST_FW_Deliverable.xlsx - the simplified, consultant-facing export:
+#     Year x River x Mode x Location x Angler Trips, exactly the format
+#     Northern Economics requested (see _01_scope_and_contract.qmd). No
+#     audit columns, no gap register, no P2 diagnostics - those stay in the
+#     status workbook. This is NOT a claim that the numbers are final; it's
+#     the current best estimate in the requested shape, regenerated fresh
+#     every run from whatever pst_fw_angler_trips_assembly.R currently
+#     supports.
 #
 # MUST RUN AFTER pst_fw_angler_trips_assembly.R. This script does not compute
 # anything itself - it reads the CSVs that script writes to IN_DIR and lays
-# them out into tabs. If the CSVs are stale, this workbook is stale.
+# them out into tabs. If the CSVs are stale, both workbooks are stale.
 #
 # Inputs (all from IN_DIR = analysis/pst/outputs/05_assembly, written by
 # pst_fw_angler_trips_assembly.R):
-#   pst_fw_trips_by_mode_location_INTERMEDIATE.csv  (effort_by_mode_location)
-#   pst_fw_trips_by_crc_area_INTERMEDIATE.csv       (effort_by_area)
+#   pst_fw_trips_by_mode_location.csv               (effort_by_mode_location)
+#   pst_fw_trips_by_crc_area.csv                    (effort_by_area)
 #   pst_fw_p2_area_ratios.csv                       (p2x$ratios)
 #   pst_fw_p2_donors.csv                            (p2x$donors)
 #   pst_fw_p2_loo_summary.csv                       (p2x$loo_summary)
@@ -24,8 +34,9 @@
 #   pst_fw_provenance_ledger.csv                    (provenance)
 #   pst_fw_crc_vs_creel_bias.csv                    (crc_vs_creel)
 #
-# Output:
+# Outputs:
 #   analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx
+#   analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx
 #
 # How to run:
 #   Rscript analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
@@ -69,11 +80,11 @@ read_if <- function(path, source_id, detail = NULL, reader = readr::read_csv) {
 # ---- 1. Load intermediate outputs --------------------------------------------
 
 effort_by_mode_location <- read_if(
-  file.path(IN_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"),
+  file.path(IN_DIR, "pst_fw_trips_by_mode_location.csv"),
   "effort_by_mode_location"
 )
 effort_by_area <- read_if(
-  file.path(IN_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"),
+  file.path(IN_DIR, "pst_fw_trips_by_crc_area.csv"),
   "effort_by_area"
 )
 p2_ratios <- read_if(
@@ -176,11 +187,15 @@ if (!is.null(effort_by_mode_location)) {
   log_note("xlsx_export", "effort_by_mode_location missing - Summary tab omitted.")
 }
 
-## 2b. Deliverable shape (river x year x mode x location) ---------------------
+## 2b. Trips by river, with audit columns (river x year x mode x location) ----
+# Same grain as the deliverable export below, plus the harvest/tier/source_id/
+# method columns the consultant didn't ask for - kept here for anyone tracing
+# a specific number back to its source. See PST_FW_Deliverable.xlsx (built in
+# section 3 below) for the simplified consultant-facing shape.
 
 if (!is.null(effort_by_mode_location)) {
-  add_sheet(wb, "Deliverable (by River)", effort_by_mode_location,
-           title = "Year x River x Mode x Location — angler trips (INTERMEDIATE, not final)")
+  add_sheet(wb, "Trips by River (detail)", effort_by_mode_location,
+           title = "Year x River x Mode x Location — angler trips, with harvest/tier/source audit columns")
 }
 
 ## 2c. CRC-area grain -----------------------------------------------------------
@@ -262,3 +277,60 @@ saveWorkbook(wb, xlsx_path, overwrite = TRUE)
 cli_ok <- tryCatch({ cli::cli_alert_success(glue("Wrote status workbook: {xlsx_path}")); TRUE },
                    error = function(e) FALSE)
 if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
+
+# =============================================================================
+# ---- 3. Excel export for the consultant-facing deliverable ------------------
+# =============================================================================
+# The actual Northern Economics request (_01_scope_and_contract.qmd):
+# Year x River x Mode x Location x Angler trips, 2022-2025, total salmon,
+# nothing else. One tab, no audit columns - no harvest, tier, source_id,
+# method, or catch_area_codes, and none of the gap/P2/provenance tabs above.
+# Those stay in PST_FW_Status_Report.xlsx.
+#
+# mode/location values are shown Title Case for a non-R reader. "Unknown"
+# (attribution failed) and "Combined" (source never split bank/boat) are
+# kept as-is rather than hidden or dropped - per [R3], a missing dimension is
+# never fabricated, so the consultant sees the same completeness picture the
+# status workbook does, just without the internal audit trail explaining it.
+
+deliverable_path <- file.path(DELIVERABLES_DIR, "PST_FW_Deliverable.xlsx")
+
+deliverable_trips <- NULL
+if (!is.null(effort_by_mode_location)) {
+  deliverable_trips <- effort_by_mode_location |>
+    transmute(
+      Year           = year,
+      River          = river_label,
+      Mode           = str_to_title(mode),
+      Location       = str_to_title(location),
+      `Angler Trips` = angler_trips
+    ) |>
+    arrange(River, Year, Location, Mode)
+}
+
+if (!is.null(deliverable_trips)) {
+  wb_deliverable <- createWorkbook()
+  add_sheet(wb_deliverable, "Angler Trips", deliverable_trips,
+           title = paste(
+             "PST Freshwater Recreational Angler Trips",
+             "— Year x River x Mode x Location, 2022–2025",
+             "(total salmon; steelhead and Columbia mainstem excluded)"
+           ))
+  addStyle(wb_deliverable, "Angler Trips", num_style,
+          rows = 4:(3 + nrow(deliverable_trips)),
+          cols = which(names(deliverable_trips) == "Angler Trips"),
+          gridExpand = TRUE, stack = TRUE)
+
+  saveWorkbook(wb_deliverable, deliverable_path, overwrite = TRUE)
+
+  cli_ok2 <- tryCatch({
+    cli::cli_alert_success(glue("Wrote deliverable workbook: {deliverable_path}"))
+    TRUE
+  }, error = function(e) FALSE)
+  if (!cli_ok2) message(glue("Wrote deliverable workbook: {deliverable_path}"))
+} else {
+  log_note("deliverable_export", paste(
+    "effort_by_mode_location missing - PST_FW_Deliverable.xlsx not written.",
+    "Run pst_fw_angler_trips_assembly.R first."
+  ))
+}

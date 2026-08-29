@@ -3,8 +3,9 @@
 # Location: analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R
 #
 # Combines angler trips with creel-derived mode/location proportions to produce
-# an INTERMEDIATE table at Year x River x Mode (guided/unguided) x Location
-# (bank/boat) x Angler Trips, 2022-2025.
+# detail tables at Year x River x Mode (guided/unguided) x Location (bank/boat)
+# x Angler Trips, 2022-2025. The simplified consultant-facing deliverable is
+# built downstream from these tables by pst_fw_build_jim_workbook.R.
 #
 # THIS IS NOT THE FINAL DELIVERABLE. It is one input to it. What's still
 # outstanding before anything goes to Northern Economics:
@@ -46,6 +47,7 @@
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
 #   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
 #   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Status_Report.xlsx
+#                                                                       PST_FW_Deliverable.xlsx
 #                                                                       (run AFTER this script)
 #
 # Design rules:
@@ -1049,8 +1051,14 @@ if (!is.null(nepa_cmp)) {
   write_csv(nepa_cmp, file.path(OUT_DIR, "pst_fw_nepa_vs_pure_crc_comparison.csv"))
 }
 
-# ---- 6. Intermediate output (NOT the deliverable) ---------------------------
+# ---- 6. Detail roll-ups (river and CRC-area grain) --------------------------
 # Year x River x Mode x Location x Angler Trips, rolled up from month grain.
+# These are detail/audit tables, not the deliverable itself - they carry
+# harvest, tier, source_id, and method columns the consultant didn't ask for.
+# The simplified Year x River x Mode x Location x Angler Trips export the
+# consultant actually wants is built downstream, in
+# pst_fw_build_jim_workbook.R, from pst_fw_trips_by_mode_location.csv below.
+#
 # Filtered to DELIVER_BLOCKS: nothing ingests ColumbiaMainstem today, but the
 # filter is explicit here too so a future ingestion function added under
 # section 2 can't silently leak consultant-supplied data back into the output.
@@ -1391,12 +1399,10 @@ coverage <- if (is.null(crosswalk)) {
     distinct()
 }
 
-# Filenames say "intermediate" so nobody picks the wrong file off disk and
-# sends it out. Rename only when the gap register is empty enough to justify it.
 write_csv(effort_by_mode_location,
-          file.path(OUT_DIR, "pst_fw_trips_by_mode_location_INTERMEDIATE.csv"))
+          file.path(OUT_DIR, "pst_fw_trips_by_mode_location.csv"))
 write_csv(effort_by_area,
-          file.path(OUT_DIR, "pst_fw_trips_by_crc_area_INTERMEDIATE.csv"))
+          file.path(OUT_DIR, "pst_fw_trips_by_crc_area.csv"))
 write_csv(effort_long, file.path(OUT_DIR, "pst_fw_effort_long.csv"))
 write_csv(provenance,  file.path(OUT_DIR, "pst_fw_provenance_ledger.csv"))
 write_csv(gaps,        file.path(OUT_DIR, "pst_fw_gap_register.csv"))
@@ -1410,7 +1416,7 @@ if (!is.null(crc_vs_creel)) {
 
 # ---- 7. Console summary -----------------------------------------------------
 
-message("\n== PST FW effort assembly (INTERMEDIATE - not the deliverable) ==")
+message("\n== PST FW effort assembly (detail tables, not the deliverable) ==")
 message(glue("rows: {nrow(effort_by_mode_location)} | river-years: ",
              "{n_distinct(effort_by_mode_location$river_label, effort_by_mode_location$year)}"))
 print(effort_by_mode_location |> count(block, year, name = "rows") |>
@@ -1500,8 +1506,10 @@ if (!is.null(crc_vs_creel) && nrow(crc_vs_creel) > 0) {
           "CSV for the unrestricted comparison.)")
 }
 
-message("\nThis output is an INTERMEDIATE. See the header comment for what ",
-        "remains before anything is sent to Northern Economics.")
+message("\nThese are detail tables, not the deliverable. See the header ",
+        "comment for what remains before anything is sent to Northern ",
+        "Economics; run pst_fw_build_jim_workbook.R next for the simplified ",
+        "deliverable export.")
 
 cli_ok <- tryCatch({
   cli::cli_alert_success(paste(

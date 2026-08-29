@@ -205,7 +205,7 @@ ODFW numbers.
   2026-08-22.** Hanford Reach and Snake River (both `covered_unpartitioned`,
   no per-row `catch_area_code` since their district sources give one
   combined total) came out with a blank `catch_area_codes` in
-  `pst_fw_trips_by_mode_location_INTERMEDIATE.csv`, unlike Quillayute
+  `pst_fw_trips_by_mode_location.csv`, unlike Quillayute
   (`398|400|402|404|406`) which shows its composite area list because its
   rows carry a real per-stratum `catch_area_code`. The crosswalk already
   knows the composite set for both (534|535|536 for Hanford,

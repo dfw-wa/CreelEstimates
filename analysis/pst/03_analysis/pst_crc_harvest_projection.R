@@ -127,6 +127,38 @@ CRC_PROJECTION_CONTROL_PS <- list(
   variant_label     = "same-parity (odd-year) 5-yr mean"
 )
 
+# PART 1c: thin-history fallback - added 2026-08-31, Evan's call. Areas whose
+# CRC area code doesn't reach back far enough for either primary variant's
+# min_history_years=3 floor (confirmed real, not rare: 15 area-years across
+# WACoast/ColumbiaLower/PugetSound as of this writing, including all three
+# Nooksack sub-reach splits - 790/792/794 have literally ZERO rows before
+# 2020, most likely because WDFW split a single combined "Nooksack River"
+# CRC code into these reach-specific codes around then) get a straight mean
+# of whatever real years exist, ANY parity, rather than being left with no
+# 2025 estimate at all. Explicitly NOT a substitute for either primary
+# variant - it only ever fires for an area BOTH primary passes already
+# failed on min_history_years (see the assembly script's merge logic,
+# which only keeps a fallback row where no primary row exists for that
+# area-year) - and it is visibly weaker: min_history_years = 1 accepts even
+# a single real year as its own "mean," which is why every fallback row's
+# method string is flagged FALLBACK and its year count is always reported,
+# so a reader can immediately tell a 1-year fallback from a proper 5-6 year
+# mean rather than mistaking the two for equally reliable.
+#
+# history_years spans the tidy CRC extract's entire real range rather than a
+# fixed recent window, by design - "whatever years exist" per Evan, not a
+# wider-but-still-bounded recent window. nepa_blocks is empty (unlike the
+# main variant) since this fallback must be eligible to run for PugetSound
+# too - it is PugetSound's own same-parity variant that most of the areas
+# needing this fallback failed.
+CRC_PROJECTION_CONTROL_FALLBACK <- list(
+  history_years     = 2010L:2024L,
+  target_year       = 2025L,
+  min_history_years = 1,
+  nepa_blocks       = character(0),
+  variant_label     = "FALLBACK: straight mean, any available year(s) (thin history)"
+)
+
 
 # --- 1. Six-year mean CRC harvest per area -------------------------------------
 #' Aggregate leaf-level harvest to annual totals per CRC area (stream_code),

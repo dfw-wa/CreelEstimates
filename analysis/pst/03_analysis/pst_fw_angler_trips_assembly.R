@@ -963,8 +963,9 @@ if (is.null(p2x)) {
   message(paste("[gap] crc_projection: P2 did not run, so no donor pairs are",
                "available to derive a ratio from; P3 projection (both",
                "variants) skipped."))
-  p3x_main <- NULL
-  p3x_ps   <- NULL
+  p3x_main     <- NULL
+  p3x_ps       <- NULL
+  p3x_fallback <- NULL
 } else {
   p3x_main <- run_crc_projection(
     crc_hist       = crc_hist,
@@ -981,16 +982,56 @@ if (is.null(p2x)) {
     deliver_blocks = "PugetSound",
     control        = CRC_PROJECTION_CONTROL_PS
   )
+  # Thin-history fallback (added 2026-08-31, Evan's call) - see PART 1c in
+  # pst_crc_harvest_projection.R for why this exists and why min_history_
+  # years = 1 there is safe. Run over EVERY deliver block (unlike p3x_main,
+  # which excludes PugetSound) since PugetSound's own same-parity variant is
+  # exactly the one most areas needing this fallback are failing. The merge
+  # below keeps this ONLY for area-years neither primary pass already
+  # resolved - this call redundantly re-projects everything, including
+  # areas the primary passes already handled just fine, but those rows are
+  # simply discarded at the merge step, never allowed to override a primary
+  # result.
+  p3x_fallback <- run_crc_projection(
+    crc_hist       = crc_hist,
+    effort_long    = effort_long,
+    donors         = p2x$donors,
+    crosswalk      = crosswalk,
+    deliver_blocks = DELIVER_BLOCKS,
+    control        = CRC_PROJECTION_CONTROL_FALLBACK
+  )
 }
 
-p3x <- if (is.null(p3x_main) && is.null(p3x_ps)) {
+p3x_primary_trips <- bind_rows(p3x_main$trips, p3x_ps$trips)
+
+# Fallback rows only fill area-years no primary pass resolved - an anti_join
+# on (catch_area_code, year), not a coalesce, so a fallback row can never
+# silently replace a real same-parity/6-yr-trailing result.
+p3x_fallback_trips <- if (is.null(p3x_fallback) || nrow(p3x_fallback$trips) == 0) {
+  p3x_fallback$trips
+} else {
+  p3x_fallback$trips |>
+    anti_join(p3x_primary_trips |> distinct(catch_area_code, year),
+              by = c("catch_area_code", "year"))
+}
+
+if (!is.null(p3x_fallback_trips) && nrow(p3x_fallback_trips) > 0) {
+  message(glue(
+    "[note] crc_projection_fallback: {nrow(p3x_fallback_trips)} area-year(s) ",
+    "projected ONLY because the thin-history fallback caught them - neither ",
+    "primary P3 variant had enough history. See method column for each ",
+    "row's actual year count (as low as 1)."
+  ))
+}
+
+p3x <- if (is.null(p3x_main) && is.null(p3x_ps) && is.null(p3x_fallback)) {
   NULL
 } else {
   list(
-    trips        = bind_rows(p3x_main$trips,        p3x_ps$trips),
-    gaps         = bind_rows(p3x_main$gaps,         p3x_ps$gaps),
-    sanity_check = bind_rows(p3x_main$sanity_check, p3x_ps$sanity_check),
-    coverage     = bind_rows(p3x_main$coverage,     p3x_ps$coverage)
+    trips        = bind_rows(p3x_primary_trips, p3x_fallback_trips),
+    gaps         = bind_rows(p3x_main$gaps,         p3x_ps$gaps,         p3x_fallback$gaps),
+    sanity_check = bind_rows(p3x_main$sanity_check, p3x_ps$sanity_check, p3x_fallback$sanity_check),
+    coverage     = bind_rows(p3x_main$coverage,     p3x_ps$coverage,     p3x_fallback$coverage)
   )
 }
 

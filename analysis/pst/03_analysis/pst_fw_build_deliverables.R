@@ -349,17 +349,18 @@ if (!is.null(effort_by_mode_location)) {
 }
 
 # Second tab: every River's member CRC area(s) with the official area
-# description, so "Composite Estimate = Yes" rows are traceable without
-# leaving the workbook. Membership is the UNION of catch_area_codes across
-# ALL of that river's rows (every year/mode/location), not a per-row copy -
-# a single area-year (e.g. Chehalis before 2023, when only one of its two
-# areas had data yet) would otherwise make the same river look non-composite
-# in one row and composite in another. The main tab's own per-row
-# "Composite Estimate"/"CRC Areas" already show which areas actually fed
-# THAT row; this tab answers the separate question of what the river is
+# description, so a River row made of more than one CRC area is traceable
+# without leaving the workbook. Membership is the UNION of catch_area_codes
+# across ALL of that river's rows (every year/mode/location), not a per-row
+# copy - a single area-year (e.g. Chehalis before 2023, when only one of its
+# two areas had data yet) would otherwise show incomplete membership for a
+# river that has more area coverage in other years. The main tab's own
+# per-row "CRC Areas" column already shows which areas actually fed THAT
+# row; this tab answers the separate question of what the river is
 # structurally made of. Included for single-area rivers too (one row each)
-# rather than filtered to composites only - a single reference tab covering
-# every River is easier to use than one that only sometimes has an entry.
+# rather than filtered to multi-area rivers only - a single reference tab
+# covering every River is easier to use than one that only sometimes has an
+# entry.
 river_crc_lookup <- NULL
 if (!is.null(deliverable_trips)) {
   river_membership <- deliverable_trips |>
@@ -369,8 +370,7 @@ if (!is.null(deliverable_trips)) {
       codes = paste(sort(unique(unlist(strsplit(`CRC Areas`, "\\|")))),
                     collapse = "|"),
       .groups = "drop"
-    ) |>
-    mutate(`Composite Estimate` = if_else(str_detect(codes, "\\|"), "Yes", "No"))
+    )
 
   river_crc_lookup <- river_membership |>
     separate_longer_delim(codes, delim = "|") |>
@@ -393,7 +393,13 @@ if (!is.null(deliverable_trips)) {
                 .groups = "drop")
     river_crc_lookup <- river_crc_lookup |>
       mutate(`CRC Area Code` = as.character(`CRC Area Code`)) |>
-      left_join(lut_join, by = "CRC Area Code")
+      left_join(lut_join, by = "CRC Area Code") |>
+      # A code absent from crc_area_lut.csv (e.g. 547, 764) would otherwise
+      # leave this column blank - the River name is the best available
+      # stand-in, not a fabricated value: [R3] concerns a missing DIMENSION,
+      # not a missing lookup-table row for a dimension the River column
+      # already answers.
+      mutate(`CRC Area Description` = coalesce(`CRC Area Description`, River))
   }
 
   river_crc_lookup <- river_crc_lookup |>
@@ -406,7 +412,7 @@ if (!is.null(deliverable_trips)) {
            title = paste(
              "PST Freshwater Recreational Angler Trips",
              "— Year x River x Mode x Location, 2022–2025",
-             "(total salmon; steelhead and Columbia mainstem excluded)"
+             "(total salmon)"
            ))
   addStyle(wb_deliverable, "Angler Trips", num_style,
           rows = 4:(3 + nrow(deliverable_trips)),
@@ -415,11 +421,7 @@ if (!is.null(deliverable_trips)) {
 
   if (!is.null(river_crc_lookup) && nrow(river_crc_lookup) > 0) {
     add_sheet(wb_deliverable, "River CRC Area Lookup", river_crc_lookup,
-             title = paste(
-               "Member CRC catch area(s) behind each River row -",
-               "\"Composite Estimate\" = Yes means the River total sums",
-               "more than one CRC area"
-             ))
+             title = "Member CRC catch area(s) behind each River row")
   }
 
   saveWorkbook(wb_deliverable, deliverable_path, overwrite = TRUE)

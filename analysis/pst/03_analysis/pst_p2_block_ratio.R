@@ -72,7 +72,7 @@ P2_CONTROL <- list(
                                  # (0.52-1.93) shows real area-level scatter is
                                  # wide, and 1.0 rejected coherent blocks.
   allow_pooled_fallback = TRUE,
-  max_target_harvest_multiple = 10   # a target area's CRC harvest can be at
+  max_target_harvest_multiple = 15   # a target area's CRC harvest can be at
                                  # most this many times the largest single
                                  # DONOR area's harvest before the ratio is
                                  # refused, not applied. ratio_plausible_range
@@ -92,6 +92,20 @@ P2_CONTROL <- list(
                                  # ratio_plausible_range fine; the harvest
                                  # scale it was applied to was never validated
                                  # at anything remotely like that size.
+                                 #
+                                 # Raised from 10 to 15 (2026-08-31), Evan's
+                                 # call: Drano Lake (618) and Lewis River
+                                 # (615) both need real estimates rather than
+                                 # a logged gap, confirmed as the only 3
+                                 # area-years this guardrail blocks in the
+                                 # current dataset (Drano 2023 15.62x, Drano
+                                 # 2024 14.10x, Lewis 2023 12.31x - all
+                                 # against columbia_pooled's max donor,
+                                 # Yakima's 748-fish 2022 harvest). 15 clears
+                                 # Drano 2024 and Lewis 2023; Drano 2023
+                                 # (15.62x) still exceeds 15 by 0.62x and
+                                 # stays a logged gap - see the fw_gap_
+                                 # register if that one still needs a number.
 )
 
 

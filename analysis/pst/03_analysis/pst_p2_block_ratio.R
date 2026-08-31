@@ -393,6 +393,157 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
 }
 
 
+# --- 2b. Composite-area donors -------------------------------------------------
+#' P1 sources whose own trip total already spans MULTIPLE CRC areas at once
+#' (composite crc_areas, area_coverage = "covered_unpartitioned" in the
+#' crosswalk) can still donate a real ratio if CRC harvest is summed across
+#' that SAME combined footprint rather than restricted to one area -
+#' build_p2_donors() above can't do this: it joins on a single
+#' catch_area_code, and these rows carry catch_area_code = NA in effort_long
+#' (see ingest_hanford_boat()/ingest_r2_upper_columbia()'s "composite-area
+#' problem" comments in district_creel_ingestion.R).
+#'
+#' NOT built for every covered_unpartitioned composite source - only an
+#' explicit allowlist (COMPOSITE_DONOR_RIVERS below, EMPTY by default - see
+#' "WHY THIS IS EMPTY" below), because building this correctly requires the
+#' combined footprint to not dilute the ratio with an excluded area's real,
+#' non-zero harvest. Snake River (R1_external) is a case this would exclude
+#' even if the list were populated: Jeremy Trump's total only covers a
+#' season-specific SUBSET of the six Snake CRC areas (640+644 spring,
+#' 644+648 fall - see pst_river_block_crosswalk.csv's Snake River notes),
+#' but 642/646/650 are NOT harvest-free the way that note's "closed portions
+#' produce no harvest to miss" framing would suggest - confirmed empirically
+#' against crc_freshwater_harvest_2010_2024_tidy.csv: 642/646/650 carry
+#' real, non-zero all-time harvest (268/991/2051 respectively). Summing CRC
+#' harvest across all six areas would fold that harvest - from water
+#' Jeremy's creel never measured - into the denominator, biasing the ratio
+#' down exactly the way this file's month-restriction rule exists to
+#' prevent for the per-area path. Doing Snake correctly needs season-
+#' specific area AND month attribution (spring vs. fall Chinook run timing)
+#' that isn't sourced anywhere in this repo; logged as an open gap rather
+#' than guessed at here.
+#'
+#' WHY THIS IS EMPTY (2026-08-31): Hanford Reach and Upper Columbia
+#' (R2_external) were both implemented and tested here - mechanically
+#' correct, no double-counting, verified with a full pipeline re-run - but
+#' the RESULT is worse, not better. Hanford's computed ratio is ~2.0-2.3
+#' trips/CRC-salmon; Upper Columbia's is ~0.36-0.64. Both are far below
+#' McNary/Yakima's ~9-10, and it isn't noise: Hanford Reach and R2's
+#' mainstem Priest Rapids-Chief Joseph reach (537|539|541|543|545, which
+#' account for 72% of R2's combined 2022 CRC harvest per Evan's check) are
+#' both large, high-catch-rate mainstem fall Chinook fisheries - physically
+#' a different kind of fishery from McNary Reservoir/Yakima's smaller
+#' tributary programs, not a data error. Pooling them into ColumbiaUpper's
+#' SAME block_year/block_pooled ratio - the ratio applied to every other
+#' uncovered ColumbiaUpper area, e.g. Methow River - measurably wrecks the
+#' block's own leave-one-out fit: median_ape 56.6% -> 92.1%, bias_pct
+#' +7.1% -> -82.8% with both added. `system` is set to a synthetic
+#' "combined:<areas>" label specifically so a composite donor can't
+#' accidentally collide into a real single-area donor's system_year/
+#' system_pooled tier - but that same isolation means it never gets a
+#' chance to form ITS OWN comparable-fishery-type tier either; it falls
+#' straight through to block_year/block_pooled, which don't discriminate by
+#' fishery type at all. Needed before COMPOSITE_DONOR_RIVERS is populated:
+#' either a real "mainstem vs. tributary" system distinction feeding
+#' system_year/system_pooled properly, or restricting a composite donor to
+#' inform ONLY a target area confirmed comparable to it - not a blanket
+#' block-wide pool. Left in place as tested, working machinery for that
+#' follow-up rather than deleted.
+#'
+#' `system` is set to a synthetic "combined:<areas>" label rather than any
+#' real CRC system name, since Upper Columbia's 11 areas span several real
+#' systems and picking one with first() would be arbitrary and could
+#' silently pool this composite donor into an unrelated single-area donor's
+#' system_year/system_pooled tier. The synthetic label can't collide with a
+#' real system, so estimate_block_ratios()'s system tiers simply treat each
+#' composite donor as its own singleton system (a no-op) while the
+#' block_year/block_pooled/columbia_pooled tiers - which don't key on system
+#' at all - pick it up normally.
+COMPOSITE_DONOR_RIVERS <- character(0)  # empty - see "WHY THIS IS EMPTY" above
+
+build_composite_donors <- function(effort_long, crc_month, crosswalk,
+                                   deliver_blocks) {
+
+  eligible <- crosswalk |>
+    filter(river_label %in% COMPOSITE_DONOR_RIVERS,
+           area_coverage == "covered_unpartitioned") |>
+    distinct(river_label, crc_areas) |>
+    filter(str_detect(crc_areas, "\\|"))  # truly composite, >1 area
+
+  if (nrow(eligible) == 0) return(tibble())
+
+  p1_rows <- effort_long |>
+    filter(block %in% deliver_blocks, tier == "P1",
+           is.na(catch_area_code), river_label %in% eligible$river_label) |>
+    left_join(eligible, by = "river_label")
+
+  if (nrow(p1_rows) == 0) return(tibble())
+
+  creel_area <- p1_rows |>
+    group_by(block, crc_areas, year) |>
+    summarise(
+      creel_trips   = sum(angler_trips,         na.rm = TRUE),
+      creel_harvest = sum(total_salmon_harvest, na.rm = TRUE),
+      fisheries     = paste(sort(unique(fishery_name)), collapse = "|"),
+      min_prop_strata_estimated = suppressWarnings(
+        min(prop_strata_estimated, na.rm = TRUE)
+      ),
+      .groups = "drop"
+    ) |>
+    mutate(min_prop_strata_estimated = if_else(
+      is.finite(min_prop_strata_estimated), min_prop_strata_estimated, NA_real_
+    ))
+
+  # One row per (combined key, component area code) - the join table that
+  # lets a combined trip total be matched to the SUM of CRC harvest across
+  # its listed component areas.
+  component_areas <- eligible |>
+    distinct(crc_areas) |>
+    mutate(catch_area_code = crc_areas) |>
+    separate_longer_delim(catch_area_code, delim = "|")
+
+  crc_month_key <- crc_month |>
+    transmute(catch_area_code = as.character(stream_code),
+             year            = calendar_year,
+             month           = calendar_month,
+             harvest)
+
+  has_real_month <- p1_rows |> filter(!is.na(month)) |> distinct(crc_areas, year)
+
+  month_matched <- p1_rows |>
+    semi_join(has_real_month, by = c("crc_areas", "year")) |>
+    filter(!is.na(month)) |>
+    distinct(crc_areas, year, month) |>
+    left_join(component_areas, by = "crc_areas", relationship = "many-to-many") |>
+    inner_join(crc_month_key, by = c("catch_area_code", "year", "month")) |>
+    group_by(crc_areas, year) |>
+    summarise(crc_harvest = sum(harvest, na.rm = TRUE), .groups = "drop")
+
+  annual_matched <- p1_rows |>
+    anti_join(has_real_month, by = c("crc_areas", "year")) |>
+    distinct(crc_areas, year) |>
+    left_join(component_areas, by = "crc_areas", relationship = "many-to-many") |>
+    inner_join(crc_month_key, by = c("catch_area_code", "year")) |>
+    group_by(crc_areas, year) |>
+    summarise(crc_harvest = sum(harvest, na.rm = TRUE), .groups = "drop")
+
+  crc_matched <- bind_rows(month_matched, annual_matched)
+
+  creel_area |>
+    inner_join(crc_matched, by = c("crc_areas", "year")) |>
+    filter(crc_harvest > 0, creel_trips > 0) |>
+    rename(catch_area_code = crc_areas) |>
+    mutate(
+      system            = paste0("combined:", catch_area_code),
+      ratio_crc_denom   = creel_trips / crc_harvest,
+      ratio_creel_denom = if_else(creel_harvest > 0,
+                                  creel_trips / creel_harvest, NA_real_),
+      crc_over_creel    = if_else(creel_harvest > 0,
+                                  crc_harvest / creel_harvest, NA_real_)
+    )
+}
+
+
 # --- 3. Block ratios ----------------------------------------------------------
 #' Ratio of sums within group, not mean of area ratios: the sum form weights
 #' donors by harvest so a small area with a thin denominator can't swing the
@@ -810,6 +961,16 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
 
   xw_area <- expand_crosswalk_areas(crosswalk)
   donors  <- build_p2_donors(effort_long, crc_month, xw_area, deliver_blocks, control)
+  n_creel_areas <- attr(donors, "n_creel_areas")
+
+  composite_donors <- build_composite_donors(effort_long, crc_month, crosswalk, deliver_blocks)
+  if (nrow(composite_donors) > 0) {
+    message(glue(
+      "[note] p2_donors: {nrow(composite_donors)} composite-area donor ",
+      "area-year(s) added ({paste(sort(unique(composite_donors$catch_area_code)), collapse = '; ')})."
+    ))
+    donors <- bind_rows(donors, composite_donors)
+  }
 
   if (nrow(donors) == 0) {
     message("[blocker] p2_expansion: no donor area-years -- no CRC/creel overlap.")
@@ -818,7 +979,7 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
 
   message(glue(
     "[note] p2_donors: {nrow(donors)} donor area-years across ",
-    "{n_distinct(donors$block)} blocks (of {attr(donors, 'n_creel_areas')} ",
+    "{n_distinct(donors$block)} blocks (of {n_creel_areas} ",
     "creel area-years; the remainder have no CRC counterpart)."
   ))
 

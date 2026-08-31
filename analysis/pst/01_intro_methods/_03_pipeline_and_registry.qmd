@@ -76,18 +76,17 @@ correctly excluded as mainstem, and different regions from Cowlitz/Lewis/Drano:
 
 | Block | Rows | Primary source | Delivered? |
 |---|---|---|---|
-| Puget Sound | 60 | mix of `creel_pe` and `CRC_only` (P2 candidates) | Yes |
+| Puget Sound | 60 | mix of `creel_pe`, `R4_external` (Green/Duwamish), and `CRC_only` (P2 candidates) | Yes |
 | WA Coast | 46 | mix of `creel_pe` and `CRC_only` (P2 candidates) | Yes |
-| Columbia Lower | 24 | `creel_pe` (Lower Cowlitz — `NO_DATA`), `CRC_only` (Cowlitz/Lewis system and small Lower-Columbia tributaries) | Yes |
+| Columbia Lower | 24 | `CRC_only` (Cowlitz/Lewis system and small Lower-Columbia tributaries) | Yes |
 | Columbia Middle | 7 | `creel_pe` (Drano Lake), `CRC_only` (Klickitat, Wind, Big White Salmon) | Yes |
-| Columbia Upper | 24 | `R3_external` (Hanford Reach, McNary, Yakima), `R2_external` (Chad Jackson's combined Upper Columbia total, added 2026-08-28 — see MD6 in status/gaps), `CRC_only` (Methow — deliberately left active pending an R2 scope question — plus the mainstem stretch above Chief Joseph Dam, split 2026-08-28 from the row reclassified from ColumbiaMainstem) | Yes |
-| Columbia Snake | 6 | `R1_external` (Snake River, resolving the crosswalk gap this doc used to flag) | Yes |
-| Columbia mainstem | 2 | ODFW (Buoy 10 / below Bonneville, Bonneville–McNary) | **No — consultant-supplied, out of scope; rows exist for documentation only and are filtered at load** |
+| Columbia Upper | 24 | `R3_external` (Hanford Reach, McNary, Yakima), `R2_external` (Chad Jackson's combined Upper Columbia total), `CRC_only` | Yes |
+| Columbia Snake | 6 | `R1_external` (Snake River) | Yes |
+| Columbia mainstem | 2 | ODFW/WDFW (Buoy 10 / below Bonneville, Bonneville–McNary) | No 
 
 ## Outputs
 
-Assembly emits detail roll-up tables plus three ledgers, which is what lets
-the status children report status rather than assert it. The simplified
+Assembly emits detail roll-up tables plus three ledgers. The simplified
 deliverable itself (Year × River × Mode × Location × Angler Trips) is built
 downstream by `pst_fw_build_jim_workbook.R` (step 6 above) into
 `analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx`. All files below

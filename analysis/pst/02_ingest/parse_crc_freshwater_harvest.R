@@ -274,9 +274,28 @@ parse_fw_workbook <- function(license_year, filename, sheet) {
 
   # Coerce fixed cols to character; convert empty strings to NA so downstream
   # detections work on clean NA, not empty string.
+  #
+  # str_squish() (added 2026-08-31): source workbook cells with wrapped text
+  # come through readxl with literal embedded \n/\r\n where Excel wrapped the
+  # line - confirmed for "system": "Nooksack Samish R. System" exists in the
+  # tidy CRC output as four distinct strings ("Nooksack Samish R. System",
+  # "Nooksack Samish R.\nSystem", "Nooksack\r\nSamish R.\r\nSystem",
+  # "Nooksack Samish\r\nR. System") purely from where Excel happened to wrap
+  # that cell in different source rows. group_by(system) downstream
+  # (estimate_block_ratios()'s system_year/system_pooled tiers) then treats
+  # these as four unrelated systems instead of one, fragmenting what should
+  # be a shared donor pool into thin slivers - confirmed as the direct cause
+  # of Samish (CRC 816) failing P2's harvest-scale guardrail in 2022/2024:
+  # system_year matched it to a lone 208-fish Nooksack North Fork row (one of
+  # the four fragments) instead of the full multi-area Nooksack+Samish system,
+  # producing a ~45x apparent extrapolation that doesn't exist once the
+  # system name is one consistent string. str_squish() collapses all
+  # whitespace runs (including newlines) to single spaces and trims ends -
+  # applied to every fixed column, not just system, since the same wrapping
+  # could affect stream/region/species text identically.
   data_sub <- data_sub |>
     mutate(across(all_of(fixed_names), as.character)) |>
-    mutate(across(all_of(fixed_names), ~ na_if(., "")))
+    mutate(across(all_of(fixed_names), ~ na_if(str_squish(.), "")))
 
   # ---- Coerce monthly cols to numeric ----
   data_sub <- data_sub |>

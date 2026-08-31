@@ -72,7 +72,7 @@ P2_CONTROL <- list(
                                  # (0.52-1.93) shows real area-level scatter is
                                  # wide, and 1.0 rejected coherent blocks.
   allow_pooled_fallback = TRUE,
-  max_target_harvest_multiple = 15   # a target area's CRC harvest can be at
+  max_target_harvest_multiple = 15,  # a target area's CRC harvest can be at
                                  # most this many times the largest single
                                  # DONOR area's harvest before the ratio is
                                  # refused, not applied. ratio_plausible_range
@@ -106,6 +106,26 @@ P2_CONTROL <- list(
                                  # (15.62x) still exceeds 15 by 0.62x and
                                  # stays a logged gap - see the fw_gap_
                                  # register if that one still needs a number.
+  excluded_donor_areas  = c("746")   # Green-Duwamish. Qualifies for the
+                                 # annual-only donor path (see build_p2_
+                                 # donors()'s header) and was tried as a
+                                 # PugetSound donor 2026-08-31, but its own
+                                 # LOO errors are extreme (393.9%/239.6%/
+                                 # 349.9% in 2022-2024) because its real
+                                 # trips-per-salmon ratio (0.68-1.37) sits
+                                 # well below what the rest of the pool
+                                 # implies. Not a data error - that ratio is
+                                 # within PugetSound's real observed range
+                                 # (0.16-109.5) - just a poor fit for a single
+                                 # pooled ratio. Including it as a donor moved
+                                 # PugetSound's block-level LOO from
+                                 # median_ape 61.2/bias_pct -15.9 to 63.8/
+                                 # -33.8 (roughly doubling the bias
+                                 # magnitude). Evan's call: exclude it as a
+                                 # donor rather than keep degrading the
+                                 # block's validated fit; it can still be a
+                                 # P2 TARGET (expanded from the block ratio)
+                                 # same as before.
 )
 
 
@@ -318,6 +338,7 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
   p1_rows <- effort_long |>
     filter(block %in% deliver_blocks, tier == "P1", !is.na(catch_area_code)) |>
     mutate(catch_area_code = as.character(catch_area_code)) |>
+    filter(!catch_area_code %in% control$excluded_donor_areas) |>
     exclude_truncated_months()
 
   creel_area <- p1_rows |>

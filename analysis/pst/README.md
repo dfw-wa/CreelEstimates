@@ -59,8 +59,8 @@ and `lookup_tables/`.
 |---|---|
 | `01_intro_methods/` | `_`-prefixed Quarto fragments owning the framework: deliverable contract & scope (`_01_scope_and_contract.qmd`), the P1/P2/P3 tier hierarchy and Track A/B split (`_02_framework.qmd`), and the pipeline registry (`_03_pipeline_and_registry.qmd`). Never rendered standalone. |
 | `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. |
-| `03_analysis/` | The two assembly scripts (`pst_fw_angler_trips_assembly.R`, `pst_fw_build_jim_workbook.R`), the P2/P3 helpers they source (`pst_p2_block_ratio.R`, `pst_crc_harvest_projection.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
-| `outputs/` | Every CSV/RDS/XLSX written by the pipeline, in subfolders numbered by pipeline step (`01_crc_harvest/`, `02_multi_fishery_creel/`, `03_district_creel/`, `04_interview_proportions/`, `05_assembly/`), plus `deliverables/` for the Jim status workbook and the simplified consultant-facing export. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
+| `03_analysis/` | The two assembly scripts (`pst_fw_angler_trips_assembly.R`, `pst_fw_build_deliverables.R`), the P2/P3 helpers they source (`pst_p2_block_ratio.R`, `pst_crc_harvest_projection.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
+| `outputs/` | Every CSV/RDS/XLSX written by the pipeline, in subfolders numbered by pipeline step (`01_crc_harvest/`, `02_multi_fishery_creel/`, `03_district_creel/`, `04_interview_proportions/`, `05_assembly/`), plus `deliverables/` for the status workbook and the simplified consultant-facing export. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
 | `correspondence/` | Point-in-time status write-ups (e.g. `PST_FW_Effort_Status_Brief_2026-08-06.md`) — snapshots for external audiences, not living documentation. |
 
 ## Run order
@@ -77,7 +77,7 @@ script's header for exactly what it does and does not do.
 | 3 | `02_ingest/district_creel_ingestion.R` | no | `03_district_creel/district_creel_summary.csv` |
 | 4 | `02_ingest/interview_proportions.qmd` | **yes** | `04_interview_proportions/interview_mode_location_props.csv`, `interview_batch_crosscheck.csv`, `all_interviews.{csv,rds}`, ~25 proportion/variability CSVs |
 | 5 | `03_analysis/pst_fw_angler_trips_assembly.R` | no | reads 1–4 (from their subfolders above) plus `input_files/pst/lookup_tables/{pst_input_manifest,pst_river_block_crosswalk}.csv`, `input_files/pst/lookup_tables/crc_area_lut.csv`, and (if present) the NEPA workbook under `input_files/pst/external_data/`; sources `pst_p2_block_ratio.R` and `pst_crc_harvest_projection.R`; writes the `pst_fw_*.csv` family to `05_assembly/`, including the diagnostic `pst_fw_nepa_vs_pure_crc_comparison.csv` |
-| 6 | `03_analysis/pst_fw_build_jim_workbook.R` | no | reads step 5's CSVs from `05_assembly/`; writes `deliverables/PST_FW_Status_Report.xlsx` (internal status) and `deliverables/PST_FW_Deliverable.xlsx` (simplified Year × River × Mode × Location × Angler Trips export for the consultant) |
+| 6 | `03_analysis/pst_fw_build_deliverables.R` | no | reads step 5's CSVs from `05_assembly/`; writes `deliverables/PST_FW_Status_Report.xlsx` (internal status) and `deliverables/PST_FW_Deliverable.xlsx` (simplified Year × River × Mode × Location × Angler Trips export for the consultant) |
 | 7 | `quarto render pst_fw_angler_trips.qmd` | no | reads everything above; renders the parent doc |
 
 ## Parent/child Quarto structure
@@ -105,7 +105,7 @@ Referenced throughout this subtree, defined in
 > A missing input is logged as a gap, never silently dropped and never
 > fatal. Partial assembly is the expected state until all providers return.
 
-`run_pst_pipeline.R`, `pst_fw_angler_trips_assembly.R`, `pst_fw_build_jim_workbook.R`,
+`run_pst_pipeline.R`, `pst_fw_angler_trips_assembly.R`, `pst_fw_build_deliverables.R`,
 and `pst_fw_angler_trips.qmd` all follow this: a missing file produces a
 logged gap (console message and/or a row in
 `outputs/05_assembly/pst_fw_gap_register.csv`)

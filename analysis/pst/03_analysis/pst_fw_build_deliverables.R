@@ -1,11 +1,11 @@
 # =============================================================================
-# pst_fw_build_jim_workbook.R
-# Location: analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
+# pst_fw_build_deliverables.R
+# Location: analysis/pst/03_analysis/pst_fw_build_deliverables.R
 #
 # Builds two Excel workbooks from the assembly script's outputs:
 #
 #   PST_FW_Status_Report.xlsx - a multi-tab internal status workbook so a
-#     non-R reader (Jim) can see what the PST freshwater effort pipeline
+#     non-R reader can see what the PST freshwater effort pipeline
 #     currently supports without running anything. Every gap/blocker visible
 #     in pst_fw_angler_trips_assembly.R's console summary is visible here
 #     too, not smoothed over for presentation.
@@ -39,7 +39,7 @@
 #   analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx
 #
 # How to run:
-#   Rscript analysis/pst/03_analysis/pst_fw_build_jim_workbook.R
+#   Rscript analysis/pst/03_analysis/pst_fw_build_deliverables.R
 #
 # Missing upstream CSVs (interview props not run, P2 not wired, a prior
 # assembly run that predates a given file, etc.) are handled the same way as

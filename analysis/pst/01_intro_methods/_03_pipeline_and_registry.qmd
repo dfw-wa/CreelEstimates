@@ -14,7 +14,7 @@ order; each step can also be run standalone.
 | 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/03_district_creel/district_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/04_interview_proportions/interview_mode_location_props.csv` |
 | 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | detail roll-ups + three ledgers, to `analysis/pst/outputs/05_assembly/` |
-| 6 | `analysis/pst/03_analysis/pst_fw_build_jim_workbook.R` | `analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx` (internal status) and `PST_FW_Deliverable.xlsx` (simplified consultant export) |
+| 6 | `analysis/pst/03_analysis/pst_fw_build_deliverables.R` | `analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx` (internal status) and `PST_FW_Deliverable.xlsx` (simplified consultant export) |
 
 Steps 1–4 are independent and parallelizable. Step 5 is the only writer of
 the deliverable, and it is re-runnable at any time — it reads whatever is
@@ -88,19 +88,19 @@ correctly excluded as mainstem, and different regions from Cowlitz/Lewis/Drano:
 
 Assembly emits detail roll-up tables plus three ledgers. The simplified
 deliverable itself (Year × River × Mode × Location × Angler Trips) is built
-downstream by `pst_fw_build_jim_workbook.R` (step 6 above) into
+downstream by `pst_fw_build_deliverables.R` (step 6 above) into
 `analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx`. All files below
 live under `analysis/pst/outputs/05_assembly/`:
 
 | File | Grain | Purpose |
 |---|---|---|
-| `pst_fw_trips_by_mode_location.csv` | block × river × year × mode × location | **Detail table — not the deliverable.** Trips + paired total-salmon harvest + `trips_per_salmon`, plus tier/source_id/method audit columns. The simplified Year × River × Mode × Location × Angler Trips deliverable is built from this table by `pst_fw_build_jim_workbook.R` into `PST_FW_Deliverable.xlsx`. |
+| `pst_fw_trips_by_mode_location.csv` | block × river × year × mode × location | **Detail table — not the deliverable.** Trips + paired total-salmon harvest + `trips_per_salmon`, plus tier/source_id/method audit columns. The simplified Year × River × Mode × Location × Angler Trips deliverable is built from this table by `pst_fw_build_deliverables.R` into `PST_FW_Deliverable.xlsx`. |
 | `pst_fw_trips_by_crc_area.csv` | block × river × **CRC area** × year × mode × location | Same as above but retains `catch_area_code` — **use this one for CRC joins** |
 | `pst_fw_p2_block_ratios.csv` | block × year | Paired trips-per-salmon derived from the merged creel run |
 | `pst_fw_p2_area_ratios.csv` | CRC area (and block × year) | Ratios from the P2 module in `pst_p2_block_ratio.R`, across all five pooling tiers (`ratio_basis`: `system_year`, `block_year`, `system_pooled`, `block_pooled`, `columbia_pooled` — finest-first cascade, see `estimate_block_ratios()`'s docstring). Distinct from `pst_fw_p2_block_ratios.csv` above — both are written, and they are not the same artifact |
 | `pst_fw_p2_donors.csv` | recipient area × donor area | Which surveyed areas each unsurveyed area borrowed from (rule R4: donors are within-block only) |
 | `pst_fw_p2_loo_detail.csv` | held-out area × year | Leave-one-out validation, row level |
-| `pst_fw_p2_loo_summary.csv` | block | LOO rollup; `median_ape` feeds `p2_median_error_pct` in the Jim workbook |
+| `pst_fw_p2_loo_summary.csv` | block | LOO rollup; `median_ape` feeds `p2_median_error_pct` in the status workbook |
 | `pst_fw_crc_vs_creel_bias.csv` | CRC area × year | CRC vs design-based creel harvest, same area-year |
 | `pst_fw_crc_projection.csv` | CRC area × year (2025 only) | Tier P3 (`pst_crc_harvest_projection.R`): 2025 trips for areas with no P1 and no real P2, expanded from a projected CRC harvest through the same ratio machinery P2 uses. Combines both control variants' rows — WACoast/Columbia-block areas from the 6-year trailing mean, Puget Sound areas from the same-parity 5-year mean (added 2026-08-21) — see that script's header |
 | `pst_fw_crc_projection_sanity.csv` | CRC area | P3's projected harvest (either variant) vs. partial actual 2025 CRC (Jan–Mar), where available |

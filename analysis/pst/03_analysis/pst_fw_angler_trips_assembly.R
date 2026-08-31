@@ -5,7 +5,7 @@
 # Combines angler trips with creel-derived mode/location proportions to produce
 # detail tables at Year x River x Mode (guided/unguided) x Location (bank/boat)
 # x Angler Trips, 2022-2025. The simplified consultant-facing deliverable is
-# built downstream from these tables by pst_fw_build_jim_workbook.R.
+# built downstream from these tables by pst_fw_build_deliverables.R.
 #
 # THIS IS NOT THE FINAL DELIVERABLE. It is one input to it. What's still
 # outstanding before anything goes to Northern Economics:
@@ -46,7 +46,7 @@
 #   3. analysis/pst/02_ingest/district_creel_ingestion.R            -> district_creel_summary.csv
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
 #   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
-#   6. analysis/pst/03_analysis/pst_fw_build_jim_workbook.R         -> PST_FW_Status_Report.xlsx
+#   6. analysis/pst/03_analysis/pst_fw_build_deliverables.R         -> PST_FW_Status_Report.xlsx
 #                                                                       PST_FW_Deliverable.xlsx
 #                                                                       (run AFTER this script)
 #
@@ -1057,7 +1057,7 @@ if (!is.null(nepa_cmp)) {
 # harvest, tier, source_id, and method columns the consultant didn't ask for.
 # The simplified Year x River x Mode x Location x Angler Trips export the
 # consultant actually wants is built downstream, in
-# pst_fw_build_jim_workbook.R, from pst_fw_trips_by_mode_location.csv below.
+# pst_fw_build_deliverables.R, from pst_fw_trips_by_mode_location.csv below.
 #
 # Filtered to DELIVER_BLOCKS: nothing ingests ColumbiaMainstem today, but the
 # filter is explicit here too so a future ingestion function added under
@@ -1508,19 +1508,19 @@ if (!is.null(crc_vs_creel) && nrow(crc_vs_creel) > 0) {
 
 message("\nThese are detail tables, not the deliverable. See the header ",
         "comment for what remains before anything is sent to Northern ",
-        "Economics; run pst_fw_build_jim_workbook.R next for the simplified ",
+        "Economics; run pst_fw_build_deliverables.R next for the simplified ",
         "deliverable export.")
 
 cli_ok <- tryCatch({
   cli::cli_alert_success(paste(
     "Assembly complete. Next: Rscript",
-    "analysis/pst/03_analysis/pst_fw_build_jim_workbook.R"
+    "analysis/pst/03_analysis/pst_fw_build_deliverables.R"
   ))
   TRUE
 }, error = function(e) FALSE)
 if (!cli_ok) {
   message(paste(
     "Assembly complete. Next: Rscript",
-    "analysis/pst/03_analysis/pst_fw_build_jim_workbook.R"
+    "analysis/pst/03_analysis/pst_fw_build_deliverables.R"
   ))
 }

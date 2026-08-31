@@ -37,7 +37,7 @@
 #   Every producer script under 02_ingest/ and 03_analysis/ defines its own
 #   top-level objects with the SAME NAMES - OUT_DIR, PST_DIR, read_if(),
 #   log_gap(), canon(), GRAIN, and so on (compare
-#   pst_fw_angler_trips_assembly.R and pst_fw_build_jim_workbook.R, which both
+#   pst_fw_angler_trips_assembly.R and pst_fw_build_deliverables.R, which both
 #   define read_if()/log_note() at file scope). source()-ing several of
 #   these into one session would let a later script's definitions silently
 #   shadow an earlier script's, or trip on a leftover object from a prior
@@ -91,7 +91,7 @@ STEPS <- c(
   # "02_multi_fishery_creel_summary",  # needs DB/VPN - see comment above
   "03_district_creel",
   "05_effort_assembly",
-  "06_jim_workbook"
+  "06_build_deliverables"
 )
 
 # ---- 1. Step registry ---------------------------------------------------------
@@ -122,8 +122,8 @@ STEP_REGISTRY <- list(
     depends_on = c("01_crc_freshwater_harvest", "02_multi_fishery_creel_summary",
                     "03_district_creel", "04_interview_proportions")
   ),
-  "06_jim_workbook" = list(
-    path       = "analysis/pst/03_analysis/pst_fw_build_jim_workbook.R",
+  "06_build_deliverables" = list(
+    path       = "analysis/pst/03_analysis/pst_fw_build_deliverables.R",
     needs_db   = FALSE,
     depends_on = c("05_effort_assembly")
   )

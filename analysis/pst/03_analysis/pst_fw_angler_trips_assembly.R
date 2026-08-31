@@ -1036,6 +1036,77 @@ if (!is.null(p3x)) {
   write_csv(p3x$coverage,     file.path(OUT_DIR, "pst_fw_crc_projection_coverage.csv"))
 }
 
+# ---- 5e. Final-harvest occurrence filter (ground-truth: did the season run?) -
+# Extends the season-status idea (P3-only, hand-verified against WDFW
+# pamphlets) with a second, automatic, data-driven signal that runs across
+# EVERY year the final/creel-substituted CRC data covers - both P2 and P3,
+# not just the P3 projected year. Per Evan (2026-08-31): if there's real
+# creel data (P1) for an area, that alone proves the fishery ran - this
+# filter is never applied to P1 rows. But a P2 (CRC-ratio-expanded) or P3
+# (CRC-projected) area-year is built from CRC harvest that may itself be
+# describing a fishery that didn't occur that year; parse_crc_creel_subs_
+# final.R's pst_crc_final_harvest_occurrence.csv is the ground truth check -
+# a CRC-only area-year with literally NO harvest reported in the final,
+# creel-substituted data is treated as evidence the fishery did not happen,
+# not as "harvest happened to be zero in an open season" (see that script's
+# header for the reasoning and its deliberate exclusion of partial-coverage
+# 2025). Zeroed, not dropped - the row and its provenance stay visible,
+# same convention the P3 season-status correction uses for closed areas.
+final_occurrence <- read_if(
+  file.path(CRC_HARVEST_DIR, "pst_crc_final_harvest_occurrence.csv"),
+  "final_harvest_occurrence",
+  detail = paste(
+    "not found - run parse_crc_creel_subs_final.R first if the final/creel-",
+    "substituted CRC workbooks are available. P2/P3 estimates are not cross-",
+    "checked against final reported harvest without it."
+  )
+)
+
+if (!is.null(final_occurrence)) {
+  not_occurred <- final_occurrence |>
+    filter(!season_occurred) |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    select(catch_area_code, year)
+
+  to_zero <- effort_long |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    semi_join(not_occurred, by = c("catch_area_code", "year")) |>
+    filter(tier %in% c("P2", "P3"), angler_trips > 0)
+
+  if (nrow(to_zero) > 0) {
+    walk(seq_len(nrow(to_zero)), \(i) {
+      r <- to_zero[i, ]
+      log_gap("final_harvest_occurrence", r$block, "defect", glue(
+        "area {r$catch_area_code} ({r$river_label}) {r$year}: zeroed ",
+        "{round(r$angler_trips)} {r$tier} trips ({round(r$total_salmon_harvest)} ",
+        "salmon) - final/creel-substituted CRC data reports NO salmon harvest ",
+        "for this area-year, meaning the fishery most likely did not occur. ",
+        "See pst_crc_final_harvest_occurrence.csv."
+      ))
+    })
+  }
+
+  effort_long <- effort_long |>
+    mutate(.catch_area_code_chr = as.character(catch_area_code)) |>
+    left_join(
+      not_occurred |> mutate(.not_occurred = TRUE),
+      by = c(".catch_area_code_chr" = "catch_area_code", "year")
+    ) |>
+    mutate(
+      .zero_this = !is.na(.not_occurred) & tier %in% c("P2", "P3"),
+      method = if_else(
+        .zero_this & angler_trips > 0,
+        paste(method, "- ZEROED: final/creel-substituted CRC data reports no",
+              "harvest this area-year (season most likely did not occur) -",
+              "see pst_crc_final_harvest_occurrence.csv."),
+        method
+      ),
+      angler_trips = if_else(.zero_this, 0, angler_trips),
+      total_salmon_harvest = if_else(.zero_this, 0, total_salmon_harvest)
+    ) |>
+    select(-.catch_area_code_chr, -.not_occurred, -.zero_this)
+}
+
 # ---- 5d. NEPA vs. pure-CRC 5-year even/odd mean comparison (diagnostic) -----
 # Purely diagnostic - does not feed effort_long or any deliverable row. Only
 # runs if the NEPA workbook is present; a missing workbook is a logged gap,

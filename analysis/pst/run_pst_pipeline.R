@@ -88,6 +88,7 @@ library(glue)
 
 STEPS <- c(
   "01_crc_freshwater_harvest",
+  "01b_crc_final_harvest",
   # "02_multi_fishery_creel_summary",  # needs DB/VPN - see comment above
   "03_district_creel",
   "05_effort_assembly",
@@ -106,6 +107,11 @@ STEP_REGISTRY <- list(
     needs_db   = FALSE,
     depends_on = character(0)
   ),
+  "01b_crc_final_harvest" = list(
+    path       = "analysis/pst/02_ingest/parse_crc_creel_subs_final.R",
+    needs_db   = FALSE,
+    depends_on = character(0)
+  ),
   "02_multi_fishery_creel_summary" = list(
     path       = "analysis/pst/02_ingest/multi_fishery_creel_summary.R",
     needs_db   = TRUE,
@@ -119,7 +125,8 @@ STEP_REGISTRY <- list(
   "05_effort_assembly" = list(
     path       = "analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R",
     needs_db   = FALSE,
-    depends_on = c("01_crc_freshwater_harvest", "02_multi_fishery_creel_summary",
+    depends_on = c("01_crc_freshwater_harvest", "01b_crc_final_harvest",
+                    "02_multi_fishery_creel_summary",
                     "03_district_creel", "04_interview_proportions")
   ),
   "06_build_deliverables" = list(

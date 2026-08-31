@@ -18,3 +18,4 @@ catch_area_code,river_label,reason,verified_by,verified_date,notes
 345,Goodman Creek,not_open_for_salmon,Evan Booher,8/31/2026,starting batch - out of scope for this data request
 418,Sooes River,not_open_for_salmon,Evan Booher,8/31/2026,added to closed-areas list
 824,Baker River,not_open_for_salmon,Evan Booher,8/31/2026,"Baker River (824) only, not Baker Lake (825) - the two are combined under the ""Baker"" river_label but 825 has its own salmon fishery and is not in scope for this closure. 824's current P2/P3 estimates are already near-zero (0/0/191/0 trips 2022-2025)."
+732,Dewatto River,not_open_for_salmon,Evan Booher,8/31/2026,added to closed-areas list

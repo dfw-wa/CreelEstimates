@@ -238,9 +238,10 @@ ODFW numbers.
   `columbia_pooled` tier in `pst_p2_block_ratio.R` for now). Worth revisiting
   as a real, Snake-calibrated ratio rather than a permanent limitation.
 - **`multi_fishery_creel_run_ledger.csv`** — 98 rows, all `ok` as of the
-  2026-08-14 run. The previous 3 errors / 1 skip are resolved. Lower Cowlitz
-  remains absent from the output entirely: it lacks the data needed for
-  effort estimation, a genuine gap rather than a pipeline bug.
+  2026-08-14 run. The previous 3 errors / 1 skip are resolved. Cowlitz R.
+  below Mayfield Dam (561) remains absent from the output entirely: it
+  lacks the data needed for effort estimation, a genuine gap rather than a
+  pipeline bug.
   **Stale as of 2026-08-21:** the row count will change on the next run —
   winter/summer gamefish fisheries are now filtered out of the ledger along
   with the estimates, and the restored `[S4]` donor hierarchy changes which
@@ -291,7 +292,7 @@ Against `multi_fishery_creel_trips.csv` at that time:
   Drano years carried trip estimates. The `[S4]` donor hierarchy was doing
   the work: 778 rows on own-month trip length, 166 `area_season`, 66
   `type_season`, 8 `fishery_season`.
-- Lower Cowlitz is absent entirely — the one genuine, confirmed data gap.
+- Cowlitz R. below Mayfield Dam (561) is absent entirely — the one genuine, confirmed data gap.
 
 ::: {.callout-important}
 **Those figures describe the PREDECESSOR script, and the fix they describe
@@ -462,7 +463,7 @@ Gaps tracked outside the ledger, because they are outreach rather than code:
 | McNary 2022 | Todd Miller | Confirmed missing; no source |
 | 2025 CRC harvest | Heidi / Harvest Data Team | Publishes October — binding constraint on 2025 |
 | ~~NEPA odd/even ratio misapplication~~ | ~~Christina Iverson~~ | **Closed 2026-08-22, no call needed.** This pipeline never consumed NEPA's 3.44/8.65 ratio: `ingest_published_fallback()` only ever logged notes, and every trips-per-salmon figure here is derived empirically from our own paired creel/CRC data (P1 design-based, P2 CRC-denominated block ratios). The workbook's "applies 3.44 to every year regardless of parity" defect is real but belongs to that external deliverable, not to ours. Retained in the intro/methods children as reference context for why R4 forbids cross-block ratio transfer |
-| Lower Cowlitz | — | Genuine data gap, not a bug; `KNOWN_FAILED` |
+| Cowlitz R. below Mayfield Dam (561) | — | Genuine data gap, not a bug; `KNOWN_FAILED` |
 | Yakima 2023–2025 trip expansion | Evan | **Resolved 2026-08-21.** OQ4's premise was wrong — the expansion was never dropped from the 2023+ workbooks, it was never read from the right sheet. The `Summary` sheet this parser used to read really is sampled-only, but the per-site `Prosser`/`Horn Rapids` tabs (previously ignored) each carry a `Combined` weekly table with the same expanded Angler Trips / Effort Pole Hrs columns 2022's `Sheet1` has. `ingest_yakima_site_combined()` now reads both site tabs (`Horn Rapids` is all-zero in every week of all three years — no coverage at that site in this data), sums per week, and prorates to months. Expanded totals: 3,854 / 3,634 / 3,675 trips and 7,781 / 8,609 / 6,428 effort-hrs for 2023/2024/2025 respectively, verified against each sheet's own season-total row before trusting the parser. Caught and fixed a real bug along the way: the `Combined`, `Bank Summary`, and `Boat Summary` blocks in each sheet reuse identical week-label text, so an unscoped label match would have summed all three blocks together (triple-counting); the parser now bounds rows strictly between the `Combined` and `Bank Summary` section labels |
 | Lower Chehalis 2023 NA-area shadow rows | Evan | **Resolved 2026-08-21.** `section_crc_area` in `multi_fishery_creel_summary.R` now drops the NA variant for a section whenever a real `crc_area` is also present for that section, instead of only warning about the resulting fan-out |
 | Drano `angler_final = "fail"` | Evan | **Follow-up task.** Failed bank/boat classification recoded `"unknown"` downstream; root cause is an unrecognised `count_type` value in `prep_dwg_effort_index()`'s Drano branch (4 rows, Drano Lake salmon and steelhead 2024, 1,745 effort-hrs). `multi_fishery_creel_summary.R` now writes `multi_fishery_creel_effort_index_fail_counts.csv`/`.rds`, recording every unrecognised `count_type` by fishery — next DB-connected run of the pipeline will surface the exact value(s) so the Drano branch's `case_when()` can be patched precisely instead of guessed at |

@@ -145,20 +145,34 @@ title_style <- createStyle(textDecoration = "bold", fontSize = 13)
 pct_style   <- createStyle(numFmt = "0.0%")
 num_style   <- createStyle(numFmt = "#,##0")
 
+#' Character width of one data column, ignoring the header (it wraps via
+#' hdr_style, so it never needs to dictate column width) and anything
+#' outside df entirely (notably the title row - see add_sheet below).
+data_col_width <- function(x) {
+  x_chr <- if (is.numeric(x)) format(x, big.mark = ",", trim = TRUE) else as.character(x)
+  max(c(4, nchar(x_chr, type = "chars")), na.rm = TRUE) + 2
+}
+
 #' Write one data frame to one tab with a title row, bold header, frozen
-#' panes, and auto-sized columns. Centralized so every tab looks the same
+#' panes, and data-sized columns. Centralized so every tab looks the same
 #' without repeating the formatting calls seven times.
 add_sheet <- function(wb, sheet_name, df, title = NULL, freeze = TRUE) {
   addWorksheet(wb, sheet_name)
-  start_row <- 1
+  start_row <- if (!is.null(title)) 3 else 1
+  writeData(wb, sheet_name, df, startRow = start_row, headerStyle = hdr_style)
+  if (freeze) freezePane(wb, sheet_name, firstActiveRow = start_row + 1)
+  # Explicit widths from df's own content, NOT setColWidths(widths = "auto"):
+  # openxlsx's "auto" is resolved at saveWorkbook() time by scanning the
+  # sheet's FINAL state, so it sees the title text in column A's row 1
+  # regardless of write order and stretches that column to the title's full
+  # length. Computing widths from df directly sidesteps that entirely - the
+  # title (written below, after this) never enters the calculation.
+  setColWidths(wb, sheet_name, cols = seq_along(df),
+              widths = vapply(df, data_col_width, numeric(1)))
   if (!is.null(title)) {
     writeData(wb, sheet_name, title, startRow = 1, startCol = 1)
     addStyle(wb, sheet_name, title_style, rows = 1, cols = 1)
-    start_row <- 3
   }
-  writeData(wb, sheet_name, df, startRow = start_row, headerStyle = hdr_style)
-  if (freeze) freezePane(wb, sheet_name, firstActiveRow = start_row + 1)
-  setColWidths(wb, sheet_name, cols = seq_along(df), widths = "auto")
   invisible(NULL)
 }
 

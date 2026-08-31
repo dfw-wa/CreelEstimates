@@ -145,12 +145,20 @@ title_style <- createStyle(textDecoration = "bold", fontSize = 13)
 pct_style   <- createStyle(numFmt = "0.0%")
 num_style   <- createStyle(numFmt = "#,##0")
 
-#' Character width of one data column, ignoring the header (it wraps via
-#' hdr_style, so it never needs to dictate column width) and anything
-#' outside df entirely (notably the title row - see add_sheet below).
-data_col_width <- function(x) {
+#' Character width for one data column - the wider of its own values and its
+#' header name. hdr_style wraps text, so a header alone never NEEDS the
+#' column widened for it, but skipping it entirely (as an earlier version of
+#' this function did) let short-valued columns like "Composite Estimate"
+#' (Yes/No) size down to the data's ~2 characters, forcing that whole header
+#' to wrap across 4+ lines and blow out the header row's height on open.
+#' Anything outside df - notably the title row - never enters this at all
+#' (see add_sheet below).
+data_col_width <- function(x, header) {
   x_chr <- if (is.numeric(x)) format(x, big.mark = ",", trim = TRUE) else as.character(x)
-  max(c(4, nchar(x_chr, type = "chars")), na.rm = TRUE) + 2
+  # Header gets +1 extra character of slack on top of the shared +2 padding
+  # below - it renders bold, which is visibly wider per character than the
+  # data rows' regular weight at the same nominal width.
+  max(c(4, nchar(x_chr, type = "chars"), nchar(header, type = "chars") + 1), na.rm = TRUE) + 2
 }
 
 #' Write one data frame to one tab with a title row, bold header, frozen
@@ -168,7 +176,7 @@ add_sheet <- function(wb, sheet_name, df, title = NULL, freeze = TRUE) {
   # length. Computing widths from df directly sidesteps that entirely - the
   # title (written below, after this) never enters the calculation.
   setColWidths(wb, sheet_name, cols = seq_along(df),
-              widths = vapply(df, data_col_width, numeric(1)))
+              widths = mapply(data_col_width, df, names(df)))
   if (!is.null(title)) {
     writeData(wb, sheet_name, title, startRow = 1, startCol = 1)
     addStyle(wb, sheet_name, title_style, rows = 1, cols = 1)

@@ -14,7 +14,7 @@ order; each step can also be run standalone.
 | 3 | `analysis/pst/02_ingest/district_creel_ingestion.R` | `analysis/pst/outputs/03_district_creel/district_creel_summary.csv` |
 | 4 | `analysis/pst/02_ingest/interview_proportions.qmd` | `analysis/pst/outputs/04_interview_proportions/interview_mode_location_props.csv` |
 | 5 | `analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R` | detail roll-ups + three ledgers, to `analysis/pst/outputs/05_assembly/` |
-| 6 | `analysis/pst/03_analysis/pst_fw_build_deliverables.R` | `analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx` (internal status) and `PST_FW_Deliverable.xlsx` (simplified consultant export) |
+| 6 | `analysis/pst/03_analysis/pst_fw_build_deliverables.R` | `analysis/pst/outputs/deliverables/WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx` (internal status) and `WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx` (simplified consultant export) |
 
 Steps 1–4 are independent and parallelizable. Step 5 is the only writer of
 the deliverable, and it is re-runnable at any time — it reads whatever is
@@ -89,12 +89,12 @@ correctly excluded as mainstem, and different regions from Cowlitz/Lewis/Drano:
 Assembly emits detail roll-up tables plus three ledgers. The simplified
 deliverable itself (Year × River × Mode × Location × Angler Trips) is built
 downstream by `pst_fw_build_deliverables.R` (step 6 above) into
-`analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx`. All files below
+`analysis/pst/outputs/deliverables/WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx`. All files below
 live under `analysis/pst/outputs/05_assembly/`:
 
 | File | Grain | Purpose |
 |---|---|---|
-| `pst_fw_trips_by_mode_location.csv` | block × river × year × mode × location | **Detail table — not the deliverable.** Trips + paired total-salmon harvest + `trips_per_salmon`, plus tier/source_id/method audit columns. The simplified Year × River × Mode × Location × Angler Trips deliverable is built from this table by `pst_fw_build_deliverables.R` into `PST_FW_Deliverable.xlsx`. |
+| `pst_fw_trips_by_mode_location.csv` | block × river × year × mode × location | **Detail table — not the deliverable.** Trips + paired total-salmon harvest + `trips_per_salmon`, plus tier/source_id/method audit columns. The simplified Year × River × Mode × Location × Angler Trips deliverable is built from this table by `pst_fw_build_deliverables.R` into `WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx`. |
 | `pst_fw_trips_by_crc_area.csv` | block × river × **CRC area** × year × mode × location | Same as above but retains `catch_area_code` — **use this one for CRC joins** |
 | `pst_fw_p2_block_ratios.csv` | block × year | Paired trips-per-salmon derived from the merged creel run |
 | `pst_fw_p2_area_ratios.csv` | CRC area (and block × year) | Ratios from the P2 module in `pst_p2_block_ratio.R`, across all five pooling tiers (`ratio_basis`: `system_year`, `block_year`, `system_pooled`, `block_pooled`, `columbia_pooled` — finest-first cascade, see `estimate_block_ratios()`'s docstring). Distinct from `pst_fw_p2_block_ratios.csv` above — both are written, and they are not the same artifact |
@@ -114,7 +114,7 @@ live under `analysis/pst/outputs/05_assembly/`:
 
 Every row in the detail tables above carries `tier` and `source_id` — there
 are no unattributed numbers internally, even though the simplified
-`PST_FW_Deliverable.xlsx` sent to the consultant drops those columns.
+`WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx` sent to the consultant drops those columns.
 
 - **Provenance ledger** — tier, source_id, method per row
 - **Gap ledger** — every skipped or absent input, with reason

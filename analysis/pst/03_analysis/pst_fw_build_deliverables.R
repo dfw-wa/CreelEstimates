@@ -4,13 +4,13 @@
 #
 # Builds two Excel workbooks from the assembly script's outputs:
 #
-#   PST_FW_Status_Report.xlsx - a multi-tab internal status workbook so a
+#   WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx - a multi-tab internal status workbook so a
 #     non-R reader can see what the PST freshwater effort pipeline
 #     currently supports without running anything. Every gap/blocker visible
 #     in pst_fw_angler_trips_assembly.R's console summary is visible here
 #     too, not smoothed over for presentation.
 #
-#   PST_FW_Deliverable.xlsx - the simplified, consultant-facing export:
+#   WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx - the simplified, consultant-facing export:
 #     Year x River x Mode x Location x Angler Trips, exactly the format
 #     Northern Economics requested (see _01_scope_and_contract.qmd). No
 #     audit columns, no gap register, no P2 diagnostics - those stay in the
@@ -35,8 +35,8 @@
 #   pst_fw_crc_vs_creel_bias.csv                    (crc_vs_creel)
 #
 # Outputs:
-#   analysis/pst/outputs/deliverables/PST_FW_Status_Report.xlsx
-#   analysis/pst/outputs/deliverables/PST_FW_Deliverable.xlsx
+#   analysis/pst/outputs/deliverables/WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx
+#   analysis/pst/outputs/deliverables/WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx
 #
 # How to run:
 #   Rscript analysis/pst/03_analysis/pst_fw_build_deliverables.R
@@ -135,7 +135,7 @@ p2_ran <- !is.null(p2_ratios)
 # (coverage before/after P2), then the two roll-ups, then the evidence for
 # trusting P2 (ratios + leave-one-out), then the open items.
 
-xlsx_path <- file.path(DELIVERABLES_DIR, "PST_FW_Status_Report.xlsx")
+xlsx_path <- file.path(DELIVERABLES_DIR, "WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx")
 
 wb <- createWorkbook()
 
@@ -220,7 +220,7 @@ if (!is.null(effort_by_mode_location)) {
 ## 2b. Trips by river, with audit columns (river x year x mode x location) ----
 # Same grain as the deliverable export below, plus the harvest/tier/source_id/
 # method columns the consultant didn't ask for - kept here for anyone tracing
-# a specific number back to its source. See PST_FW_Deliverable.xlsx (built in
+# a specific number back to its source. See WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx (built in
 # section 3 below) for the simplified consultant-facing shape.
 
 if (!is.null(effort_by_mode_location)) {
@@ -315,7 +315,7 @@ if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
 # Year x River x Mode x Location x Angler trips, 2022-2025, total salmon,
 # nothing else. One tab, no audit columns - no harvest, tier, source_id,
 # method, and none of the gap/P2/provenance tabs above. Those stay in
-# PST_FW_Status_Report.xlsx.
+# WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx.
 #
 # One addition beyond the base request: "Composite Estimate" + "CRC Areas"
 # columns, and a second lookup tab. Several River rows (e.g. Quillayute,
@@ -346,9 +346,9 @@ if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
 # Boat strata sit at a leftover 0 next to it - confirmed the fix DID take
 # effect when the leftover zero rows read as if it hadn't. A zero conveys
 # nothing to the consultant on its own; the "why" behind it belongs in
-# PST_FW_Status_Report.xlsx's method/gap-register columns, not repeated here.
+# WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx's method/gap-register columns, not repeated here.
 
-deliverable_path <- file.path(DELIVERABLES_DIR, "PST_FW_Deliverable.xlsx")
+deliverable_path <- file.path(DELIVERABLES_DIR, "WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx")
 
 deliverable_trips <- NULL
 if (!is.null(effort_by_mode_location)) {
@@ -456,7 +456,7 @@ if (!is.null(deliverable_trips)) {
   if (!cli_ok2) message(glue("Wrote deliverable workbook: {deliverable_path}"))
 } else {
   log_note("deliverable_export", paste(
-    "effort_by_mode_location missing - PST_FW_Deliverable.xlsx not written.",
+    "effort_by_mode_location missing - WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx not written.",
     "Run pst_fw_angler_trips_assembly.R first."
   ))
 }

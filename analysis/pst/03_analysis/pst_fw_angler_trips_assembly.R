@@ -46,8 +46,8 @@
 #   3. analysis/pst/02_ingest/district_creel_ingestion.R            -> district_creel_summary.csv
 #   4. analysis/pst/02_ingest/interview_proportions.qmd             -> interview_mode_location_props.csv
 #   5. analysis/pst/03_analysis/pst_fw_angler_trips_assembly.R      <- THIS SCRIPT
-#   6. analysis/pst/03_analysis/pst_fw_build_deliverables.R         -> PST_FW_Status_Report.xlsx
-#                                                                       PST_FW_Deliverable.xlsx
+#   6. analysis/pst/03_analysis/pst_fw_build_deliverables.R         -> WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Status_Report.xlsx
+#                                                                       WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx
 #                                                                       (run AFTER this script)
 #
 # Design rules:

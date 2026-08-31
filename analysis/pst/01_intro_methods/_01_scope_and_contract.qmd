@@ -96,7 +96,7 @@ analysis for our annual North of Falcon fishing package. The NEPA spreadsheet
 produces annual trip estimates by river and month using CRC salmon harvest
 multiplied by a trips-per-salmon-caught ratio (per 2013 NOAA memo).
 Two ratios were originally established: 3.44 trips/salmon in odd yeras and 8.65 trips/salmon in even years. 
-Rather than use historical ratios we opted to derive trips/salmon ratios using paired creel survey and CRC harvest estimates within the data request window. 
+Rather than use historical ratios we opted to derive trips/salmon ratios using paired creel survey and CRC harvest estimates within the data request window. In practice this extends to years/areas where CRC harvest itself isn't published yet (2025): rather than fall back to an externally published ratio, the pipeline projects that CRC harvest from its own recent history (Tier P3, `pst_crc_harvest_projection.R`) and expands it with the same self-derived ratio — no published ratio (NEPA's or otherwise) feeds any delivered number.
 
 **Creel interview data** from WDFW's internal database contains
 party-level records with guided status and bank/boat classification. These

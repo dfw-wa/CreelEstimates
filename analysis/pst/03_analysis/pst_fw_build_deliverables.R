@@ -333,6 +333,7 @@ if (!is.null(effort_by_mode_location)) {
   deliverable_trips <- effort_by_mode_location |>
     filter(angler_trips > 0) |>
     transmute(
+      `CRC Region`       = block,
       Year               = year,
       River              = river_label,
       Mode               = str_to_title(mode),
@@ -345,7 +346,7 @@ if (!is.null(effort_by_mode_location)) {
       `CRC Areas`        = catch_area_codes
     ) |>
     select(-catch_area_codes) |>
-    arrange(River, Year, Location, Mode)
+    arrange(`CRC Region`, River, Year, Location, Mode)
 }
 
 # Second tab: every River's member CRC area(s) with the official area

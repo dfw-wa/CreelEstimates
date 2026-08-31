@@ -1163,6 +1163,95 @@ if (!is.null(nepa_cmp)) {
   write_csv(nepa_cmp, file.path(OUT_DIR, "pst_fw_nepa_vs_pure_crc_comparison.csv"))
 }
 
+# ---- 5f. Closed-area filter (not open for salmon / out of scope) -----------
+# Runs LAST, after every other correction (P2, P3, both season-status and
+# final-harvest-occurrence filters) - per Evan (2026-08-31): a hand-maintained
+# list of CRC areas confirmed not open to salmon fishing (or otherwise out of
+# scope for this data request), distinct from pst_season_status_lookup.csv's
+# month/year-specific P3 correction. That table asks "was THIS YEAR's season
+# open" for a P3 projection target; this one asks "is this water ever legally
+# open to salmon retention at all" - a blanket, not-year-specific exclusion,
+# since a CRC-only ratio expansion (P2 or P3) attributing angler trips to
+# water with no legal salmon fishery represents illegal-fishing effort that
+# should never appear in the deliverable, in any year.
+#
+# Applied to P2/P3 only, same as final_harvest_occurrence filter above - a
+# real creel survey (P1) actually documenting trips in a listed area would
+# directly contradict the "not open" premise and is flagged as a conflict to
+# resolve by hand, not silently zeroed (P1 is real, observed activity; a
+# closed-area list should never override real data, only ever the CRC-ratio
+# guesses that could put trips somewhere no legal fishery exists).
+closed_areas <- read_if(
+  file.path(PST_DIR, "pst_closed_areas_lookup.csv"),
+  "closed_areas",
+  detail = paste(
+    "not found - P2/P3 estimates are not cross-checked against a not-open-",
+    "for-salmon exclusion list without it. Not fatal, but this is a hand-",
+    "maintained list someone needs to populate/keep, not a auto-scaffolded",
+    "one - see pst_closed_areas_lookup.csv's own header if it exists."
+  )
+)
+
+if (!is.null(closed_areas)) {
+  closed_codes <- closed_areas |> mutate(catch_area_code = as.character(catch_area_code))
+
+  # Real P1 trips in a listed area contradict "not open for salmon" - flag,
+  # don't silently zero. [R2]
+  conflicting_p1 <- effort_long |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    semi_join(closed_codes, by = "catch_area_code") |>
+    filter(tier == "P1", angler_trips > 0)
+
+  if (nrow(conflicting_p1) > 0) {
+    walk(seq_len(nrow(conflicting_p1)), \(i) {
+      r <- conflicting_p1[i, ]
+      log_gap("closed_areas", r$block, "blocker", glue(
+        "area {r$catch_area_code} ({r$river_label}) {r$year}: pst_closed_areas_",
+        "lookup.csv says this area is not open for salmon, but real P1 creel ",
+        "data ({round(r$angler_trips)} trips, fishery {r$fishery_name}) exists ",
+        "here - NOT zeroed, this contradicts the closed-area list and needs ",
+        "human review before either the estimate or the lookup entry is trusted."
+      ))
+    })
+  }
+
+  to_zero <- effort_long |>
+    mutate(catch_area_code = as.character(catch_area_code)) |>
+    semi_join(closed_codes, by = "catch_area_code") |>
+    filter(tier %in% c("P2", "P3"), angler_trips > 0)
+
+  if (nrow(to_zero) > 0) {
+    walk(seq_len(nrow(to_zero)), \(i) {
+      r <- to_zero[i, ]
+      log_gap("closed_areas", r$block, "defect", glue(
+        "area {r$catch_area_code} ({r$river_label}) {r$year}: zeroed ",
+        "{round(r$angler_trips)} {r$tier} trips ({round(r$total_salmon_harvest)} ",
+        "salmon) - pst_closed_areas_lookup.csv confirms this area is not open ",
+        "for salmon / out of scope for this data request."
+      ))
+    })
+  }
+
+  effort_long <- effort_long |>
+    mutate(.catch_area_code_chr = as.character(catch_area_code)) |>
+    left_join(
+      closed_codes |> distinct(catch_area_code) |> mutate(.is_closed = TRUE),
+      by = c(".catch_area_code_chr" = "catch_area_code")
+    ) |>
+    mutate(
+      .zero_this = !is.na(.is_closed) & tier %in% c("P2", "P3"),
+      method = if_else(
+        .zero_this & angler_trips > 0,
+        paste(method, "- ZEROED: pst_closed_areas_lookup.csv confirms this area",
+              "is not open for salmon / out of scope for this data request."),
+        method
+      ),
+      angler_trips = if_else(.zero_this, 0, angler_trips),
+      total_salmon_harvest = if_else(.zero_this, 0, total_salmon_harvest)
+    ) |>
+    select(-.catch_area_code_chr, -.is_closed, -.zero_this)
+}
+
 # ---- 6. Detail roll-ups (river and CRC-area grain) --------------------------
 # Year x River x Mode x Location x Angler Trips, rolled up from month grain.
 # These are detail/audit tables, not the deliverable itself - they carry

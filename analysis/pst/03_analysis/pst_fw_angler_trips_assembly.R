@@ -898,6 +898,51 @@ effort_long <- apply_track_b(trips_p1)
 # risks a fan-out. They enter the stack already canonical and already
 # mode/location = "unknown" per [R3].
 
+# P1-distrust overrides (added 2026-08-31, Evan's call): a hand-maintained,
+# explicit list of (catch_area_code, year) combos where the real creel_pe
+# survey exists but is judged UNRELIABLE for this specific area-year - e.g.
+# Nooksack (below North Fork, 794) 2023/2024, where the creel period/design
+# doesn't align with the main salmon fishery and the real trip counts (122
+# in 2023, 773 in 2024) are wildly incongruous next to the P2/P3 estimates
+# for the SAME area in the surrounding years (10,575 in 2022; 5,654
+# projected for 2025). This is the ONE place in this pipeline where real P1
+# data is deliberately NOT trusted over a modeled estimate - everywhere else,
+# P1 always wins over P2/P3 by design. Scoped narrowly (area + year, hand-
+# verified, logged loudly) rather than a general "distrust thin P1" rule.
+#
+# Mechanically: effort_long_for_p2 excludes the listed area-years' P1 rows
+# from what run_p2_extrapolation() sees, for TWO reasons that both matter -
+# (1) apply_p2()'s "already covered" check must not see them, so P2 builds
+# a real target row for that area-year instead of skipping it as covered;
+# (2) build_p2_donors() must not use the distrusted rows as a DONOR either -
+# if the survey itself is judged unreliable, it shouldn't calibrate anyone
+# else's ratio either. The ORIGINAL effort_long (with the real P1 rows
+# still in it) is what P2's new rows get bind_rows()'d onto below; the
+# superseding step right after that zeroes the real rows for exactly these
+# area-years, so only the new P2 estimate counts toward the deliverable -
+# see the "SUPERSEDED" step below for why zero-and-annotate, not delete.
+p1_overrides <- read_if(
+  file.path(PST_DIR, "pst_p1_distrust_overrides.csv"),
+  "p1_distrust_override",
+  detail = paste(
+    "not found - no P1 area-year is overridden by a P2 regional estimate.",
+    "Not fatal; this is a hand-maintained, deliberately narrow list, not",
+    "an auto-scaffolded one."
+  )
+)
+
+effort_long_for_p2 <- if (is.null(p1_overrides) || nrow(p1_overrides) == 0) {
+  effort_long
+} else {
+  effort_long |>
+    mutate(.cac_chr = as.character(catch_area_code)) |>
+    anti_join(
+      p1_overrides |> mutate(catch_area_code = as.character(catch_area_code)),
+      by = c(".cac_chr" = "catch_area_code", "year")
+    ) |>
+    select(-.cac_chr)
+}
+
 # run_p2_extrapolation() (pst_p2_block_ratio.R) expands crc_areas on the
 # crosswalk unconditionally once crc_yr is non-NULL, so a NULL crosswalk must
 # be intercepted here rather than passed through. [R2]
@@ -905,7 +950,7 @@ p2x <- if (is.null(crosswalk)) {
   NULL
 } else {
   run_p2_extrapolation(
-    effort_long    = effort_long,
+    effort_long    = effort_long_for_p2,
     crc_yr         = p2$crc,
     crc_month      = p2$crc_month,
     crosswalk      = crosswalk,
@@ -916,6 +961,53 @@ p2x <- if (is.null(crosswalk)) {
 
 if (!is.null(p2x)) {
   effort_long <- bind_rows(effort_long, canon(p2x$trips))
+
+  # Supersede the distrusted real P1 rows now that P2's replacement estimate
+  # is in effort_long - zeroed, not dropped, so the real (untrusted) survey
+  # numbers stay visible in the audit trail with a clear annotation, same
+  # convention every other late-stage correction in this file uses.
+  if (!is.null(p1_overrides) && nrow(p1_overrides) > 0) {
+    superseded <- effort_long |>
+      mutate(.cac_chr = as.character(catch_area_code)) |>
+      inner_join(
+        p1_overrides |> mutate(catch_area_code = as.character(catch_area_code)),
+        by = c(".cac_chr" = "catch_area_code", "year")
+      ) |>
+      filter(tier == "P1", angler_trips > 0)
+
+    if (nrow(superseded) > 0) {
+      walk(seq_len(nrow(superseded)), \(i) {
+        r <- superseded[i, ]
+        log_gap("p1_distrust_override", r$block, "defect", glue(
+          "area {r$catch_area_code} ({r$river_label}) {r$year}: superseded ",
+          "{round(r$angler_trips)} real P1 trips ({r$fishery_name}) with a P2 ",
+          "regional-block estimate - {r$reason}. See ",
+          "pst_p1_distrust_overrides.csv."
+        ))
+      })
+    }
+
+    effort_long <- effort_long |>
+      mutate(.cac_chr = as.character(catch_area_code)) |>
+      left_join(
+        p1_overrides |> mutate(catch_area_code = as.character(catch_area_code)) |>
+          distinct(catch_area_code, year) |> mutate(.is_overridden = TRUE),
+        by = c(".cac_chr" = "catch_area_code", "year")
+      ) |>
+      mutate(
+        .zero_this = !is.na(.is_overridden) & tier == "P1",
+        method = if_else(
+          .zero_this & angler_trips > 0,
+          paste0(method, " - SUPERSEDED: real P1 data judged unreliable for ",
+                 "this area-year, replaced by a P2 regional-block estimate - ",
+                 "see pst_p1_distrust_overrides.csv."),
+          method
+        ),
+        angler_trips = if_else(.zero_this, 0, angler_trips),
+        total_salmon_harvest = if_else(.zero_this, 0, total_salmon_harvest)
+      ) |>
+      select(-.cac_chr, -.is_overridden, -.zero_this)
+  }
 
   if (nrow(p2x$gaps) > 0) {
     walk(seq_len(nrow(p2x$gaps)), \(i) {

@@ -311,12 +311,27 @@ if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
 # dimension is never fabricated, so the consultant sees the same completeness
 # picture the status workbook does, just without the internal audit trail
 # explaining it.
+#
+# Zero-trip rows are dropped (Evan's call, 2026-08-31), UNLIKE the status
+# workbook's detail tabs above. Several late-stage corrections in this
+# pipeline zero a row rather than delete it, specifically so the ORIGINAL
+# (now-corrected) number stays visible in the audit trail: a distrusted P1
+# survey superseded by a P2 regional estimate (pst_p1_distrust_overrides.csv),
+# a closed/out-of-scope area (pst_closed_areas_lookup.csv), a season-status
+# closure (pst_season_status_lookup.csv). All of that machinery is exactly
+# why a River can show a real, sensible number in this tab (e.g. Nooksack
+# River (below North Fork) 2023 = 4,844 trips) while the SAME row's Bank/
+# Boat strata sit at a leftover 0 next to it - confirmed the fix DID take
+# effect when the leftover zero rows read as if it hadn't. A zero conveys
+# nothing to the consultant on its own; the "why" behind it belongs in
+# PST_FW_Status_Report.xlsx's method/gap-register columns, not repeated here.
 
 deliverable_path <- file.path(DELIVERABLES_DIR, "PST_FW_Deliverable.xlsx")
 
 deliverable_trips <- NULL
 if (!is.null(effort_by_mode_location)) {
   deliverable_trips <- effort_by_mode_location |>
+    filter(angler_trips > 0) |>
     transmute(
       Year               = year,
       River              = river_label,

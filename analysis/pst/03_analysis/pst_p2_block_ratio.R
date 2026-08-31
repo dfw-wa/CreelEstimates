@@ -695,6 +695,53 @@ fill_ratio_tier <- function(resolved, tier, join_cols) {
     select(-ends_with("_new"))
 }
 
+#' Un-fill a ratio that resolved but whose calibration doesn't cover the
+#' target's own harvest scale (max_target_harvest_multiple, see P2_CONTROL),
+#' so the NEXT, coarser cascade tier gets a real chance to fill it instead of
+#' the target being rejected outright at whichever tier happened to fill it
+#' first. MUST be called after EVERY fill_ratio_tier() step in the cascade,
+#' not once at the very end - added 2026-08-31 to fix a real, confirmed case:
+#' Samish (CRC 816, PugetSound) was rejected every year because system_year
+#' resolved it first against "Nooksack Samish R. System"'s ONE real donor
+#' that year (a small, month-restricted creel program - ~200-500 fish), even
+#' though PugetSound's own block_year tier (11+ real donors, thousands-scale
+#' max single-donor harvest) would have covered Samish's harvest comfortably.
+#' The old end-of-cascade-only check discarded that target the moment
+#' system_year's thin calibration failed, never letting block_year - already
+#' sitting one step later in the SAME cascade - get a turn.
+#'
+#' Tracks two things across repeated calls so the final gap message (built
+#' after the whole cascade) can still report a real number even when every
+#' tier eventually rejects the target: `ever_out_of_scale` (was this target
+#' EVER rejected on scale, as opposed to never finding a usable ratio at
+#' all) and `last_rejected_max_donor` (the most recent tier's donor scale it
+#' was rejected against, since a successful later fill blanks
+#' max_donor_area_harvest back out along with ratio).
+#'
+#' @param harvest_col  name of the column holding the target's own harvest
+#'   to compare against - "crc_harvest" for apply_p2(), a projected mean for
+#'   apply_crc_projection() (pst_crc_harvest_projection.R) - same shape,
+#'   different column name between the two callers.
+apply_out_of_scale_guard <- function(resolved, control, harvest_col) {
+  resolved |>
+    mutate(
+      .this_out_of_scale = !is.na(ratio) &
+        .data[[harvest_col]] > control$max_target_harvest_multiple * max_donor_area_harvest,
+      last_rejected_max_donor = if_else(
+        .this_out_of_scale, max_donor_area_harvest,
+        coalesce(last_rejected_max_donor, NA_real_)
+      ),
+      ever_out_of_scale      = coalesce(ever_out_of_scale, FALSE) | .this_out_of_scale,
+      ratio                  = if_else(.this_out_of_scale, NA_real_, ratio),
+      ratio_basis            = if_else(.this_out_of_scale, NA_character_, ratio_basis),
+      n_donor_areas          = if_else(.this_out_of_scale, NA_integer_, n_donor_areas),
+      donor_areas            = if_else(.this_out_of_scale, NA_character_, donor_areas),
+      donor_ratio_cv         = if_else(.this_out_of_scale, NA_real_, donor_ratio_cv),
+      max_donor_area_harvest = if_else(.this_out_of_scale, NA_real_, max_donor_area_harvest)
+    ) |>
+    select(-.this_out_of_scale)
+}
+
 
 #' Guardrails. Failures are marked, not dropped -- the reason must reach the
 #' gap register.
@@ -817,27 +864,35 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
   # docstring for why all five exist). Each step only fills rows still NA
   # from the previous step - a target that already resolved at system_year
   # never gets overwritten by a coarser tier.
+  #
+  # apply_out_of_scale_guard() runs after EVERY tier, not once at the end -
+  # see that function's header for why: a target rejected on scale at a fine
+  # tier must be able to fall through and try the next, coarser tier, rather
+  # than being locked out the moment the finest tier that filled it turns
+  # out to be thinly calibrated.
   resolved <- targets |>
     mutate(ratio = NA_real_, ratio_basis = NA_character_,
            n_donor_areas = NA_integer_, donor_areas = NA_character_,
-           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_)
+           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_,
+           ever_out_of_scale = NA, last_rejected_max_donor = NA_real_)
 
-  resolved <- resolved |> fill_ratio_tier(ratios$system_year, c("block", "system", "year"))
-  resolved <- resolved |> fill_ratio_tier(ratios$block_year,  c("block", "year"))
+  resolved <- resolved |> fill_ratio_tier(ratios$system_year, c("block", "system", "year")) |>
+    apply_out_of_scale_guard(control, "crc_harvest")
+  resolved <- resolved |> fill_ratio_tier(ratios$block_year,  c("block", "year")) |>
+    apply_out_of_scale_guard(control, "crc_harvest")
   if (control$allow_pooled_fallback) {
-    resolved <- resolved |> fill_ratio_tier(ratios$system_pooled, c("block", "system"))
-    resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,  c("block"))
-    resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block"))
+    resolved <- resolved |> fill_ratio_tier(ratios$system_pooled, c("block", "system")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
+    resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,  c("block")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
+    resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
   }
 
-  # A ratio can be well-calibrated and still not be safe to apply this far
-  # outside the harvest scale it was calibrated on. See max_target_harvest_
-  # multiple's comment in P2_CONTROL for the real case (area 545) this guards.
   resolved <- resolved |>
     mutate(
-      out_of_scale = !is.na(ratio) &
-        crc_harvest > control$max_target_harvest_multiple * max_donor_area_harvest,
-      ratio = if_else(out_of_scale, NA_real_, ratio)
+      out_of_scale           = coalesce(ever_out_of_scale, FALSE),
+      max_donor_area_harvest = coalesce(max_donor_area_harvest, last_rejected_max_donor)
     )
 
   p2_trips <- resolved |>

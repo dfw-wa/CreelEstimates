@@ -290,24 +290,36 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area, area_system
   resolved <- targets |>
     mutate(ratio = NA_real_, ratio_basis = NA_character_,
            n_donor_areas = NA_integer_, donor_areas = NA_character_,
-           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_)
-
-  resolved <- resolved |> fill_ratio_tier(system_year_recent, c("block", "system"))
-  resolved <- resolved |> fill_ratio_tier(block_year_recent,  c("block"))
-  resolved <- resolved |> fill_ratio_tier(ratios$system_pooled,   c("block", "system"))
-  resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,    c("block"))
-  resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block"))
+           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_,
+           ever_out_of_scale = NA, last_rejected_max_donor = NA_real_)
 
   # Same harvest-scale guardrail apply_p2() uses (pst_p2_block_ratio.R) - a
   # ratio calibrated on small donor areas should not be extrapolated onto a
   # projected mean harvest many times larger than anything it was validated
   # against. P2_CONTROL is passed in unchanged (see run_crc_projection()),
   # not CRC_PROJECTION_CONTROL, so this reuses the same tunable.
+  #
+  # apply_out_of_scale_guard() (pst_p2_block_ratio.R) runs after EVERY tier,
+  # not once at the end - see that function's header for why: a target
+  # rejected on scale at a fine tier must fall through to try the next,
+  # coarser tier rather than being locked out the moment the finest tier
+  # that filled it turns out to be thinly calibrated. Same fix as apply_p2()
+  # (2026-08-31), same real case (Samish/CRC 816) exposed it here too.
+  resolved <- resolved |> fill_ratio_tier(system_year_recent, c("block", "system")) |>
+    apply_out_of_scale_guard(P2_CONTROL, "mean_harvest")
+  resolved <- resolved |> fill_ratio_tier(block_year_recent,  c("block")) |>
+    apply_out_of_scale_guard(P2_CONTROL, "mean_harvest")
+  resolved <- resolved |> fill_ratio_tier(ratios$system_pooled,   c("block", "system")) |>
+    apply_out_of_scale_guard(P2_CONTROL, "mean_harvest")
+  resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,    c("block")) |>
+    apply_out_of_scale_guard(P2_CONTROL, "mean_harvest")
+  resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block")) |>
+    apply_out_of_scale_guard(P2_CONTROL, "mean_harvest")
+
   resolved <- resolved |>
     mutate(
-      out_of_scale = !is.na(ratio) &
-        mean_harvest > P2_CONTROL$max_target_harvest_multiple * max_donor_area_harvest,
-      ratio = if_else(out_of_scale, NA_real_, ratio)
+      out_of_scale           = coalesce(ever_out_of_scale, FALSE),
+      max_donor_area_harvest = coalesce(max_donor_area_harvest, last_rejected_max_donor)
     )
 
   p3_trips <- resolved |>

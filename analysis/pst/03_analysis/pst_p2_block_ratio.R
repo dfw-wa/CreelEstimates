@@ -268,6 +268,27 @@ expand_crosswalk_areas <- function(crosswalk) {
 #' gets its full-year CRC harvest expanded; only the ratio's construction
 #' needs the matched months.
 #'
+#' ANNUAL-ONLY DONORS (added 2026-08-31): a P1 source whose own trip total has
+#' no month breakdown at all (month is NA in effort_long) can't be restricted
+#' to matched months the way the above paragraph describes - there is no
+#' partial-season creel presence to match against, because the trip total
+#' already represents the WHOLE year, not a subset of it. Green-Duwamish
+#' (R4_external, area 746) is the case in point: ingest_green_duwamish()
+#' pools trip length across the full year, not by month (see district_creel_
+#' ingestion.R), so month is NA even though CRC independently reports real,
+#' non-zero monthly harvest for area 746 going back to 2010 - CRC's own
+#' harvest doesn't depend on R4's own (absent) harvest column at all. For
+#' these rows the denominator is CRC's own FULL-YEAR harvest for that
+#' area-year rather than a month-restricted subset - not a looser standard,
+#' the correct match for a trip total that already covers the full year.
+#' Composite-area sources with the same NA month (R1_external/Snake River,
+#' R2_external/Upper Columbia, R3_external/Hanford Reach) are NOT swept up by
+#' this path: none of them carry a real single catch_area_code in
+#' effort_long (see p1_rows's `!is.na(catch_area_code)` filter below) - their
+#' problem is an unsplit AREA total, not an unsplit MONTH total, and remains
+#' the separate, not-yet-built gap documented in estimate_block_ratios()'s
+#' ColumbiaSnake note.
+#'
 #' Two distinct data-quality filters apply before p1_rows becomes anything:
 #' exclude_truncated_months() removes fishery/year/months a human has
 #' CONFIRMED the creel program stopped before the legal season did (see that
@@ -307,21 +328,54 @@ build_p2_donors <- function(effort_long, crc_month, xw_area,
       is.finite(min_prop_strata_estimated), min_prop_strata_estimated, NA_real_
     ))
 
-  crc_matched <- p1_rows |>
+  crc_month_key <- crc_month |>
+    transmute(catch_area_code = as.character(stream_code),
+             year            = calendar_year,
+             month           = calendar_month,
+             system,
+             harvest)
+
+  # Partition by (catch_area_code, year) GROUP, not by individual row: an
+  # area-year with real per-month rows can still carry one stray NA-month
+  # row (confirmed real case - McNary Reservoir 533/2024 has a 229.66-trip,
+  # 0-harvest row with month = NA alongside its real months 9/10/11, likely
+  # an unassigned prorated residual). Splitting on row-level month would let
+  # that one stray row ALSO match via the annual path below, fanning the
+  # join out to two crc_harvest rows for the same area-year and silently
+  # double-counting the donor. Routing every row of an area-year through
+  # whichever path the GROUP qualifies for keeps the two paths mutually
+  # exclusive - McNary 2024 stays entirely month-matched, its stray NA row
+  # contributes to creel_area's trip total same as before but is invisible
+  # to crc_matched exactly as it was before this annual path existed.
+  has_real_month <- p1_rows |>
+    filter(!is.na(month)) |>
+    distinct(catch_area_code, year)
+
+  # Month-matched path: real per-month P1 rows, restricted to the months the
+  # creel actually covers (see this function's header for why).
+  month_matched <- p1_rows |>
+    semi_join(has_real_month, by = c("catch_area_code", "year")) |>
+    filter(!is.na(month)) |>
     distinct(catch_area_code, year, month) |>
-    inner_join(
-      crc_month |> transmute(catch_area_code = as.character(stream_code),
-                             year            = calendar_year,
-                             month           = calendar_month,
-                             system,
-                             harvest),
-      by = c("catch_area_code", "year", "month")
-    ) |>
+    inner_join(crc_month_key, by = c("catch_area_code", "year", "month")) |>
     group_by(catch_area_code, year) |>
     # system is 1:1 with catch_area_code (same CRC "system" field regardless
     # of month), so first() is a constant, not an arbitrary pick.
     summarise(crc_harvest = sum(harvest, na.rm = TRUE),
               system      = first(system), .groups = "drop")
+
+  # Annual-only path: area-years with NO real month anywhere (see the
+  # ANNUAL-ONLY DONORS note above) - matched against CRC's full-year harvest
+  # for that area-year instead of a month-restricted subset.
+  annual_matched <- p1_rows |>
+    anti_join(has_real_month, by = c("catch_area_code", "year")) |>
+    distinct(catch_area_code, year) |>
+    inner_join(crc_month_key, by = c("catch_area_code", "year")) |>
+    group_by(catch_area_code, year) |>
+    summarise(crc_harvest = sum(harvest, na.rm = TRUE),
+              system      = first(system), .groups = "drop")
+
+  crc_matched <- bind_rows(month_matched, annual_matched)
 
   donors <- creel_area |>
     inner_join(crc_matched, by = c("catch_area_code", "year")) |>

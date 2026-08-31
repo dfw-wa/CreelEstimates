@@ -1127,18 +1127,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 810,Pysht River,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 810,Pysht River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 810,Pysht River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,8,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,9,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-812,Quilcene,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+812,Big Quilcene River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area (see crosswalk's 2026-08-29 river_label correction for 812)"
+812,Big Quilcene River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,4,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,5,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,6,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,7,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,8,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,Corrected 8/31/2026: open Aug-Oct 2025 per Evan; river_label also corrected from 'Quilcene' to 'Big Quilcene River'
+812,Big Quilcene River,9,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,Corrected 8/31/2026: open Aug-Oct 2025 per Evan; river_label also corrected from 'Quilcene' to 'Big Quilcene River'
+812,Big Quilcene River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,Corrected 8/31/2026: open Aug-Oct 2025 per Evan; river_label also corrected from 'Quilcene' to 'Big Quilcene River'
+812,Big Quilcene River,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
+812,Big Quilcene River,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/31/2026,"River_label corrected from 'Quilcene' to 'Big Quilcene River' - name misalignment, not a distinct area"
 814,Salt Creek (Clallam Co),1,2024-25,closed,NA,NA,NA,NA
 814,Salt Creek (Clallam Co),2,2024-25,closed,NA,NA,NA,NA
 814,Salt Creek (Clallam Co),3,2024-25,closed,NA,NA,NA,NA

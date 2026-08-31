@@ -1036,12 +1036,19 @@ if (!is.null(p2x)) {
 # ---- 5c. P3 CRC-harvest projection -------------------------------------------
 # Runs AFTER P2 on purpose: "already covered?" for this tier means covered by
 # EITHER P1 or real P2, so effort_long must already carry the P2 merge above.
-# Two calls to the SAME run_crc_projection(), differing only in control and
-# deliver_blocks: the 6-year trailing mean for WACoast/Columbia (unchanged),
-# and PugetSound's own same-parity (odd-year) 5-year mean (added 2026-08-21 -
-# see pst_crc_harvest_projection.R's header and CRC_PROJECTION_CONTROL_PS for
-# why PS needed a different projection basis, not just a different control
-# value). Provisional pending Jim's sign-off per _22_status_and_gaps.qmd.
+# Three calls to the SAME run_crc_projection() cover PugetSound plus the 6-yr-
+# trailing main variant, differing only in control and deliver_blocks:
+#   - 6-year trailing mean for WACoast/Columbia (unchanged)
+#   - PugetSound's PINK-DOMINANT areas: same-parity (odd-year) 5-year mean
+#     (added 2026-08-21)
+#   - PugetSound's NON-pink areas (Baker, Minter Creek, Big Quilcene, etc.):
+#     the same 6-year trailing mean WACoast/Columbia use (added 2026-08-31,
+#     Evan's call - see CRC_PROJECTION_CONTROL_PS_NONPINK's header for why
+#     applying the same-parity method block-wide was confirmed wrong)
+# See pst_crc_harvest_projection.R's header and CRC_PROJECTION_CONTROL_PS for
+# why PugetSound needed a different projection basis at all, not just a
+# different control value. Provisional pending Jim's sign-off per
+# _22_status_and_gaps.qmd.
 #
 # crc_hist is read independently here rather than reusing p2$crc: p2$crc is
 # filtered to YEARS_SCOPE (2022-2025), which drops 2019-2021/2015-2018 - too
@@ -1053,11 +1060,12 @@ crc_hist <- read_if(file.path(CRC_HARVEST_DIR, "crc_freshwater_harvest_2010_2024
 
 if (is.null(p2x)) {
   message(paste("[gap] crc_projection: P2 did not run, so no donor pairs are",
-               "available to derive a ratio from; P3 projection (both",
+               "available to derive a ratio from; P3 projection (all",
                "variants) skipped."))
-  p3x_main     <- NULL
-  p3x_ps       <- NULL
-  p3x_fallback <- NULL
+  p3x_main         <- NULL
+  p3x_ps           <- NULL
+  p3x_ps_nonpink   <- NULL
+  p3x_fallback     <- NULL
 } else {
   p3x_main <- run_crc_projection(
     crc_hist       = crc_hist,
@@ -1066,13 +1074,36 @@ if (is.null(p2x)) {
     crosswalk      = crosswalk,
     deliver_blocks = DELIVER_BLOCKS
   )
+
+  # Which PugetSound areas are actually pink-dominant, computed fresh from
+  # CRC's own harvest history every run rather than a hand-typed river list -
+  # see classify_pink_dominant_areas()'s header (pst_crc_harvest_
+  # projection.R) for the exact rule and why it exists.
+  ps_pink_areas <- classify_pink_dominant_areas(crc_hist)
+  message(glue(
+    "[note] crc_projection_ps_split: {length(ps_pink_areas)} PugetSound CRC ",
+    "area(s) classified pink-dominant (same-parity odd-year projection): ",
+    "{paste(sort(ps_pink_areas), collapse = ', ')}. Every other PugetSound ",
+    "area uses the standard 6-yr trailing mean."
+  ))
+  control_ps_pink <- modifyList(CRC_PROJECTION_CONTROL_PS,
+                                list(area_allowlist = ps_pink_areas))
+
   p3x_ps <- run_crc_projection(
     crc_hist       = crc_hist,
     effort_long    = effort_long,
     donors         = p2x$donors,
     crosswalk      = crosswalk,
     deliver_blocks = "PugetSound",
-    control        = CRC_PROJECTION_CONTROL_PS
+    control        = control_ps_pink
+  )
+  p3x_ps_nonpink <- run_crc_projection(
+    crc_hist       = crc_hist,
+    effort_long    = effort_long,
+    donors         = p2x$donors,
+    crosswalk      = crosswalk,
+    deliver_blocks = "PugetSound",
+    control        = CRC_PROJECTION_CONTROL_PS_NONPINK
   )
   # Thin-history fallback (added 2026-08-31, Evan's call) - see PART 1c in
   # pst_crc_harvest_projection.R for why this exists and why min_history_
@@ -1094,7 +1125,22 @@ if (is.null(p2x)) {
   )
 }
 
-p3x_primary_trips <- bind_rows(p3x_main$trips, p3x_ps$trips)
+# p3x_ps_nonpink has no area_allowlist of its own (see its control's header),
+# so without this anti_join it would independently re-resolve the SAME pink-
+# dominant areas p3x_ps already covers (both calls check "already covered?"
+# against the SAME pre-P3 effort_long snapshot, not against each other's
+# output) - the pink-scoped same-parity result must win on any area it
+# actually resolved, so this keeps the trailing-mean call to only the areas
+# p3x_ps left untouched, same anti_join pattern the fallback merge below uses.
+p3x_ps_nonpink_trips <- if (is.null(p3x_ps_nonpink) || nrow(p3x_ps_nonpink$trips) == 0) {
+  p3x_ps_nonpink$trips
+} else {
+  p3x_ps_nonpink$trips |>
+    anti_join(p3x_ps$trips |> distinct(catch_area_code, year),
+              by = c("catch_area_code", "year"))
+}
+
+p3x_primary_trips <- bind_rows(p3x_main$trips, p3x_ps$trips, p3x_ps_nonpink_trips)
 
 # Fallback rows only fill area-years no primary pass resolved - an anti_join
 # on (catch_area_code, year), not a coalesce, so a fallback row can never
@@ -1116,14 +1162,14 @@ if (!is.null(p3x_fallback_trips) && nrow(p3x_fallback_trips) > 0) {
   ))
 }
 
-p3x <- if (is.null(p3x_main) && is.null(p3x_ps) && is.null(p3x_fallback)) {
+p3x <- if (is.null(p3x_main) && is.null(p3x_ps) && is.null(p3x_ps_nonpink) && is.null(p3x_fallback)) {
   NULL
 } else {
   list(
     trips        = bind_rows(p3x_primary_trips, p3x_fallback_trips),
-    gaps         = bind_rows(p3x_main$gaps,         p3x_ps$gaps,         p3x_fallback$gaps),
-    sanity_check = bind_rows(p3x_main$sanity_check, p3x_ps$sanity_check, p3x_fallback$sanity_check),
-    coverage     = bind_rows(p3x_main$coverage,     p3x_ps$coverage,     p3x_fallback$coverage)
+    gaps         = bind_rows(p3x_main$gaps,         p3x_ps$gaps,         p3x_ps_nonpink$gaps,         p3x_fallback$gaps),
+    sanity_check = bind_rows(p3x_main$sanity_check, p3x_ps$sanity_check, p3x_ps_nonpink$sanity_check, p3x_fallback$sanity_check),
+    coverage     = bind_rows(p3x_main$coverage,     p3x_ps$coverage,     p3x_ps_nonpink$coverage,     p3x_fallback$coverage)
   )
 }
 

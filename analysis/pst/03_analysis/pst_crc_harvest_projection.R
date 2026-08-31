@@ -102,18 +102,75 @@ CRC_PROJECTION_CONTROL <- list(
                                      # wearing an average's name
   nepa_blocks       = "PugetSound", # blocks this call must NEVER touch - see
                                      # PART 1b for what covers them instead
+  area_allowlist    = character(0), # empty = no area-level restriction beyond
+                                     # nepa_blocks/deliver_blocks
   variant_label     = "6-yr trailing mean"  # carried into every row's method
                                      # string (R5) so a reader can tell which
                                      # projection basis produced it without
                                      # cross-referencing this file
 )
 
+# --- Data-driven Puget Sound pink-river classification ------------------------
+# Pink salmon return to Puget Sound almost exclusively in ODD years - that's
+# the entire premise behind CRC_PROJECTION_CONTROL_PS's same-parity (odd-year)
+# mean below. Applying it to EVERY PugetSound area regardless of species mix
+# was confirmed wrong (2026-08-31, real production data): Baker (sockeye/
+# kokanee), Minter Creek, and Big Quilcene (fall Chinook) are non-pink
+# fisheries - restricting THEIR historical mean to just 5 odd years is not
+# capturing any real seasonal pattern for them, it's averaging an arbitrary
+# subset of their history, and for all three it happened to net out well
+# below their recent actuals. The result: PugetSound's real, large pink-driven
+# 2025 increase in the big pink rivers (Skagit/Puyallup-Carbon/Snohomish, all
+# real P1 data, +43-142% over 2024) was almost entirely offset in the BLOCK
+# total by these non-pink rivers' projections dropping for an unrelated
+# reason, making the total look like the pink effect barely showed up at all
+# when it's actually there in full in the rivers that carry it.
+#
+# Which areas are "pink-dominant" is decided from CRC's own harvest history,
+# not asserted - Evan's call to keep this reproducible as new CRC years land
+# rather than a hand-typed river list. min_total_harvest excludes streams
+# whose 5-year odd-year total is too small for a species-share ratio to mean
+# anything (e.g. a stream at 145 total fish over 5 years reading "100% pink"
+# is noise, not a finding). min_pink_share = 0.30 is the point above which
+# pink is clearly a major component of that area's harvest, not merely
+# present alongside other species.
+PINK_CLASSIFICATION_CONTROL <- list(
+  odd_years         = c(2015L, 2017L, 2019L, 2021L, 2023L),
+  min_total_harvest = 5000,
+  min_pink_share    = 0.30
+)
+
+#' Which Puget Sound CRC stream_codes are pink-salmon-dominated, computed
+#' fresh from CRC harvest history every run.
+#'
+#' @param crc_hist  full, unfiltered CRC harvest tidy CSV
+#' @return character vector of stream_codes (as character) classified
+#'   pink-dominant
+classify_pink_dominant_areas <- function(crc_hist, control = PINK_CLASSIFICATION_CONTROL) {
+  crc_hist |>
+    filter(region == "Puget Sound", calendar_year %in% control$odd_years) |>
+    mutate(stream_code = as.character(stream_code)) |>
+    group_by(stream_code) |>
+    summarise(
+      total = sum(harvest_count, na.rm = TRUE),
+      pink  = sum(harvest_count[species == "Pink"], na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    mutate(pink_share = if_else(total > 0, pink / total, NA_real_)) |>
+    filter(total >= control$min_total_harvest, !is.na(pink_share),
+           pink_share >= control$min_pink_share) |>
+    pull(stream_code)
+}
+
 # PART 1b: PugetSound's own variant - see that section below for why. Same
 # functions, same P2_CONTROL guardrails, only history_years/nepa_blocks/
 # variant_label differ. min_history_years stays at 3: with 5 candidate odd
 # years instead of 6, that is still "needs data in a majority of the
 # candidate years," the same floor logic as the trailing-mean variant, not a
-# separately chosen number.
+# separately chosen number. area_allowlist is left empty here in the static
+# definition - the assembly script fills it in at call time with
+# classify_pink_dominant_areas(crc_hist)'s result, since crc_hist isn't
+# available yet when this file is sourced.
 CRC_PROJECTION_CONTROL_PS <- list(
   history_years     = c(2015L, 2017L, 2019L, 2021L, 2023L),  # matches NEPA's
                                      # own "odd 5 yr" window - see PART 2's
@@ -124,7 +181,28 @@ CRC_PROJECTION_CONTROL_PS <- list(
   min_history_years = 3,
   nepa_blocks       = character(0), # this call targets PugetSound directly;
                                      # nothing to exclude from within it
+  area_allowlist    = character(0), # filled in at call time - see above
   variant_label     = "same-parity (odd-year) 5-yr mean"
+)
+
+# PugetSound's NON-pink areas (Baker, Minter Creek, Big Quilcene, etc.) -
+# added 2026-08-31 alongside the pink-area classification above. Same 6-yr
+# trailing mean as the main (non-PugetSound) variant - there is no odd/even
+# effect to correct for in a river that isn't pink-dominant, so it gets the
+# same treatment WACoast/Columbia already get. deliver_blocks is passed as
+# "PugetSound" alone at the call site (same as CRC_PROJECTION_CONTROL_PS), so
+# nepa_blocks has nothing to exclude; area_allowlist is deliberately left
+# empty (not the pink-set's complement) - the assembly script's merge already
+# lets CRC_PROJECTION_CONTROL_PS's results win on any area it resolved (an
+# anti_join, same pattern as the thin-history fallback below), so this call
+# only ever ends up filling the areas the pink-scoped call didn't touch.
+CRC_PROJECTION_CONTROL_PS_NONPINK <- list(
+  history_years     = 2019L:2024L,
+  target_year       = 2025L,
+  min_history_years = 3,
+  nepa_blocks       = character(0),
+  area_allowlist    = character(0),
+  variant_label     = "6-yr trailing mean (non-pink Puget Sound)"
 )
 
 # PART 1c: thin-history fallback - added 2026-08-31, Evan's call. Areas whose
@@ -156,6 +234,7 @@ CRC_PROJECTION_CONTROL_FALLBACK <- list(
   target_year       = 2025L,
   min_history_years = 1,
   nepa_blocks       = character(0),
+  area_allowlist    = character(0),
   variant_label     = "FALLBACK: straight mean, any available year(s) (thin history)"
 )
 
@@ -289,6 +368,15 @@ apply_crc_projection <- function(proj, effort_long, ratios, xw_area, area_system
   # Snake River (R1) as of this writing, which has no crosswalk rows yet.
   unmapped <- candidates |> filter(is.na(block))
   targets  <- candidates |> filter(block %in% target_blocks)
+
+  # Area-level restriction on top of the block-level one above - used to
+  # split PugetSound between the pink-dominant same-parity variant and the
+  # non-pink 6-yr-trailing variant (see CRC_PROJECTION_CONTROL_PS/_PS_
+  # NONPINK above). Empty (the default for every other variant) means no
+  # additional restriction beyond target_blocks.
+  if (length(control$area_allowlist) > 0) {
+    targets <- targets |> filter(catch_area_code %in% control$area_allowlist)
+  }
 
   excluded_nepa <- candidates |>
     filter(!is.na(block), block %in% control$nepa_blocks)

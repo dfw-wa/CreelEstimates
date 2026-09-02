@@ -1,14 +1,27 @@
 # Function to generate or load analysis lookup table with session-specific uuid
-generate_analysis_lut <- function(params, current_file_path = NULL) {
+#
+# `resolved_params` is built in fw_creel.Rmd after resolve_dates() and
+# resolve_catch_groups() run: the YAML params list overlaid with resolver
+# outputs (est_date_start, est_date_end, model_run_type, est_catch_groups).
+# The same object is later passed through the export pipeline
+# (finalize_analysis_lut() / export_estimates()) in place of raw params.
+generate_analysis_lut <- function(resolved_params, current_file_path = NULL) {
   
   # Try to get current file path if not provided
   if (is.null(current_file_path)) {
     current_file_path <- tryCatch({
       if (!is.null(knitr::current_input()) && knitr::current_input() != "") {
-        here::here("template_scripts", knitr::current_input())
+        # knitr::current_input(dir = TRUE) returns the full path to the file
+        # actually being knit — i.e. the analysis-folder copy of the script —
+        # rather than a path reconstructed under template_scripts/, which is
+        # always wrong once a session is running from its own analysis folder.
+        knitr::current_input(dir = TRUE)
       } else if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
         rstudioapi::getSourceEditorContext()$path
       } else {
+        # Headless (Rscript / cron / CI) invocation: no reliable script-path
+        # API exists here. Left as NULL intentionally — making this branch
+        # work is separate follow-up work, not part of this fix.
         NULL
       }
     }, error = function(e) NULL)
@@ -22,7 +35,7 @@ generate_analysis_lut <- function(params, current_file_path = NULL) {
     # Check if current directory matches analysis folder pattern
     # Pattern: IDENTIFIER_XXXX_YYYYMMDD (e.g., SFS25_ABCD_20241222)
     folder_name <- basename(current_dir)
-    analysis_pattern <- "^[A-Z0-9]+_[A-Z0-9]{4}_\\d{8}$"
+    analysis_pattern <- "^[A-Z0-9]+_[0-9a-f]{4}_\\d{8}$"
     
     if (grepl(analysis_pattern, folder_name)) {
       # Look for existing analysis_lut RDS file
@@ -30,6 +43,15 @@ generate_analysis_lut <- function(params, current_file_path = NULL) {
       
       if (file.exists(lut_file)) {
         existing_analysis_lut <- readRDS(lut_file)
+        
+        # Legacy (ETL 1.0) luts carry analysis_name; still usable for local
+        # work, but finalize_analysis_lut() will abort at export time
+        if ("analysis_name" %in% names(existing_analysis_lut)) {
+          cli::cli_alert_warning(
+            "Legacy (ETL 1.0) analysis_lut loaded; database export will fail. Start a new session to export."
+          )
+        }
+        
         cli::cli_alert_success("Loaded existing analysis_lut from {.path {lut_file}}")
         cli::cli_alert_info("Using analysis_id: {.val {existing_analysis_lut$analysis_id}}")
         assign("analysis_lut", existing_analysis_lut, envir = .GlobalEnv)
@@ -43,11 +65,11 @@ generate_analysis_lut <- function(params, current_file_path = NULL) {
     
     # Generate session-specific analysis uuid
     analysis_id <- uuid::UUIDgenerate()
-    analysis_id <- toupper(analysis_id)  # Capitalize to match database format
+    analysis_id <- tolower(analysis_id)  # force lowercase (PostgreSQL standard)
     cli::cli_alert_success("New analysis_id created: {.val {substr(analysis_id, 1, 8)}...}")
     
     # Create fishery identifier
-    fishery_name <- params$fishery_name
+    fishery_name <- resolved_params$fishery_name
     year_format <- dplyr::case_when(
       stringr::str_detect(fishery_name, "\\d{4}-\\d{2}") ~ "yyyy-yy",
       stringr::str_detect(fishery_name, "\\b\\d{4}\\b") ~ "yyyy",
@@ -70,28 +92,37 @@ generate_analysis_lut <- function(params, current_file_path = NULL) {
     identifier <- paste0(initials, last_two_digits)
     
     # Create analysis folder name: IDENTIFIER_LAST4_YYYYMMDD
-    analysis_folder <- paste(
+    analysis_folder_name <- paste(
       identifier,
       stringr::str_sub(analysis_id, -4),
       format(Sys.Date(), "%Y%m%d"),
       sep = "_"
     )
     
+    # Git metadata: SHA and tag only when HEAD on a tag
+    git_sha <- tryCatch(
+      system("git rev-parse HEAD", intern = TRUE),
+      error = function(e) NA_character_
+    )
+    git_tag <- tryCatch({
+      tag <- system("git tag --points-at HEAD", intern = TRUE)
+      if (length(tag) == 0) NA_character_ else tag[1]
+    }, error = function(e) NA_character_)
+
+    params_json <- as.character(
+      jsonlite::toJSON(resolved_params, auto_unbox = TRUE, pretty = TRUE)
+    )
+    
     # Create analysis_lut data frame
     analysis_lut <- data.frame(
       analysis_id = analysis_id,
-      analysis_name = paste0(
-        params$fishery_name, "_", params$data_grade, "_",
-        format(Sys.time(), format = "%Y-%m-%dT%H:%M:%SZ")
-      ),
-      fishery_name = params$fishery_name,
-      identifier = identifier,
-      analysis_folder = analysis_folder,
-      repo_version = tryCatch({
-        paste0("https://github.com/wdfw-fp/CreelEstimates/tree/",
-               system("git rev-parse HEAD", intern = TRUE))
-      }, error = function(e) "Git version unavailable"),
-      created_datetime = format(Sys.time(), format = "%Y-%m-%dT%H:%M:%SZ"),
+      project_name = resolved_params$project_name,
+      fishery_name = fishery_name,
+      analysis_folder_name = analysis_folder_name,
+      model_run_type = resolved_params$model_run_type,
+      git_sha = git_sha,
+      git_tag = git_tag,
+      params_json = params_json,
       stringsAsFactors = FALSE
     )
     

@@ -3,12 +3,10 @@ title: "Freshwater Creel Report <br>`r params$fishery_name`"
 date: "`r Sys.Date()`"
 params:
   project_name: "District 14"
-  fishery_name: "Skagit spring Chinook 2026 upper"
+  fishery_name: "Skagit spring Chinook 2025 upper"
   est_date_start: ""
   est_date_end: ""
-  est_catch_groups: !r data.frame(rbind(
-    c(species = 'Chinook', life_stage = 'Adult', fin_mark = 'UM', fate = 'Released'),
-    c(species = 'Chinook', life_stage = 'Adult', fin_mark = 'AD', fate = 'Kept')))
+  est_catch_groups: ""
   study_design: "Standard"   
   boat_type_collapse: "Yes"
   fish_location_determines_type: "No"
@@ -22,7 +20,7 @@ params:
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
   model_used: "Both models"
   data_grade: "provisional"
-  export: "local"
+  export: "database"
   export_tables: "both"
   enable_cache: FALSE  # Set to FALSE to disable all caching (useful when cached files become too large)
 output:
@@ -44,15 +42,6 @@ This report is intended to communicate preliminary results of freshwater salmon 
 Please note that the data provided has not yet undergone complete Quality Assurance/Quality Control (QA/QC) procedures and may be subject to revision.
 
 # Setup code chunks
-#### Report parameters
-```{r display_params, results='asis', echo=FALSE}
-cat('<details class="params-section">\n')
-cat("<summary>Click to view report parameters</summary>\n\n")
-cat("```yaml\n")
-cat(yaml::as.yaml(params))
-cat("```\n\n")
-cat("</details>\n")
-```
 
 #### Load packages
 ```{r packages, results='hide', message=FALSE, warning=FALSE}
@@ -72,8 +61,15 @@ library("bayesplot")
 library("digest")
 
 # Load packages from source
-# devtools::install_github("wdfw-fp/creelutils")
-library(creelutils)
+# devtools::install_github("dfw-wa/creelutils")
+# library(creelutils)
+devtools::load_all("C:/Repos/creelutils")
+```
+
+```{r database_con, message=FALSE}
+# Establish a connection to the creel database, carry throughout the session
+# This requires a one-time setup per user
+con <- creelutils::connect_creel_db(db_env = "test") # TEMP argument, remove "db_env = 'test'" use after revview
 ```
 
 ```{r, load_functions, message=FALSE}
@@ -91,14 +87,56 @@ walk(list.files(here("R_functions"), full.names = T), source)
 est_dates <- resolve_dates(
   params$fishery_name, 
   params$est_date_start, 
-  params$est_date_end
+  params$est_date_end,
+  conn = con
 )
+```
+
+```{r resolve_catch_groups, message=FALSE}
+# Dynamically source catch groups from the creel database when the YAML param
+# est_catch_groups is blank (default: ""). Manually entered catch groups always
+# override and require no database connection; validation is up to the user.
+est_catch_groups <- resolve_catch_groups(
+  fishery       = params$fishery_name,
+  catch_groups  = params$est_catch_groups,
+  observed_only = TRUE,
+  conn = con
+)
+```
+
+```{r build_resolved_params, message=FALSE}
+# Snapshot of resolved parameters. The actual values used, representing 'params' 
+# defined in the analysis script and those sourced from the database. 
+# 'resolved_params' used everywhere downstream as full replacement of stock 'params'.
+resolved_params <- utils::modifyList(
+  unclass(params),
+    # Append resolved fishery dates and model run type (In-season, Post-season)
+    est_dates[c("est_date_start", "est_date_end", "model_run_type")]
+  )
+
+# Append resolved catch groups, retaining combined catch group (i.e., est_cg) 
+# crosswalk to associated database uuid (unavailable when manually entered in YAML)
+resolved_params$est_catch_groups = est_catch_groups[c("combined_catch_group", "model_catch_group_id")]
+```
+
+#### Report parameters
+```{r display_params, results='asis', echo=FALSE}
+cat('<details class="params-section">\n')
+cat("<summary>Click to view report parameters</summary>\n\n")
+cat("```yaml\n")
+cat(yaml::as.yaml(resolved_params))
+cat("```\n\n")
+cat("</details>\n")
 ```
 
 #### Selected catch groups
 The following catch groups of fish were selected for generating catch estimates. 
 ```{r, echo = FALSE}
-params$est_catch_groups |> 
+# Using object here instead of resolved_params$est_catch_groups as it does not retain
+# the four catch group fields, which just present a little cleaner in this table
+# rather than the single combined_catch_group field
+est_catch_groups |> 
+  select(-c(fishery_name, combined_catch_group, model_catch_group_id)) |> 
   mutate(`#` = row_number()) |> 
   relocate(`#`) |> 
   gt() |> 
@@ -112,10 +150,10 @@ params$est_catch_groups |>
 
 #### Fishery dates
 
-```{r, eval=params$report_type %in% c("detailed","summary")}
+```{r}
 tibble(
-  `Start date`= format(as.Date(est_dates$est_date_start), "%m/%d/%Y"),
-  `End date` = format(as.Date(est_dates$est_date_end), "%m/%d/%Y")
+  `Start date`= format(as.Date(resolved_params$est_date_start), "%m/%d/%Y"),
+  `End date` = format(as.Date(resolved_params$est_date_end), "%m/%d/%Y")
 ) |> 
   gt() |> 
 tab_header(
@@ -133,7 +171,7 @@ tab_header(
 knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
-  cache = FALSE,          # Will be set based on params$enable_cache
+  cache = FALSE,          # Will be set based on resolved_params$enable_cache
   fig.width = 10,
   fig.height = 8
 )
@@ -144,11 +182,11 @@ rstan_options(auto_write = TRUE)
 # Global R settings
 theme_set(theme_light()) #ggplot theme
 
-# Create hash for cache invalidation when params change
-param_hash <- digest::digest(list(params, est_dates))
+# Create hash for cache invalidation when resolved_params change
+param_hash <- digest::digest(resolved_params)
 
 # Display cache status
-if (params$enable_cache) {
+if (resolved_params$enable_cache) {
   cli_alert_success("Cache is ENABLED - cached results will be reused when possible")
 } else {
   cli_alert_warning("Cache is DISABLED - all chunks will be re-executed")
@@ -156,7 +194,7 @@ if (params$enable_cache) {
 
 # adjust day_length inputs
 day_length_inputs <- list()
-if(params$day_length_expansion == "manual"){
+if(resolved_params$day_length_expansion == "manual"){
 # Step #1: Select general strategy for [earliest] start and [latest] end time
     day_length_inputs$start_time<-c("manual") # enter either "sunrise" or "manual" 
     day_length_inputs$end_time<-c("sunset")    # enter either "sunset"  or "manual" 
@@ -176,8 +214,8 @@ if(params$day_length_expansion == "manual"){
 ## Define directory structure
 path_components <- list(
   here("fishery_analyses"),
-  here("fishery_analyses", params$project_name),
-  here("fishery_analyses", params$project_name, params$fishery_name)
+  here("fishery_analyses", resolved_params$project_name),
+  here("fishery_analyses", resolved_params$project_name, resolved_params$fishery_name)
 )
 
 ## Create directories as needed
@@ -187,12 +225,12 @@ path_components |>
     message(glue("Folder(s) created: \n{.x}"))
   })
 
-# Generate analyis metadata 
+# Generate analysis metadata 
 ## Get current file path for analysis folder detection
 current_file <- tryCatch({
   # CASE 1: Knitting
   if (!is.null(knitr::current_input())) {
-    file.path(getwd(), knitr::current_input())
+    knitr::current_input(dir = TRUE)
   # CASE 2: Interactive RStudio
   } else if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     rstudioapi::getSourceEditorContext()$path
@@ -200,18 +238,16 @@ current_file <- tryCatch({
     NULL
   }
 }, error = function(e) NULL)
-
 ## Generate or load analysis_lut (uses existing function as-is)
-generate_analysis_lut(params, current_file_path = current_file)
+generate_analysis_lut(resolved_params, current_file_path = current_file)
 
 # Display analysis metadata
 cli_alert_info("Analysis ID: {.val {analysis_lut$analysis_id}}")
-cli_alert_info("Analysis Folder: {.val {analysis_lut$analysis_folder}}")
-cli_alert_info("Identifier: {.val {analysis_lut$identifier}}")
+cli_alert_info("Analysis Folder: {.val {analysis_lut$analysis_folder_name}}")
 
 # Create analysis folder structure and configure knitr
 # THIS will set the cache.path and fig.path correctly
-analysis_structure <- setup_analysis_structure(params, analysis_lut, est_dates)
+analysis_structure <- setup_analysis_structure(resolved_params, analysis_lut)
 
 # Extract paths for use in subsequent chunks
 analysis_folder_path <- analysis_structure$analysis_folder_path
@@ -220,7 +256,7 @@ cache_path <- analysis_structure$cache_path
 
 # Copy current Rmd file to analysis folder and save metadata files
 save_analysis_metadata(
-  params = params,
+  params = resolved_params,
   analysis_lut = analysis_lut,
   analysis_folder_path = analysis_folder_path,
   current_file_path = current_file
@@ -287,24 +323,24 @@ save_gt_table <- function(gt_obj, filename) {
 # Fetch and review data
 
 ## Download data
-```{r dwg_fetch, cache=params$enable_cache, results='hide', dependson="setup", cache.extra=param_hash}
-dwg <- creelutils::fetch_dwg(params$fishery_name)
+```{r dwg_fetch, cache=resolved_params$enable_cache, results='hide', dependson="setup", cache.extra=param_hash}
+dwg <- creelutils::fetch_dwg(resolved_params$fishery_name)
 
 # Save raw data
 saveRDS(dwg, file.path(outputs_folders$inputs, "dwg_raw.rds"))
 
 dwg$days <- prep_days(
-  params = params,
-  date_begin = est_dates$est_date_start, 
-  date_end = est_dates$est_date_end, 
-  weekends = params$days_wkend,
+  params = resolved_params,
+  date_begin = resolved_params$est_date_start, 
+  date_end = resolved_params$est_date_end, 
+  weekends = resolved_params$days_wkend,
   # holidays = read_lines(paste(here(), "input_files/dates_holidays_2015_2030.txt", sep = "/")),
   lat = mean(dwg$ll$centroid_lat), #can/should consider smarter options
   long = mean(dwg$ll$centroid_lon),#can/should consider smarter options 
-  period_pe = params$period_pe,
+  period_pe = resolved_params$period_pe,
   sections = unique(dwg$interview$section_num),
   closures = dwg$closures,
-  day_length = params$day_length_expansion,
+  day_length = resolved_params$day_length_expansion,
   day_length_inputs = day_length_inputs
   )
 
@@ -347,7 +383,7 @@ dwg$effort |>
 ```{r creel_effort}
 
 dwg$effort |>
-  filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |>
+  filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |>
   distinct(section_num, location, event_date, tie_in_indicator, count_sequence) |>
   count(section_num, location, tie_in_indicator) |>
   mutate(
@@ -387,13 +423,13 @@ tab_header(
   ## NOTE: NAs in the "effort_type.y" column indicate that a census survey was conducted without the paired index count; if this occurs, the census data without a paired index count needs to be filter out for BSS model to run
 left_join(
   dwg$effort |>
-    filter(tie_in_indicator == 1, between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |> 
+    filter(tie_in_indicator == 1, between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |> 
     mutate(effort_type = "Census") |> 
     select(water_body, event_date, section_num, effort_type) |> 
     distinct() |> 
     arrange(event_date, section_num),
   dwg$effort |>
-    filter(tie_in_indicator == 0, between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |> 
+    filter(tie_in_indicator == 0, between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |> 
     mutate(effort_type = "Index") |> 
     select(water_body, event_date, section_num, effort_type) |> 
     distinct() |> 
@@ -407,7 +443,7 @@ left_join(
 ```{r creel_interview}
 # Total number of angler group interviews by section_num and fishing_location
 dwg$interview |>
-  filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |>
+  filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |>
   count(section_num, fishing_location) |>
   arrange(section_num) |>
   gt() |> 
@@ -437,7 +473,7 @@ tab_style(
 ```{r interviews_date_section, include=FALSE}
 # Number of angler group interviews by event_date and section_num; 
 dwg$interview |>  
-  filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |> 
+  filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |> 
   count(section_num, event_date) |> 
   pivot_wider(names_from = section_num, values_from = n) |> 
   arrange(event_date) |> 
@@ -452,7 +488,7 @@ dwg$interview |>
 # Total number of "encounters" for each unique catch_group recorded during angler group interviews
 dwg$catch |>
   left_join(dwg$interview, by = "interview_id") |> 
-  filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))) |> 
+  filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))) |> 
   group_by(catch_group) |> 
   summarise(fish_count = sum(fish_count), .groups = "drop") |> 
 gt() |>
@@ -483,7 +519,7 @@ tab_style(
 
 ## Shared data aggregation
 
-```{r prep_dwg_summ_shared_summary_objects, results = 'hide', cache=params$enable_cache, dependson="dwg_fetch", cache.extra=param_hash}
+```{r prep_dwg_summ_shared_summary_objects, results = 'hide', cache=resolved_params$enable_cache, dependson="dwg_fetch", cache.extra=param_hash}
 # Create blank list that will be used to attach the following three datasets
   dwg_summ <- list() #intermediate objects wrangled from creel list elements
 
@@ -491,22 +527,22 @@ tab_style(
   # 1.1 - Summarize fishing time 
   interview_fishing_time <- 
     prep_dwg_interview_fishing_time(
-      params = params,
-      dwg_interview = dwg$interview |> filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))),
-      #person_count_type = params$person_count_type,
-      min_fishing_time = params$min_fishing_time,
-      study_design = params$study_design
+      params = resolved_params,
+      dwg_interview = dwg$interview |> filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))),
+      #person_count_type = resolved_params$person_count_type,
+      min_fishing_time = resolved_params$min_fishing_time,
+      study_design = resolved_params$study_design
     )
   
   # 1.2 - Summarize angler types (angler_final based on arguments)
   interview_plus_angler_types <- 
     prep_dwg_interview_angler_types(
-      params = params,
+      params = resolved_params,
       interview_fishing_time = interview_fishing_time,
-      study_design = params$study_design,
-      boat_type_collapse = params$boat_type_collapse,
-      fish_location_determines_type = params$fish_location_determines_type,
-      angler_type_kayak_pontoon = params$angler_type_kayak_pontoon
+      study_design = resolved_params$study_design,
+      boat_type_collapse = resolved_params$boat_type_collapse,
+      fish_location_determines_type = resolved_params$fish_location_determines_type,
+      angler_type_kayak_pontoon = resolved_params$angler_type_kayak_pontoon
     )
   
     # 1.2.1 - Preview angler_final designations
@@ -515,11 +551,11 @@ tab_style(
   # 1.3 - Summarize catch (for catch groups of interest)
   interview_plus_catch <- 
     prep_dwg_interview_catch(
-      params = params,
+      params = resolved_params,
       interview_plus_angler_types = interview_plus_angler_types,
-      study_design = params$study_design,
+      study_design = resolved_params$study_design,
       dwg_catch = dwg$catch,
-      est_catch_groups = params$est_catch_groups
+      est_catch_groups = dplyr::select(est_catch_groups, species, life_stage, fin_mark, fate)
     )
 
   # 1.4 - Attach the final formatted interview data set to "dwg_summ"
@@ -540,12 +576,12 @@ tab_style(
     
       effort_index_summ <- 
         prep_dwg_effort_index(
-          params = params,
-          eff = dwg$effort |> filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))),
-          study_design = params$study_design,
-          boat_type_collapse = params$boat_type_collapse,
-          fish_location_determines_type = params$fish_location_determines_type,
-          angler_type_kayak_pontoon = params$angler_type_kayak_pontoon
+          params = resolved_params,
+          eff = dwg$effort |> filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))),
+          study_design = resolved_params$study_design,
+          boat_type_collapse = resolved_params$boat_type_collapse,
+          fish_location_determines_type = resolved_params$fish_location_determines_type,
+          angler_type_kayak_pontoon = resolved_params$angler_type_kayak_pontoon
         )
       
     # 2.1.1 - Summary of count_types and their corresponding "angler_final" designation
@@ -563,12 +599,12 @@ tab_style(
     ##NOTE: a warning message will appear indicating "...an unexpected many-to-many relationship..." if multiple effort census counts were completed in the same section and day; this message can be ignored as the data wrangling works as intended despite this warning
     effort_census_summ <- 
       prep_dwg_effort_census(
-        params = params,
-        eff = dwg$effort |> filter(between(event_date, as.Date(est_dates$est_date_start), as.Date(est_dates$est_date_end))),
-        study_design = params$study_design,
-        boat_type_collapse = params$boat_type_collapse,
-        fish_location_determines_type = params$fish_location_determines_type,
-        angler_type_kayak_pontoon = params$angler_type_kayak_pontoon
+        params = resolved_params,
+        eff = dwg$effort |> filter(between(event_date, as.Date(resolved_params$est_date_start), as.Date(resolved_params$est_date_end))),
+        study_design = resolved_params$study_design,
+        boat_type_collapse = resolved_params$boat_type_collapse,
+        fish_location_determines_type = resolved_params$fish_location_determines_type,
+        angler_type_kayak_pontoon = resolved_params$angler_type_kayak_pontoon
       )
     
     # 3.1.1 - QAQC - are there any census effort count groups that "failed"
@@ -581,7 +617,7 @@ tab_style(
 # 4.) Generate summary table of "p_census" 
     (dwg_summ$census_expan <- 
       prep_dwg_census_expan(
-        params = params,
+        params = resolved_params,
         eff = dwg$effort,
         days = dwg$days
       ))  
@@ -592,24 +628,24 @@ saveRDS(dwg_summ, file.path(outputs_folders$inputs, "dwg_summ.rds"))
 
 ## Plot of index effort counts
 
-```{r plot_index_effort_counts, cache=params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", fig.cap= "Index effort counts for each count sequence on surveyed days within the monitoring period. Index counts represent the sum of counts completed at each sampling site during a drive around effort count."}
+```{r plot_index_effort_counts, cache=resolved_params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", fig.cap= "Index effort counts for each count sequence on surveyed days within the monitoring period. Index counts represent the sum of counts completed at each sampling site during a drive around effort count."}
 # plot of index effort counts faceted by section and count_type per count sequence and day 
 
 plot_inputs_pe_index_effort_counts(
-  params = params,
+  params = resolved_params,
   effort_index = dwg_summ$effort_index,
   outputs_folders = outputs_folders)
 ```
 
 # Effort and catch estimation
 
-This section contains preliminary estimates of angler effort and catch during the `r paste(params$fishery_name)` fishery. Settings for the Bayesian state space creel model are contained in folded code, select "show" to view the settings used for this report, including priors used for model parameters and sampler settings. 
+This section contains preliminary estimates of angler effort and catch during the `r paste(resolved_params$fishery_name)` fishery. Settings for the Bayesian state space creel model are contained in folded code, select "show" to view the settings used for this report, including priors used for model parameters and sampler settings. 
 
 ## PE estimation
 
 ### Create PE input object
 
-```{r prep_inputs_pe, results = 'hide', cache=params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", cache.extra=param_hash}
+```{r prep_inputs_pe, results = 'hide', cache=resolved_params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", cache.extra=param_hash}
 
 inputs_pe <- list()
 
@@ -625,7 +661,7 @@ inputs_pe <- list()
   (inputs_pe$interview_ang_per_object <- 
     prep_inputs_pe_int_ang_per_object(
       dwg_summarized = dwg_summ, 
-      study_design = params$study_design
+      study_design = resolved_params$study_design
     ))
 
 # Calculate tie-in (aka census) count expansion factor by section & angler_final
@@ -637,7 +673,7 @@ inputs_pe <- list()
       dwg_summarized = dwg_summ,
       interview_ang_per_object = inputs_pe$interview_ang_per_object,
       census_expan = dwg_summ$census_expan,
-      study_design = params$study_design
+      study_design = resolved_params$study_design
     ))
   
 # Calculate census-corrected angler effort (mean angler hours) by event_date, angler_type, and section_num
@@ -647,7 +683,7 @@ inputs_pe <- list()
       dwg_summarized = dwg_summ,
       interview_ang_per_object = inputs_pe$interview_ang_per_object,
       paired_census_index_counts = inputs_pe$paired_census_index_counts,
-      study_design = params$study_design
+      study_design = resolved_params$study_design
     ))
 
 # Calculate CPUE and catch_estimates by event_date, angler_type, section_num, and est_cg (aka catch group of interest)
@@ -674,7 +710,7 @@ saveRDS(inputs_pe, file.path(outputs_folders$inputs, "inputs_pe.rds"))
 
 ### Paired census and index angler effort counts
 
-```{r view_paired_census_index_counts, cache=params$enable_cache, dependson=c("establish_file_structure", "prep_inputs_pe")}
+```{r view_paired_census_index_counts, cache=resolved_params$enable_cache, dependson=c("establish_file_structure", "prep_inputs_pe")}
 
 if (nrow(dwg_summ$effort_census) > 0) {
   # table view of census / index surveys and resulting bias term ratio 
@@ -708,12 +744,12 @@ if (nrow(dwg_summ$effort_census) > 0) {
 
 ### Generate PE estimates
 
-```{r estimates_pe, cache=params$enable_cache, dependson="prep_inputs_pe", cache.extra=param_hash}
+```{r estimates_pe, cache=resolved_params$enable_cache, dependson="prep_inputs_pe", cache.extra=param_hash}
 estimates_pe <- list() 
 
 estimates_pe$effort <- 
   est_pe_effort(
-    params = params,
+    params = resolved_params,
     dwg = dwg,
     days = dwg$days,
     pe_inputs_list = inputs_pe
@@ -721,7 +757,7 @@ estimates_pe$effort <-
 
 estimates_pe$catch <- 
   est_pe_catch(
-    params = params,
+    params = resolved_params,
     dwg = dwg,
     days = dwg$days,
     pe_inputs_list = inputs_pe
@@ -732,7 +768,7 @@ saveRDS(estimates_pe, file.path(outputs_folders$outputs, "estimates_pe.rds"))
 ```
 
 ### Effort estimates
-```{r pe_effort_summary, cache=params$enable_cache, cache.extra=param_hash}
+```{r pe_effort_summary, cache=resolved_params$enable_cache, cache.extra=param_hash}
 # effort by section_num
 estimates_pe$effort |>
   group_by(section_num, angler_final) |> 
@@ -741,26 +777,26 @@ estimates_pe$effort |>
     .groups = "drop"
   ) |> 
   pivot_wider(names_from = section_num, values_from = E_sum) |> 
-  gt(caption = paste("Estimated effort (angler hours) by fishing section from", est_dates$est_date_start, "to", est_dates$est_date_end)) |> 
+  gt(caption = paste("Estimated effort (angler hours) by fishing section from", resolved_params$est_date_start, "to", resolved_params$est_date_end)) |> 
   tab_options(
     heading.title.font.size = px(14),
     table.font.color = "black"
   )
 ```
 
-```{r plot_pe_effort_estimates, fig.cap= "Estimated effort (angler-hours) grouped by time strata, section and angler type (angler_final).", cache=params$enable_cache, dependson=c("establish_file_structure", "estimates_pe"), cache.extra=param_hash}
+```{r plot_pe_effort_estimates, fig.cap= "Estimated effort (angler-hours) grouped by time strata, section and angler type (angler_final).", cache=resolved_params$enable_cache, dependson=c("establish_file_structure", "estimates_pe"), cache.extra=param_hash}
 
 # barplot of effort estimates by time stratum, section, and angler type
 plot_est_pe_effort(
   estimates_pe_effort = estimates_pe$effort,
-  period_pe = params$period_pe,
+  period_pe = resolved_params$period_pe,
   outputs_folders = outputs_folders,
   filename = "pe_effort_estimates_")
 ```
 
 ### Catch rate (CPUE) estimates
 
-```{r pe_cpue_period_plots, results = 'hide',  cache=params$enable_cache, dependson= c("prep_inputs_pe","dwg_fetch"), cache.extra=param_hash}
+```{r pe_cpue_period_plots, results = 'hide',  cache=resolved_params$enable_cache, dependson= c("prep_inputs_pe","dwg_fetch"), cache.extra=param_hash}
 # plot of catch rate estimates by catch group, time stratum, section, and angler type
 unique(na.omit(inputs_pe$daily_cpue_catch_est$est_cg)) |> 
 set_names() |> 
@@ -770,7 +806,7 @@ map(
     dwg_summarized = dwg_summ,
     daily_cpue_catch_est = inputs_pe$daily_cpue_catch_est,
     est_catch_group = .x,
-    period_pe = params$period_pe,
+    period_pe = resolved_params$period_pe,
     outputs_folders = outputs_folders,
     filename = paste0("pe_cpue_estimates_", stringr::str_replace_all(.x, "[^[:alnum:]]", "_")) #safe name when using | operator in catch group
   )
@@ -802,7 +838,7 @@ map(
   )
 ```
 
-```{r plot_pe_catch_estimates, results = 'hide', cache=params$enable_cache, dependson="estimates_pe", cache.extra=param_hash}
+```{r plot_pe_catch_estimates, results = 'hide', cache=resolved_params$enable_cache, dependson="estimates_pe", cache.extra=param_hash}
 # barplot of catch estimates by catch group, time stratum, section, and angler type
 unique(na.omit(estimates_pe$catch$est_cg)) |> 
 set_names() |> 
@@ -810,7 +846,7 @@ map(
   ~plot_est_pe_catch(
     estimates_pe_catch = estimates_pe$catch,
     est_catch_group = .x,
-    period_pe = params$period_pe,
+    period_pe = resolved_params$period_pe,
     outputs_folders = outputs_folders,
     filename = paste0("pe_catch_estimates_", stringr::str_replace_all(.x, "[^[:alnum:]]", "_"))) #safe name when using | operator in catch group
 )
@@ -820,7 +856,7 @@ map(
 
 ### Create BSS input object 
 
-```{r prep_inputs_bss, eval=TRUE, cache=params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", cache.extra=param_hash}
+```{r prep_inputs_bss, eval=TRUE, cache=resolved_params$enable_cache, dependson="prep_dwg_summ_shared_summary_objects", cache.extra=param_hash}
 #either a single element list for a single catch_group
 #or a list of bss-input-lists, one for each catch_group
 inputs_bss <- 
@@ -829,11 +865,11 @@ inputs_bss <-
   map(
     ~prep_inputs_bss(
       est_catch_group = .x,
-      period = params$period_bss,
+      period = resolved_params$period_bss,
       days = dwg$days,
       dwg_summarized = dwg_summ,
       census_expan = dwg_summ$census_expan, 
-      study_design = params$study_design, 
+      study_design = resolved_params$study_design, 
       priors = c(
         value_cauchyDF_sigma_eps_C = 0.5,
         value_cauchyDF_sigma_eps_E = 0.5,
@@ -861,7 +897,7 @@ saveRDS(inputs_bss, file.path(outputs_folders$inputs, "inputs_bss.rds"))
 
 ### Generate BSS estimates
 
-```{r estimates_bss, eval=TRUE, results='hide', fig.show='hide', cache=params$enable_cache, dependson=c("establish_file_structure", "prep_inputs_bss"), cache.extra=param_hash}
+```{r estimates_bss, eval=TRUE, results='hide', fig.show='hide', cache=resolved_params$enable_cache, dependson=c("establish_file_structure", "prep_inputs_bss"), cache.extra=param_hash}
 #should work for either single or multiple catch_group 
 
 # ---- CONFIGURATION ----
@@ -882,7 +918,7 @@ for(ecg in names(inputs_bss)) {
   # fit the model to generate estimates 
   ecg_fit <-
     fit_bss(
-      model_file_name = params$bss_model_file_name,
+      model_file_name = resolved_params$bss_model_file_name,
       bss_inputs_list = inputs_bss[[ecg]],
       n_chain = 2,  
       n_cores = 2,
@@ -919,7 +955,7 @@ for(ecg in names(inputs_bss)) {
     inputs_bss = inputs_bss, 
     ecg = ecg,
     dwg = dwg, 
-    params = params))
+    params = resolved_params))
   
   ## store estimates and model fit
   estimates_bss[[ecg]] <- ecg_keep
@@ -1452,7 +1488,7 @@ map_df(estimates_bss, ~.x$overview) |>
 
 ## Estimated total effort sampled by interviews
 
-```{r effort_sampled_by_interviews, eval=TRUE, cache=params$enable_cache, dependson=c("dwg_fetch", "prep_dwg_summ_shared_summary_objects", "estimates_pe"), cache.extra=param_hash}
+```{r effort_sampled_by_interviews, eval=TRUE, cache=resolved_params$enable_cache, dependson=c("dwg_fetch", "prep_dwg_summ_shared_summary_objects", "estimates_pe"), cache.extra=param_hash}
 
 interview_coverage_table <-  est_pe_effort_sampled_by_interviews(
   days = dwg$days, 
@@ -1509,12 +1545,12 @@ save_gt_table(interview_coverage_table, paste0("interview_coverage_table"))
 
 # Save results
 
-```{r transform_estimates, eval = TRUE, results='hide', cache=params$enable_cache, dependson="estimates_bss", cache.extra=param_hash}
+```{r transform_estimates, eval = TRUE, results='hide', cache=resolved_params$enable_cache, dependson="estimates_bss", cache.extra=param_hash}
 #Extract and transform model estimates into a common format
 transformed_pe_data <- list()
 transformed_bss_data <- list()
 #Export data from one or both models
-if (params$export %in% c("database", "local") && !params$model_used %in% c("PE only", "BSS only", "Both models" )) {
+if (resolved_params$export %in% c("database", "local") && !resolved_params$model_used %in% c("PE only", "BSS only", "Both models" )) {
   stop("\nInvalid value for export or model_used parameter.")
 } else {
   
@@ -1524,61 +1560,61 @@ if (params$export %in% c("database", "local") && !params$model_used %in% c("PE o
   }
   
   # Process PE estimates to common format
-  if (exists("estimates_pe") && params$model_used == "PE only") {
+  if (exists("estimates_pe") && resolved_params$model_used == "PE only") {
     cat("Performing 'PE only' transformation.")
-    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params)
-    
-    #add parameter data_grade as a field on all tables
-    creelutils::map_data_grade(params, transformed_bss_data=NULL, transformed_pe_data)
+    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params, days = dwg$days)
   }
   
   # Process BSS estimates to common format
-  if (exists("estimates_bss") && params$model_used == "BSS only") {
+  if (exists("estimates_bss") && resolved_params$model_used == "BSS only") {
     cat("Performing 'BSS only' transformation.")
-    transformed_bss_data <- creelutils::process_estimates_bss(params, analysis_lut, estimates_bss)
-    
-    #add parameter data_grade as a field on all tables
-    creelutils::map_data_grade(params, transformed_bss_data, transformed_pe_data=NULL)
+    transformed_bss_data <- creelutils::process_estimates_bss(params = resolved_params, analysis_lut, estimates_bss)
   }
   
   # Process PE and BSS model estimates to common format
-  if (exists("estimates_pe") && exists("estimates_bss") && params$model_used == "Both models") {
+  if (exists("estimates_pe") && exists("estimates_bss") && resolved_params$model_used == "Both models") {
     cat("Performing 'Both models' transformation.")
-    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params)
-    transformed_bss_data <- creelutils::process_estimates_bss(params, analysis_lut, estimates_bss)
-    
-    #add parameter data_grade as a field on all tables
-    creelutils::map_data_grade(params, transformed_bss_data, transformed_pe_data)
+    transformed_pe_data <- creelutils::process_estimates_pe(analysis_lut, estimates_pe, params = resolved_params, days = dwg$days)
+    transformed_bss_data <- creelutils::process_estimates_bss(params = resolved_params, analysis_lut, estimates_bss)
   }
   
   #Combine PE and BSS and perform other transformation steps
-  creel_estimates <- creelutils::transform_estimates(params, dwg, transformed_pe_data, transformed_bss_data)  
-
+  creel_estimates <- creelutils::transform_estimates(
+    params = resolved_params, 
+    transformed_pe_data, 
+    transformed_bss_data
+  )  
 }
-
-# Save transformed estimates locally
-# saveRDS(creel_estimates, file.path(outputs_folders$outputs, "creel_estimates_transformed.rds"))
-# cli_alert_success("Transformed estimates saved to {.path {file.path(outputs_folders$outputs, 'creel_estimates_transformed.rds')}}")
 ```
 
 ```{r export_estimates, results='hide', eval= TRUE}
 
-if (params$export == "database") {
-  #Converts metadata to JSON and adds to analysis_lut
-  #Connects to database
-  #calls prep_export()
-  #Defines functions for writing to database tables
-  #Performs pre- and post- upload QAQC checks
-  # creelutils::export_estimates(params, analysis_lut, creel_estimates)
+if (resolved_params$export == "database") {
+# Note for interactive/by-chunk runs: resolved_params (and therefore analysis_lut$params_json)
+# is snapshot in build_resolved_params. Editing params$export after that chunk is not 
+# reflected here or in params_json unless build_resolved_params chunk is re-run.
+  connection_alive <- tryCatch({
+    DBI::dbGetQuery(con, "SELECT 1")
+    TRUE
+  }, error = function(error) FALSE)
+
+  if (!connection_alive) {
+    cli::cli_alert_warning("Database connection went stale during analysis; reconnecting before export.")
+    if (DBI::dbIsValid(con)) {
+      try(DBI::dbDisconnect(con), silent = TRUE)
+    }
+    con <- creelutils::connect_creel_db(db_env = "prod")
+  }
+
+  creelutils::export_estimates(
+    resolved_params,
+    est_catch_groups, 
+    analysis_lut, 
+    creel_estimates, 
+    conn = con
+  )
   
-  con <- creelutils::connect_creel_db()
-  
-  analysis_lut <- analysis_lut |> 
-    dplyr::select(-fishery_name, -identifier, -analysis_folder, -created_datetime)
-  
-  creelutils::export_estimates(conn = con , params, analysis_lut, creel_estimates)
-  
-} else if (params$export == "local") {
+} else if (resolved_params$export == "local") {
   # Save all export tables to outputs folder
   cli_alert_info("Exporting estimates to local files...")
   
@@ -1605,6 +1641,6 @@ if (params$export == "database") {
   cli_alert_success("All export tables saved to {.path {export_folder}}")
   
 } else {
-  cli_alert_warning("Export parameter is '{params$export}' - no export performed")
+  cli_alert_warning("Export parameter is '{resolved_params$export}' - no export performed")
 }
 ```

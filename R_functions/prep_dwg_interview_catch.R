@@ -15,6 +15,9 @@ prep_dwg_interview_catch <- function(
     dwg_catch |> 
     mutate(across(c(species, life_stage, fin_mark, fate), ~replace_na(as.character(.), "NA")))
   
+  est_catch_groups <- est_catch_groups |>
+    mutate(across(c(species, life_stage, fin_mark, fate), ~replace_na(as.character(.), "NA")))
+  
   catches <- map_df(
     1:nrow(est_catch_groups),
     ~dwg_catch_group |>
@@ -24,9 +27,7 @@ prep_dwg_interview_catch <- function(
         str_detect(fin_mark, est_catch_groups$fin_mark[.x]),
         str_detect(fate, est_catch_groups$fate[.x])
       ) |>
-      mutate(
-        est_cg = paste0(unlist(est_catch_groups[.x,]), collapse = "_")
-      ) |>
+      mutate(est_cg = combine_catch_group(est_catch_groups[.x, ])) |>
       group_by(est_cg, interview_id) |>
       summarise(fish_count = sum(fish_count, na.rm = T), .groups = "drop")
   )
@@ -35,7 +36,7 @@ prep_dwg_interview_catch <- function(
   int_cat <- map_df(
     1:nrow(est_catch_groups), 
     ~interview_plus_angler_types |>   
-      mutate(est_cg = paste0(unlist(est_catch_groups[.x,]), collapse = "_"))
+      mutate(est_cg = combine_catch_group(est_catch_groups[.x, ]))
     ) |>
     left_join(catches, by = c("est_cg", "interview_id")) |>
     mutate(fish_count = replace_na(fish_count, 0)) |>

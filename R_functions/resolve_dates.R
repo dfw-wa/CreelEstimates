@@ -82,11 +82,35 @@ resolve_dates <- function(
     if (resolved_end < resolved_start) {
       cli::cli_abort("Invalid date range for {.val {fishery}}: end ({resolved_end}) is before start ({resolved_start}).")
     }
+
+    # Derive model run type from the resolved window relative to the true fishery end date:
+    # - estimate window ends before the fishery end date -> "In-season"
+    # - estimate window reaches the fishery end date -> "Post-season"
+    model_run_type <- if (resolved_end < as.Date(fishery_row$fishery_end_date)) {
+      "In-season"
+    } else {
+      "Post-season"
+      }
+      
   } else {
     # Both supplied = verbatim, convert to date to validate format and mirror needs_db date resolution
     resolved_start <- as.Date(est_start_input)
     resolved_end   <- as.Date(est_end_input)
+    
+    # Abort when the resolved window is inverted
+    if (resolved_end < resolved_start) {
+      cli::cli_abort("Invalid date range for {.val {fishery}}: end ({resolved_end}) is before start ({resolved_start}).")
+    }
+    
+    # If both dates supplied manually, no database lookup
+    # model run type set as "Unknown" without database fishery_lut validation
+    model_run_type <- "Unknown"
   }
-  # Return list of resolved start and end dates
-  list(est_date_start = as.character(resolved_start), est_date_end = as.character(resolved_end))
+
+  # Return list of resolved dates and run type
+  list(
+    est_date_start = as.character(resolved_start),
+    est_date_end = as.character(resolved_end),
+    model_run_type = model_run_type
+  )
 }

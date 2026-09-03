@@ -20,7 +20,7 @@ params:
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
   model_used: "Both models"
   data_grade: "provisional"
-  export: "database"
+  export: "local"
   export_tables: "both"
   enable_cache: FALSE  # Set to FALSE to disable all caching (useful when cached files become too large)
 output:
@@ -62,14 +62,21 @@ library("digest")
 
 # Load packages from source
 # devtools::install_github("dfw-wa/creelutils")
-# library(creelutils)
-devtools::load_all("C:/Repos/creelutils")
+library(creelutils)
 ```
 
 ```{r database_con, message=FALSE}
 # Establish a connection to the creel database, carry throughout the session
 # This requires a one-time setup per user
-con <- creelutils::connect_creel_db(db_env = "test") # TEMP argument, remove "db_env = 'test'" use after revview
+# Required if any of the start date, end date, or catch group params are left as blank quotes ""
+is_blank <- function(x) is.null(x) || identical(x, "")
+
+needs_con <- any(
+  is_blank(params$est_date_start),
+  is_blank(params$est_date_end),
+  is_blank(params$est_catch_groups)
+)
+con <- if (needs_con) creelutils::connect_creel_db(db_env = "prod") else NULL
 ```
 
 ```{r, load_functions, message=FALSE}
@@ -1600,7 +1607,7 @@ if (resolved_params$export == "database") {
 
   if (!connection_alive) {
     cli::cli_alert_warning("Database connection went stale during analysis; reconnecting before export.")
-    if (DBI::dbIsValid(con)) {
+    if (!is.null(con) && DBI::dbIsValid(con)) {
       try(DBI::dbDisconnect(con), silent = TRUE)
     }
     con <- creelutils::connect_creel_db(db_env = "prod")

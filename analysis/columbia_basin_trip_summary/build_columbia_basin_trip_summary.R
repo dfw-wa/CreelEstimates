@@ -54,7 +54,8 @@
 # supplied workbooks (Lower and Middle Columbia mainstem); "WDFW" for
 # everything else in this compilation, mainstem or tributary alike.
 #
-# SCOPE CAVEAT (surfaced in the Methods tab, not just here): the ODFW/WDFW
+# SCOPE CAVEAT (surfaced in Columbia_Basin_Methods_and_Data_Sources.csv, not
+# just here): the ODFW/WDFW
 # joint mainstem trip counts are combined salmon+steelhead effort, matching
 # how those fisheries are jointly run. The WDFW tributary side is salmon-only
 # by the PST pipeline's own design (steelhead-primary fisheries excluded
@@ -369,14 +370,15 @@ wdfw_summary <- wdfw_raw |>
 # ---- 3. Combined summary -----------------------------------------------------
 # Season coverage (Aug-Dec for Buoy 10, "not stated" for Bonneville-McNary,
 # etc.) is intentionally NOT in this tab - see the Mainstem Mode Detail tab
-# for that, and the season-specific caveats already called out in the
-# Methods tab (Buoy 10 / Bonneville-McNary season coverage rows).
+# for that, and the season-specific caveats already called out in
+# Columbia_Basin_Methods_and_Data_Sources.csv (Buoy 10 / Bonneville-McNary
+# season coverage rows).
 
 odfw_wdfw_summary <- odfw_wdfw_detail |>
   transmute(
     year, region, water_type, data_source,
     angler_trips = round(angler_trips),
-    method = "Design-based creel survey (joint ODFW/WDFW program) - see Methods tab",
+    method = "Design-based creel survey (joint ODFW/WDFW program) - see Columbia_Basin_Methods_and_Data_Sources.csv",
     crc_areas
   )
 

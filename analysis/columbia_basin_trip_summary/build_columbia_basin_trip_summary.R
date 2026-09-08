@@ -349,18 +349,20 @@ wdfw_summary <- wdfw_raw |>
   transmute(
     year, region, water_type,
     data_source    = WDFW_SOURCE,
-    season_covered = "Jan-Dec (salmon-directed effort only - see Methods tab)",
     angler_trips,
     method,
     crc_areas
   )
 
 # ---- 3. Combined summary -----------------------------------------------------
+# Season coverage (Aug-Dec for Buoy 10, "not stated" for Bonneville-McNary,
+# etc.) is intentionally NOT in this tab - see the Mainstem Mode Detail tab
+# for that, and the season-specific caveats already called out in the
+# Methods tab (Buoy 10 / Bonneville-McNary season coverage rows).
 
 odfw_wdfw_summary <- odfw_wdfw_detail |>
   transmute(
     year, region, water_type, data_source,
-    season_covered,
     angler_trips = round(angler_trips),
     method = "Design-based creel survey (joint ODFW/WDFW program) - see Methods tab",
     crc_areas
@@ -511,7 +513,7 @@ wb <- createWorkbook()
 
 add_sheet(wb, "Combined Summary", combined_summary |>
            rename(Year = year, Region = region, `Water Type` = water_type,
-                  `Data Source` = data_source, `Season Covered` = season_covered,
+                  `Data Source` = data_source,
                   `Angler Trips` = angler_trips, Method = method,
                   `CRC Areas` = crc_areas),
          title = "Columbia Basin Recreational Salmon Angler Trips - Combined Summary (2022-2025)",

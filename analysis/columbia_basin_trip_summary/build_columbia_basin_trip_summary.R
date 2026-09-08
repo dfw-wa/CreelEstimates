@@ -342,8 +342,20 @@ wdfw_summary <- wdfw_raw |>
   group_by(region, water_type, year) |>
   summarise(
     method       = tier_share_sentence(tier, angler_trips),
+    # Zero-trip codes (e.g. an area whose verified open window has ~0%
+    # historical harvest share, so it prorates to 0 despite being open)
+    # are excluded here - this column should list only codes that actually
+    # contribute to the trips total, not every code a projection was
+    # attempted for. MUST be computed before angler_trips is reassigned to
+    # the group's scalar sum below - dplyr evaluates summarise() expressions
+    # in order and overwrites the name in the data mask, so referencing
+    # angler_trips AFTER that line would compare against the scalar total
+    # (always > 0 for a nonempty group) instead of each row's own value,
+    # silently keeping every code regardless of whether it actually
+    # contributed - the exact bug tier_share_sentence's ordering above
+    # already had to avoid.
+    crc_areas    = crc_areas_union(catch_area_codes[angler_trips > 0]),
     angler_trips = round(sum(angler_trips, na.rm = TRUE)),
-    crc_areas    = crc_areas_union(catch_area_codes),
     .groups = "drop"
   ) |>
   transmute(
@@ -539,12 +551,24 @@ add_sheet(wb, "WDFW Detail", wdfw_detail |>
          title = "WDFW detail by river, region, water type, and tier - PST pipeline output",
          wrap_cols = "Method (plain language)")
 
-add_sheet(wb, "Methods & Data Sources", methods_notes,
-         title = "Methods & Data Sources", freeze = FALSE, wrap_cols = "Explanation")
+# Methods & Data Sources is written as a standalone reference CSV rather
+# than a workbook tab (Evan's call, 2026-09-08) - kept in this script and
+# regenerated alongside the workbook every run rather than dropped
+# entirely, since the P1/P2/P3 plain-language mapping and the mainstem/
+# tributary scope caveat are still the reference for anyone auditing this
+# compilation's numbers.
+methods_path <- file.path(OUT_DIR, "Columbia_Basin_Methods_and_Data_Sources.csv")
+write_csv(methods_notes, methods_path)
 
 out_path <- file.path(OUT_DIR, "Columbia_Basin_Angler_Trip_Estimates.xlsx")
 saveWorkbook(wb, out_path, overwrite = TRUE)
 
-cli_ok <- tryCatch({ cli::cli_alert_success(glue("Wrote {out_path}")); TRUE },
-                   error = function(e) FALSE)
-if (!cli_ok) message(glue("Wrote {out_path}"))
+cli_ok <- tryCatch({
+  cli::cli_alert_success(glue("Wrote {out_path}"))
+  cli::cli_alert_success(glue("Wrote {methods_path}"))
+  TRUE
+}, error = function(e) FALSE)
+if (!cli_ok) {
+  message(glue("Wrote {out_path}"))
+  message(glue("Wrote {methods_path}"))
+}

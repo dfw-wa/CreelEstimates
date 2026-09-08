@@ -262,20 +262,21 @@ RIVER_WATER_TYPE <- c(
 # this is translating.
 TIER_PLAIN_LANGUAGE <- c(
   P1 = paste(
-    "Creel-based (P1): a real, design-based creel survey directly measured",
-    "trips for this river and year."
+    "Creel-based (P1): a design-based creel survey directly measured trips",
+    "for this river and year."
   ),
   P2 = paste(
     "CRC expansion (P2): no creel survey covered this river/year, so trips",
     "are estimated by applying a trips-per-salmon ratio - derived from",
-    "rivers in the same region and year that DO have both a real creel",
-    "survey and CRC harvest data - to this river's own real, already",
-    "published CRC harvest count."
+    "rivers in the same region and year that DO have both a creel survey",
+    "and CRC harvest data - to this river's own already published CRC",
+    "harvest count."
   ),
   P3 = paste(
     "Projected (P3): CRC has not yet published harvest for this year, so",
     "harvest itself is first projected from that river's recent history,",
-    "then expanded into trips the same way P2 expands a real harvest figure."
+    "then expanded into trips the same way P2 expands a published harvest",
+    "figure."
   )
 )
 
@@ -403,7 +404,7 @@ methods_notes <- tribble(
     "WDFW district staff (Todd Miller, R3_external) through this repo's own",
     "PST pipeline. Chad Jackson's (R2) combined Upper Columbia total adds a",
     "further mainstem stretch (Priest Rapids to Chief Joseph Dam) bundled",
-    "into ONE number together with several real tributaries (Entiat,",
+    "into ONE number together with several tributaries (Entiat,",
     "Okanogan, Similkameen, Wenatchee River, Icicle Creek) - that bundle",
     "cannot be split into mainstem vs. tributary, so it is shown here as its",
     "own \"Mixed\" row rather than forced into either bucket."

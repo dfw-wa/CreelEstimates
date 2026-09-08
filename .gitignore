@@ -64,6 +64,11 @@ config.yml
 # ignore: `git add -f analysis/pst/outputs/<file>`.
 analysis/pst/outputs/
 
+# Regenerable output of analysis/columbia_basin_trip_summary/
+# build_columbia_basin_trip_summary.R - same rationale as analysis/pst/outputs/
+# above.
+analysis/columbia_basin_trip_summary/outputs/
+
 # Local scratch cache (interview_proportions.qmd DB pull; regenerable)
 .cache/
 

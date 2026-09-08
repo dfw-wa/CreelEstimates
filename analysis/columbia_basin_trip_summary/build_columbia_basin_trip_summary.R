@@ -4,34 +4,62 @@
 #
 # Purpose: compile and standardize Columbia basin recreational salmon angler
 # trip estimates for Raquel Crosier (WDFW Fish Program Deputy Director of
-# Regions). Combines TWO genuinely different kinds of estimate that have
-# never been put side by side before:
+# Regions), organized by REGION (Lower / Middle / Upper Columbia, Snake) -
+# each region showing its MAINSTEM component and its TRIBUTARY component
+# side by side, since those are two independent things a first draft of
+# this script conflated:
 #
-#   MAINSTEM (Buoy 10, Lower Columbia below Bonneville, Bonneville-McNary) -
-#     joint ODFW & WDFW design-based creel estimates, read directly from the
-#     two workbooks ODFW supplied. Not part of the PST tributary pipeline at
-#     all - this is the water that pipeline's own crosswalk explicitly
-#     excludes as "ColumbiaMainstem, OUT_OF_SCOPE" (dam-to-dam reach
-#     segments, not tributaries).
+#   WATER TYPE (mainstem vs. tributary) is NOT the same axis as DATA SOURCE
+#   (who produced the estimate). Getting this right matters here specifically
+#   because Upper Columbia's mainstem water (Hanford Reach, McNary Reservoir,
+#   and part of Chad Jackson's combined Upper Columbia total) is WDFW's OWN
+#   data, not ODFW's - mainstem is emphatically NOT exclusively ODFW-supplied.
+#   Only the Lower and Middle Columbia mainstem reaches (Buoy 10 through
+#   Bonneville-McNary) come from the joint ODFW/WDFW workbooks; everything
+#   upstream of McNary Dam that this compilation carries is WDFW's alone.
 #
-#   TRIBUTARY (Columbia Lower/Middle/Upper blocks, Snake) - this repo's own
-#     WDFW-only PST freshwater pipeline output (P1/P2/P3 tiered), read from
-#     analysis/pst/outputs/05_assembly/pst_fw_trips_by_mode_location.csv.
-#     Real creel data where it exists, CRC-ratio expansion/projection where
-#     it doesn't - see the P1/P2/P3 plain-language mapping below and the
-#     "Methods & Data Sources" tab this script writes.
+#   Per region:
+#     Lower Columbia  - mainstem = Buoy 10 + below Bonneville Dam (ODFW & WDFW
+#                        joint). tributary = Cowlitz/Lewis/Kalama/Elochoman/
+#                        Washougal/etc. (WDFW, this repo's own PST pipeline).
+#     Middle Columbia - mainstem = Bonneville-McNary (ODFW & WDFW joint).
+#                        tributary = Drano Lake/Klickitat/Wind/Big White
+#                        Salmon (WDFW).
+#     Upper Columbia  - mainstem = Hanford Reach + McNary Reservoir (WDFW,
+#                        R3_external/Todd Miller) - water ABOVE McNary Dam,
+#                        not covered by either ODFW sheet, which stop AT
+#                        McNary Dam. tributary = Yakima River (WDFW,
+#                        R3_external). A third component, Chad Jackson's
+#                        (R2) combined Upper Columbia total, bundles MORE
+#                        mainstem (Priest Rapids-Chief Joseph reaches) together
+#                        with real tributaries (Entiat/Okanogan/Similkameen/
+#                        Wenatchee/Icicle Creek) in ONE bundled number that
+#                        cannot be split into mainstem vs. tributary - kept as
+#                        its own "Mixed" row rather than forced into either
+#                        bucket.
+#     Snake           - the only water in this compilation's Snake block is
+#                        the Snake River itself (WDFW, R1_external/Jeremy
+#                        Trump's combined total) - that's mainstem Snake
+#                        River, not a small tributary stream, so it is
+#                        labeled Mainstem here, not Tributary.
 #
-# Every row in the output is tagged with its Data Source so the two are
-# never silently blended: "ODFW & WDFW (joint creel estimate)" for the
-# mainstem rows, "WDFW" for the tributary rows.
+# This is the water the PST tributary pipeline's own crosswalk otherwise
+# excludes as "ColumbiaMainstem, OUT_OF_SCOPE" for the Lower/Middle reaches,
+# PLUS the mainstem water this repo's PST pipeline actually does carry
+# further upstream (Hanford Reach/McNary Reservoir/part of the R2 total/
+# Snake River) but had never previously been called out AS mainstem.
 #
-# SCOPE CAVEAT (surfaced in the Methods tab, not just here): the mainstem
-# trip counts are combined salmon+steelhead effort, matching how ODFW/WDFW
-# jointly run those fisheries. The tributary side is salmon-only by the PST
-# pipeline's own design (steelhead-primary fisheries excluded there). A
-# mainstem row is therefore NOT apples-to-apples with a tributary row for
-# species scope, even though both are "angler trips" - flagged explicitly so
-# a reader doesn't sum across scope boundaries without knowing that.
+# Every row also carries a Data Source column so that's never confused with
+# water type: "ODFW & WDFW (joint creel estimate)" only for the two ODFW-
+# supplied workbooks (Lower and Middle Columbia mainstem); "WDFW" for
+# everything else in this compilation, mainstem or tributary alike.
+#
+# SCOPE CAVEAT (surfaced in the Methods tab, not just here): the ODFW/WDFW
+# joint mainstem trip counts are combined salmon+steelhead effort, matching
+# how those fisheries are jointly run. The WDFW tributary side is salmon-only
+# by the PST pipeline's own design (steelhead-primary fisheries excluded
+# there). A mainstem row is therefore NOT apples-to-apples with a tributary
+# row for species scope, even though both are "angler trips."
 #
 # Inputs:
 #   input_files/pst/external_data/Copy of Buoy 10 Angler Trips by Mode and
@@ -45,7 +73,9 @@
 #   analysis/pst/outputs/05_assembly/pst_fw_trips_by_mode_location.csv -
 #     WDFW, written by pst_fw_angler_trips_assembly.R. MUST be current; this
 #     script does not run that pipeline itself. Filtered here to
-#     ColumbiaLower/ColumbiaMiddle/ColumbiaUpper/ColumbiaSnake.
+#     ColumbiaLower/ColumbiaMiddle/ColumbiaUpper/ColumbiaSnake, then
+#     reclassified by river into the mainstem/tributary/mixed split above -
+#     see RIVER_WATER_TYPE.
 #
 # Output:
 #   analysis/columbia_basin_trip_summary/outputs/
@@ -69,7 +99,10 @@ dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 ODFW_WDFW_SOURCE <- "ODFW & WDFW (joint creel estimate)"
 WDFW_SOURCE      <- "WDFW"
 
-# ---- 1. Mainstem: ODFW & WDFW joint estimates --------------------------------
+REGION_ORDER <- c("Lower Columbia", "Middle Columbia", "Upper Columbia", "Snake River")
+WATER_TYPE_ORDER <- c("Mainstem", "Tributary", "Mixed (mainstem + tributary, not separable)")
+
+# ---- 1. Mainstem: ODFW & WDFW joint estimates (Lower + Middle Columbia only) -
 # All three sheets share the same quirk: every real column is followed by a
 # blank spacer column, which readxl turns into an auto-named "...N" column -
 # selected past by position rather than by name, since the header row leaves
@@ -84,7 +117,9 @@ read_buoy10 <- function(path) {
     filter(!is.na(Year)) |>
     transmute(
       year          = as.integer(Year),
-      region        = "Buoy 10 (Columbia mainstem, river mouth)",
+      region        = "Lower Columbia",
+      water_type    = "Mainstem",
+      area          = "Buoy 10 (river mouth)",
       season_covered = "Aug-Dec",
       angler_trips  = TOTAL,
       bank          = Bank,
@@ -101,7 +136,9 @@ read_lower_columbia_mainstem <- function(path) {
     filter(!is.na(Year)) |>
     transmute(
       year          = as.integer(Year),
-      region        = "Lower Columbia mainstem (below Bonneville Dam)",
+      region        = "Lower Columbia",
+      water_type    = "Mainstem",
+      area          = "Below Bonneville Dam",
       season_covered = "Jan-Dec",
       angler_trips  = TOTAL,
       bank          = Bank,
@@ -118,7 +155,9 @@ read_bonneville_mcnary <- function(path) {
     filter(!is.na(Year)) |>
     transmute(
       year          = as.integer(Year),
-      region        = "Bonneville-McNary mainstem",
+      region        = "Middle Columbia",
+      water_type    = "Mainstem",
+      area          = "Bonneville Dam to McNary Dam",
       # Source workbook has no State:/Method:/Month: header block like the
       # other two sheets do - month coverage is genuinely not stated, not
       # assumed to match the others. [R3]: a missing dimension stays
@@ -133,26 +172,47 @@ read_bonneville_mcnary <- function(path) {
     )
 }
 
-mainstem_detail <- bind_rows(
+odfw_wdfw_detail <- bind_rows(
   read_buoy10(file.path(EXTERNAL_DIR, "Copy of Buoy 10 Angler Trips by Mode and Catch 20222025.xlsx")),
   read_lower_columbia_mainstem(file.path(EXTERNAL_DIR, "LCR Angler Trips by Mode 20222025.xlsx")),
   read_bonneville_mcnary(file.path(EXTERNAL_DIR, "LCR Angler Trips by Mode 20222025.xlsx"))
 ) |>
   mutate(data_source = ODFW_WDFW_SOURCE) |>
-  arrange(region, year)
+  arrange(match(region, REGION_ORDER), area, year)
 
-# ---- 2. Tributary: WDFW PST pipeline output ----------------------------------
+# ---- 2. WDFW: this repo's own PST pipeline output ----------------------------
 # Read as-is from the pipeline's own detail table - this script does not
 # recompute anything, it only re-labels tier codes into plain language and
-# rolls rivers up to the same region grain as the mainstem side above.
+# reclassifies each river by region + water type (see the header comment).
 
-COLUMBIA_TRIB_BLOCKS <- c("ColumbiaLower", "ColumbiaMiddle", "ColumbiaUpper", "ColumbiaSnake")
+WDFW_BLOCKS <- c("ColumbiaLower", "ColumbiaMiddle", "ColumbiaUpper", "ColumbiaSnake")
 
-TRIB_REGION_LABEL <- c(
-  ColumbiaLower  = "Columbia Lower tributaries (WDFW)",
-  ColumbiaMiddle = "Columbia Middle tributaries (WDFW)",
-  ColumbiaUpper  = "Columbia Upper tributaries (WDFW)",
-  ColumbiaSnake  = "Snake River tributaries (WDFW)"
+BLOCK_REGION <- c(
+  ColumbiaLower  = "Lower Columbia",
+  ColumbiaMiddle = "Middle Columbia",
+  ColumbiaUpper  = "Upper Columbia",
+  ColumbiaSnake  = "Snake River"
+)
+
+# Everything not listed here defaults to "Tributary" (river_label is unique
+# enough within a block for this; verified against pst_river_block_
+# crosswalk.csv's ColumbiaUpper/ColumbiaSnake rows, 2026-09-08). "Upper
+# Columbia" as a river_label is Chad Jackson's (R2) own combined district
+# total - genuinely bundles mainstem and tributary CRC areas into one number
+# neither this script nor the pipeline itself can split further; see MD6 in
+# analysis/pst/03_analysis/_22_status_and_gaps.qmd for the full area list.
+RIVER_WATER_TYPE <- c(
+  "Hanford Reach"                 = "Mainstem",
+  "McNary Reservoir"              = "Mainstem",
+  "Columbia River (above McNary)" = "Mainstem",  # Priest Rapids-Chief Joseph
+                                     # reaches (CRC 537-545/547|549) - one row
+                                     # is superseded by the R2 bundle below,
+                                     # the other (547|549, Roosevelt Lake) is
+                                     # NOT covered by R2 and can still surface
+                                     # here on its own; both are mainstem
+                                     # either way.
+  "Upper Columbia"   = "Mixed (mainstem + tributary, not separable)",
+  "Snake River"      = "Mainstem"
 )
 
 # Plain-language mapping for the tier codes this repo uses everywhere else -
@@ -187,27 +247,32 @@ if (!file.exists(tributary_path)) {
   ))
 }
 
-tributary_raw <- read_csv(tributary_path, show_col_types = FALSE) |>
-  filter(block %in% COLUMBIA_TRIB_BLOCKS)
+wdfw_raw <- read_csv(tributary_path, show_col_types = FALSE) |>
+  filter(block %in% WDFW_BLOCKS) |>
+  mutate(
+    region     = BLOCK_REGION[block],
+    water_type = coalesce(RIVER_WATER_TYPE[river_label], "Tributary")
+  )
 
-tributary_detail <- tributary_raw |>
-  group_by(block, river_label, year, tier) |>
+wdfw_detail <- wdfw_raw |>
+  group_by(region, water_type, river_label, year, tier) |>
   summarise(angler_trips = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
   filter(angler_trips > 0) |>
   transmute(
-    region       = TRIB_REGION_LABEL[block],
+    region, water_type,
     river        = river_label,
     year,
     angler_trips = round(angler_trips),
     tier,
     method_plain_language = TIER_PLAIN_LANGUAGE[tier]
   ) |>
-  arrange(region, river, year)
+  arrange(match(region, REGION_ORDER), match(water_type, WATER_TYPE_ORDER), river, year)
 
-# One sentence per region-year summarizing the tier mix by trip-weighted
-# share, e.g. "79% creel-based (P1), 21% CRC expansion (P2)" - this is what
-# lets the combined summary tab show ONE method description per region-year
-# even though a region is usually a blend of rivers on different tiers.
+# One sentence per region/water-type/year summarizing the tier mix by trip-
+# weighted share, e.g. "79% creel-based (P1), 21% CRC expansion (P2)" - this
+# is what lets the combined summary tab show ONE method description per row
+# even though a region/water-type is usually a blend of rivers on different
+# tiers.
 tier_share_sentence <- function(tier, trips) {
   totals <- tapply(trips, tier, sum)
   totals <- totals[totals > 0]
@@ -218,16 +283,15 @@ tier_share_sentence <- function(tier, trips) {
   paste(glue("{pct[ord]}% {label[ord]}"), collapse = ", ")
 }
 
-tributary_summary <- tributary_raw |>
-  group_by(block, year) |>
+wdfw_summary <- wdfw_raw |>
+  group_by(region, water_type, year) |>
   summarise(
     method       = tier_share_sentence(tier, angler_trips),
     angler_trips = round(sum(angler_trips, na.rm = TRUE)),
     .groups = "drop"
   ) |>
   transmute(
-    year,
-    region         = TRIB_REGION_LABEL[block],
+    year, region, water_type,
     data_source    = WDFW_SOURCE,
     season_covered = "Jan-Dec (salmon-directed effort only - see Methods tab)",
     angler_trips,
@@ -236,35 +300,63 @@ tributary_summary <- tributary_raw |>
 
 # ---- 3. Combined summary -----------------------------------------------------
 
-mainstem_summary <- mainstem_detail |>
+odfw_wdfw_summary <- odfw_wdfw_detail |>
   transmute(
-    year, region, data_source,
+    year, region, water_type, data_source,
     season_covered,
     angler_trips = round(angler_trips),
     method = "Design-based creel survey (joint ODFW/WDFW program) - see Methods tab"
   )
 
-combined_summary <- bind_rows(mainstem_summary, tributary_summary) |>
-  arrange(match(region, c(
-    "Buoy 10 (Columbia mainstem, river mouth)",
-    "Lower Columbia mainstem (below Bonneville Dam)",
-    "Bonneville-McNary mainstem",
-    TRIB_REGION_LABEL
-  )), year)
+combined_summary <- bind_rows(odfw_wdfw_summary, wdfw_summary) |>
+  arrange(match(region, REGION_ORDER), match(water_type, WATER_TYPE_ORDER), data_source, year)
 
 # ---- 4. Methods & data sources tab -------------------------------------------
 
 methods_notes <- tribble(
   ~Topic, ~Explanation,
+  "Region layout",
+  paste(
+    "Every region (Lower/Middle/Upper Columbia, Snake) is shown with its",
+    "mainstem component and its tributary component as SEPARATE rows -",
+    "these are independent things: which water it is (mainstem vs.",
+    "tributary) is not the same question as who produced the estimate",
+    "(see \"Two data sources\" below). Do not sum a region's mainstem and",
+    "tributary rows into one \"region total\" without noting the two also",
+    "differ in species scope - see \"Mainstem vs. tributary scope\" below."
+  ),
   "Two data sources",
   paste(
-    "\"ODFW & WDFW (joint creel estimate)\" = the Columbia mainstem (Buoy 10,",
-    "below Bonneville, Bonneville-McNary) is fished and managed jointly by",
-    "Oregon and Washington under the Columbia River Compact; these are",
-    "design-based creel estimates both agencies produce together, taken",
-    "directly from the workbooks ODFW supplied. \"WDFW\" = the Columbia",
-    "tributaries (Lower/Middle/Upper blocks) and Snake River are WDFW's own",
-    "estimates, produced entirely within this analysis."
+    "\"ODFW & WDFW (joint creel estimate)\" = ONLY the Lower and Middle",
+    "Columbia mainstem (Buoy 10, below Bonneville Dam, Bonneville-McNary) -",
+    "water fished and managed jointly by Oregon and Washington under the",
+    "Columbia River Compact, taken directly from the workbooks ODFW",
+    "supplied. \"WDFW\" = everything else in this compilation, mainstem or",
+    "tributary alike: the Columbia tributaries (Lower/Middle/Upper blocks),",
+    "Snake River, AND the Upper Columbia mainstem (Hanford Reach, McNary",
+    "Reservoir, and the mainstem reaches bundled into Chad Jackson's",
+    "combined Upper Columbia total) - all WDFW's own estimates. Mainstem is",
+    "NOT exclusively ODFW-supplied; it is only the two reaches below McNary",
+    "Dam that are joint."
+  ),
+  "Upper Columbia mainstem, specifically",
+  paste(
+    "Hanford Reach and McNary Reservoir sit ABOVE McNary Dam - outside the",
+    "ODFW/WDFW joint sheets, which stop AT McNary Dam - and are reported by",
+    "WDFW district staff (Todd Miller, R3_external) through this repo's own",
+    "PST pipeline. Chad Jackson's (R2) combined Upper Columbia total adds a",
+    "further mainstem stretch (Priest Rapids to Chief Joseph Dam) bundled",
+    "into ONE number together with several real tributaries (Entiat,",
+    "Okanogan, Similkameen, Wenatchee River, Icicle Creek) - that bundle",
+    "cannot be split into mainstem vs. tributary, so it is shown here as its",
+    "own \"Mixed\" row rather than forced into either bucket."
+  ),
+  "Snake River",
+  paste(
+    "The only water this compilation carries for the Snake block is the",
+    "Snake River itself (WDFW, Jeremy Trump's/R1_external's combined total",
+    "near the WA/ID border) - that is mainstem Snake River, not a small",
+    "tributary stream, and is labeled Mainstem here accordingly."
   ),
   "P1 - Creel-based",
   TIER_PLAIN_LANGUAGE[["P1"]],
@@ -274,13 +366,13 @@ methods_notes <- tribble(
   TIER_PLAIN_LANGUAGE[["P3"]],
   "Mainstem vs. tributary scope",
   paste(
-    "Mainstem trip counts are COMBINED salmon + steelhead effort - that's how",
-    "ODFW/WDFW jointly report those fisheries. Tributary trip counts are",
-    "SALMON-DIRECTED EFFORT ONLY, by this analysis's own design",
-    "(steelhead-primary fisheries are excluded). A mainstem row is not apples-to-apples",
-    "with a tributary row on species scope, even though both are labeled",
-    "\"angler trips\" - do not sum across this boundary without accounting",
-    "for it."
+    "ODFW/WDFW joint mainstem trip counts are COMBINED salmon + steelhead",
+    "effort - that's how those fisheries are jointly reported. WDFW",
+    "tributary trip counts are SALMON-DIRECTED EFFORT ONLY, by this",
+    "analysis's own design (steelhead-primary fisheries are excluded). A",
+    "mainstem row is not apples-to-apples with a tributary row on species",
+    "scope, even though both are labeled \"angler trips\" - do not sum",
+    "across this boundary without accounting for it."
   ),
   "Buoy 10 season coverage",
   "Aug-Dec only, per the source workbook - not a full calendar year.",
@@ -289,13 +381,6 @@ methods_notes <- tribble(
     "Not stated in the source workbook (no State/Method/Month header block",
     "like the other two ODFW sheets carry). Assume nothing about the season",
     "window for this region without checking with ODFW/WDFW directly."
-  ),
-  "Tributary region groupings",
-  paste(
-    "\"Columbia Lower/Middle/Upper\" and \"Snake River\" tributary blocks are",
-    "this analysis's own grouping, based on CRC's own region field (not a",
-    "hand-assigned label) - see analysis/pst/01_intro_methods/",
-    "_03_pipeline_and_registry.qmd for the full derivation."
   ),
   "Undocumented secondary columns",
   paste(
@@ -348,22 +433,27 @@ add_sheet <- function(wb, sheet_name, df, title = NULL, freeze = TRUE, wrap_cols
 
 wb <- createWorkbook()
 
-add_sheet(wb, "Combined Summary", combined_summary,
+add_sheet(wb, "Combined Summary", combined_summary |>
+           rename(Year = year, Region = region, `Water Type` = water_type,
+                  `Data Source` = data_source, `Season Covered` = season_covered,
+                  `Angler Trips` = angler_trips, Method = method),
          title = "Columbia Basin Recreational Salmon Angler Trips - Combined Summary (2022-2025)",
-         wrap_cols = "method")
+         wrap_cols = "Method")
 
-add_sheet(wb, "Mainstem Mode Detail", mainstem_detail |>
-           rename(`Angler Trips` = angler_trips, Region = region, Year = year,
-                  `Season Covered` = season_covered, Bank = bank,
+add_sheet(wb, "Mainstem Mode Detail", odfw_wdfw_detail |>
+           rename(Year = year, Region = region, `Water Type` = water_type,
+                  Area = area, `Season Covered` = season_covered,
+                  `Angler Trips` = angler_trips, Bank = bank,
                   `Private Boat` = private_boat, `Guided Boat` = guided_boat,
-                  `Charter Boat` = charter_boat, `Boat Total` = boat_total),
-         title = "Mainstem detail by mode - as reported by ODFW/WDFW, trips only")
+                  `Charter Boat` = charter_boat, `Boat Total` = boat_total,
+                  `Data Source` = data_source),
+         title = "ODFW/WDFW joint mainstem detail by mode - Lower & Middle Columbia only")
 
-add_sheet(wb, "Tributary Detail", tributary_detail |>
-           rename(Region = region, River = river, Year = year,
-                  `Angler Trips` = angler_trips, Tier = tier,
+add_sheet(wb, "WDFW Detail", wdfw_detail |>
+           rename(Region = region, `Water Type` = water_type, River = river,
+                  Year = year, `Angler Trips` = angler_trips, Tier = tier,
                   `Method (plain language)` = method_plain_language),
-         title = "Tributary detail by river and tier - WDFW PST pipeline output",
+         title = "WDFW detail by river, region, water type, and tier - PST pipeline output",
          wrap_cols = "Method (plain language)")
 
 add_sheet(wb, "Methods & Data Sources", methods_notes,

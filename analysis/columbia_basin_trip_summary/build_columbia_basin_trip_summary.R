@@ -183,15 +183,19 @@ odfw_wdfw_detail <- bind_rows(
 
 # ---- 1b. Which CRC mainstem area codes each ODFW/WDFW area corresponds to ---
 # These three areas are defined by river landmarks (dams, bridges, buoy
-# lines), not creel/interview strata, so they don't appear anywhere else in
-# this repo's own crosswalk - matched here directly against crc_area_lut.csv
-# by the landmark descriptions CRC itself uses for its mainstem catch areas.
-# Confirmed against each sheet's own boundary text: Buoy 10's title says
-# "Buoy 10 line to Tongue Point/Rocky Point line" (= CRC 519 exactly); the
-# Lower Columbia sheet's own cell comment says "Below Bonneville Dam - Does
-# not include Buoy 10" (= CRC 521/523/525, the three reaches from that same
-# Rocky Pt/Tongue Pt line up to Bonneville Dam); Bonneville-McNary's title is
-# literal (= CRC 527/529/531, Bonneville Dam to McNary Dam in three reaches).
+# lines), not creel/interview strata - matched here directly against
+# crc_area_lut.csv by the landmark descriptions CRC itself uses for its
+# mainstem catch areas. Confirmed against each sheet's own boundary text:
+# Buoy 10's title says "Buoy 10 line to Tongue Point/Rocky Point line" (= CRC
+# 519 exactly); the Lower Columbia sheet's own cell comment says "Below
+# Bonneville Dam - Does not include Buoy 10" (= CRC 521/523/525, the three
+# reaches from that same Rocky Pt/Tongue Pt line up to Bonneville Dam);
+# Bonneville-McNary's title is literal (= CRC 527/529/531, Bonneville Dam to
+# McNary Dam in three reaches). Also documented as ColumbiaMainstem/
+# OUT_OF_SCOPE rows in pst_river_block_crosswalk.csv (2026-09-08) - kept
+# hardcoded here too rather than read from there, since this script's own
+# job is to be independently checkable against crc_area_lut.csv without
+# depending on the PST crosswalk's own filtering conventions.
 MAINSTEM_AREA_CRC <- c(
   "Buoy 10 (river mouth)"       = "519",
   "Below Bonneville Dam"        = "521|523|525",
@@ -432,13 +436,19 @@ methods_notes <- tribble(
   paste(
     "The three ODFW/WDFW mainstem areas (Buoy 10, Below Bonneville Dam,",
     "Bonneville Dam to McNary Dam) are defined by river landmarks, not by",
-    "creel/interview strata, so they never appear in this repo's own",
-    "crosswalk - matched here directly against crc_area_lut.csv by the",
-    "landmark descriptions CRC uses for its own mainstem catch areas. See",
-    "the \"Mainstem CRC Area Lookup\" tab for the exact codes. CRC's own",
-    "\"catch_area_region\" field is \"Columbia River\" for every one of",
-    "them - it does not distinguish Lower/Middle/Upper, so it is carried",
-    "through as-is rather than treated as a finer region label."
+    "creel/interview strata - matched here directly against crc_area_lut.csv",
+    "by the landmark descriptions CRC uses for its own mainstem catch areas.",
+    "See the \"Mainstem CRC Area Lookup\" tab for the exact codes. CRC's own",
+    "\"catch_area_region\" field (in crc_area_lut.csv) is \"Columbia River\"",
+    "for every one of them - it does not distinguish Lower/Middle/Upper, so",
+    "it is carried through as-is rather than treated as a finer region",
+    "label. These same codes are ALSO now documented as ColumbiaMainstem/",
+    "OUT_OF_SCOPE rows in pst_river_block_crosswalk.csv (2026-09-08), cross-",
+    "checked there against the ACTUAL region field the Salmon Freshwater",
+    "Estimates CRC files (input_files/pst/CRC/) carry: CRC 519/521 verified",
+    "'Columbia - Lower', 527/529/531 verified 'Columbia - Middle'. CRC 523",
+    "and 525 do not appear in that CRC series at all, so their region could",
+    "not be verified the same way - see that crosswalk row's own note."
   )
 )
 

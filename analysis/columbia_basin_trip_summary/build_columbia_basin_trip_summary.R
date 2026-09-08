@@ -295,9 +295,21 @@ wdfw_raw <- read_csv(tributary_path, show_col_types = FALSE) |>
     water_type = coalesce(RIVER_WATER_TYPE[river_label], "Tributary")
   )
 
+# Sorted, deduplicated union of every catch_area_code behind a group of rows
+# - pst_fw_trips_by_mode_location.csv already carries this pipe-delimited
+# per river/year (a composite river like the R2-sourced "Upper Columbia" row
+# is itself multiple codes), so rolling up to river or region just means
+# re-exploding and re-collapsing rather than a fresh lookup.
+crc_areas_union <- function(x) {
+  codes <- unlist(strsplit(x[!is.na(x) & x != ""], "\\|"))
+  if (length(codes) == 0) return(NA_character_)
+  paste(sort(unique(codes)), collapse = "|")
+}
+
 wdfw_detail <- wdfw_raw |>
   group_by(region, water_type, river_label, year, tier) |>
-  summarise(angler_trips = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
+  summarise(angler_trips = sum(angler_trips, na.rm = TRUE),
+           crc_areas    = crc_areas_union(catch_area_codes), .groups = "drop") |>
   filter(angler_trips > 0) |>
   transmute(
     region, water_type,
@@ -305,6 +317,7 @@ wdfw_detail <- wdfw_raw |>
     year,
     angler_trips = round(angler_trips),
     tier,
+    crc_areas,
     method_plain_language = TIER_PLAIN_LANGUAGE[tier]
   ) |>
   arrange(match(region, REGION_ORDER), match(water_type, WATER_TYPE_ORDER), river, year)
@@ -329,6 +342,7 @@ wdfw_summary <- wdfw_raw |>
   summarise(
     method       = tier_share_sentence(tier, angler_trips),
     angler_trips = round(sum(angler_trips, na.rm = TRUE)),
+    crc_areas    = crc_areas_union(catch_area_codes),
     .groups = "drop"
   ) |>
   transmute(
@@ -336,7 +350,8 @@ wdfw_summary <- wdfw_raw |>
     data_source    = WDFW_SOURCE,
     season_covered = "Jan-Dec (salmon-directed effort only - see Methods tab)",
     angler_trips,
-    method
+    method,
+    crc_areas
   )
 
 # ---- 3. Combined summary -----------------------------------------------------
@@ -516,6 +531,7 @@ add_sheet(wb, "Mainstem CRC Area Lookup", mainstem_crc_lookup,
 add_sheet(wb, "WDFW Detail", wdfw_detail |>
            rename(Region = region, `Water Type` = water_type, River = river,
                   Year = year, `Angler Trips` = angler_trips, Tier = tier,
+                  `CRC Areas` = crc_areas,
                   `Method (plain language)` = method_plain_language),
          title = "WDFW detail by river, region, water type, and tier - PST pipeline output",
          wrap_cols = "Method (plain language)")

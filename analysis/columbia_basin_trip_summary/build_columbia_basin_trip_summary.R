@@ -93,6 +93,7 @@ library(openxlsx)
 
 EXTERNAL_DIR <- here("input_files", "pst", "external_data")
 PST_ASSEMBLY_DIR <- here("analysis", "pst", "outputs", "05_assembly")
+CRC_LUT_PATH <- here("input_files", "pst", "lookup_tables", "crc_area_lut.csv")
 OUT_DIR <- here("analysis", "columbia_basin_trip_summary", "outputs")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
@@ -179,6 +180,42 @@ odfw_wdfw_detail <- bind_rows(
 ) |>
   mutate(data_source = ODFW_WDFW_SOURCE) |>
   arrange(match(region, REGION_ORDER), area, year)
+
+# ---- 1b. Which CRC mainstem area codes each ODFW/WDFW area corresponds to ---
+# These three areas are defined by river landmarks (dams, bridges, buoy
+# lines), not creel/interview strata, so they don't appear anywhere else in
+# this repo's own crosswalk - matched here directly against crc_area_lut.csv
+# by the landmark descriptions CRC itself uses for its mainstem catch areas.
+# Confirmed against each sheet's own boundary text: Buoy 10's title says
+# "Buoy 10 line to Tongue Point/Rocky Point line" (= CRC 519 exactly); the
+# Lower Columbia sheet's own cell comment says "Below Bonneville Dam - Does
+# not include Buoy 10" (= CRC 521/523/525, the three reaches from that same
+# Rocky Pt/Tongue Pt line up to Bonneville Dam); Bonneville-McNary's title is
+# literal (= CRC 527/529/531, Bonneville Dam to McNary Dam in three reaches).
+MAINSTEM_AREA_CRC <- c(
+  "Buoy 10 (river mouth)"       = "519",
+  "Below Bonneville Dam"        = "521|523|525",
+  "Bonneville Dam to McNary Dam" = "527|529|531"
+)
+
+crc_lut <- read_csv(CRC_LUT_PATH, show_col_types = FALSE) |>
+  transmute(catch_area_code = as.character(catch_area_code),
+           catch_area_description, catch_area_region)
+
+mainstem_crc_lookup <- tibble(area = names(MAINSTEM_AREA_CRC), crc_areas = MAINSTEM_AREA_CRC) |>
+  separate_longer_delim(crc_areas, delim = "|") |>
+  rename(catch_area_code = crc_areas) |>
+  left_join(crc_lut, by = "catch_area_code") |>
+  transmute(
+    Area = area,
+    `CRC Area Code` = catch_area_code,
+    `CRC Area Description` = catch_area_description,
+    `CRC Region` = catch_area_region
+  ) |>
+  arrange(match(Area, names(MAINSTEM_AREA_CRC)), `CRC Area Code`)
+
+odfw_wdfw_detail <- odfw_wdfw_detail |>
+  mutate(crc_areas = MAINSTEM_AREA_CRC[area])
 
 # ---- 2. WDFW: this repo's own PST pipeline output ----------------------------
 # Read as-is from the pipeline's own detail table - this script does not
@@ -305,7 +342,8 @@ odfw_wdfw_summary <- odfw_wdfw_detail |>
     year, region, water_type, data_source,
     season_covered,
     angler_trips = round(angler_trips),
-    method = "Design-based creel survey (joint ODFW/WDFW program) - see Methods tab"
+    method = "Design-based creel survey (joint ODFW/WDFW program) - see Methods tab",
+    crc_areas
   )
 
 combined_summary <- bind_rows(odfw_wdfw_summary, wdfw_summary) |>
@@ -389,6 +427,18 @@ methods_notes <- tribble(
     "column in the source workbook that this compilation does NOT include -",
     "its meaning isn't documented in the sheet itself. Flagging its",
     "existence here rather than silently dropping it without a record."
+  ),
+  "Mainstem CRC area codes",
+  paste(
+    "The three ODFW/WDFW mainstem areas (Buoy 10, Below Bonneville Dam,",
+    "Bonneville Dam to McNary Dam) are defined by river landmarks, not by",
+    "creel/interview strata, so they never appear in this repo's own",
+    "crosswalk - matched here directly against crc_area_lut.csv by the",
+    "landmark descriptions CRC uses for its own mainstem catch areas. See",
+    "the \"Mainstem CRC Area Lookup\" tab for the exact codes. CRC's own",
+    "\"catch_area_region\" field is \"Columbia River\" for every one of",
+    "them - it does not distinguish Lower/Middle/Upper, so it is carried",
+    "through as-is rather than treated as a finer region label."
   )
 )
 
@@ -436,7 +486,8 @@ wb <- createWorkbook()
 add_sheet(wb, "Combined Summary", combined_summary |>
            rename(Year = year, Region = region, `Water Type` = water_type,
                   `Data Source` = data_source, `Season Covered` = season_covered,
-                  `Angler Trips` = angler_trips, Method = method),
+                  `Angler Trips` = angler_trips, Method = method,
+                  `CRC Areas` = crc_areas),
          title = "Columbia Basin Recreational Salmon Angler Trips - Combined Summary (2022-2025)",
          wrap_cols = "Method")
 
@@ -446,8 +497,11 @@ add_sheet(wb, "Mainstem Mode Detail", odfw_wdfw_detail |>
                   `Angler Trips` = angler_trips, Bank = bank,
                   `Private Boat` = private_boat, `Guided Boat` = guided_boat,
                   `Charter Boat` = charter_boat, `Boat Total` = boat_total,
-                  `Data Source` = data_source),
+                  `Data Source` = data_source, `CRC Areas` = crc_areas),
          title = "ODFW/WDFW joint mainstem detail by mode - Lower & Middle Columbia only")
+
+add_sheet(wb, "Mainstem CRC Area Lookup", mainstem_crc_lookup,
+         title = "CRC catch area codes represented by each Buoy 10/LCR mainstem area (crc_area_lut.csv)")
 
 add_sheet(wb, "WDFW Detail", wdfw_detail |>
            rename(Region = region, `Water Type` = water_type, River = river,

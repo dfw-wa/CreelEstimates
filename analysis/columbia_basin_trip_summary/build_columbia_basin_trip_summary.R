@@ -422,7 +422,7 @@ add_sheet <- function(wb, sheet_name, df, title = NULL, freeze = TRUE, wrap_cols
     writeData(wb, sheet_name, title, startRow = 1, startCol = 1)
     addStyle(wb, sheet_name, title_style, rows = 1, cols = 1)
   }
-  num_cols <- which(vapply(df, is.numeric, logical(1)))
+  num_cols <- which(vapply(df, is.numeric, logical(1)) & !names(df) %in% c("Year", "year"))
   if (length(num_cols) > 0 && nrow(df) > 0) {
     addStyle(wb, sheet_name, num_style,
             rows = (start_row + 1):(start_row + nrow(df)), cols = num_cols,

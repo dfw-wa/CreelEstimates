@@ -63,10 +63,12 @@ prep_days <- function(
     week = as.numeric(format(event_date, "%W")),
     month = as.numeric(format(event_date, "%m")),
     year = as.numeric(format(event_date, "%Y")),
-    period = case_when(
-      period_pe == "week" ~ week,
-      period_pe == "month" ~ month,
-      period_pe == "duration" ~ double(1)
+    period = switch(
+      period_pe,
+      week = week,
+      month = month,
+      duration = double(1),
+      stop("Invalid `period_pe`: ", period_pe)
     ),
     day_index = as.integer(seq_along(event_date)),
     week_index = as.integer(factor(week, levels = unique(week))),
@@ -136,6 +138,14 @@ prep_days <- function(
     
     # 
   }else{
+    selected_day_length <- switch(
+      day_length, # the input argument, from `params$day_length_expansion`
+      "dawn/dusk" = "day_length_dawn_dusk",
+      "sunrise/sunset" = "day_length_sunrise_sunset",
+      "night closure"  = "day_length_night_closure",
+      stop("Invalid `day_length`: ", day_length)
+    )
+    
     day_length_values <- suncalc::getSunlightTimes(
       date = days$event_date,
       tz = "America/Los_Angeles",
@@ -148,13 +158,7 @@ prep_days <- function(
         day_length_sunrise_sunset = as.numeric((sunset) - (sunrise)),
         day_length_night_closure = as.numeric((sunset + 3600) - (sunrise - 3600)),
       ) |> 
-      mutate(
-        day_length = case_when(
-          day_length == "dawn/dusk" ~ day_length_dawn_dusk,
-          day_length == "sunrise/sunset" ~ day_length_sunrise_sunset,
-          day_length == "night closure" ~ day_length_night_closure
-        )
-      ) |> 
+      mutate(day_length = .data[[selected_day_length]]) |> 
       select(event_date, day_length)
   }
   

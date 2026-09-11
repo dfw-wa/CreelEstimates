@@ -1211,11 +1211,50 @@ Case is normalized to lowercase on both fields, because `angler_final` is
 `"Bank"`/`"Boat"` in the interview data and `"bank"`/`"boat"` in
 `multi_fishery_creel_trips.csv`. An unnormalized join silently drops every row.
 
+### The proportion is angler-weighted, not party-weighted
+
+One interview row is a **party**, not an angler — `angler_count` records how
+many anglers that one row represents. What the assembly multiplies this
+proportion against is an **angler**-trip total:
+`total_trips_est = total_effort_hrs ÷ mean_trip_length`, where effort is
+angler-hours and `mean_trip_length` is hours per angler-trip (a per-angler
+duration, not party-hours). The units on both sides of that multiplication
+have to agree, so `prop` is the share of **anglers** at a location that were
+guided:
+
+$$\hat{p}(\text{guided}\mid\text{boat}) = \frac{\sum_{i \in \text{guided}} a_i}{\sum_{i \in \text{boat}} a_i}$$
+
+where $a_i$ is the angler count on interview $i$. The party-count share is
+retained as `prop_parties`, and the difference between them is exactly the
+ratio of mean party sizes:
+
+$$\text{angler share} = \text{party share} \times \frac{\bar{a}_{\text{guided}}}{\bar{a}_{\text{all}}}$$
+
+That correction is not cosmetic here: guided parties are typically larger than
+unguided ones (a chartered boat books to capacity; a private boat often
+carries one or two), so a party-count proportion **understates** the guided
+angler share. The previous version of this export used the party count, which
+is why the Track B guided totals it produced were biased low. See
+`prop_party_delta` in the output for the size of the correction cell by cell.
+
+**Fallback.** `angler_count` is not universally recorded. When a
+fishery-year-location cell has usable angler counts on fewer than
+`MIN_ANGLER_COUNT_COVERAGE` of its interviews — or when a mode with
+interviews in it has *no* usable angler count at all, which would silently
+estimate that mode at a share of zero — the cell falls back to the
+party-count share and says so in `prop_basis`. Falling back is a documented
+downgrade, not a silent one [R2]; it is never filled by assuming a party size
+[R3].
+
 ```{r}
 #| label: export-assembly-props
 
 assembly_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
 if (!dir.exists(assembly_dir)) dir.create(assembly_dir, recursive = TRUE)
+
+# Minimum share of a cell's interviews that must carry a usable angler count
+# before the angler-weighted proportion is trusted over the party-count one.
+MIN_ANGLER_COUNT_COVERAGE <- 0.5
 
 mode_location_props <- interviews |>
   filter(!is.na(guided_status), !is.na(angler_final), !is.na(year)) |>
@@ -1223,25 +1262,54 @@ mode_location_props <- interviews |>
     location = str_to_lower(angler_final),
     mode     = str_to_lower(guided_status)
   ) |>
-  count(fishery_name, year, location, mode, name = "n_interviews") |>
+  group_by(fishery_name, year, location, mode) |>
+  summarise(
+    n_interviews       = n(),                             # parties
+    n_anglers          = sum(angler_count_num, na.rm = TRUE),
+    n_int_with_anglers = sum(!is.na(angler_count_num)),
+    .groups = "drop"
+  ) |>
   # Both modes must exist in every fishery-year-location cell so that a
   # structural zero (a fishery with no guided effort) is an explicit 0 rather
   # than an absent row the assembly would read as "no proportion available".
   complete(
     nesting(fishery_name, year, location), mode = c("guided", "unguided"),
-    fill = list(n_interviews = 0L)
+    fill = list(n_interviews = 0L, n_anglers = 0, n_int_with_anglers = 0L)
   ) |>
   group_by(fishery_name, year, location) |>
   mutate(
-    n_location = sum(n_interviews),
-    prop       = if_else(n_location > 0, n_interviews / n_location, NA_real_)
+    n_location            = sum(n_interviews),
+    n_anglers_location    = sum(n_anglers),
+    angler_count_coverage = if_else(n_location > 0,
+                                    sum(n_int_with_anglers) / n_location,
+                                    NA_real_),
+    # A mode that has interviews but not one usable angler count would
+    # contribute 0 anglers and be estimated at a spurious 0 share - that is a
+    # coverage hole, not a structural zero, so the whole cell falls back.
+    .mode_uncovered = any(n_interviews > 0 & n_int_with_anglers == 0),
+    prop_anglers = if_else(n_anglers_location > 0,
+                           n_anglers / n_anglers_location, NA_real_),
+    prop_parties = if_else(n_location > 0, n_interviews / n_location, NA_real_),
+    .use_anglers = !is.na(angler_count_coverage) &
+                   angler_count_coverage >= MIN_ANGLER_COUNT_COVERAGE &
+                   !.mode_uncovered & n_anglers_location > 0,
+    prop = if_else(.use_anglers, prop_anglers, prop_parties),
+    prop_basis = case_when(
+      n_location == 0 ~ NA_character_,
+      .use_anglers    ~ "angler_weighted",
+      TRUE            ~ "party_count_fallback"
+    ),
+    mean_party_size = if_else(n_int_with_anglers > 0,
+                              n_anglers / n_int_with_anglers, NA_real_)
   ) |>
-  ungroup()
+  ungroup() |>
+  select(-.mode_uncovered, -.use_anglers, -n_int_with_anglers)
 
 # Hours-weighted companion, carried as a diagnostic rather than the primary.
-# Counts are the primary because the assembly multiplies a *trip* total; an
-# hours-weighted proportion answers a different question (share of angler-hours,
-# not share of trips) and would bias toward whichever mode fishes longer.
+# Angler counts are the primary because the assembly multiplies an angler-*trip*
+# total; an hours-weighted proportion answers a different question (share of
+# angler-hours, not share of angler-trips) and would bias toward whichever mode
+# fishes longer per trip.
 mode_location_props_hrs <- interviews |>
   filter(!is.na(guided_status), !is.na(angler_final), !is.na(year),
          !is.na(fishing_time_total)) |>
@@ -1256,7 +1324,12 @@ mode_location_props_hrs <- interviews |>
 
 mode_location_props <- mode_location_props |>
   left_join(mode_location_props_hrs, by = c("fishery_name", "year", "location", "mode")) |>
-  mutate(prop_delta = prop - prop_hrs) |>
+  mutate(
+    prop_delta       = prop - prop_hrs,
+    # How much the angler weighting moved the answer. Positive on guided rows
+    # means the party-count version was understating the guided share.
+    prop_party_delta = prop - prop_parties
+  ) |>
   arrange(fishery_name, year, location, mode)
 
 write_csv(mode_location_props,
@@ -1265,6 +1338,26 @@ write_csv(mode_location_props,
 cat(glue("Wrote {nrow(mode_location_props)} rows covering ",
          "{n_distinct(mode_location_props$fishery_name)} fisheries × ",
          "{n_distinct(mode_location_props$year)} years\n\n"))
+
+# How often the angler weighting was actually available, and how much it moved
+# the guided share where it was. A fallback rate that is anything but small
+# means angler_count coverage - not the weighting choice - is the binding
+# constraint on this table.
+basis_tally <- mode_location_props |>
+  filter(!is.na(prop_basis)) |>
+  distinct(fishery_name, year, location, prop_basis, angler_count_coverage)
+cat("Proportion basis, by fishery-year-location cell:\n")
+basis_tally |> count(prop_basis) |> print()
+
+guided_shift <- mode_location_props |>
+  filter(mode == "guided", prop_basis == "angler_weighted", n_location > 0)
+if (nrow(guided_shift) > 0) {
+  cat(glue(
+    "\nAngler vs party weighting on guided rows (n = {nrow(guided_shift)} cells): ",
+    "median shift {round(median(guided_shift$prop_party_delta, na.rm = TRUE), 4)}, ",
+    "max {round(max(guided_shift$prop_party_delta, na.rm = TRUE), 4)}\n\n"
+  ))
+}
 
 # Sanity: every cell with support must sum to 1
 chk <- mode_location_props |>

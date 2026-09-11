@@ -22,6 +22,16 @@
 #     trip total, so it carries both sampling error and whatever selection
 #     bias governs who gets interviewed (guides launching early and fishing
 #     hard are plausibly under-sampled at an access point).
+#
+# One known unit bias on the x side has since been FIXED and is noted here so
+# a stale run of this script is not misread: the interview proportion was
+# originally the share of interview PARTIES that were guided, applied to an
+# ANGLER-trip total. Because guided parties run larger than unguided ones,
+# that understated guided trips - the bias ran in the opposite direction from
+# the overshoot the first regression appeared to show. interview_proportions.qmd
+# now exports an angler-weighted share (`prop_basis == "angler_weighted"`), so
+# x is larger than it was in any run predating that change; re-render the
+# producer before reading a slope off this script.
 # A slope near 1 would be reassuring; a slope far from 1, or no relationship
 # at all, means the logbook cannot be used as a floor without understanding
 # why first.

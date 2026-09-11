@@ -38,26 +38,42 @@ props <- read_if(file.path(INTERVIEW_PROPS_DIR, "interview_mode_location_props.c
 if (is.null(props)) {
   cat("Track B proportions table not found. Run analysis/pst/02_ingest/interview_proportions.qmd.\n")
 } else {
+  show_cols <- intersect(
+    c("fishery_name", "year", "location", "mode", "n_interviews", "n_location",
+      "n_anglers", "n_anglers_location", "prop", "prop_basis", "prop_parties",
+      "prop_hrs", "prop_delta", "prop_party_delta"),
+    names(props)
+  )
+  num_cols <- intersect(c("prop", "prop_parties", "prop_hrs", "prop_delta",
+                          "prop_party_delta"), show_cols)
+
   props |>
     arrange(fishery_name, year, location, mode) |>
-    select(fishery_name, year, location, mode,
-           n_interviews, n_location, prop, prop_hrs, prop_delta) |>
+    select(all_of(show_cols)) |>
     gt() |>
-    fmt_number(columns = c(prop, prop_hrs, prop_delta), decimals = 3) |>
+    fmt_number(columns = all_of(num_cols), decimals = 3) |>
     tab_header(
       title = "Interview-derived mode proportions",
-      subtitle = "Grain: fishery_name x year x location x mode. prop is the interview-count share; prop_hrs is the same split weighted by interview-reported hours; prop_delta is prop_hrs - prop"
+      subtitle = "Grain: fishery_name x year x location x mode. prop is the angler-weighted share; prop_parties is the same split by interview (party) counts; prop_hrs weights by interview-reported hours; prop_delta is prop - prop_hrs and prop_party_delta is prop - prop_parties"
     )
 }
 ```
 
-Two columns worth reading together rather than separately: `prop` is the raw
-share of interviews at a location classified guided vs. unguided; `prop_hrs`
-re-weights that same split by hours reported per interview, since a guided
-trip and an unguided trip are not sampled at equal effort-intensity.
-`prop_delta` is provided so a location-year where the two diverge sharply is
-visible without recomputing it — a large delta says the count-weighted and
-effort-weighted stories disagree, which is worth a second look before the
+An interview row is a fishing **party**, not a single angler, and the total
+this proportion multiplies in the assembly is an angler-trip total. So `prop`
+is the share of **anglers** at a location classified guided, not the share of
+interviews — the two differ by the ratio of mean party sizes, and because
+guided parties run larger than unguided ones, the party-count version
+understates the guided share. `prop_parties` carries that older count-based
+figure and `prop_party_delta` the size of the correction; `prop_basis` flags
+the cells where `angler_count` coverage was too thin to weight by anglers at
+all and the party share stands in.
+
+`prop_hrs` re-weights the same split by hours reported per interview, since a
+guided trip and an unguided trip are not sampled at equal effort-intensity.
+`prop_delta` is provided so a location-year where it and `prop` diverge
+sharply is visible without recomputing it — a large delta says the trip-based
+and effort-based stories disagree, which is worth a second look before the
 proportion is applied to a Track A total.
 
 Note what this table does **not** contain: no row here carries

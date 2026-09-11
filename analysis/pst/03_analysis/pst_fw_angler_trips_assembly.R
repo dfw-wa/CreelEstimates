@@ -776,6 +776,13 @@ build_block_ratios <- function(trips_p1) {
 #             Guided-Boat, Unguided-Bank, Unguided-Boat) under A1-A4.
 # Sample size - not structural assumption - governs fallback to block-level
 # proportions.
+#
+# Units: `prop` from interview_proportions.qmd is the share of ANGLERS at a
+# location that were guided, matching the angler-trip total it multiplies here
+# (total_trips_est = angler-hours / hours-per-angler-trip). n_interviews stays a
+# count of interview PARTIES because it is used only as a sample size below -
+# 30 parties is 30 independent observations regardless of how many anglers sat
+# in them.
 
 MIN_INTERVIEWS <- 30   # below this, fall back to block pooled proportions
 
@@ -810,6 +817,21 @@ apply_track_b <- function(trips) {
   # row simply has no prop_block to fall back on below and, absent a
   # fishery-level match too, resolves to mode = "unknown" via
   # no_proportion_available, same as any other unresolved row. [R3]
+  # `prop` is an ANGLER share (see interview_proportions.qmd, "The proportion is
+  # angler-weighted, not party-weighted"), so pooling it across the fisheries in
+  # a block has to pool anglers, not parties: sum the block's guided anglers over
+  # the block's anglers at that location. An older props table written before
+  # that change carries no n_anglers column; rather than silently pooling an
+  # angler share by party weights, fall back to the party counts and log it [R2].
+  has_angler_counts <- all(c("n_anglers") %in% names(props))
+  if (!has_angler_counts) {
+    log_gap("interview_prop", NA, "gap",
+            paste("interview_mode_location_props.csv has no n_anglers column - it",
+                  "predates the angler-weighted proportion fix, so `prop` is a",
+                  "party-count share and the guided split is biased low. Re-run",
+                  "analysis/pst/02_ingest/interview_proportions.qmd."))
+  }
+
   block_lvl <- if (is.null(crosswalk)) {
     tibble(block = character(), .location_norm = character(),
           mode = character(), prop = double())
@@ -817,10 +839,22 @@ apply_track_b <- function(trips) {
     props |>
       left_join(crosswalk |> select(fishery_name, block), by = "fishery_name") |>
       group_by(block, .location_norm, mode) |>
-      summarise(prop = weighted.mean(prop, n_interviews), .groups = "drop") |>
-      group_by(block, .location_norm) |>
-      mutate(prop = prop / sum(prop)) |>
-      ungroup()
+      summarise(
+        n_anglers    = if (has_angler_counts) sum(n_anglers, na.rm = TRUE) else 0,
+        n_interviews = sum(n_interviews, na.rm = TRUE),
+        .groups = "drop_last"
+      ) |>
+      mutate(
+        .ang_tot = sum(n_anglers),
+        .int_tot = sum(n_interviews),
+        prop = case_when(
+          .ang_tot > 0 ~ n_anglers / .ang_tot,
+          .int_tot > 0 ~ n_interviews / .int_tot,
+          TRUE         ~ NA_real_
+        )
+      ) |>
+      ungroup() |>
+      select(block, .location_norm, mode, prop)
   }
 
   splittable <- trips |> filter(mode_basis == "pending_track_b")

@@ -58,9 +58,9 @@ and `lookup_tables/`.
 | Path | Contents |
 |---|---|
 | `01_intro_methods/` | `_`-prefixed Quarto fragments owning the framework: deliverable contract & scope (`_01_scope_and_contract.qmd`), the P1/P2/P3 tier hierarchy and Track A/B split (`_02_framework.qmd`), and the pipeline registry (`_03_pipeline_and_registry.qmd`). Never rendered standalone. |
-| `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. |
+| `02_ingest/` | Producer scripts that turn raw sources (DB, CRC workbooks, ad hoc R3 spreadsheets, interview records, the guide logbook extract) into the tidy CSVs that `03_analysis/` reads. One is a `.qmd` (`interview_proportions.qmd`); the rest are `.R`. |
 | `03_analysis/` | The two assembly scripts (`pst_fw_angler_trips_assembly.R`, `pst_fw_build_deliverables.R`), the P2/P3 helpers they source (`pst_p2_block_ratio.R`, `pst_crc_harvest_projection.R`), and the `_`-prefixed status/analysis children included by the parent doc. |
-| `outputs/` | Every CSV/RDS/XLSX written by the pipeline, in subfolders numbered by pipeline step (`01_crc_harvest/`, `02_multi_fishery_creel/`, `03_district_creel/`, `04_interview_proportions/`, `05_assembly/`), plus `deliverables/` for the status workbook and the simplified consultant-facing export. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
+| `outputs/` | Every CSV/RDS/XLSX written by the pipeline, in subfolders numbered by pipeline step (`01_crc_harvest/`, `02_multi_fishery_creel/`, `03_district_creel/`, `04_interview_proportions/`, `05_assembly/`, `07_guide_logbook/`), plus `deliverables/` for the status workbook and the simplified consultant-facing export. Nothing here is hand-edited; everything is regenerable by re-running the producing script. |
 | `correspondence/` | Point-in-time status write-ups (e.g. `PST_FW_Effort_Status_Brief_2026-08-06.md`) — snapshots for external audiences, not living documentation. |
 
 ## Run order
@@ -96,6 +96,16 @@ cleanly from an empty or partial pipeline — every chunk that touches an
 artifact checks for its presence first and reports a gap rather than
 raising an error. Run `interview_proportions.qmd` manually, on its own,
 whenever Track B proportions need refreshing.
+
+`02_ingest/parse_guide_logbook.R` is also a **standalone producer**, not yet
+wired into `run_pst_pipeline.R` or read by any `03_analysis/` script. It
+summarizes `input_files/pst/guide_logbook/guide_logbook_data_2026-09-02.rds`
+(WDFW's mandatory guide logbook) into CRC x year x trip-type angler-trip
+counts, written to `outputs/07_guide_logbook/`. This is a numerator only —
+it captures trips a licensed guide logged, not the total population of
+guided + unguided trips — so any guided-share proportion computed from it
+elsewhere is a minimum bound, not a point estimate. See the script's header
+for the full filtering/join logic and known coverage gaps.
 
 ## Design rule R2
 

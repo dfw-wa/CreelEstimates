@@ -59,6 +59,25 @@ if (is.null(props)) {
 }
 ```
 
+**This table is the fallback tier, not the one usually applied.** The producer
+also writes `interview_mode_location_props_month.csv` at
+fishery × year × **month** × location, and `apply_track_b()` resolves each
+stratum through a three-tier hierarchy: that month's own share where the month
+carries at least `MIN_INTERVIEWS` interviews, else this annual table, else the
+block pool. The tier is chosen per cell before the guided/unguided fan-out, so
+both modes always come from the same tier and the split repartitions the
+stratum instead of resizing it; `mode_basis` in the assembled output records
+which tier served each row, and `pst_fw_track_b_month_vs_annual.csv` reports
+what the flat annual share would have given for the same strata.
+
+The month tier exists because a single annual proportion applied across a
+season is an average over *interviews*, while the quantity it stands in for is
+an average over *effort*. Those agree only if guiding intensity is flat across
+the season or interviews are distributed exactly like effort. Drano Lake 2025
+is the clearest counterexample in this dataset: 79% of its boat effort falls in
+August and September, so a flat share there is an assumption rather than a
+measurement.
+
 An interview row is a fishing **party**, not a single angler, and the total
 this proportion multiplies in the assembly is an angler-trip total. So `prop`
 is the share of **anglers** at a location classified guided, not the share of

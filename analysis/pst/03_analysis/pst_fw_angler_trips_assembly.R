@@ -786,6 +786,10 @@ build_block_ratios <- function(trips_p1) {
 
 MIN_INTERVIEWS <- 30   # below this, fall back to block pooled proportions
 
+# Set by apply_track_b(); stays NULL if Track B never ran so the write below is
+# skipped rather than erroring. [R2]
+.track_b_month_vs_annual <- NULL
+
 apply_track_b <- function(trips) {
   props <- read_if(file.path(INTERVIEW_PROPS_DIR, "interview_mode_location_props.csv"),
                    "interview_prop",
@@ -798,6 +802,16 @@ apply_track_b <- function(trips) {
     return(trips)
   }
 
+  # Month-grain proportions are PREFERRED (see the tier hierarchy below). Their
+  # absence is a degrade, not a stop [R2]: without them every row resolves at
+  # the annual tier exactly as it did before this table existed.
+  props_month <- read_if(
+    file.path(INTERVIEW_PROPS_DIR, "interview_mode_location_props_month.csv"),
+    "interview_prop_month", severity = "note",
+    detail = paste("no month-grain proportion table - Track B falls back to the",
+                   "flat annual share for every river-year. Re-run",
+                   "analysis/pst/02_ingest/interview_proportions.qmd to produce it."))
+
   # Normalize the join key BEFORE joining, not after failing silently. A case
   # or spelling mismatch between this table's `location` ("Boat"/"Bank", as
   # recorded by angler_final) and interview_proportions.qmd's `location`
@@ -809,8 +823,35 @@ apply_track_b <- function(trips) {
   trips <- trips |> mutate(.location_norm = norm_loc(location))
   props <- props |> mutate(.location_norm = norm_loc(location)) |>
     select(-location)
+  if (!is.null(props_month)) {
+    props_month <- props_month |> mutate(.location_norm = norm_loc(location)) |>
+      select(-location)
+  }
 
-  fishery_lvl <- props |> filter(n_interviews >= MIN_INTERVIEWS)
+  # THE THRESHOLD IS A PROPERTY OF THE CELL, NOT OF ONE MODE.
+  #
+  # This previously read `filter(n_interviews >= MIN_INTERVIEWS)`, which tests
+  # each MODE's own interview count. That silently deleted trips. In a cell with
+  # 29 guided and 681 unguided interviews, the guided row failed the filter and
+  # was dropped outright - so the join returned only the unguided row, its prop
+  # of 0.959 was applied to the stratum, and the missing 4.1% of angler trips
+  # left the deliverable entirely rather than falling back to the block pool.
+  # It also read as measured: mode_basis said "fishery_year_interviews".
+  # Across the 2026-09 outputs that leaked 4,304 angler trips over 33 cells,
+  # and the dropped mode was `guided` in every single one - a systematic
+  # deletion of exactly the quantity Track B exists to estimate.
+  #
+  # n_location is the cell's sample size, which is what MIN_INTERVIEWS was
+  # always meant to gate: a cell either has enough interviews to post-stratify
+  # or it does not, and a rare mode inside a well-sampled cell is a real
+  # estimate of a small share, not a missing one.
+  keep_supported <- function(df) {
+    if (is.null(df)) return(NULL)
+    df |> filter(n_location >= MIN_INTERVIEWS, !is.na(prop))
+  }
+
+  fishery_lvl <- keep_supported(props)
+  month_lvl   <- keep_supported(props_month)
 
   # Block-pooled fallback needs fishery_name -> block from the crosswalk. If
   # the crosswalk didn't load, there is no way to pool by block [R2]: every
@@ -860,16 +901,64 @@ apply_track_b <- function(trips) {
   splittable <- trips |> filter(mode_basis == "pending_track_b")
   passthru   <- trips |> filter(mode_basis != "pending_track_b")
 
-  out <- splittable |>
-    select(-mode) |>
-    left_join(fishery_lvl |> select(fishery_name, year, .location_norm, mode, prop),
-              by = c("fishery_name", "year", ".location_norm"),
-              relationship = "many-to-many") |>
+  # ---- Tier hierarchy: month -> fishery-year -> block ------------------------
+  # A flat annual proportion applied to every month is an average over
+  # INTERVIEWS; the quantity it stands in for is an average over EFFORT. They
+  # agree only when guiding intensity is flat across the season or interviews
+  # are distributed exactly like effort. Drano Lake 2025 puts 79% of its boat
+  # effort in August-September, so a flat share there is an assumption, not a
+  # measurement. Applying a month's own share to that month's trips and summing
+  # makes the annual result effort-weighted without anyone having to supply the
+  # effort curve.
+  #
+  # The tier is resolved per cell BEFORE the fan-out so both modes of a cell are
+  # always drawn from the same tier - mixing a month share for guided with an
+  # annual share for unguided would not sum to 1 and would silently resize the
+  # design-based stratum total.
+  month_tier <- if (is.null(month_lvl)) NULL else {
+    month_lvl |>
+      mutate(month = as.numeric(month_num)) |>
+      select(fishery_name, year, month, .location_norm, mode, prop_month = prop)
+  }
+  year_tier <- fishery_lvl |>
+    select(fishery_name, year, .location_norm, mode, prop_year = prop)
+
+  prop_lookup <- splittable |>
+    distinct(fishery_name, year, month, block, .location_norm) |>
+    mutate(month = as.numeric(month)) |>
+    tidyr::crossing(mode = c("guided", "unguided"))
+
+  prop_lookup <- (if (is.null(month_tier)) {
+      prop_lookup |> mutate(prop_month = NA_real_)
+    } else {
+      prop_lookup |> left_join(
+        month_tier, by = c("fishery_name", "year", "month", ".location_norm", "mode"))
+    }) |>
+    left_join(year_tier, by = c("fishery_name", "year", ".location_norm", "mode")) |>
     left_join(block_lvl |> rename(prop_block = prop),
               by = c("block", ".location_norm", "mode")) |>
     mutate(
-      used_block   = is.na(prop),
-      prop         = coalesce(prop, prop_block),
+      prop = coalesce(prop_month, prop_year, prop_block),
+      prop_tier = case_when(
+        !is.na(prop_month) ~ "month_interviews",
+        !is.na(prop_year)  ~ "fishery_year_interviews",
+        !is.na(prop_block) ~ as.character(glue("block_pooled (n < {MIN_INTERVIEWS})")),
+        TRUE               ~ NA_character_
+      )
+    ) |>
+    # Dropping the unresolved rows here is what preserves the old behaviour for
+    # a cell no tier can serve: the join below misses entirely, leaving ONE row
+    # with mode = NA that becomes "unknown", rather than two NA-prop rows. [R3]
+    filter(!is.na(prop)) |>
+    select(fishery_name, year, month, block, .location_norm, mode, prop, prop_tier)
+
+  out_full <- splittable |>
+    select(-mode) |>
+    mutate(month = as.numeric(month)) |>
+    left_join(prop_lookup,
+              by = c("fishery_name", "year", "month", "block", ".location_norm"),
+              relationship = "many-to-many") |>
+    mutate(
       mode         = coalesce(mode, "unknown"),
       angler_trips = angler_trips * coalesce(prop, 1),
       # Harvest has to be apportioned by the SAME proportion. Splitting one
@@ -877,15 +966,63 @@ apply_track_b <- function(trips) {
       # each row would duplicate the catch and wreck any downstream
       # trips-per-salmon computed off this table.
       total_salmon_harvest = total_salmon_harvest * coalesce(prop, 1),
-      mode_basis = case_when(
-        is.na(prop) ~ "no_proportion_available",
-        used_block  ~ glue("block_pooled (n < {MIN_INTERVIEWS})"),
-        TRUE        ~ "fishery_year_interviews"
-      )
+      mode_basis = coalesce(prop_tier, "no_proportion_available")
+    )
+
+  # What the flat annual share would have produced for the same strata, so the
+  # effort weighting's effect is reported rather than assumed. Written out as
+  # pst_fw_track_b_month_vs_annual.csv.
+  .track_b_month_vs_annual <<- splittable |>
+    group_by(block, fishery_name, year, .location_norm) |>
+    summarise(stratum_trips = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
+    left_join(
+      year_tier |> filter(mode == "guided") |>
+        select(fishery_name, year, .location_norm, prop_year),
+      by = c("fishery_name", "year", ".location_norm")) |>
+    left_join(
+      out_full |> filter(mode == "guided") |>
+        group_by(fishery_name, year, .location_norm) |>
+        summarise(guided_applied = sum(angler_trips, na.rm = TRUE),
+                  tiers = paste(sort(unique(mode_basis)), collapse = "; "),
+                  .groups = "drop"),
+      by = c("fishery_name", "year", ".location_norm")) |>
+    mutate(
+      guided_flat_annual = stratum_trips * prop_year,
+      guided_delta       = guided_applied - guided_flat_annual,
+      pct_change         = if_else(guided_flat_annual > 0,
+                                   100 * guided_delta / guided_flat_annual, NA_real_)
     ) |>
-    select(-prop, -prop_block, -used_block, -.location_norm)
+    rename(location = .location_norm) |>
+    arrange(desc(abs(guided_delta)))
+
+  out <- out_full |> select(-prop, -prop_tier, -.location_norm)
 
   result <- bind_rows(out, passthru |> select(-.location_norm)) |> canon()
+
+  # CONSERVATION CHECK. The proportions must repartition each stratum, never
+  # resize it: every cell's modes sum to 1, so total trips out must equal total
+  # trips in. This is the check the old per-mode MIN_INTERVIEWS filter would
+  # have failed - it dropped a mode's row and quietly shrank the stratum.
+  trips_in  <- sum(splittable$angler_trips, na.rm = TRUE)
+  trips_out <- sum(out$angler_trips, na.rm = TRUE)
+  if (trips_in > 0 && abs(trips_out - trips_in) / trips_in > 1e-6) {
+    log_gap("track_b_join", NA, "blocker",
+            glue("Track B changed the trip total: {round(trips_in)} in vs ",
+                 "{round(trips_out)} out ({round(trips_out - trips_in)} trips). ",
+                 "The mode proportions do not sum to 1 within some cell, so ",
+                 "angler trips are being created or destroyed by the split."))
+  }
+
+  # Which tier actually served the trips, so a run that silently lost the month
+  # table is visible as a drop in month_interviews rather than as nothing.
+  tier_mix <- out |>
+    group_by(mode_basis) |>
+    summarise(trips = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
+    mutate(pct = round(100 * trips / sum(trips), 1)) |>
+    arrange(desc(trips))
+  log_gap("track_b_tier", NA, "note",
+          glue("Track B proportion tiers by angler trips: ",
+               "{paste(tier_mix$mode_basis, ' ', tier_mix$pct, '%', sep = '', collapse = '; ')}"))
 
   # Report the match rate instead of letting a 100%-unknown result pass
   # unremarked. This is the check that would have caught this exact failure.
@@ -1777,6 +1914,10 @@ write_csv(effort_by_mode_location,
 write_csv(effort_by_area,
           file.path(OUT_DIR, "pst_fw_trips_by_crc_area.csv"))
 write_csv(effort_long, file.path(OUT_DIR, "pst_fw_effort_long.csv"))
+if (!is.null(.track_b_month_vs_annual)) {
+  write_csv(.track_b_month_vs_annual,
+            file.path(OUT_DIR, "pst_fw_track_b_month_vs_annual.csv"))
+}
 write_csv(provenance,  file.path(OUT_DIR, "pst_fw_provenance_ledger.csv"))
 write_csv(gaps,        file.path(OUT_DIR, "pst_fw_gap_register.csv"))
 write_csv(coverage,    file.path(OUT_DIR, "pst_fw_crc_coverage.csv"))

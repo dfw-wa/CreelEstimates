@@ -1237,6 +1237,34 @@ angler share. The previous version of this export used the party count, which
 is why the Track B guided totals it produced were biased low. See
 `prop_party_delta` in the output for the size of the correction cell by cell.
 
+### Why the month grain exists
+
+A single annual proportion applied to every month of a season is a flat
+average over interviews, but the quantity it stands in for is an
+**effort-weighted** average — the share of the year's angler trips that were
+guided. Those two agree only when guiding intensity is flat across the season,
+or when interviews are distributed across months in the same proportion as
+effort. Neither holds in general.
+
+Drano Lake 2025 is the worst case in this dataset: 79% of the season's boat
+effort falls in August and September, with July and October contributing about
+10% each. If the guided share moves across those months at all — and on a
+spring-Chinook-and-fall river it should — a flat annual share applied to a
+sharply peaked effort curve is biased, in whichever direction the peak months
+differ from the season average.
+
+So this document exports **two** tables:
+
+| File | Grain | Role |
+|---|---|---|
+| `interview_mode_location_props.csv` | fishery × year × location | fallback, and the table the Track B report renders |
+| `interview_mode_location_props_month.csv` | fishery × year × **month** × location | preferred; the assembly applies it per month |
+
+The assembly prefers the month table and falls back to the annual one where a
+month's interview sample is too thin, so the effort weighting comes for free:
+each month's trips are split by that month's own share, and the annual total is
+the sum. Nothing needs to know the effort curve in advance.
+
 **Fallback.** `angler_count` is not universally recorded. When a
 fishery-year-location cell has usable angler counts on fewer than
 `MIN_ANGLER_COUNT_COVERAGE` of its interviews — or when a mode with
@@ -1256,88 +1284,137 @@ if (!dir.exists(assembly_dir)) dir.create(assembly_dir, recursive = TRUE)
 # before the angler-weighted proportion is trusted over the party-count one.
 MIN_ANGLER_COUNT_COVERAGE <- 0.5
 
-mode_location_props <- interviews |>
+# The interview rows both exports are built from, classified once so the two
+# grains cannot disagree about which interviews are in scope.
+props_input <- interviews |>
   filter(!is.na(guided_status), !is.na(angler_final), !is.na(year)) |>
   mutate(
-    location = str_to_lower(angler_final),
-    mode     = str_to_lower(guided_status)
-  ) |>
-  group_by(fishery_name, year, location, mode) |>
-  summarise(
-    n_interviews       = n(),                             # parties
-    n_anglers          = sum(angler_count_num, na.rm = TRUE),
-    n_int_with_anglers = sum(!is.na(angler_count_num)),
-    .groups = "drop"
-  ) |>
-  # Both modes must exist in every fishery-year-location cell so that a
-  # structural zero (a fishery with no guided effort) is an explicit 0 rather
-  # than an absent row the assembly would read as "no proportion available".
-  complete(
-    nesting(fishery_name, year, location), mode = c("guided", "unguided"),
-    fill = list(n_interviews = 0L, n_anglers = 0, n_int_with_anglers = 0L)
-  ) |>
-  group_by(fishery_name, year, location) |>
-  mutate(
-    n_location            = sum(n_interviews),
-    n_anglers_location    = sum(n_anglers),
-    angler_count_coverage = if_else(n_location > 0,
-                                    sum(n_int_with_anglers) / n_location,
-                                    NA_real_),
-    # A mode that has interviews but not one usable angler count would
-    # contribute 0 anglers and be estimated at a spurious 0 share - that is a
-    # coverage hole, not a structural zero, so the whole cell falls back.
-    .mode_uncovered = any(n_interviews > 0 & n_int_with_anglers == 0),
-    prop_anglers = if_else(n_anglers_location > 0,
-                           n_anglers / n_anglers_location, NA_real_),
-    prop_parties = if_else(n_location > 0, n_interviews / n_location, NA_real_),
-    .use_anglers = !is.na(angler_count_coverage) &
-                   angler_count_coverage >= MIN_ANGLER_COUNT_COVERAGE &
-                   !.mode_uncovered & n_anglers_location > 0,
-    prop = if_else(.use_anglers, prop_anglers, prop_parties),
-    prop_basis = case_when(
-      n_location == 0 ~ NA_character_,
-      .use_anglers    ~ "angler_weighted",
-      TRUE            ~ "party_count_fallback"
-    ),
-    mean_party_size = if_else(n_int_with_anglers > 0,
-                              n_anglers / n_int_with_anglers, NA_real_)
-  ) |>
-  ungroup() |>
-  select(-.mode_uncovered, -.use_anglers, -n_int_with_anglers)
+    location  = str_to_lower(angler_final),
+    mode      = str_to_lower(guided_status),
+    month_num = month(event_date)
+  )
+
+# Both exports run through this, so the angler weighting and the fallback rules
+# are defined once. `keys` is everything the proportion is conditioned on
+# except `mode`; the proportion always sums to 1 within a `keys` cell.
+build_mode_props <- function(df, keys) {
+  df |>
+    group_by(across(all_of(c(keys, "mode")))) |>
+    summarise(
+      n_interviews       = n(),                           # parties
+      n_anglers          = sum(angler_count_num, na.rm = TRUE),
+      n_int_with_anglers = sum(!is.na(angler_count_num)),
+      .groups = "drop"
+    ) |>
+    # Both modes must exist in every cell so that a structural zero (a fishery
+    # with no guided effort) is an explicit 0 rather than an absent row the
+    # assembly would read as "no proportion available".
+    complete(
+      nesting(!!!syms(keys)), mode = c("guided", "unguided"),
+      fill = list(n_interviews = 0L, n_anglers = 0, n_int_with_anglers = 0L)
+    ) |>
+    group_by(across(all_of(keys))) |>
+    mutate(
+      n_location            = sum(n_interviews),
+      n_anglers_location    = sum(n_anglers),
+      angler_count_coverage = if_else(n_location > 0,
+                                      sum(n_int_with_anglers) / n_location,
+                                      NA_real_),
+      # A mode that has interviews but not one usable angler count would
+      # contribute 0 anglers and be estimated at a spurious 0 share - that is a
+      # coverage hole, not a structural zero, so the whole cell falls back.
+      .mode_uncovered = any(n_interviews > 0 & n_int_with_anglers == 0),
+      prop_anglers = if_else(n_anglers_location > 0,
+                             n_anglers / n_anglers_location, NA_real_),
+      prop_parties = if_else(n_location > 0, n_interviews / n_location, NA_real_),
+      .use_anglers = !is.na(angler_count_coverage) &
+                     angler_count_coverage >= MIN_ANGLER_COUNT_COVERAGE &
+                     !.mode_uncovered & n_anglers_location > 0,
+      prop = if_else(.use_anglers, prop_anglers, prop_parties),
+      prop_basis = case_when(
+        n_location == 0 ~ NA_character_,
+        .use_anglers    ~ "angler_weighted",
+        TRUE            ~ "party_count_fallback"
+      ),
+      mean_party_size = if_else(n_int_with_anglers > 0,
+                                n_anglers / n_int_with_anglers, NA_real_)
+    ) |>
+    ungroup() |>
+    select(-.mode_uncovered, -.use_anglers, -n_int_with_anglers)
+}
 
 # Hours-weighted companion, carried as a diagnostic rather than the primary.
 # Angler counts are the primary because the assembly multiplies an angler-*trip*
 # total; an hours-weighted proportion answers a different question (share of
 # angler-hours, not share of angler-trips) and would bias toward whichever mode
 # fishes longer per trip.
-mode_location_props_hrs <- interviews |>
-  filter(!is.na(guided_status), !is.na(angler_final), !is.na(year),
-         !is.na(fishing_time_total)) |>
-  mutate(location = str_to_lower(angler_final),
-         mode     = str_to_lower(guided_status)) |>
-  group_by(fishery_name, year, location, mode) |>
-  summarise(hrs = sum(fishing_time_total), .groups = "drop_last") |>
-  group_by(fishery_name, year, location) |>
-  mutate(prop_hrs = hrs / sum(hrs)) |>
-  ungroup() |>
-  select(fishery_name, year, location, mode, prop_hrs)
+build_hrs_props <- function(df, keys) {
+  df |>
+    filter(!is.na(fishing_time_total)) |>
+    group_by(across(all_of(c(keys, "mode")))) |>
+    summarise(hrs = sum(fishing_time_total), .groups = "drop") |>
+    group_by(across(all_of(keys))) |>
+    mutate(prop_hrs = hrs / sum(hrs)) |>
+    ungroup() |>
+    select(all_of(c(keys, "mode", "prop_hrs")))
+}
 
-mode_location_props <- mode_location_props |>
-  left_join(mode_location_props_hrs, by = c("fishery_name", "year", "location", "mode")) |>
-  mutate(
-    prop_delta       = prop - prop_hrs,
-    # How much the angler weighting moved the answer. Positive on guided rows
-    # means the party-count version was understating the guided share.
-    prop_party_delta = prop - prop_parties
-  ) |>
-  arrange(fishery_name, year, location, mode)
+finish_props <- function(props, hrs, keys) {
+  props |>
+    left_join(hrs, by = c(keys, "mode")) |>
+    mutate(
+      prop_delta       = prop - prop_hrs,
+      # How much the angler weighting moved the answer. Positive on guided rows
+      # means the party-count version was understating the guided share.
+      prop_party_delta = prop - prop_parties
+    ) |>
+    arrange(across(all_of(c(keys, "mode"))))
+}
+
+ANNUAL_KEYS <- c("fishery_name", "year", "location")
+MONTH_KEYS  <- c("fishery_name", "year", "month_num", "location")
+
+mode_location_props <- finish_props(
+  build_mode_props(props_input, ANNUAL_KEYS),
+  build_hrs_props(props_input, ANNUAL_KEYS),
+  ANNUAL_KEYS
+)
+
+# Month grain. The assembly applies this first and falls back to the annual
+# table where a month's sample is too thin - see "Why the month grain exists"
+# above. Note the two tables will NOT generally agree when summed: an annual
+# proportion is a flat average over interviews, while applying the month
+# proportions to monthly effort is an effort-weighted average, and the two
+# differ exactly when guiding intensity and fishing effort peak in different
+# months.
+mode_location_props_month <- finish_props(
+  build_mode_props(props_input, MONTH_KEYS),
+  build_hrs_props(props_input, MONTH_KEYS),
+  MONTH_KEYS
+)
 
 write_csv(mode_location_props,
           file.path(assembly_dir, "interview_mode_location_props.csv"))
+write_csv(mode_location_props_month,
+          file.path(assembly_dir, "interview_mode_location_props_month.csv"))
 
-cat(glue("Wrote {nrow(mode_location_props)} rows covering ",
+cat(glue("Wrote {nrow(mode_location_props)} annual rows and ",
+         "{nrow(mode_location_props_month)} month rows covering ",
          "{n_distinct(mode_location_props$fishery_name)} fisheries × ",
          "{n_distinct(mode_location_props$year)} years\n\n"))
+
+# How much of the annual interview base survives at the month grain, at the
+# threshold the assembly actually uses. A low number here means most river-years
+# will still fall back to the flat annual share.
+month_support <- mode_location_props_month |>
+  distinct(fishery_name, year, month_num, location, n_location) |>
+  summarise(
+    cells        = n(),
+    cells_ge_30  = sum(n_location >= 30),
+    pct_ge_30    = round(100 * mean(n_location >= 30), 1)
+  )
+cat("Month-grain support (fishery x year x month x location cells):\n")
+print(as.data.frame(month_support))
 
 # How often the angler weighting was actually available, and how much it moved
 # the guided share where it was. A fallback rate that is anything but small
@@ -1359,17 +1436,23 @@ if (nrow(guided_shift) > 0) {
   ))
 }
 
-# Sanity: every cell with support must sum to 1
-chk <- mode_location_props |>
-  filter(n_location > 0) |>
-  group_by(fishery_name, year, location) |>
-  summarise(s = sum(prop), .groups = "drop") |>
-  filter(abs(s - 1) > 1e-8)
-if (nrow(chk) > 0) {
-  warning(glue("{nrow(chk)} fishery-year-location cells do not sum to 1"))
-} else {
-  cat("All supported cells sum to 1.0\n")
+# Sanity: every cell with support must sum to 1, at BOTH grains. A cell that
+# does not is one the assembly would silently shrink or inflate a design-based
+# effort total with.
+check_sums <- function(df, keys, label) {
+  chk <- df |>
+    filter(n_location > 0) |>
+    group_by(across(all_of(keys))) |>
+    summarise(s = sum(prop), .groups = "drop") |>
+    filter(abs(s - 1) > 1e-8)
+  if (nrow(chk) > 0) {
+    warning(glue("{nrow(chk)} {label} cells do not sum to 1"))
+  } else {
+    cat(glue("All supported {label} cells sum to 1.0\n\n"))
+  }
 }
+check_sums(mode_location_props, ANNUAL_KEYS, "fishery-year-location")
+check_sums(mode_location_props_month, MONTH_KEYS, "fishery-year-month-location")
 ```
 
 ### Cells resting on thin support

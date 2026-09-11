@@ -147,9 +147,14 @@ check_step4_outputs <- function() {
   out_dir <- here::here("analysis", "pst", "outputs", "04_interview_proportions")
   required <- c("interview_mode_location_props.csv", "interview_batch_crosscheck.csv",
                 "all_interviews.csv", "all_interviews.rds")
+  # The month-grain table is PREFERRED by apply_track_b() but not required: its
+  # absence degrades Track B to the flat annual share rather than stopping the
+  # run [R2], so it is reported separately instead of blocking step 5.
+  optional <- "interview_mode_location_props_month.csv"
   present <- file.exists(file.path(out_dir, required))
-  list(all_present = all(present),
-       missing     = required[!present])
+  list(all_present    = all(present),
+       missing        = required[!present],
+       missing_optional = optional[!file.exists(file.path(out_dir, optional))])
 }
 
 # ---- 3. Guarded runner --------------------------------------------------------
@@ -215,6 +220,16 @@ if (step4$all_present) {
     "Render it yourself: quarto render analysis/pst/02_ingest/",
     "interview_proportions.qmd -- step 5 below will still run and will log ",
     "the missing interview_prop input as a gap rather than fail."
+  ))
+}
+if (length(step4$missing_optional) > 0) {
+  cli::cli_alert_warning(glue(
+    "Month-grain proportions missing ({paste(step4$missing_optional, collapse = ', ')}): ",
+    "Track B will apply one flat annual guided share to every month instead of ",
+    "each month's own. That is an interview-weighted average standing in for an ",
+    "effort-weighted one, and it biases any fishery whose effort and guiding ",
+    "intensity peak in different months. Re-render interview_proportions.qmd ",
+    "to produce it."
   ))
 }
 

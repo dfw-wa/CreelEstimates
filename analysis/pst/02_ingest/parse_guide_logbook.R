@@ -51,6 +51,19 @@
 #     Non-guided rows are dropped here since this table is meant to feed a
 #     guided-share proportion), with the angler-trip count and the
 #     crc_area_lut.csv name/region attached.
+#   analysis/pst/outputs/07_guide_logbook/guide_logbook_angler_trips_by_crc_year_month.csv
+#     Same, one row finer: catch_area_code x calendar_year x calendar_month.
+#     Added 2026-09-11 because the annual table CANNOT be compared against
+#     this repo's own creel-based estimates without it. The logbook is
+#     calendar-year and species-agnostic; the creel estimates are
+#     salmon-directed effort inside a season window (e.g. Hoh fall salmon
+#     2023 surveyed September-October only). Comparing the two annually
+#     charges a river's entire winter steelhead guide season against a
+#     two-month fall salmon creel - on the Hoh that produced a "minimum"
+#     guided count 2.8x our whole boat-trip estimate, which is a scope
+#     mismatch, not a bound violation. Any comparison or floor built off
+#     this data must restrict to the months the creel actually operated;
+#     see guide_logbook_vs_interview_diagnostic.R (03_analysis).
 #   analysis/pst/outputs/07_guide_logbook/guide_logbook_coverage_summary.csv
 #     Row counts for each exclusion (void, bad year, unresolved CRC) so
 #     downstream users can see how much of the raw extract the summary
@@ -74,6 +87,7 @@ out_dir <- here("analysis", "pst", "outputs", "07_guide_logbook")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 OUT_SUMMARY_CSV  <- file.path(out_dir, "guide_logbook_angler_trips_by_crc_year.csv")
+OUT_MONTH_CSV    <- file.path(out_dir, "guide_logbook_angler_trips_by_crc_year_month.csv")
 OUT_COVERAGE_CSV <- file.path(out_dir, "guide_logbook_coverage_summary.csv")
 
 YEARS_SCOPE <- 2020:2026
@@ -96,9 +110,10 @@ trip_clean <- trip |>
   mutate(
     trip_type_name = trip_type_lut$name[match(trip_type_id, trip_type_lut$id)],
     crc_code       = water_body_lut$crc_code[match(water_body_id, water_body_lut$id)],
-    trip_year      = as.integer(format(trip_date, "%Y"))
+    trip_year      = as.integer(format(trip_date, "%Y")),
+    trip_month     = as.integer(format(trip_date, "%m"))
   ) |>
-  select(id, trip_type_name, crc_code, trip_year, is_void)
+  select(id, trip_type_name, crc_code, trip_year, trip_month, is_void)
 
 # 3. Coverage accounting - count exclusions before applying them --------------
 
@@ -154,6 +169,18 @@ angler_trips_by_crc_year <- trip_angler_clean |>
   left_join(crc_lut, by = c("crc_code" = "catch_area_code")) |>
   arrange(crc_code, trip_year, trip_type_name)
 
+# Month-level companion of the same table. Same filters, same Guided-only
+# and Paying/Comped-only definitions - the ONLY difference is that
+# trip_month survives the aggregation, so a downstream comparison can
+# restrict to the months a creel survey actually ran. See this file's
+# header for why an annual-only table is not comparable to the creel
+# estimates at all.
+angler_trips_by_crc_year_month <- trip_angler_clean |>
+  filter(trip_type_name == "Guided") |>
+  count(crc_code, trip_year, trip_month, trip_type_name, name = "angler_trips") |>
+  left_join(crc_lut, by = c("crc_code" = "catch_area_code")) |>
+  arrange(crc_code, trip_year, trip_month)
+
 n_crc_unmatched <- angler_trips_by_crc_year |>
   filter(is.na(catch_area_description)) |>
   distinct(crc_code) |>
@@ -170,7 +197,9 @@ if (n_crc_unmatched > 0L) {
 cli::cli_h1("Writing output")
 
 readr::write_csv(angler_trips_by_crc_year, OUT_SUMMARY_CSV)
+readr::write_csv(angler_trips_by_crc_year_month, OUT_MONTH_CSV)
 readr::write_csv(coverage, OUT_COVERAGE_CSV)
 
 cli::cli_alert_success("Wrote {nrow(angler_trips_by_crc_year)} rows to {OUT_SUMMARY_CSV}")
+cli::cli_alert_success("Wrote {nrow(angler_trips_by_crc_year_month)} rows to {OUT_MONTH_CSV}")
 cli::cli_alert_success("Wrote {nrow(coverage)} rows to {OUT_COVERAGE_CSV}")

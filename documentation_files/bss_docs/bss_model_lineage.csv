@@ -1,0 +1,6 @@
+﻿model_file_name,date_released,study_design,comment
+BSS_creel_model_02_2021-01-22.stan,1/22/2021,Standard,Original model.
+BSS_creel_model_02_2024-04-03.stan,4/3/2024,Drano,Adaptation of original model to accommodate Drano study design.
+BSS_creel_model_02_2021-01-22_ppc.stan,12/18/2025,Standard,"Update to original model that added posterior predictive distribution (PPD) calculations to the generated quanities block of the model, enabling posterior predicitive checking (PPC) of model fit."
+BSS_creel_model_02_2024-07-24.stan,7/24/2024,,
+BSS_creel_model_02_2026-09-11.stan,9/11/2026,Drano,"Update to the Drano model (2024-04-03). Adds the PPD calculations to the generated quantities, enabling PPCs of model fit for Drano fisheries as well."

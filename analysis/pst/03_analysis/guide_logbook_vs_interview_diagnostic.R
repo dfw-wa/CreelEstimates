@@ -561,16 +561,9 @@ p2 <- ggplot(paired, aes(x = n_guided_anglers, y = lb_guided)) +
                     "n = {nrow(paired)} | {fit_lab} | dashed line = 1 logged trip per guided angler"),
     x = glue("Anglers in interviews classified as guided ({INT_GRAIN})"),
     y = "Guide logbook guided angler trips",
-    colour = "Block",
-    caption = str_wrap(paste(
-      "No TRIP expansion on the x axis - sampler classifications, scaled from parties to",
-      "anglers only, so both axes are in client units. A creel samples a fraction of all",
-      "trips, so points are expected well above the dashed line; what informs is their",
-      "position relative to each other, not which side of it they fall on."
-    ), width = 95)
+    colour = "Block"
   ) +
-  theme_minimal(base_size = 11) +
-  theme(plot.caption = element_text(hjust = 0))
+  theme_minimal(base_size = 11)
 
 plot2_path <- file.path(OUT_DIR, "guide_logbook_vs_guided_interviews_scatter.png")
 suppressWarnings(ggsave(plot2_path, p2, width = 9, height = 6.5, dpi = 150))

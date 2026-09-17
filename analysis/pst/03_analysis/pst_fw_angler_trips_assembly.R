@@ -1944,15 +1944,20 @@ print(effort_by_mode_location |> group_by(tier) |>
 # so P2 rows are permanently unknown on both dimensions. That is the honest
 # number, not a regression - the denominator grew, the resolvable share didn't.
 message("\nunresolved mode share (P2 and district_creel can never be resolved):")
+# The conditional sums MUST be computed before angler_trips is reassigned.
+# summarise() evaluates sequentially, so `angler_trips = sum(angler_trips)`
+# replaces the per-row vector with a scalar, and a later
+# `angler_trips[mode == "unknown"]` indexes that scalar with a length-n logical
+# and returns NA - which is exactly what this diagnostic printed for every
+# block until it was fixed.
 print(effort_by_mode_location |> group_by(block) |>
-        summarise(angler_trips = sum(angler_trips),
-                  pct_mode_unknown =
-                    round(100 * sum(angler_trips[mode == "unknown"]) /
-                            sum(angler_trips), 1),
-                  pct_from_p2 =
-                    round(100 * sum(angler_trips[grepl("P2", tier)]) /
-                            sum(angler_trips), 1),
-                  .groups = "drop"))
+        summarise(unknown_trips = sum(angler_trips[mode == "unknown"]),
+                  p2_trips      = sum(angler_trips[grepl("P2", tier)]),
+                  angler_trips  = sum(angler_trips),
+                  pct_mode_unknown = round(100 * unknown_trips / angler_trips, 1),
+                  pct_from_p2      = round(100 * p2_trips / angler_trips, 1),
+                  .groups = "drop") |>
+        select(block, angler_trips, pct_mode_unknown, pct_from_p2))
 
 if (!is.null(p2$ratios) && nrow(p2$ratios) > 0) {
   message("\nDescriptive trips-per-salmon by block-year (creel trips / creel harvest):")

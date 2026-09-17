@@ -133,24 +133,46 @@ if (!is.null(props) && !is.null(effort)) {
     filter(mode == "guided", n_interviews < 30, n_interviews > 0, n_location >= 30) |>
     select(fishery_name, year, location, n_guided = n_interviews, n_cell = n_location)
 
-  recovered <- at_risk |>
-    left_join(
-      effort |>
-        filter(tier == "P1", mode == "guided") |>
-        mutate(location = tolower(location)) |>
-        group_by(fishery_name, year, location) |>
-        summarise(guided_trips = sum(angler_trips, na.rm = TRUE), .groups = "drop"),
-      by = c("fishery_name", "year", "location")
-    ) |>
-    mutate(guided_trips = round(coalesce(guided_trips, 0)))
+  # p1_trips and guided_trips are both read off the raw angler_trips vector
+  # before anything reassigns it - see the note in the assembly about the
+  # summarise() evaluation-order hazard.
+  eff_cells <- effort |>
+    filter(tier == "P1") |>
+    mutate(location = tolower(location)) |>
+    group_by(fishery_name, year, location) |>
+    summarise(p1_trips     = sum(angler_trips, na.rm = TRUE),
+              guided_trips = sum(angler_trips[mode == "guided"], na.rm = TRUE),
+              .groups = "drop")
 
-  print(as.data.frame(recovered))
-  n_missing <- sum(recovered$guided_trips == 0)
-  if (n_missing > 0) {
-    cat(glue("\n!! {n_missing} of these still have no guided trips - investigate.\n"))
+  # A props cell with no P1 rows at all is not a Track B failure - the fishery
+  # simply is not in the salmon deliverable (steelhead and gamefish fisheries,
+  # and years outside YEARS_SCOPE, are interviewed but never assembled). Only a
+  # cell that HAS P1 trips and still shows no guided rows is a real problem.
+  recovered <- at_risk |>
+    left_join(eff_cells, by = c("fishery_name", "year", "location")) |>
+    mutate(
+      p1_trips     = round(coalesce(p1_trips, 0)),
+      guided_trips = round(coalesce(guided_trips, 0)),
+      status = case_when(
+        p1_trips == 0    ~ "n/a - not in the salmon deliverable",
+        guided_trips > 0 ~ "recovered",
+        TRUE             ~ "STILL ZERO - investigate"
+      )
+    )
+
+  recovered |> count(status, name = "cells") |> as.data.frame() |> print()
+
+  cat(glue("\nGuided angler trips recovered: ",
+           "{round(sum(recovered$guided_trips))}\n\n"))
+
+  still_zero <- recovered |> filter(status == "STILL ZERO - investigate")
+  if (nrow(still_zero) > 0) {
+    cat("-- Cells with P1 trips but no guided rows (real, investigate) --\n")
+    still_zero |>
+      select(fishery_name, year, location, n_guided, n_cell, p1_trips) |>
+      arrange(desc(p1_trips)) |> as.data.frame() |> print()
   } else {
-    cat(glue("\nAll {nrow(recovered)} carry guided trips. Total recovered: ",
-             "{round(sum(recovered$guided_trips))} angler trips.\n"))
+    cat("Every at-risk cell that reaches the deliverable now carries guided trips.\n")
   }
 }
 

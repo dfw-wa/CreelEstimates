@@ -74,13 +74,51 @@ for (nm in names(gl)) {
 # values printed - a lookup table's values are what actually answer the
 # question ("Drift Boat"/"Sled"/"Bank" vs. a meaningless integer key).
 
+# Several columns in this extract are integer64, and some (`version`) are
+# integer64 bit patterns being read as denormal doubles - printing those as
+# characters yields hundreds of digits per value and segfaulted the first
+# version of this script. Coerce to something printable and cap the width.
+safe_chr <- function(v) {
+  if (inherits(v, "integer64")) v <- suppressWarnings(as.numeric(v))
+  if (is.numeric(v)) {
+    v <- suppressWarnings(as.numeric(v))
+    fin <- v[is.finite(v) & v != 0]
+    # Only reach for scientific notation when a value would otherwise print
+    # hundreds of digits (the denormal `version` columns). Ordinary counts and
+    # hours stay readable.
+    pathological <- length(fin) > 0 &&
+      (max(abs(fin)) >= 1e9 || min(abs(fin)) < 1e-4)
+    return(if (pathological) format(signif(v, 4), scientific = TRUE, trim = TRUE)
+           else format(signif(v, 6), scientific = FALSE, trim = TRUE))
+  }
+  substr(as.character(v), 1, 60)
+}
+
+# Sort numerics as numbers, everything else as text, then format. Sorting the
+# formatted strings instead would order 100 before 2.
+safe_sorted <- function(v) {
+  if (inherits(v, "integer64")) v <- suppressWarnings(as.numeric(v))
+  if (is.numeric(v)) v <- sort(v) else v <- sort(as.character(v))
+  safe_chr(v)
+}
+
+# Columns that are audit plumbing rather than content - never informative here,
+# and several are the pathological ones above.
+NOISE <- paste0("create_datetime|modify_datetime|obsolete_datetime|receive_datetime",
+                "|client_create|client_modify|^version$|platform|operating_system",
+                "|client_version|app_version|sort_order|client_trip_id")
+
+drop_noise <- function(x) x[, !str_detect(names(x), regex(NOISE, ignore_case = TRUE)),
+                            drop = FALSE]
+
 show_values <- function(v, indent = "   ") {
   u <- unique(v[!is.na(v)])
-  if (length(u) <= 30) {
-    cat(indent, "values: ", paste(sort(as.character(u)), collapse = " | "), "\n", sep = "")
+  out <- tryCatch(safe_sorted(u), error = function(e) safe_chr(u))
+  if (length(out) <= 25) {
+    cat(indent, "values: ", paste(out, collapse = " | "), "\n", sep = "")
   } else {
-    cat(indent, length(u), " distinct; first 15: ",
-        paste(head(sort(as.character(u)), 15), collapse = " | "), "\n", sep = "")
+    cat(indent, length(out), " distinct; first 12: ",
+        paste(head(out, 12), collapse = " | "), "\n", sep = "")
   }
 }
 
@@ -97,13 +135,14 @@ probe <- function(pattern, label) {
     if (!is.data.frame(x)) next
     if (!str_detect(nm, regex(pattern, ignore_case = TRUE))) next
     hits <- hits + 1L
-    cat("\n-- TABLE ", nm, " (", nrow(x), " rows) - printed in full:\n", sep = "")
-    if (nrow(x) <= 40) {
-      print(as.data.frame(x), row.names = FALSE)
-    } else {
-      print(as.data.frame(head(x, 40)), row.names = FALSE)
-      cat("   ... ", nrow(x) - 40, " more rows\n", sep = "")
-    }
+    xs <- drop_noise(x)
+    cat("\n-- TABLE ", nm, " (", nrow(x), " rows, ",
+        ncol(x), " cols; showing <=15 rows, plumbing columns dropped):\n", sep = "")
+    tryCatch({
+      xs <- xs |> mutate(across(everything(), safe_chr))
+      print(as.data.frame(head(xs, 15)), row.names = FALSE)
+      if (nrow(x) > 15) cat("   ... ", nrow(x) - 15, " more rows\n", sep = "")
+    }, error = function(e) cat("   (could not print: ", conditionMessage(e), ")\n", sep = ""))
   }
 
   for (nm in names(gl)) {

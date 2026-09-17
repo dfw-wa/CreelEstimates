@@ -83,6 +83,18 @@ effort_by_mode_location <- read_if(
   file.path(IN_DIR, "pst_fw_trips_by_mode_location.csv"),
   "effort_by_mode_location"
 )
+# mode_basis was added to the assembly's output after this script started
+# consuming it. An older CSV simply has no such column, so stand one in rather
+# than erroring [R2] - the Mode Basis column then reads "Not available"
+# throughout, which is honest about what that file can support. [R3]
+if (!is.null(effort_by_mode_location) &&
+    !"mode_basis" %in% names(effort_by_mode_location)) {
+  log_note("effort_by_mode_location",
+           paste("no mode_basis column - this CSV predates the Track B tier",
+                 "reporting, so Mode Basis cannot be populated. Re-run",
+                 "pst_fw_angler_trips_assembly.R."))
+  effort_by_mode_location$mode_basis <- NA_character_
+}
 effort_by_area <- read_if(
   file.path(IN_DIR, "pst_fw_trips_by_crc_area.csv"),
   "effort_by_area"
@@ -350,6 +362,29 @@ if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
 
 deliverable_path <- file.path(DELIVERABLES_DIR, "WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx")
 
+# A Mode value is not self-describing. "Guided" derived from that month's own
+# creel interviews and "Guided" derived from a share pooled across other
+# fisheries in the same region are very different claims, and about 41% of the
+# splittable trips resolve at the pooled tier. Without this column the
+# consultant cannot tell the two apart, so the guided/unguided split would read
+# as uniformly measured when much of it is inferred. Labels are plain language
+# and kept short enough not to stretch the column.
+mode_basis_label <- function(x) {
+  x <- coalesce(x, "")
+  measured <- str_detect(x, "interviews")
+  pooled   <- str_detect(x, "block_pooled")
+  notcoll  <- str_detect(x, "not_collected")
+  none     <- str_detect(x, "no_proportion_available")
+  case_when(
+    measured & !pooled & !notcoll & !none ~ "Measured — creel interviews",
+    pooled   & !measured & !notcoll       ~ "Estimated — pooled from region",
+    notcoll  & !measured & !pooled        ~ "Not collected by survey",
+    none     & !measured & !pooled        ~ "Not available",
+    x == ""                               ~ "Not available",
+    TRUE                                  ~ "Mixed"
+  )
+}
+
 deliverable_trips <- NULL
 if (!is.null(effort_by_mode_location)) {
   deliverable_trips <- effort_by_mode_location |>
@@ -359,6 +394,7 @@ if (!is.null(effort_by_mode_location)) {
       Year               = year,
       River              = river_label,
       Mode               = str_to_title(mode),
+      `Mode Basis`       = mode_basis_label(mode_basis),
       Location           = str_to_title(location),
       `Angler Trips`     = angler_trips,
       catch_area_codes,

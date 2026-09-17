@@ -1640,6 +1640,13 @@ effort_by_mode_location <- effort_long |>
     tier      = paste(sort(unique(tier)), collapse = "|"),
     source_id = paste(sort(unique(source_id)), collapse = "|"),
     method    = paste(sort(unique(method)), collapse = "; "),
+    # How the guided/unguided split on this row was arrived at. Carried
+    # through because a mode value is not self-describing: "guided" from a
+    # month's own interviews and "guided" from a block-pooled share are very
+    # different claims, and roughly 41% of splittable trips now resolve at the
+    # pooled tier. Collapsed like tier/source_id since a river-year-mode-
+    # location can aggregate months served by different tiers.
+    mode_basis = paste(sort(unique(mode_basis)), collapse = "; "),
     .groups = "drop"
   ) |>
   left_join(river_crc_areas_fallback, by = c("river_label", "block")) |>

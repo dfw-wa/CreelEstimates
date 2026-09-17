@@ -87,11 +87,15 @@
 #   Plot 1  y = logbook guided trips, x = OUR ESTIMATE (creel trips x
 #           interview guided share). Disagreement here can come from the share
 #           or from the trip total behind it - it cannot separate them.
-#   Plot 2  y = logbook guided trips, x = the RAW COUNT of interviews a creel
-#           sampler classified as guided. No expansion in between. A tighter
-#           fit here than in plot 1 locates the disagreement in the trip
-#           expansion; scatter in both says the two sources disagree about
-#           guide activity itself.
+#   Plot 2  y = logbook guided trips, x = the ANGLERS in interviews a creel
+#           sampler classified as guided. No trip expansion in between. A
+#           tighter fit here than in plot 1 locates the disagreement in the
+#           trip expansion; scatter in both says the two sources disagree
+#           about guide activity itself.
+#           Anglers, not parties: the logbook logs one row per CLIENT, so a
+#           party count on the x axis would repeat the party-vs-angler unit
+#           error that interview_proportions.qmd was fixed for, and in the
+#           same direction - guided parties are larger than average.
 #
 # Outputs:
 #   analysis/pst/outputs/08_guide_logbook_diagnostic/
@@ -297,23 +301,60 @@ paired <- season_window |>
 # A fishery is counted ONCE per river-year, matched by whether its own CRC
 # codes intersect that river-year's set - NOT by expanding interviews across
 # codes, which would multiply the count by the number of areas in the fishery.
+#
+# UNITS. The logbook counts one row per CLIENT on a guide trip (trip_angler,
+# Paying/Comped), so the y axis is angler-trips. An interview row is a PARTY.
+# Comparing a party count against a client count is the same unit error the
+# mode proportions carried before interview_proportions.qmd was made
+# angler-weighted, and it runs the same direction: guided parties are larger
+# than average, so a party count understates the anglers behind it. The x axis
+# is therefore guided ANGLERS.
+#
+# n_interviews * mean_party_size, not n_anglers: n_anglers sums only the
+# interviews that carry a usable angler_count, so it undercounts wherever
+# coverage is partial. Multiplying the party count by the cell's mean party
+# size imputes that mean onto the interviews with no recorded count, and is
+# exactly equal to n_anglers when every interview has one. Both counts are
+# kept so the expansion factor stays visible.
 
 fishery_codeset <- creel |>
   filter(!is.na(catch_area_code)) |>
   group_by(fishery_name, year) |>
   summarise(codes = list(sort(unique(catch_area_code))), .groups = "drop")
 
+# Guided anglers per row, falling back to parties only if the props table
+# predates the angler-count columns - in which case the two axes are in
+# different units and the plot says so rather than implying otherwise. [R2]
+guided_anglers <- function(df) {
+  if (all(c("n_anglers", "mean_party_size") %in% names(df))) {
+    ANGLER_BASIS <<- "anglers"
+    df |> mutate(.anglers = if_else(!is.na(mean_party_size) & mean_party_size > 0,
+                                    n_interviews * mean_party_size,
+                                    as.numeric(n_anglers)))
+  } else if ("n_anglers" %in% names(df)) {
+    ANGLER_BASIS <<- "anglers"
+    df |> mutate(.anglers = as.numeric(n_anglers))
+  } else {
+    ANGLER_BASIS <<- "parties"
+    df |> mutate(.anglers = as.numeric(n_interviews))
+  }
+}
+
 if (!is.null(props_month) && "month_num" %in% names(props_month)) {
   int_src <- props_month |>
     filter(mode == "guided") |>
+    guided_anglers() |>
     group_by(fishery_name, year, month = month_num) |>
-    summarise(n_guided_int = sum(n_interviews, na.rm = TRUE), .groups = "drop")
+    summarise(n_guided_int     = sum(n_interviews, na.rm = TRUE),
+              n_guided_anglers = sum(.anglers, na.rm = TRUE), .groups = "drop")
   INT_GRAIN <- "month-restricted"
 } else {
   int_src <- props_year |>
     filter(mode == "guided") |>
+    guided_anglers() |>
     group_by(fishery_name, year) |>
-    summarise(n_guided_int = sum(n_interviews, na.rm = TRUE), .groups = "drop") |>
+    summarise(n_guided_int     = sum(n_interviews, na.rm = TRUE),
+              n_guided_anglers = sum(.anglers, na.rm = TRUE), .groups = "drop") |>
     mutate(month = NA_integer_)
   INT_GRAIN <- "annual - month-grain props absent"
   message(glue(
@@ -333,21 +374,26 @@ paired <- paired |>
         vapply(fishery_codeset$codes,
                function(cc) any(cc %in% .codes), logical(1))
     ]),
-    n_guided_int = sum(int_src$n_guided_int[
-      int_src$fishery_name %in% .fish & int_src$year == year &
-        (is.na(int_src$month) | int_src$month %in% .months)
-    ], na.rm = TRUE),
+    .sel = list(int_src$fishery_name %in% .fish & int_src$year == year &
+                  (is.na(int_src$month) | int_src$month %in% .months)),
+    n_guided_int     = sum(int_src$n_guided_int[.sel], na.rm = TRUE),
+    n_guided_anglers = round(sum(int_src$n_guided_anglers[.sel], na.rm = TRUE)),
     n_fisheries = length(.fish)
   ) |>
   ungroup() |>
-  select(-.codes, -.months, -.fish) |>
+  select(-.codes, -.months, -.fish, -.sel) |>
   mutate(
-    # Logbook guided trips per guided interview. A stable value across rivers
-    # would mean the two sources scale together and the interview count is a
-    # usable index of guide activity; wild variation means they are measuring
-    # different things.
+    # Logbook guided angler-trips per guided ANGLER interviewed - both sides in
+    # client units. A stable value across rivers would mean the two sources
+    # scale together and the interview count is a usable index of guide
+    # activity; wild variation means they are measuring different things.
+    lb_per_guided_angler = if_else(n_guided_anglers > 0,
+                                   round(lb_guided / n_guided_anglers, 2), NA_real_),
+    # Party-unit version, kept only so the expansion factor is visible.
     lb_per_guided_int = if_else(n_guided_int > 0,
-                                round(lb_guided / n_guided_int, 2), NA_real_)
+                                round(lb_guided / n_guided_int, 2), NA_real_),
+    guided_party_size = if_else(n_guided_int > 0,
+                                round(n_guided_anglers / n_guided_int, 2), NA_real_)
   )
 
 n_no_int <- sum(paired$n_guided_int == 0)
@@ -395,8 +441,12 @@ fits <- bind_rows(
   # sampler classified as guided. A tighter fit than the two above would say
   # the disagreement lives in the trip expansion rather than in the guided
   # classification itself.
+  fit_one(paired, "n_guided_anglers",
+          glue("logbook_guided ~ n_guided_ANGLERS ({INT_GRAIN})")),
+  # Party-unit version of the same fit, retained only to show what the unit
+  # correction does - it is not the comparison to read.
   fit_one(paired, "n_guided_int",
-          glue("logbook_guided ~ n_guided_interviews ({INT_GRAIN})"))
+          glue("logbook_guided ~ n_guided_parties ({INT_GRAIN}, wrong units)"))
 )
 
 # ---- 5. Report ----------------------------------------------------------------
@@ -407,12 +457,14 @@ cat(glue("Month-restricted to each river-year's own creel season window.\n",
 
 print(as.data.frame(paired |> select(
   block, river_label, year, crc_set, season_months,
-  our_guided, lb_guided, lb_over_ours, n_guided_int, lb_per_guided_int,
-  lb_guided_annual, pct_of_annual_kept
+  our_guided, lb_guided, lb_over_ours, n_guided_int, n_guided_anglers,
+  guided_party_size, lb_per_guided_angler, lb_guided_annual, pct_of_annual_kept
 )), row.names = FALSE)
 
-cat(glue("\n=== logbook guided trips per guided interview ({INT_GRAIN}) ===\n"), "\n")
-print(summary(paired$lb_per_guided_int))
+cat(glue("\n=== logbook guided angler-trips per guided ANGLER interviewed ({INT_GRAIN}) ===\n"), "\n")
+print(summary(paired$lb_per_guided_angler))
+cat(glue("\n=== mean guided party size implied by the interviews ===\n"), "\n")
+print(summary(paired$guided_party_size))
 
 cat("\n=== Fits ===\n")
 print(as.data.frame(fits), row.names = FALSE)
@@ -459,18 +511,19 @@ suppressWarnings(ggsave(plot_path, p, width = 9, height = 6.5, dpi = 150))
 # Second plot: same points, same y, but x is the raw guided interview count
 # rather than an expanded trip estimate.
 #
-# The 1:1 line here is NOT an equality check - the axes are different units
-# (interviews vs. angler trips), so crossing it means nothing on its own. It
-# reads as one logged guide trip per guided interview: a point above the line
-# is a river-year where guides logged more client trips than the creel
-# interviewed guided parties, below is the reverse. That ratio is
-# lb_per_guided_int in the paired CSV, and the line is where it equals 1.
-fit_int <- fits |> filter(str_detect(fit, "n_guided_interviews"))
+# Both axes are in client units once the interview counts are expanded by
+# party size, but they are still not the same quantity: y is every client trip
+# guides logged, x is the clients a sampler happened to intercept. A creel
+# samples a fraction of all trips, so points are EXPECTED well above the line
+# and crossing it is not a finding. The line is a fixed reference that makes
+# the spread readable - the ratio it marks is lb_per_guided_angler in the
+# paired CSV, and what informs is how river-years sit relative to each other.
+fit_int <- fits |> filter(str_detect(fit, "n_guided_ANGLERS"))
 fit_lab <- if (nrow(fit_int) == 1 && !is.na(fit_int$slope)) {
   glue("slope = {fit_int$slope} | R^2 = {fit_int$r_squared} | p = {fit_int$p_value}")
 } else "fit not estimable"
 
-p2 <- ggplot(paired, aes(x = n_guided_int, y = lb_guided)) +
+p2 <- ggplot(paired, aes(x = n_guided_anglers, y = lb_guided)) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey50") +
   geom_smooth(method = "lm", formula = y ~ x, se = TRUE,
               colour = "#238b45", fill = "#238b45", alpha = 0.15) +
@@ -480,17 +533,18 @@ p2 <- ggplot(paired, aes(x = n_guided_int, y = lb_guided)) +
   scale_x_continuous(labels = scales::comma) +
   scale_y_continuous(labels = scales::comma) +
   labs(
-    title    = "Guide logbook trips vs. interviews classified as guided",
+    title    = "Guide logbook trips vs. anglers interviewed as guided",
     # Two lines: one long subtitle clips off the right edge at this width.
     subtitle = glue("Interview counts {INT_GRAIN} to each river-year's creel season window\n",
-                    "n = {nrow(paired)} | {fit_lab} | dashed line = 1 logged trip per guided interview"),
-    x = glue("Interviews classified as guided ({INT_GRAIN})"),
+                    "n = {nrow(paired)} | {fit_lab} | dashed line = 1 logged trip per guided angler"),
+    x = glue("Anglers in interviews classified as guided ({INT_GRAIN})"),
     y = "Guide logbook guided angler trips",
     colour = "Block",
     caption = str_wrap(paste(
-      "No expansion on the x axis - raw sampler classifications, not estimated trips.",
-      "The axes are different units, so the dashed line is a ratio reference, not an equality:",
-      "above it guides logged more client trips than the creel interviewed guided parties."
+      "No TRIP expansion on the x axis - sampler classifications, scaled from parties to",
+      "anglers only, so both axes are in client units. A creel samples a fraction of all",
+      "trips, so points are expected well above the dashed line; what informs is their",
+      "position relative to each other, not which side of it they fall on."
     ), width = 95)
   ) +
   theme_minimal(base_size = 11) +

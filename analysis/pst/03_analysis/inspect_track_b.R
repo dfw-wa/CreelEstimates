@@ -176,4 +176,49 @@ if (!is.null(props) && !is.null(effort)) {
   }
 }
 
+# ---- 5. Month-by-month picture for anything still stuck ----------------------
+# A cell can legitimately resolve to zero guided trips if the months carrying
+# the effort are months with no guided interviews - the guided sample landing
+# in a month the creel barely fished. That is a real (if uncomfortable) answer,
+# not a join failure, and the only way to tell them apart is to line the two up.
+
+if (exists("still_zero") && !is.null(still_zero) && nrow(still_zero) > 0 &&
+    !is.null(pmonth) && !is.null(effort)) {
+
+  cat("\n================ 5. STUCK CELLS, MONTH BY MONTH ================\n")
+
+  eff_month <- effort |>
+    filter(tier == "P1") |>
+    mutate(location = tolower(location)) |>
+    group_by(fishery_name, year, location, month) |>
+    summarise(trips = sum(angler_trips, na.rm = TRUE),
+              modes = paste(sort(unique(mode)), collapse = "/"),
+              basis = paste(sort(unique(mode_basis)), collapse = "/"),
+              .groups = "drop")
+
+  props_month_guided <- pmonth |>
+    filter(mode == "guided") |>
+    transmute(fishery_name, year, month = month_num, location,
+              n_int_month = n_location, prop_guided = round(prop, 4))
+
+  for (i in seq_len(nrow(still_zero))) {
+    r <- still_zero[i, ]
+    cat(glue("\n-- {r$fishery_name} | {r$location} | ",
+             "annual guided interviews {r$n_guided} of {r$n_cell} --\n\n"))
+    eff_month |>
+      filter(fishery_name == r$fishery_name, year == r$year,
+             location == r$location) |>
+      left_join(props_month_guided,
+                by = c("fishery_name", "year", "month", "location")) |>
+      transmute(month, trips = round(trips), modes, basis,
+                n_int_month, prop_guided) |>
+      arrange(month) |> as.data.frame() |> print()
+  }
+
+  cat("\nRead this as: a month with trips but prop_guided = 0 means the creel\n",
+      "fished that month and interviewed no guides in it. A month with trips\n",
+      "but n_int_month = NA means the month tier had no cell at all and the\n",
+      "row fell back - check `basis` for which tier actually served it.\n", sep = "")
+}
+
 cat("\nDone.\n")

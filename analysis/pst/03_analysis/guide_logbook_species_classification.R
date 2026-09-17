@@ -77,6 +77,36 @@ YEARS_SCOPE <- 2020:2026
 # excluded too: an escapee encounter is not evidence of a salmon-directed trip.
 SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
 
+# The "ambiguous" cell - non-salmon catch in a month salmon were open - is only
+# ambiguous if you ignore WHICH non-salmon fish were caught. A trip that boated
+# eight walleye is a walleye trip whether or not salmon were open. Grouping the
+# non-salmon catch turns most of that cell back into evidence.
+#
+# Rainbow Trout (74,085 fish) and Walleye (53,430) are the two most-caught
+# species in the whole logbook, both above Chinook (38,830) - this logbook is
+# dominated by non-salmon guiding, so defaulting ambiguity toward "salmon"
+# pushes hard in the wrong direction.
+SPECIES_GROUPS <- list(
+  salmon    = SALMON_SPECIES,
+  steelhead = c("Steelhead"),
+  trout_char = c("Rainbow Trout", "Westslope Cutthroat", "Coastal Cutthroat",
+                 "Dolly/Bull Trout", "Kokanee", "Brown Trout", "Cutbow Trout",
+                 "Lake Trout", "Brook Trout", "Golden Trout", "Tiger Trout",
+                 "Mountain Whitefish", "Lake Whitefish", "Pygmy Whitefish"),
+  warmwater = c("Walleye", "Smallmouth Bass", "Largemouth Bass", "Yellow Perch",
+                "Black Crappie", "White Crappie", "Channel Catfish",
+                "Blue Catfish", "Brown Bullhead", "Black Bullhead", "Bluegill",
+                "Burbot", "Tiger Musky", "Northern Pike", "Carp"),
+  sturgeon  = c("White Sturgeon", "Green Sturgeon")
+)
+
+species_group <- function(x) {
+  out <- rep("other", length(x))
+  for (g in names(SPECIES_GROUPS)) out[x %in% SPECIES_GROUPS[[g]]] <- g
+  out[is.na(x)] <- "unrecorded"
+  out
+}
+
 req <- function(p, who) {
   if (!file.exists(p)) stop(glue("Required input missing:\n  {p}\nProduced by: {who}"),
                             call. = FALSE)
@@ -128,6 +158,18 @@ enc |>
   mutate(counted_as_salmon = species %in% SALMON_SPECIES) |>
   arrange(desc(fish)) |> head(30) |> as.data.frame() |> print(row.names = FALSE)
 
+enc <- enc |> mutate(sp_group = species_group(species))
+
+# Dominant non-salmon group per trip, by fish count - what the trip was
+# evidently after when no salmon were landed.
+dominant_other <- enc |>
+  filter(sp_group != "salmon", fish_count > 0) |>
+  group_by(trip_id, sp_group) |>
+  summarise(fish = sum(fish_count, na.rm = TRUE), .groups = "drop_last") |>
+  slice_max(fish, n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  select(trip_id, other_group = sp_group)
+
 trip_catch <- enc |>
   group_by(trip_id) |>
   summarise(
@@ -135,7 +177,8 @@ trip_catch <- enc |>
     n_other       = sum(fish_count[!species %in% SALMON_SPECIES], na.rm = TRUE),
     species_seen  = paste(sort(unique(species)), collapse = "; "),
     .groups = "drop"
-  )
+  ) |>
+  left_join(dominant_other, by = "trip_id")
 
 trips <- trips |>
   left_join(trip_catch, by = "trip_id") |>
@@ -240,6 +283,32 @@ cat(glue(
   "  EXCLUDED (non-salmon evidence)      {format(excluded, big.mark = ',')}  ({pct(excluded, tot_ang)}%)\n\n",
   "The ambiguous share is the size of the assumption. Everything in it gets a\n",
   "guided salmon trip only because we decide it does.\n"
+), "\n")
+
+# ---- 5b. What the ambiguous cell is actually made of -------------------------
+# Cell 4 is the bulk of the ambiguity, and most of it is not ambiguous once the
+# non-salmon catch is named. Only cell 5 - nothing caught, in a salmon month -
+# needs a genuine assumption.
+
+cat("\n================ CELL 4 BROKEN OUT: what was caught instead ================\n")
+cat("Non-salmon catch in a salmon-open month, by dominant species group.\n",
+    "Anything but steelhead here is a different fishery, not an ambiguous one.\n\n", sep = "")
+cell4 <- trips |>
+  filter(str_starts(final_class, "4")) |>
+  group_by(other_group) |>
+  summarise(trips = n(), angler_trips = sum(angler_trips), .groups = "drop") |>
+  mutate(pct_of_all = pct(angler_trips, tot_ang)) |>
+  arrange(desc(angler_trips))
+print(as.data.frame(cell4), row.names = FALSE)
+
+irreducible <- sum(trips$angler_trips[str_starts(trips$final_class, "5")])
+steelhead_amb <- sum(cell4$angler_trips[cell4$other_group == "steelhead"])
+cat(glue(
+  "\nIf a non-salmon catch is taken as evidence of a non-salmon trip, the only\n",
+  "genuinely undecidable group left is 'no catch in a salmon month':\n",
+  "  {format(irreducible, big.mark = ',')} angler-trips ({pct(irreducible, tot_ang)}% of the logbook)\n",
+  "Steelhead-only trips in a salmon month are arguable either way and add\n",
+  "  {format(steelhead_amb, big.mark = ',')} more ({pct(steelhead_amb, tot_ang)}%).\n"
 ), "\n")
 
 cat("\n================ BY CRC REGION ================\n")

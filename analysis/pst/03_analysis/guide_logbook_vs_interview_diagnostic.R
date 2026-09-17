@@ -412,24 +412,42 @@ if (n_no_int > 0) {
 # comparison is the closer like-for-like - it is reported alongside, not
 # instead of, the all-mode fit.
 
+# p-values print as a threshold rather than as raw scientific notation. At
+# n = 20 the exact figure is not the point - "4.36e-04" invites reading
+# precision into a number whose only job is to say the slope is not noise. The
+# exact value stays in the CSV as p_exact for anyone who wants it.
+format_p <- function(p) {
+  case_when(
+    is.na(p)  ~ NA_character_,
+    p < 1e-6  ~ "< 0.000001",
+    p < 1e-5  ~ "< 0.00001",
+    p < 1e-4  ~ "< 0.0001",
+    p < 1e-3  ~ "< 0.001",
+    TRUE      ~ sprintf("%.3f", p)
+  )
+}
+
 fit_one <- function(df, xcol, label) {
   x <- df[[xcol]]; y <- df$lb_guided
   ok <- is.finite(x) & is.finite(y)
   x <- x[ok]; y <- y[ok]
   if (length(x) < 3 || length(unique(x)) < 2) {
     return(tibble(fit = label, n = length(x), slope = NA_real_,
-                  intercept = NA_real_, r_squared = NA_real_, p_value = NA_real_,
+                  intercept = NA_real_, r_squared = NA_real_,
+                  p_value = NA_character_, p_exact = NA_real_,
                   note = "too few distinct points to fit"))
   }
   m <- lm(y ~ x)
   s <- summary(m)
+  p_raw <- unname(s$coefficients[2, 4])
   tibble(
     fit       = label,
     n         = length(x),
     slope     = round(unname(coef(m)[2]), 3),
     intercept = round(unname(coef(m)[1]), 1),
     r_squared = round(s$r.squared, 3),
-    p_value   = signif(unname(s$coefficients[2, 4]), 3),
+    p_value   = format_p(p_raw),
+    p_exact   = signif(p_raw, 3),
     note      = if (length(x) < 10) "n < 10 - treat as indicative only" else NA_character_
   )
 }
@@ -467,7 +485,7 @@ cat(glue("\n=== mean guided party size implied by the interviews ===\n"), "\n")
 print(summary(paired$guided_party_size))
 
 cat("\n=== Fits ===\n")
-print(as.data.frame(fits), row.names = FALSE)
+print(as.data.frame(fits |> select(-p_exact)), row.names = FALSE)
 
 cat("\n=== lb_guided / our_guided ===\n")
 print(summary(paired$lb_over_ours))
@@ -520,7 +538,11 @@ suppressWarnings(ggsave(plot_path, p, width = 9, height = 6.5, dpi = 150))
 # paired CSV, and what informs is how river-years sit relative to each other.
 fit_int <- fits |> filter(str_detect(fit, "n_guided_ANGLERS"))
 fit_lab <- if (nrow(fit_int) == 1 && !is.na(fit_int$slope)) {
-  glue("slope = {fit_int$slope} | R^2 = {fit_int$r_squared} | p = {fit_int$p_value}")
+  # "p = < 0.001" reads badly - a thresholded p already carries its own operator.
+  p_lab <- if (str_starts(fit_int$p_value, "<")) {
+    glue("p {fit_int$p_value}")
+  } else glue("p = {fit_int$p_value}")
+  glue("slope = {fit_int$slope} | R^2 = {fit_int$r_squared} | {p_lab}")
 } else "fit not estimable"
 
 p2 <- ggplot(paired, aes(x = n_guided_anglers, y = lb_guided)) +

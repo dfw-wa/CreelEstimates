@@ -77,14 +77,30 @@
 #   analysis/pst/outputs/02_multi_fishery_creel/multi_fishery_creel_trips.csv
 #     (multi_fishery_creel_summary.R - supplies the per-CRC month coverage
 #      that defines each river-year's season window)
+#   analysis/pst/outputs/04_interview_proportions/
+#     interview_mode_location_props.csv        (interview_proportions.qmd)
+#     interview_mode_location_props_month.csv  (same; preferred not required -
+#       without it the guided interview counts are annual while the logbook
+#       counts stay season-restricted, which the second plot labels as such)
+#
+# TWO COMPARISONS, deliberately sharing the same points:
+#   Plot 1  y = logbook guided trips, x = OUR ESTIMATE (creel trips x
+#           interview guided share). Disagreement here can come from the share
+#           or from the trip total behind it - it cannot separate them.
+#   Plot 2  y = logbook guided trips, x = the RAW COUNT of interviews a creel
+#           sampler classified as guided. No expansion in between. A tighter
+#           fit here than in plot 1 locates the disagreement in the trip
+#           expansion; scatter in both says the two sources disagree about
+#           guide activity itself.
 #
 # Outputs:
 #   analysis/pst/outputs/08_guide_logbook_diagnostic/
 #     guide_logbook_vs_interview_river_year.csv  - the paired points + residuals
 #     guide_logbook_vs_interview_fit.csv         - slope/intercept/R2/n per fit
-#     guide_logbook_vs_interview_scatter.png     - the plot
+#     guide_logbook_vs_interview_scatter.png     - plot 1
+#     guide_logbook_vs_guided_interviews_scatter.png - plot 2
 #
-# How to run (after the three inputs above exist):
+# How to run (after the inputs above exist):
 #   Rscript analysis/pst/03_analysis/guide_logbook_vs_interview_diagnostic.R
 # ==============================================================================
 
@@ -95,6 +111,7 @@ library(glue)
 GUIDE_LOGBOOK_DIR <- here("analysis", "pst", "outputs", "07_guide_logbook")
 ASSEMBLY_DIR      <- here("analysis", "pst", "outputs", "05_assembly")
 CREEL_DIR         <- here("analysis", "pst", "outputs", "02_multi_fishery_creel")
+PROPS_DIR         <- here("analysis", "pst", "outputs", "04_interview_proportions")
 OUT_DIR           <- here("analysis", "pst", "outputs", "08_guide_logbook_diagnostic")
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 
@@ -104,6 +121,8 @@ LOGBOOK_YEAR_PATH  <- file.path(GUIDE_LOGBOOK_DIR,
                                 "guide_logbook_angler_trips_by_crc_year.csv")
 EFFORT_PATH        <- file.path(ASSEMBLY_DIR, "pst_fw_trips_by_mode_location.csv")
 CREEL_PATH         <- file.path(CREEL_DIR, "multi_fishery_creel_trips.csv")
+PROPS_YEAR_PATH    <- file.path(PROPS_DIR, "interview_mode_location_props.csv")
+PROPS_MONTH_PATH   <- file.path(PROPS_DIR, "interview_mode_location_props_month.csv")
 
 # ---- 0. Required inputs -------------------------------------------------------
 # Stop, don't degrade. A diagnostic that silently runs on two of three inputs
@@ -137,6 +156,21 @@ creel  <- read_csv(CREEL_PATH, show_col_types = FALSE) |>
 logbook_year <- if (file.exists(LOGBOOK_YEAR_PATH)) {
   read_csv(LOGBOOK_YEAR_PATH, show_col_types = FALSE) |>
     mutate(crc_code = as.character(crc_code))
+} else NULL
+
+# The second comparison (section 3b) needs the raw interview counts, not the
+# proportions derived from them. Required rather than optional: it is produced
+# by the same interview_proportions.qmd render that EFFORT_PATH already depends
+# on, so if it is missing the effort table is stale anyway.
+props_year  <- read_csv(require_input(PROPS_YEAR_PATH,
+  "analysis/pst/02_ingest/interview_proportions.qmd (DB access)"),
+  show_col_types = FALSE)
+
+# Month grain preferred so the interview counts can be restricted to the same
+# window as the logbook counts. Absent it, the comparison still runs annually,
+# but it is labelled as such on the plot rather than passed off as like-for-like.
+props_month <- if (file.exists(PROPS_MONTH_PATH)) {
+  read_csv(PROPS_MONTH_PATH, show_col_types = FALSE)
 } else NULL
 
 # ---- 1. Our side: interview-proportion guided trips, per river-year -----------
@@ -245,6 +279,86 @@ paired <- season_window |>
   ) |>
   arrange(block, river_label, year)
 
+# ---- 3b. Raw guided INTERVIEW counts, same pairing ---------------------------
+# The first comparison puts an ESTIMATE on the x axis: creel trips expanded by
+# an interview-derived share. That means a disagreement with the logbook could
+# come from either the share or the trip total behind it. This second
+# comparison strips the expansion out and asks a narrower question: do the two
+# sources agree about WHERE guided activity is, using nothing but the raw count
+# of interviews a creel sampler classified as guided?
+#
+# Grain: the same river-year x CRC-set pairing as above, deliberately, so both
+# plots carry the same points and only the x axis changes. Interviews cannot be
+# split below that - a fishery covering five CRC areas (Quillayute =
+# 398|400|402|404|406) records one fishery_name per interview, not a catch
+# area, so a true per-CRC interview count does not exist for multi-area
+# fisheries. For single-area rivers the pairing IS CRC x year.
+#
+# A fishery is counted ONCE per river-year, matched by whether its own CRC
+# codes intersect that river-year's set - NOT by expanding interviews across
+# codes, which would multiply the count by the number of areas in the fishery.
+
+fishery_codeset <- creel |>
+  filter(!is.na(catch_area_code)) |>
+  group_by(fishery_name, year) |>
+  summarise(codes = list(sort(unique(catch_area_code))), .groups = "drop")
+
+if (!is.null(props_month) && "month_num" %in% names(props_month)) {
+  int_src <- props_month |>
+    filter(mode == "guided") |>
+    group_by(fishery_name, year, month = month_num) |>
+    summarise(n_guided_int = sum(n_interviews, na.rm = TRUE), .groups = "drop")
+  INT_GRAIN <- "month-restricted"
+} else {
+  int_src <- props_year |>
+    filter(mode == "guided") |>
+    group_by(fishery_name, year) |>
+    summarise(n_guided_int = sum(n_interviews, na.rm = TRUE), .groups = "drop") |>
+    mutate(month = NA_integer_)
+  INT_GRAIN <- "annual - month-grain props absent"
+  message(glue(
+    "[note] {basename(PROPS_MONTH_PATH)} not found - guided interview counts ",
+    "are annual while logbook counts are season-restricted. The two are not ",
+    "like-for-like; re-render interview_proportions.qmd to fix."
+  ))
+}
+
+paired <- paired |>
+  rowwise() |>
+  mutate(
+    .codes  = list(strsplit(crc_set, "\\|")[[1]]),
+    .months = list(as.integer(strsplit(season_months, ",")[[1]])),
+    .fish   = list(fishery_codeset$fishery_name[
+      fishery_codeset$year == year &
+        vapply(fishery_codeset$codes,
+               function(cc) any(cc %in% .codes), logical(1))
+    ]),
+    n_guided_int = sum(int_src$n_guided_int[
+      int_src$fishery_name %in% .fish & int_src$year == year &
+        (is.na(int_src$month) | int_src$month %in% .months)
+    ], na.rm = TRUE),
+    n_fisheries = length(.fish)
+  ) |>
+  ungroup() |>
+  select(-.codes, -.months, -.fish) |>
+  mutate(
+    # Logbook guided trips per guided interview. A stable value across rivers
+    # would mean the two sources scale together and the interview count is a
+    # usable index of guide activity; wild variation means they are measuring
+    # different things.
+    lb_per_guided_int = if_else(n_guided_int > 0,
+                                round(lb_guided / n_guided_int, 2), NA_real_)
+  )
+
+n_no_int <- sum(paired$n_guided_int == 0)
+if (n_no_int > 0) {
+  message(glue(
+    "[note] {n_no_int} paired river-year(s) have no guided interviews in the ",
+    "season window - they carry a guided trip estimate from a pooled tier ",
+    "rather than their own interviews, so they sit at x = 0 in the second plot."
+  ))
+}
+
 # ---- 4. Fits ------------------------------------------------------------------
 # Two denominators, because "guided" means different things on each side. The
 # logbook counts client angler-trips on guide boats; our guided estimate is a
@@ -276,7 +390,13 @@ fit_one <- function(df, xcol, label) {
 
 fits <- bind_rows(
   fit_one(paired, "our_guided", "logbook_guided ~ interview_guided (all modes)"),
-  fit_one(paired, "our_boat",   "logbook_guided ~ our_boat_trips (boat-only denominator)")
+  fit_one(paired, "our_boat",   "logbook_guided ~ our_boat_trips (boat-only denominator)"),
+  # No expansion on the x axis here - just the raw count of interviews a
+  # sampler classified as guided. A tighter fit than the two above would say
+  # the disagreement lives in the trip expansion rather than in the guided
+  # classification itself.
+  fit_one(paired, "n_guided_int",
+          glue("logbook_guided ~ n_guided_interviews ({INT_GRAIN})"))
 )
 
 # ---- 5. Report ----------------------------------------------------------------
@@ -287,8 +407,12 @@ cat(glue("Month-restricted to each river-year's own creel season window.\n",
 
 print(as.data.frame(paired |> select(
   block, river_label, year, crc_set, season_months,
-  our_guided, lb_guided, lb_over_ours, lb_guided_annual, pct_of_annual_kept
+  our_guided, lb_guided, lb_over_ours, n_guided_int, lb_per_guided_int,
+  lb_guided_annual, pct_of_annual_kept
 )), row.names = FALSE)
+
+cat(glue("\n=== logbook guided trips per guided interview ({INT_GRAIN}) ===\n"), "\n")
+print(summary(paired$lb_per_guided_int))
 
 cat("\n=== Fits ===\n")
 print(as.data.frame(fits), row.names = FALSE)
@@ -332,6 +456,42 @@ p <- ggplot(paired, aes(x = our_guided, y = lb_guided)) +
 plot_path <- file.path(OUT_DIR, "guide_logbook_vs_interview_scatter.png")
 suppressWarnings(ggsave(plot_path, p, width = 9, height = 6.5, dpi = 150))
 
+# Second plot: same points, same y, but x is the raw guided interview count
+# rather than an expanded trip estimate. No 1:1 line here - the axes are
+# different units (interviews vs. angler trips), so a 1:1 reference would be
+# meaningless; only the slope and the scatter carry information.
+fit_int <- fits |> filter(str_detect(fit, "n_guided_interviews"))
+fit_lab <- if (nrow(fit_int) == 1 && !is.na(fit_int$slope)) {
+  glue("slope = {fit_int$slope} | R^2 = {fit_int$r_squared} | p = {fit_int$p_value}")
+} else "fit not estimable"
+
+p2 <- ggplot(paired, aes(x = n_guided_int, y = lb_guided)) +
+  geom_smooth(method = "lm", formula = y ~ x, se = TRUE,
+              colour = "#238b45", fill = "#238b45", alpha = 0.15) +
+  geom_point(aes(colour = block), size = 2.5) +
+  ggrepel::geom_text_repel(aes(label = paste0(river_label, " ", year)),
+                           size = 2.6, max.overlaps = 20, seed = 1) +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title    = "Guide logbook trips vs. interviews classified as guided",
+    # Two lines: one long subtitle clips off the right edge at this width.
+    subtitle = glue("Interview counts {INT_GRAIN} to each river-year's creel season window\n",
+                    "n = {nrow(paired)} | {fit_lab}"),
+    x = glue("Interviews classified as guided ({INT_GRAIN})"),
+    y = "Guide logbook guided angler trips",
+    colour = "Block",
+    caption = str_wrap(paste(
+      "No expansion on the x axis - raw sampler classifications, not estimated trips.",
+      "Axes are different units, so there is no 1:1 reference; only slope and scatter inform."
+    ), width = 95)
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(plot.caption = element_text(hjust = 0))
+
+plot2_path <- file.path(OUT_DIR, "guide_logbook_vs_guided_interviews_scatter.png")
+suppressWarnings(ggsave(plot2_path, p2, width = 9, height = 6.5, dpi = 150))
+
 # ---- 7. Write -----------------------------------------------------------------
 
 paired_path <- file.path(OUT_DIR, "guide_logbook_vs_interview_river_year.csv")
@@ -341,4 +501,5 @@ write_csv(fits, fits_path)
 
 cat(glue("\nWrote {paired_path}\n",
          "Wrote {fits_path}\n",
-         "Wrote {plot_path}\n"), "\n")
+         "Wrote {plot_path}\n",
+         "Wrote {plot2_path}\n"), "\n")

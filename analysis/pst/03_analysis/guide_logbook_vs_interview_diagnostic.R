@@ -457,15 +457,21 @@ plot_path <- file.path(OUT_DIR, "guide_logbook_vs_interview_scatter.png")
 suppressWarnings(ggsave(plot_path, p, width = 9, height = 6.5, dpi = 150))
 
 # Second plot: same points, same y, but x is the raw guided interview count
-# rather than an expanded trip estimate. No 1:1 line here - the axes are
-# different units (interviews vs. angler trips), so a 1:1 reference would be
-# meaningless; only the slope and the scatter carry information.
+# rather than an expanded trip estimate.
+#
+# The 1:1 line here is NOT an equality check - the axes are different units
+# (interviews vs. angler trips), so crossing it means nothing on its own. It
+# reads as one logged guide trip per guided interview: a point above the line
+# is a river-year where guides logged more client trips than the creel
+# interviewed guided parties, below is the reverse. That ratio is
+# lb_per_guided_int in the paired CSV, and the line is where it equals 1.
 fit_int <- fits |> filter(str_detect(fit, "n_guided_interviews"))
 fit_lab <- if (nrow(fit_int) == 1 && !is.na(fit_int$slope)) {
   glue("slope = {fit_int$slope} | R^2 = {fit_int$r_squared} | p = {fit_int$p_value}")
 } else "fit not estimable"
 
 p2 <- ggplot(paired, aes(x = n_guided_int, y = lb_guided)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey50") +
   geom_smooth(method = "lm", formula = y ~ x, se = TRUE,
               colour = "#238b45", fill = "#238b45", alpha = 0.15) +
   geom_point(aes(colour = block), size = 2.5) +
@@ -477,13 +483,14 @@ p2 <- ggplot(paired, aes(x = n_guided_int, y = lb_guided)) +
     title    = "Guide logbook trips vs. interviews classified as guided",
     # Two lines: one long subtitle clips off the right edge at this width.
     subtitle = glue("Interview counts {INT_GRAIN} to each river-year's creel season window\n",
-                    "n = {nrow(paired)} | {fit_lab}"),
+                    "n = {nrow(paired)} | {fit_lab} | dashed line = 1 logged trip per guided interview"),
     x = glue("Interviews classified as guided ({INT_GRAIN})"),
     y = "Guide logbook guided angler trips",
     colour = "Block",
     caption = str_wrap(paste(
       "No expansion on the x axis - raw sampler classifications, not estimated trips.",
-      "Axes are different units, so there is no 1:1 reference; only slope and scatter inform."
+      "The axes are different units, so the dashed line is a ratio reference, not an equality:",
+      "above it guides logged more client trips than the creel interviewed guided parties."
     ), width = 95)
   ) +
   theme_minimal(base_size = 11) +

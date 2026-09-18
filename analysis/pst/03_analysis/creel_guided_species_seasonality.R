@@ -32,6 +32,11 @@
 #   Rscript analysis/pst/03_analysis/creel_guided_species_seasonality.R
 #   Rscript analysis/pst/03_analysis/creel_guided_species_seasonality.R "yakima"
 #   Rscript analysis/pst/03_analysis/creel_guided_species_seasonality.R "cowlitz|drano"
+#   Rscript analysis/pst/03_analysis/creel_guided_species_seasonality.R "."
+#     - "." matches every fishery. Use it to build the target-vs-catch
+#       calibration (section 5) from whichever creels DO record a target
+#       species, then carry that error rate onto fisheries that do not - and
+#       onto the guide logbook, which records no target at all.
 #
 # Output:
 #   analysis/pst/outputs/08_guide_logbook_diagnostic/
@@ -117,6 +122,55 @@ if (is.null(int) || nrow(int) == 0) {
 cat("=== interview columns ===\n"); cat(" ", paste(names(int), collapse = ", "), "\n\n")
 cat("=== catch columns ===\n")
 cat(" ", if (is.null(cat_tbl)) "(none returned)" else paste(names(cat_tbl), collapse = ", "), "\n\n")
+
+# ---- 1b. Is target species recorded directly? --------------------------------
+# Nothing in this repo references a target-species field, but the qmd pulls the
+# whole interview table, so an unused one would already be sitting there. If it
+# exists it beats catch-based inference outright - and more importantly it lets
+# the catch-based inference be CALIBRATED (section 5), which is the only way to
+# put an error bar on the same inference applied to the logbook.
+
+TARGET_PAT <- "target|fishing_for|sought|directed|intent|pursu|fishery_type|trip_type"
+
+target_col <- NULL
+tcands <- names(int)[str_detect(names(int), regex(TARGET_PAT, ignore_case = TRUE))]
+cat("=== candidate target-species fields in the interview table ===\n")
+if (length(tcands) == 0) {
+  cat("  none found by name. Catch-based inference is the only route.\n\n")
+} else {
+  for (cl in tcands) {
+    v <- int[[cl]]
+    u <- unique(v[!is.na(v) & nzchar(v)])
+    cat("  ", cl, " - ", sum(!is.na(v) & nzchar(v)), " non-blank of ", length(v),
+        ", ", length(u), " distinct\n", sep = "")
+    if (length(u) <= 25) cat("      ", paste(sort(u), collapse = " | "), "\n", sep = "")
+    else cat("      first 15: ", paste(head(sort(u), 15), collapse = " | "), "\n", sep = "")
+    # Deliberately NO minimum coverage: target species is asked by some creel
+    # programmes and not others, so a field that is blank on this fishery but
+    # populated elsewhere is still the field we want - it just means the
+    # calibration has to be built from the creels that do ask it (see below).
+    # trip_guided matches the pattern but is the guided flag, not a target.
+    if (is.null(target_col) && cl != "trip_guided" &&
+        length(u) >= 2 && length(u) <= 30 && length(u) > 0) target_col <- cl
+  }
+  cat("\n  -> using: ", target_col %||% "none usable", "\n\n", sep = "")
+
+  # Where the field is actually answered. If it is blank for the fishery in
+  # question but populated for others, re-run with a wider pattern (e.g. "." for
+  # every fishery) to build the calibration from the creels that do ask it, then
+  # carry that error rate across.
+  if (!is.null(target_col)) {
+    cat("=== coverage of ", target_col, " by fishery ===\n", sep = "")
+    int |>
+      group_by(.fishery_name) |>
+      summarise(interviews = n(),
+                answered = sum(!is.na(.data[[target_col]]) & nzchar(.data[[target_col]])),
+                .groups = "drop") |>
+      mutate(pct_answered = round(100 * answered / interviews, 1)) |>
+      arrange(desc(pct_answered)) |> as.data.frame() |> print(row.names = FALSE)
+    cat("\n")
+  }
+}
 
 # ---- 2. Find the interview <-> catch key -------------------------------------
 # Not assumed: the key is discovered by intersecting column names and preferring
@@ -235,6 +289,57 @@ g |>
   summarise(interviews = n(), nothing = sum(caught == "nothing"), .groups = "drop") |>
   mutate(pct_nothing = round(100 * nothing / interviews, 1)) |>
   arrange(month) |> as.data.frame() |> print(row.names = FALSE)
+
+# ---- 5. Calibration: how well does catch recover stated target? -------------
+# THE POINT OF THIS SECTION. The logbook has no target field, so every
+# ambiguous trip there is classified from catch alone. Here both are present,
+# so the error rate of that exact inference can be measured instead of assumed -
+# and the numbers below are what should be applied as a correction, or a
+# caveat, to the logbook's ambiguous cells.
+
+if (!is.null(target_col)) {
+  g2 <- g |> mutate(target = str_squish(.data[[target_col]])) |>
+    filter(!is.na(target), nzchar(target))
+
+  if (nrow(g2) > 0) {
+    cat(glue("\n=== CALIBRATION: stated target vs. what was caught ",
+             "(guided, n = {nrow(g2)}) ===\n"), "\n")
+    cat("Rows = what the angler said they were after; columns = what the\n",
+        "catch-based rule would have concluded. Off-diagonal mass is the error\n",
+        "rate of applying that same rule to the logbook.\n",
+        "If this fishery leaves the target blank, re-run with pattern \".\" to\n",
+        "build the calibration from creels that do ask it.\n\n", sep = "")
+    conf <- g2 |> count(target, caught, name = "n") |>
+      group_by(target) |> mutate(pct = round(100 * n / sum(n), 1)) |> ungroup()
+    conf |> select(-pct) |>
+      pivot_wider(names_from = caught, values_from = n, values_fill = 0) |>
+      as.data.frame() |> print(row.names = FALSE)
+    cat("\n-- row percentages --\n")
+    conf |> select(-n) |>
+      pivot_wider(names_from = caught, values_from = pct, values_fill = 0) |>
+      as.data.frame() |> print(row.names = FALSE)
+
+    # The two logbook cells that actually need this: what were anglers really
+    # after when they caught nothing, or caught only steelhead?
+    cat("\n-- the two ambiguous logbook cells, resolved against stated target --\n")
+    g2 |>
+      filter(caught %in% c("nothing", "steelhead only")) |>
+      count(caught, target, name = "interviews") |>
+      group_by(caught) |> mutate(pct = round(100 * interviews / sum(interviews), 1)) |>
+      ungroup() |> arrange(caught, desc(interviews)) |>
+      as.data.frame() |> print(row.names = FALSE)
+
+    cat("\n=== GUIDED interviews by stated target and month ===\n")
+    g2 |> count(month, target, name = "interviews") |>
+      pivot_wider(names_from = target, values_from = interviews, values_fill = 0) |>
+      arrange(month) |> as.data.frame() |> print(row.names = FALSE)
+  }
+} else {
+  cat("\n=== CALIBRATION skipped: no usable target field ===\n")
+  cat("Without a stated target there is no way to measure the error rate of\n",
+      "catch-based classification, here or in the logbook. The classification\n",
+      "stands as an assumption rather than a measured one.\n", sep = "")
+}
 
 cat("\n=== by fishery and year, for context ===\n")
 g |> count(.fishery_name, year, name = "guided_interviews") |>

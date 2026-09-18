@@ -132,6 +132,39 @@ cat(" ", if (is.null(cat_tbl)) "(none returned)" else paste(names(cat_tbl), coll
 
 TARGET_PAT <- "target|fishing_for|sought|directed|intent|pursu|fishery_type|trip_type"
 
+# The creel asks `target_species` directly (22 values, answered on 86.7% of all
+# interviews and ~100% of Cowlitz ones). It is far better than inferring target
+# from catch, but it is NOT a clean binary - several values are themselves
+# ambiguous about salmon vs steelhead, and one literally records that the
+# question was not asked. Classify explicitly rather than pretending otherwise.
+TARGET_CLASS <- c(
+  Chinook = "salmon", Chum = "salmon", Coho = "salmon",
+  Pink = "salmon", Sockeye = "salmon",
+  # Both of these include salmon AND steelhead - the exact distinction that
+  # decides whether a trip belongs in a salmon-only denominator.
+  `Multiple salmon and/or steelhead targeted` = "salmon_or_steelhead",
+  Salmonid = "salmon_or_steelhead",
+  Steelhead = "steelhead",
+  `Bull Trout` = "other_species", Cutthroat = "other_species",
+  `Rainbow Trout` = "other_species", Trout = "other_species",
+  Whitefish = "other_species", Sturgeon = "other_species",
+  Bass = "other_species", Carp = "other_species", Crappie = "other_species",
+  `Yellow Perch` = "other_species",
+  # Answered, but uninformative about species.
+  `Any species` = "nonspecific", Other = "nonspecific", Unknown = "nonspecific",
+  # A recorded value meaning the question was NOT put - counts as unanswered,
+  # not as an answer, or coverage is overstated.
+  `Target species not asked` = "not_asked"
+)
+
+classify_target <- function(x) {
+  x <- str_squish(x)
+  out <- unname(TARGET_CLASS[x])
+  out[is.na(out) & !is.na(x) & nzchar(x)] <- "unmapped"
+  out[is.na(x) | !nzchar(coalesce(x, ""))] <- "blank"
+  out
+}
+
 target_col <- NULL
 tcands <- names(int)[str_detect(names(int), regex(TARGET_PAT, ignore_case = TRUE))]
 cat("=== candidate target-species fields in the interview table ===\n")
@@ -153,6 +186,9 @@ if (length(tcands) == 0) {
     if (is.null(target_col) && cl != "trip_guided" &&
         length(u) >= 2 && length(u) <= 30 && length(u) > 0) target_col <- cl
   }
+  # The field name is known, so prefer it outright rather than whatever the
+  # pattern happened to hit first.
+  if ("target_species" %in% names(int)) target_col <- "target_species"
   cat("\n  -> using: ", target_col %||% "none usable", "\n\n", sep = "")
 
   # Where the field is actually answered. If it is blank for the fishery in
@@ -164,7 +200,12 @@ if (length(tcands) == 0) {
     int |>
       group_by(.fishery_name) |>
       summarise(interviews = n(),
-                answered = sum(!is.na(.data[[target_col]]) & nzchar(.data[[target_col]])),
+                # "Target species not asked" is a recorded value meaning the
+                # question was never put - counting it as answered would
+                # overstate coverage.
+                answered = sum(classify_target(.data[[target_col]]) %in%
+                                 c("salmon", "salmon_or_steelhead", "steelhead",
+                                   "other_species", "nonspecific", "unmapped")),
                 .groups = "drop") |>
       mutate(pct_answered = round(100 * answered / interviews, 1)) |>
       arrange(desc(pct_answered)) |> as.data.frame() |> print(row.names = FALSE)
@@ -298,10 +339,43 @@ g |>
 # caveat, to the logbook's ambiguous cells.
 
 if (!is.null(target_col)) {
-  g2 <- g |> mutate(target = str_squish(.data[[target_col]])) |>
-    filter(!is.na(target), nzchar(target))
+  g2 <- g |>
+    mutate(target = str_squish(.data[[target_col]]),
+           target_class = classify_target(.data[[target_col]])) |>
+    filter(!target_class %in% c("blank", "not_asked"))
 
   if (nrow(g2) > 0) {
+    # The direct answer first. Everything else in this section is a check on
+    # the catch-based rule; this is the measurement it is trying to imitate.
+    cat(glue("\n=== GUIDED interviews by STATED TARGET and month ",
+             "(n = {nrow(g2)}) ===\n"), "\n")
+    cat("Counts:\n")
+    g2 |> count(month, target_class, name = "interviews") |>
+      pivot_wider(names_from = target_class, values_from = interviews,
+                  values_fill = 0) |>
+      arrange(month) |> as.data.frame() |> print(row.names = FALSE)
+    cat("\nRow percentages:\n")
+    g2 |> count(month, target_class, name = "n") |>
+      group_by(month) |> mutate(pct = round(100 * n / sum(n), 1)) |>
+      ungroup() |> select(-n) |>
+      pivot_wider(names_from = target_class, values_from = pct, values_fill = 0) |>
+      arrange(month) |> as.data.frame() |> print(row.names = FALSE)
+
+    cat("\n=== guided vs unguided target mix (whole period) ===\n")
+    ints |>
+      filter(!is.na(guided)) |>
+      mutate(target_class = classify_target(.data[[target_col]])) |>
+      filter(!target_class %in% c("blank", "not_asked")) |>
+      count(guided, target_class, name = "n") |>
+      group_by(guided) |> mutate(pct = round(100 * n / sum(n), 1)) |>
+      ungroup() |> select(-n) |>
+      pivot_wider(names_from = guided, values_from = pct, values_fill = 0) |>
+      as.data.frame() |> print(row.names = FALSE)
+
+    cat("\n=== raw target_species values, guided only ===\n")
+    g2 |> count(target, target_class, name = "interviews") |>
+      arrange(desc(interviews)) |> as.data.frame() |> print(row.names = FALSE)
+
     cat(glue("\n=== CALIBRATION: stated target vs. what was caught ",
              "(guided, n = {nrow(g2)}) ===\n"), "\n")
     cat("Rows = what the angler said they were after; columns = what the\n",
@@ -309,8 +383,8 @@ if (!is.null(target_col)) {
         "rate of applying that same rule to the logbook.\n",
         "If this fishery leaves the target blank, re-run with pattern \".\" to\n",
         "build the calibration from creels that do ask it.\n\n", sep = "")
-    conf <- g2 |> count(target, caught, name = "n") |>
-      group_by(target) |> mutate(pct = round(100 * n / sum(n), 1)) |> ungroup()
+    conf <- g2 |> count(target_class, caught, name = "n") |>
+      group_by(target_class) |> mutate(pct = round(100 * n / sum(n), 1)) |> ungroup()
     conf |> select(-pct) |>
       pivot_wider(names_from = caught, values_from = n, values_fill = 0) |>
       as.data.frame() |> print(row.names = FALSE)
@@ -324,15 +398,11 @@ if (!is.null(target_col)) {
     cat("\n-- the two ambiguous logbook cells, resolved against stated target --\n")
     g2 |>
       filter(caught %in% c("nothing", "steelhead only")) |>
-      count(caught, target, name = "interviews") |>
+      count(caught, target_class, name = "interviews") |>
       group_by(caught) |> mutate(pct = round(100 * interviews / sum(interviews), 1)) |>
       ungroup() |> arrange(caught, desc(interviews)) |>
       as.data.frame() |> print(row.names = FALSE)
 
-    cat("\n=== GUIDED interviews by stated target and month ===\n")
-    g2 |> count(month, target, name = "interviews") |>
-      pivot_wider(names_from = target, values_from = interviews, values_fill = 0) |>
-      arrange(month) |> as.data.frame() |> print(row.names = FALSE)
   }
 } else {
   cat("\n=== CALIBRATION skipped: no usable target field ===\n")

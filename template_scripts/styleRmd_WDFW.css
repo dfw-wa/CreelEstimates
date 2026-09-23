@@ -351,3 +351,16 @@ a:focus, button:focus {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
+
+/* Make main HTML content wider */
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-fluid {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}

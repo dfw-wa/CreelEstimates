@@ -2,18 +2,17 @@
 
 #' Set up analysis folder structure and knitr cache settings
 #' 
-#' @param params List of parameters from Rmd YAML header
+#' @param resolved_params List of parameters from Rmd YAML header
 #' @param analysis_lut Analysis lookup table with folder information
-#' @param est_dates Estimate dates resolved from the database fishery lookup table or manually entered by a user
 #' 
 #' @return List with paths to outputs folders
-setup_analysis_structure <- function(params, analysis_lut, est_dates) {
+setup_analysis_structure <- function(resolved_params, analysis_lut) {
   
   # Define analysis folder path
   analysis_folder_path <- here::here(
     "fishery_analyses", 
-    params$project_name, 
-    params$fishery_name, 
+    resolved_params$project_name, 
+    resolved_params$fishery_name, 
     analysis_lut$analysis_folder
   )
   
@@ -41,7 +40,7 @@ setup_analysis_structure <- function(params, analysis_lut, est_dates) {
   # Define cache location (only create folder if caching is enabled)
   cache_path <- file.path(analysis_folder_path, ".cache")
   
-  if (isTRUE(params$enable_cache)) {
+  if (isTRUE(resolved_params$enable_cache)) {
     if (!dir.exists(cache_path)) {
       dir.create(cache_path, recursive = TRUE)
     }
@@ -54,7 +53,7 @@ setup_analysis_structure <- function(params, analysis_lut, est_dates) {
       fig.keep = "all",
       dev = c("png", "pdf"),
       dpi = 300,
-      cache.extra = list(params, analysis_lut$analysis_id, est_dates),
+      cache.extra = list(resolved_params, analysis_lut$analysis_id),
       cache.lazy = FALSE
     )
   } else {
@@ -75,7 +74,7 @@ setup_analysis_structure <- function(params, analysis_lut, est_dates) {
   cli::cli_alert_info("  Inputs: {.path {outputs_folders$inputs}}")
   cli::cli_alert_info("  Outputs: {.path {outputs_folders$outputs}}")
   cli::cli_alert_info("  Figures: {.path {outputs_folders$figures}}")
-  if (isTRUE(params$enable_cache)) {
+  if (isTRUE(resolved_params$enable_cache)) {
     cli::cli_alert_info("  Cache: {.path {cache_path}}")
   } else {
     cli::cli_alert_warning("  Cache: DISABLED (no .cache folder created)")

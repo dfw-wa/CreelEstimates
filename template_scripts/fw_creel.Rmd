@@ -863,8 +863,10 @@ inputs_bss <-
         value_normal_sigma_omega_E_0 = 3, # 
         value_lognormal_sigma_b = 1, # Bias multiplier on index counts
         value_normal_sigma_B1 = 5, # weekend/weekday fixed effect on log effort
-        value_normal_mu_mu_C = log(sum(dwg_summ$interview$fish_count)/sum(dwg_summ$interview$fishing_time_total)),
-          # Mean CPUE location. Empirical Bayes. Set from raw data
+        value_normal_mu_mu_C = {
+          cg <- dwg_summ$interview |> filter(est_cg == .x)
+          log(sum(cg$fish_count) / sum(cg$fishing_time_total))
+        },     # Mean CPUE location. Empirical Bayes. Set from raw data:
         value_normal_sigma_mu_C = 1.5, # Mean CPUE SD
         value_normal_mu_mu_E = log(5), # Median anglers/hr per gear type
         value_normal_sigma_mu_E = 2, # Median effort SD

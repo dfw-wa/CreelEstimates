@@ -125,10 +125,25 @@ step("mapping water bodies to rivers")
 cw <- read_csv(file.path(LUTDIR, "pst_river_block_crosswalk.csv"), show_col_types = FALSE)
 wb_map <- read_csv(file.path(LUTDIR, "interview_water_body_river_map.csv"),
                    show_col_types = FALSE) |> select(water_body, river_label)
-exact <- tibble(water_body = unique(ints$water_body)) |>
-  filter(water_body %in% cw$river_label, !water_body %in% wb_map$water_body) |>
-  mutate(river_label = water_body)
-wb_map <- bind_rows(wb_map, exact) |> distinct()
+# Automatic matches beyond the hand-kept map: same name once "River"/"R."/
+# punctuation are dropped and word order ignored ("Skagit River" -> Skagit,
+# "North Fork Nooksack River" -> "Nooksack River, North Fork"). Fork/reach
+# words are kept, so a mainstem never lands on a fork. Only unique matches.
+norm_name <- function(x) {
+  x |> str_to_lower() |> str_remove_all("\\([^)]*\\)") |>
+    str_replace_all("\\br\\.|\\briver\\b|[^a-z ]", " ") |> str_squish() |>
+    map_chr(\(t) paste(sort(unique(strsplit(t, " ")[[1]])), collapse = " "))
+}
+cw_norm <- tibble(river_label = unique(cw$river_label)) |>
+  filter(!is.na(river_label)) |> mutate(key = norm_name(river_label)) |>
+  group_by(key) |> filter(n() == 1) |> ungroup()
+auto <- tibble(water_body = unique(na.omit(ints$water_body))) |>
+  filter(!water_body %in% wb_map$water_body) |>
+  mutate(key = norm_name(water_body)) |>
+  inner_join(cw_norm, by = "key") |> select(water_body, river_label)
+cat("=== automatic water body -> river matches ===\n")
+print(as.data.frame(auto), row.names = FALSE)
+wb_map <- bind_rows(wb_map, auto) |> distinct()
 
 mapped <- ints |> inner_join(wb_map, by = "water_body", relationship = "many-to-many")
 cat("=== interviews mapped to PST rivers ===\n")
@@ -208,6 +223,8 @@ write_csv(bind_rows(m_ym |> mutate(level = "river-year-month"),
             mutate(p_boat = round(p_boat, 4)),
           file.path(OUT_DIR, "interview_boat_share_river_month.csv"))
 
+cat("=== rivers mapped but with no CRC salmon profile (no share possible) ===\n")
+cat(" ", paste(setdiff(unique(mapped$river_label), unique(crc_prof$river_label)), collapse = "; "), "\n\n")
 cat("=== interview boat share, CRC-salmon-weighted (usable rows are applied) ===\n")
 out |> select(-months_own_year) |> as.data.frame() |> print(row.names = FALSE)
 cat(glue("\nWrote {file.path(OUT_DIR, 'interview_boat_share_river_year.csv')}\n"))

@@ -1067,6 +1067,33 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
              profile_years = paste(range(prof_years), collapse = "-"))
   })
 
+  # Projected months must be open. pst_season_status_lookup.csv (hand-verified
+  # against the WDFW pamphlets; the same table P3 uses) is by area x month of
+  # the target year: a month verified "closed" is dropped from the
+  # projection; one with no verified status is kept and listed. Past years'
+  # actual CRC harvest is taken as evidence the month was fished and is not
+  # filtered. (Chehalis 315, 2025: closed until 8/1 - the 2022-24 profile
+  # projected June-July harvest into a closed season, 2026-09-25.)
+  if (nrow(projected) > 0) {
+    lk_path <- here::here("input_files", "pst", "lookup_tables", "pst_season_status_lookup.csv")
+    lk <- if (file.exists(lk_path)) {
+      readr::read_csv(lk_path, show_col_types = FALSE, col_types = readr::cols(.default = "c")) |>
+        transmute(catch_area_code, month = as.integer(month), status)
+    } else tibble(catch_area_code = character(), month = integer(), status = character())
+    n_before <- nrow(projected)
+    projected <- projected |>
+      left_join(lk, by = c("catch_area_code", "month")) |>
+      filter(!status %in% "closed")
+    unverified <- projected |> filter(is.na(status) | status == "UNVERIFIED")
+    message(glue(
+      "[note] p3_month_gap: {n_before - nrow(projected)} projected area-month(s) dropped as ",
+      "verified closed in pst_season_status_lookup.csv",
+      if (nrow(unverified) > 0) glue("; {nrow(unverified)} kept WITHOUT a verified season status (",
+        "{paste(head(unique(unverified$catch_area_code), 20), collapse = ', ')}) - verify ",
+        "these areas' 2025 seasons") else "", "."))
+    projected <- projected |> select(-status)
+  }
+
   gap_months <- bind_rows(actual, projected) |>
     filter(crc_harvest_m > 0) |>
     semi_join(covered_years, by = c("catch_area_code", "year")) |>

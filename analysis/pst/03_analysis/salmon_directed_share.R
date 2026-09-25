@@ -199,7 +199,8 @@ fm_f  <- fmix_tier("fishery_name", "fishery (all months)")
 #   f = the cell's mixed-target salmon:steelhead encounter ratio (as above; 1 if
 #       too few fish - flagged in the tier label).
 # Keyed on CRC code x month (logbook grain), years pooled (conditional samples
-# are thin). Tiers, first with >= MIN_ANSWERED answered interviews:
+# are thin). Pooled tiers use salmon-scoped (crosswalk) creels only.
+# Tiers, first with >= MIN_ANSWERED answered interviews:
 #   guided crc-month -> guided crc -> all-mode crc-month -> all-mode crc
 #   -> guided pooled month -> guided pooled -> all-mode pooled.
 cond_prop <- NULL
@@ -224,9 +225,13 @@ if (!is.null(ci_catch) && file.exists(CW_PATH)) {
     fk <- setdiff(keys, "condition")
     # Pooled tiers: a fishery spanning several CRC codes was fanned out by the
     # crosswalk join - collapse back to one row per interview.
+    # Pooled tiers draw only on crosswalk (salmon-scoped) creels: the logbook
+    # trips being weighted sit inside a salmon window, and winter/summer
+    # steelhead creels would drag the pooled rate toward zero for the wrong
+    # reason (2026-09-25 run: guided pooled steelhead-only p = 0.025).
     if (!"crc_code" %in% keys) {
-      d <- d |> select(-crc_code) |> distinct()
-      m <- m |> select(-crc_code) |> distinct()
+      d <- d |> filter(!is.na(crc_code)) |> select(-crc_code) |> distinct()
+      m <- m |> filter(!is.na(crc_code)) |> select(-crc_code) |> distinct()
     }
     fm <- m |> group_by(across(all_of(fk))) |>
       summarise(ms = sum(salmon), mt = sum(sthd), .groups = "drop") |>

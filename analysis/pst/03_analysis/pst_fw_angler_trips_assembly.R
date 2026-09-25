@@ -1125,9 +1125,8 @@ apply_salmon_directed_share <- function(df) {
   if (nrow(nosplit) > 0) {
     log_gap("salmon_share", NA, "gap",
             glue("'salmon or steelhead' target counted wholly as salmon (no catch ",
-                 "cache to split it) for: {paste(nosplit$fishery_name, collapse = '; ')}. ",
-                 "Run creel_guided_species_seasonality.R for these, then ",
-                 "salmon_directed_share.R."))
+                 "cache, or < MIN_MIXED_FISH salmon+steelhead encounters to split ",
+                 "it) for: {paste(nosplit$fishery_name, collapse = '; ')}."))
   }
 
   chg <- out |> group_by(block) |>

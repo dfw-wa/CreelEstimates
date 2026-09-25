@@ -50,51 +50,75 @@ included by the parent document.
 ```{r}
 #| label: pull-all-interviews
 
-cache_file <- file.path(cache_dir, "all_interviews.rds")
+# Unfiltered pull (2026-09-25). The original loop fetched interviews one
+# fishery_lut name at a time, so any interview whose fishery_name is NA, or
+# names a fishery absent from fishery_lut, was never pulled - invisible to every
+# bank/boat and guided proportion downstream. vw_analysis_interview is now read
+# whole (the same view fetch_data() filters) and every row is kept; the old
+# per-fishery loop is the fallback if the unfiltered read fails. Cache file is
+# renamed so an old filtered cache is not silently reused.
+cache_file <- file.path(cache_dir, "all_interviews_unfiltered.rds")
 
 if (file.exists(cache_file)) {
   cat("Loading cached interview data from", cache_file, "\n")
   cat("Cache date:", format(file.mtime(cache_file), "%Y-%m-%d %H:%M"), "\n")
   all_interviews <- readRDS(cache_file)
 } else {
-  # Connect and get fishery names
   conn <- connect_creel_db()
   fishery_names <- fishery_lut(conn = conn) |>
     pull(fishery_name) |>
     unique()
-
   cat(glue("{length(fishery_names)} fisheries found in fishery_lut\n\n"))
 
-  # Iterate over all fisheries and bind interview data
-  all_interviews <- purrr::map(
-    fishery_names,
-    \(fn) {
-      tryCatch(
-        {
-          dat <- fetch_data(
-            conn = conn,
-            fishery_name = fn,
-            tables = "interview",
-            data_source = "internal"
-          )
-          # Coerce all columns to character before binding to prevent
-          # type conflicts (logical from all-NA, double vs character, etc.)
-          dat$interview |>
-            mutate(across(everything(), as.character))
-        },
+  # What interview-bearing relations exist in the creel schema, and how many
+  # rows each holds - shows whether the analysis view itself hides rows (e.g.
+  # interviews never linked to a fishery) that only a base table carries.
+  rel <- tryCatch(DBI::dbGetQuery(conn, "
+      SELECT table_name, table_type FROM information_schema.tables
+      WHERE table_schema = 'creel' AND table_name ILIKE '%interview%'
+      ORDER BY table_name"), error = function(e) NULL)
+  if (!is.null(rel) && nrow(rel) > 0) {
+    rel$n_rows <- purrr::map_dbl(rel$table_name, \(t) tryCatch(
+      as.numeric(DBI::dbGetQuery(conn, glue('SELECT count(*) AS n FROM creel."{t}"'))$n),
+      error = function(e) NA_real_))
+    cat("Interview relations in schema creel:\n"); print(rel)
+    cat("\n")
+  }
+
+  all_interviews <- tryCatch(
+    fetch_db_table(conn, "creel", "vw_analysis_interview") |>
+      select(-any_of(c("created_datetime", "modified_datetime"))) |>
+      mutate(across(everything(), as.character)),
+    error = function(e) {
+      cli::cli_alert_warning("Unfiltered vw_analysis_interview read failed ({e$message}); falling back to per-fishery loop.")
+      NULL
+    })
+
+  if (is.null(all_interviews)) {
+    all_interviews <- purrr::map(
+      fishery_names,
+      \(fn) tryCatch(
+        fetch_data(conn = conn, fishery_name = fn, tables = "interview",
+                   data_source = "internal")$interview |>
+          mutate(across(everything(), as.character)),
         error = function(e) {
           cli::cli_alert_warning("Failed for {fn}: {e$message}")
           NULL
-        }
-      )
-    }
-  ) |>
-    purrr::compact() |>
-    bind_rows()
+        })
+    ) |>
+      purrr::compact() |>
+      bind_rows()
+  }
 
   DBI::dbDisconnect(conn)
 
-  # Save to cache
+  # What the old per-fishery pull would have dropped.
+  n_na   <- sum(is.na(all_interviews$fishery_name) | all_interviews$fishery_name %in% c("", "NA"))
+  n_nolut <- sum(!is.na(all_interviews$fishery_name) & !all_interviews$fishery_name %in% fishery_names)
+  cat(glue("{nrow(all_interviews)} interview rows; {n_na} with no fishery_name, ",
+           "{n_nolut} with a fishery_name not in fishery_lut - both were ",
+           "invisible to the old per-fishery pull.\n"))
+
   saveRDS(all_interviews, cache_file)
   cat(glue("Cached {nrow(all_interviews)} rows to {cache_file}\n"))
 }
@@ -118,7 +142,7 @@ cat(glue("Persisted {nrow(all_interviews)} rows to ",
 ```
 
 ::: {.callout-tip}
-To force a fresh pull from the database, delete `.cache/all_interviews.rds`
+To force a fresh pull from the database, delete `.cache/all_interviews_unfiltered.rds`
 and re-render.
 :::
 

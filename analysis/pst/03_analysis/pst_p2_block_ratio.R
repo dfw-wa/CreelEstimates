@@ -998,7 +998,9 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
 #' that month only). Skipped, not guessed:
 #'   - area-years whose P1 rows carry no month (annual district totals - no
 #'     way to tell which months they cover);
-#'   - covered_unpartitioned areas, unmapped areas.
+#'   - covered_unpartitioned areas, unmapped areas;
+#'   - area-years covered by a district-supplied total (source_id other than
+#'     creel_pe) - those totals stand as the districts gave them.
 #' Partial CRC years (compilation not yet at month 12 - 2025): months already
 #' compiled use their actual CRC harvest (tier P2); months beyond compilation
 #' use a PROJECTED harvest - that month's mean CRC harvest over the full years
@@ -1012,9 +1014,19 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
                                 deliver_blocks, years_scope, effort_long,
                                 control = P2_CONTROL, partial_years = integer(0)) {
 
-  p1 <- effort_long |>
+  # Design-based creels only. District-supplied totals (R1/R2/R3_external)
+  # are the districts' own season estimates: filling "their" gap months would
+  # second-guess them, and in the Upper Columbia it did so at the thinnest
+  # ratio in the pipeline (2025: McNary 142 projected salmon x 11.7 = 1,662
+  # trips, Yakima 105 x 8.8 = 925). Excluded 2026-09-25. Their area-years are
+  # still "covered" - they are not handed to regular P2 either (apply_p2()'s
+  # own covered check is unchanged).
+  p1_all <- effort_long |>
     filter(tier == "P1", !is.na(catch_area_code)) |>
     mutate(catch_area_code = as.character(catch_area_code))
+  district_cover <- p1_all |> filter(source_id != "creel_pe") |> distinct(catch_area_code, year)
+  p1 <- p1_all |> filter(source_id == "creel_pe") |>
+    anti_join(district_cover, by = c("catch_area_code", "year"))
   annual_only <- p1 |>
     group_by(catch_area_code, year) |>
     filter(any(is.na(month))) |> ungroup() |> distinct(catch_area_code, year)

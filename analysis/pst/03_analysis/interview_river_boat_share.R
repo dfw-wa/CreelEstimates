@@ -31,7 +31,9 @@
 #
 # Inputs:
 #   .cache/creel_db_2022_2025/vw_interview.rds   (explore_creel_db_2022_2025.R)
-#   analysis/pst/outputs/04_interview_proportions/all_interviews.rds (optional)
+#   .cache/creel_db_2022_2025/vw_analysis_interview.rds (optional; the explorer's
+#     copy - NOT all_interviews.rds, whose creelutils-pulled columns segfaulted
+#     R on read here, 2026-09-25)
 #   analysis/pst/outputs/01_crc_harvest/crc_freshwater_harvest_2010_2024_tidy.csv
 #   input_files/pst/lookup_tables/{pst_river_block_crosswalk,
 #     interview_water_body_river_map}.csv
@@ -63,34 +65,41 @@ LUTDIR  <- here("input_files", "pst", "lookup_tables")
 CRC_CSV <- here("analysis", "pst", "outputs", "01_crc_harvest",
                 "crc_freshwater_harvest_2010_2024_tidy.csv")
 
+step <- function(msg) { message(format(Sys.time(), "%H:%M:%S"), "  ", msg); flush.console() }
+
 na_str <- function(x) if_else(str_squish(coalesce(as.character(x), "")) %in% c("", "NA"),
                               NA_character_, str_squish(as.character(x)))
-col <- function(d, nm) if (nm %in% names(d)) na_str(d[[nm]]) else rep(NA_character_, nrow(d))
+getcol <- function(d, nm) if (nm %in% names(d)) na_str(d[[nm]]) else rep(NA_character_, nrow(d))
 
 # ---- 1. Interviews -----------------------------------------------------------
 vw_path <- file.path(CACHE, "vw_interview.rds")
 if (!file.exists(vw_path)) stop(glue("{vw_path} missing - run explore_creel_db_2022_2025.R"), call. = FALSE)
+step("reading vw_interview cache")
 vw <- readRDS(vw_path)
+step(glue("vw_interview: {nrow(vw)} rows"))
 vw_int <- tibble(
-  interview_id = col(vw, "interview_id"),
-  event_date   = col(vw, "event_date"),
-  water_body   = col(vw, "water_body_desc"),
-  angler_type  = col(vw, "angler_type_code"),
-  fish_from_boat = col(vw, "fish_from_boat"),
+  interview_id = getcol(vw, "interview_id"),
+  event_date   = getcol(vw, "event_date"),
+  water_body   = getcol(vw, "water_body_desc"),
+  angler_type  = getcol(vw, "angler_type_code"),
+  fish_from_boat = getcol(vw, "fish_from_boat"),
   boat_used    = NA_character_,
-  angler_count = col(vw, "angler_count"),
+  angler_count = getcol(vw, "angler_count"),
   source       = "vw_interview")
 
-ana_path <- file.path(OUT_DIR, "all_interviews.rds")
+ana_path <- file.path(CACHE, "vw_analysis_interview.rds")
 ana_int <- if (file.exists(ana_path)) {
+  step("reading vw_analysis_interview cache")
   a <- readRDS(ana_path)
-  tibble(interview_id = col(a, "interview_id"), event_date = col(a, "event_date"),
-         water_body = col(a, "water_body"), angler_type = col(a, "angler_type"),
-         fish_from_boat = col(a, "fish_from_boat"), boat_used = col(a, "boat_used"),
-         angler_count = col(a, "angler_count"), source = "vw_analysis_interview") |>
+  tibble(interview_id = getcol(a, "interview_id"), event_date = getcol(a, "event_date"),
+         water_body = getcol(a, "water_body"), angler_type = getcol(a, "angler_type"),
+         fish_from_boat = getcol(a, "fish_from_boat"), boat_used = getcol(a, "boat_used"),
+         angler_count = getcol(a, "angler_count"), source = "vw_analysis_interview") |>
     filter(!interview_id %in% vw_int$interview_id)
 } else NULL
 
+rm(vw); if (exists("a")) rm(a); invisible(gc())
+step("deriving bank/boat")
 ints <- bind_rows(vw_int, ana_int) |>
   mutate(
     date  = suppressWarnings(as.Date(substr(event_date, 1, 10))),
@@ -112,6 +121,7 @@ cat(glue("{nrow(ints)} located interviews 2022-2025 ",
          "{sum(ints$source != 'vw_interview')} analysis-view only)\n\n"))
 
 # ---- 2. Water body -> river_label --------------------------------------------
+step("mapping water bodies to rivers")
 cw <- read_csv(file.path(LUTDIR, "pst_river_block_crosswalk.csv"), show_col_types = FALSE)
 wb_map <- read_csv(file.path(LUTDIR, "interview_water_body_river_map.csv"),
                    show_col_types = FALSE) |> select(water_body, river_label)
@@ -130,6 +140,7 @@ cat(glue("\n{sum(unmapped$n)} located interviews on {nrow(unmapped)} water bodie
          "{paste(head(glue('{unmapped$water_body} ({unmapped$n})'), 8), collapse = '; ')}\n\n"))
 
 # ---- 3. Monthly shares --------------------------------------------------------
+step("monthly shares")
 share_at <- function(d, ...) {
   d |> group_by(...) |>
     summarise(located = n(),
@@ -139,6 +150,7 @@ m_ym <- share_at(mapped, river_label, year, month) |> filter(located >= MIN_MONT
 m_m  <- share_at(mapped, river_label, month)       |> filter(located >= MIN_MONTH)
 
 # ---- 4. CRC salmon profile by river x month ------------------------------------
+step("CRC salmon profile")
 if (!file.exists(CRC_CSV)) stop(glue("{CRC_CSV} missing - run parse_crc_freshwater_harvest.R"), call. = FALSE)
 river_codes <- cw |> filter(!is.na(crc_areas), crc_areas != "") |>
   distinct(river_label, crc_areas) |>
@@ -154,6 +166,7 @@ crc_prof <- read_csv(CRC_CSV, show_col_types = FALSE) |>
   filter(w > 0)
 
 # ---- 5. River-year and river shares --------------------------------------------
+step("river-year shares")
 rivers <- intersect(unique(mapped$river_label), unique(crc_prof$river_label))
 grid_y <- crc_prof |> filter(river_label %in% rivers) |> crossing(year = YEARS)
 

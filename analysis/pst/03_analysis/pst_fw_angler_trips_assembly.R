@@ -1071,7 +1071,9 @@ invisible(ingest_published_fallback())
 # numerator, and every P2/P3 area expanded from it, carries the correction.
 # Harvest is untouched (it is already salmon-only). district_creel is not
 # scaled: those are district salmon-fishery totals with no interview linkage.
-USE_SALMON_DIRECTED_SHARE <- TRUE
+# Env-var override for before/after comparisons (see section 5h):
+#   PST_SALMON_SHARE=0 PST_MONTH_GAP=0 PST_RUN_TAG=baseline Rscript ...
+USE_SALMON_DIRECTED_SHARE <- Sys.getenv("PST_SALMON_SHARE", "1") != "0"
 
 apply_salmon_directed_share <- function(df) {
   f <- file.path(INTERVIEW_PROPS_DIR, "salmon_directed_share_month.csv")
@@ -1207,6 +1209,7 @@ effort_long_for_p2 <- if (is.null(p1_overrides) || nrow(p1_overrides) == 0) {
 # run_p2_extrapolation() (pst_p2_block_ratio.R) expands crc_areas on the
 # crosswalk unconditionally once crc_yr is non-NULL, so a NULL crosswalk must
 # be intercepted here rather than passed through. [R2]
+P2_CONTROL$month_gap_expansion <- Sys.getenv("PST_MONTH_GAP", "1") != "0"
 p2x <- if (is.null(crosswalk)) {
   NULL
 } else {
@@ -1662,6 +1665,19 @@ if (!is.null(closed_areas)) {
 if (!USE_INTERVIEW_TRACK_B) {
   effort_long <- categorize_mode_location(effort_long, crosswalk)
 }
+
+# ---- 5h. Totals snapshot for before/after comparison ------------------------
+# One small file per run tag, so a baseline run (switches off) and the
+# current run can be compared without either overwriting the other.
+RUN_TAG <- Sys.getenv("PST_RUN_TAG", "current")
+write_csv(
+  effort_long |>
+    group_by(block, year, tier) |>
+    summarise(angler_trips = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
+    mutate(run_tag = RUN_TAG,
+           salmon_share = USE_SALMON_DIRECTED_SHARE,
+           month_gap = isTRUE(P2_CONTROL$month_gap_expansion)),
+  file.path(OUT_DIR, glue("pst_fw_totals_snapshot_{RUN_TAG}.csv")))
 
 # ---- 6. Detail roll-ups (river and CRC-area grain) --------------------------
 # Year x River x Mode x Location x Angler Trips, rolled up from month grain.

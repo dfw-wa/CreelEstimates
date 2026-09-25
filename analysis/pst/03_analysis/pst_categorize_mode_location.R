@@ -62,9 +62,11 @@ USE_INTERVIEW_RIVER_SHARE <- TRUE
 INTERVIEW_SHARE_PATH <- here("analysis", "pst", "outputs", "04_interview_proportions",
                              "interview_boat_share_river_year.csv")
 
-read_interview_share <- function() {
+read_interview_share <- function(usable_only = TRUE) {
   if (!USE_INTERVIEW_RIVER_SHARE || !file.exists(INTERVIEW_SHARE_PATH)) return(NULL)
-  read_csv(INTERVIEW_SHARE_PATH, show_col_types = FALSE) |> filter(usable)
+  d <- read_csv(INTERVIEW_SHARE_PATH, show_col_types = FALSE)
+  if (usable_only) d <- d |> filter(usable)
+  if (nrow(d) == 0) NULL else d
 }
 
 split_location <- function(el, use_month) {
@@ -131,7 +133,9 @@ split_location <- function(el, use_month) {
 # check on whether interviews can stand in for a design split at all
 # (interviews over- or under-sample boat anglers depending on access).
 write_interview_vs_design <- function(el) {
-  ish <- read_interview_share()
+  # All interview shares, not just applied ones: a thin sample that fails the
+  # threshold is still evidence for (or against) the method.
+  ish <- read_interview_share(usable_only = FALSE)
   if (is.null(ish)) {
     log_gap("categorize", NA, "note", glue(
       "interview river boat shares not applied - {INTERVIEW_SHARE_PATH} ",
@@ -144,12 +148,13 @@ write_interview_vs_design <- function(el) {
               p_design = sum(angler_trips[location == "boat"]) / sum(angler_trips),
               .groups = "drop")
   cmp <- ish |> filter(level == "river-year") |>
-    transmute(river_label, year = as.integer(year), p_interview = p_boat, n_located) |>
+    transmute(river_label, year = as.integer(year), p_interview = p_boat, n_located,
+              applied_where_no_design = usable) |>
     inner_join(design, by = c("river_label", "year")) |>
     mutate(diff_pts = round(100 * (p_interview - p_design), 1),
            across(c(p_interview, p_design), ~ round(.x, 3)))
   write_csv(cmp, file.path(OUT_DIR, "pst_fw_location_interview_vs_design.csv"))
-  iv_rivers <- sort(unique(ish$river_label))
+  iv_rivers <- sort(unique(ish$river_label[ish$usable]))
   log_gap("categorize", NA, "note", glue(
     "interview river boat shares usable for {length(iv_rivers)} rivers: ",
     "{paste(iv_rivers, collapse = '; ')}. Rivers with a P1 design split: ",

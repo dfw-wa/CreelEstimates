@@ -56,7 +56,9 @@ options(width = 220)
 YEARS               <- 2022:2025
 CRC_PROFILE_YEARS   <- 2022:2024
 MIN_MONTH           <- 10     # located interviews for a river-year-month share
-MIN_LOCATED         <- 20     # located interviews behind a river(-year) share
+MIN_LOCATED         <- 100    # located interviews behind a river(-year) share.
+                              # Raised from 20 (2026-09-25): a 41-interview
+                              # Nisqually share sat 39 pts off its creel design split.
 MIN_WEIGHT_COVERAGE <- 0.5    # share of CRC salmon weight with a monthly share
 
 CACHE   <- here(".cache", "creel_db_2022_2025")

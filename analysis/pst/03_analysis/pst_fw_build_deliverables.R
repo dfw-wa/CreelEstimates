@@ -515,6 +515,27 @@ if (!is.null(deliverable_trips)) {
 
   # Plain-language note on how Mode and Location were assigned, with the
   # shares filled in from this run. A separate file rather than a workbook tab.
+  # Interview vs creel design boat share, for rivers with both
+  # (pst_fw_location_interview_vs_design.csv, written by the categorize stage).
+  interview_check_text <- function() {
+    f <- file.path(IN_DIR, "pst_fw_location_interview_vs_design.csv")
+    tail_txt <- paste("Rivers where fewer than 100 interviews recorded bank or boat were not used",
+                      "to set any split. Broader validation is pending hand-mapping of interview",
+                      "water bodies to creel-survey rivers.")
+    if (!file.exists(f)) return(paste("Not available in this run.", tail_txt))
+    cmp <- suppressMessages(read_csv(f, show_col_types = FALSE))
+    if (nrow(cmp) == 0) return(paste("No river-year had both an interview share and a creel design split in this run.", tail_txt))
+    by_r <- cmp |> group_by(river_label) |>
+      summarise(years = paste(range(year), collapse = "-"),
+                n = max(n_located), d_lo = min(diff_pts), d_hi = max(diff_pts), .groups = "drop") |>
+      mutate(txt = glue("{river_label} ({years}; up to {n} interviews): interview minus creel boat share ",
+                        "{d_lo} to {d_hi} percentage points"))
+    paste0("Interview-based boat shares were compared against creel design splits where a river has both. ",
+           paste(by_r$txt, collapse = "; "), ". ",
+           "Close agreement with large samples supports using interviews where no creel split exists; ",
+           "a large gap on a small sample is treated as a sampling artefact, not a general bias. ", tail_txt)
+  }
+
   tot   <- sum(deliverable_trips$`Angler Trips`)
   share <- function(rows) round(100 * sum(deliverable_trips$`Angler Trips`[rows]) / tot, 1)
   dt <- deliverable_trips
@@ -525,7 +546,7 @@ if (!is.null(deliverable_trips)) {
     "",
     "## Guided and unguided",
     "",
-    "Guided trips come from the WDFW guide logbook, where licensed guides report each client trip. We count a logged trip as salmon-directed if it caught salmon (a trip that caught both salmon and steelhead counts only within the salmon season); if it caught nothing during the salmon season; or, only on rivers whose creel survey also covers steelhead (Drano Lake, Skykomish, Stillaguamish, Wallace), if it caught steelhead during the salmon season. Trips that caught only trout, warmwater species or sturgeon are not counted. The salmon season for each area is the months with reported salmon harvest, except on the Cowlitz below Mayfield Dam, where creel interviews show guides target salmon only September to November.",
+    "Guided trips come from the WDFW guide logbook, where licensed guides report each client trip. The logbook records catch, not target species. A logged trip counts as salmon-directed if it caught salmon (a trip that caught both salmon and steelhead counts only within the salmon season). Trips during the salmon season that caught only steelhead, or caught nothing, count in part: at the share of creel-interviewed anglers with the same catch outcome who said they were targeting salmon (same river and month where the sample allows, otherwise pooled across salmon creels). Trips that caught only trout, warmwater species or sturgeon, and trips outside the salmon season that caught no salmon, are not counted. The salmon season for each area is the months with reported salmon harvest, except on the Cowlitz below Mayfield Dam, where creel interviews show guides target salmon only September to November.",
     "",
     "Logbook trips are matched to estimates by catch area, year and month. The guided number is a minimum: the logbook depends on guides reporting every trip, and the logbook records what was caught, not what was targeted. Where a river has no logbook record, guided trips are set to zero. Unguided trips are the remainder of the estimate.",
     "",
@@ -534,11 +555,16 @@ if (!is.null(deliverable_trips)) {
     "",
     "## Bank and boat",
     "",
-    "Where a creel survey measured bank and boat effort separately, that split is used as measured. Elsewhere, including all estimates expanded from catch record cards, the split is borrowed from creel surveys: the same river and year if available, then the same river in other years, then the region. Guided trips are placed in boats at the rate creel interviews show for guided salmon anglers (about 96% overall; river-specific where at least 20 guided interviews exist). Unguided trips make up the rest of each bank and boat total.",
+    "Where a creel survey measured bank and boat effort separately, that split is used as measured. Elsewhere, including all estimates expanded from catch record cards, the split is borrowed: from a creel survey on the same river (same year if available, else other years); else from creel interviews on the same river, where at least 100 interviews recorded bank or boat (the months weighted by that river's reported salmon harvest, so salmon-season fishing sets the split); else from the region's creel surveys; else from all creel surveys statewide. Guided trips are placed in boats at the rate creel interviews show for guided salmon anglers (about 96% overall; river-specific where at least 20 guided interviews exist). Unguided trips make up the rest of each bank and boat total.",
     "",
     glue("- Location measured by the creel survey: {share(str_starts(dt$`Location Basis`, 'Measured'))}% of all trips."),
     glue("- Location estimated from a creel ratio: {share(str_starts(dt$`Location Basis`, 'Estimated'))}% of all trips."),
-    glue("- Mixed within a river-year: {share(str_starts(dt$`Location Basis`, 'Mixed'))}% of all trips.")
+    glue("- Mixed within a river-year: {share(str_starts(dt$`Location Basis`, 'Mixed'))}% of all trips."),
+    glue("- Location from same-river creel interviews: {share(dt$`Location Basis` == 'Estimated — same-river creel interviews')}% of all trips."),
+    "",
+    "### Check of interview-based bank and boat",
+    "",
+    interview_check_text()
   )
   note_path <- file.path(DELIVERABLES_DIR,
                          "WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Mode_Location_Notes.md")

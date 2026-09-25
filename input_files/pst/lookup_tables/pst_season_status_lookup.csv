@@ -710,9 +710,9 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 618,Drano Lake,1,2024-25,open,NA,NA,NA,NA
 618,Drano Lake,2,2024-25,open,NA,NA,NA,NA
 618,Drano Lake,3,2024-25,open,NA,NA,NA,NA
-618,Drano Lake,4,2025-26,open,NA,NA,NA,NA
-618,Drano Lake,5,2025-26,open,NA,NA,NA,NA
-618,Drano Lake,6,2025-26,open,NA,NA,NA,NA
+618,Drano Lake,4,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,NA
+618,Drano Lake,5,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,NA
+618,Drano Lake,6,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,NA
 618,Drano Lake,7,2025-26,open,NA,NA,NA,NA
 618,Drano Lake,8,2025-26,open,NA,NA,NA,NA
 618,Drano Lake,9,2025-26,open,NA,NA,NA,NA
@@ -1391,6 +1391,3 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 315,Chehalis,10,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
 315,Chehalis,11,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
 315,Chehalis,12,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-618,Drano Lake,4,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection; other 2025 months not verified here"
-618,Drano Lake,5,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection; other 2025 months not verified here"
-618,Drano Lake,6,2025-26,open,"Evan Booher, 2026-09-25: Drano spring Chinook open April-June 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection; other 2025 months not verified here"

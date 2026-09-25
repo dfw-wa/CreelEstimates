@@ -1087,6 +1087,10 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
     lk_path <- here::here("input_files", "pst", "lookup_tables", "pst_season_status_lookup.csv")
     lk <- if (file.exists(lk_path)) {
       readr::read_csv(lk_path, show_col_types = FALSE, col_types = readr::cols(.default = "c")) |>
+        # One row per area-month, or the join below would duplicate projected
+        # months (and their trips). A verified row beats an unsourced one.
+        arrange(catch_area_code, month, is.na(verified_by) | verified_by == "NA") |>
+        distinct(catch_area_code, month, .keep_all = TRUE) |>
         transmute(catch_area_code, month = as.integer(month), status)
     } else tibble(catch_area_code = character(), month = integer(), status = character())
     gm <- gap_months |> left_join(lk, by = c("catch_area_code", "month"))

@@ -8,14 +8,18 @@
 #   the analysis views at all - is invisible. Known case: Lewis River creel data
 #   should exist in FISH.creel but no Lewis interview reaches the pipeline.
 #
-#   This pulls EVERY table and view in schema `creel` of the FISH database,
-#   scoped only by date (2022-01-01 to 2025-12-31) where the relation has a
-#   date column, whole where it has none (up to MAX_UNDATED_ROWS), and caches
-#   each one locally so it can be explored without re-querying. No fishery,
-#   water body or project filter anywhere.
+#   This pulls every INTERVIEW table and view in schema `creel` of the FISH
+#   database (relation name matching RELATION_PATTERN - effort and catch are
+#   deliberately left out), scoped only by date (2022-01-01 to 2025-12-31)
+#   where the relation has a date column, whole where it has none (up to
+#   MAX_UNDATED_ROWS), and caches each one locally so it can be explored
+#   without re-querying. No fishery, water body or project filter anywhere.
 #
 #   Then it searches every text column of every pulled relation for SEARCH
 #   (default "lewis") and reports where it turns up and when.
+#
+# Also lists (does not pull) every other relation in the schema, so a
+# differently-named interview table would still show up by name.
 #
 # Needs DB/VPN access and creelutils (for connect_creel_db()).
 #
@@ -48,6 +52,7 @@ SCHEMA           <- "creel"
 DATE_FROM        <- "2022-01-01"
 DATE_TO          <- "2025-12-31"
 MAX_UNDATED_ROWS <- 2e6
+RELATION_PATTERN <- "interview"   # interviews only - no effort, no catch
 # Preferred date column when a relation has several.
 DATE_COL_PREF    <- c("event_date", "survey_date", "interview_date",
                       "sample_date", "trip_date", "date")
@@ -80,11 +85,17 @@ if (length(cached) == 0) {
 
   rels <- DBI::dbGetQuery(conn, glue("
     SELECT table_name, table_type FROM information_schema.tables
-    WHERE table_schema = '{SCHEMA}' ORDER BY table_type, table_name"))
+    WHERE table_schema = '{SCHEMA}' AND table_name ~* '{RELATION_PATTERN}'
+    ORDER BY table_type, table_name"))
   cols <- DBI::dbGetQuery(conn, glue("
     SELECT table_name, column_name, data_type FROM information_schema.columns
     WHERE table_schema = '{SCHEMA}'"))
-  cat(glue("{nrow(rels)} relations in {SCHEMA} ",
+  all_rels <- DBI::dbGetQuery(conn, glue("
+    SELECT table_name, table_type FROM information_schema.tables
+    WHERE table_schema = '{SCHEMA}' ORDER BY table_name"))
+  cat(glue("Other relations in {SCHEMA} (listed, not pulled): ",
+           "{paste(setdiff(all_rels$table_name, rels$table_name), collapse = ', ')}\n\n"))
+  cat(glue("{nrow(rels)} interview relations in {SCHEMA} ",
            "({sum(rels$table_type == 'BASE TABLE')} tables, ",
            "{sum(rels$table_type == 'VIEW')} views)\n\n"))
 

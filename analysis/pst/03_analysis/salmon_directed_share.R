@@ -50,7 +50,12 @@
 #
 # Output (analysis/pst/outputs/04_interview_proportions/):
 #   salmon_directed_share_month.csv   - applied by the assembly
+#   logbook_catch_conditional_salmon_target_prop.csv - read by parse_guide_logbook.R
 #   salmon_directed_share_vs_logbook.csv
+#
+# Run order: this script, then parse_guide_logbook.R (which reads the
+# conditional proportions); re-run this one afterwards to refresh the
+# logbook cross-check.
 #
 # Usage:
 #   Rscript analysis/pst/03_analysis/salmon_directed_share.R
@@ -109,6 +114,7 @@ ints <- int |>
 
 caches <- list.files(CACHE, pattern = "^creel_int_catch_.*\\.rds$", full.names = TRUE)
 mixed_catch <- NULL
+ci_catch <- NULL
 if (length(caches) > 0) {
   pulls <- map(caches, readRDS)
   ci <- map(pulls, "interview") |> compact() |> bind_rows() |> distinct()
@@ -126,7 +132,28 @@ if (length(caches) > 0) {
       summarise(salmon = sum(n[species %in% SALMON_SPECIES]),
                 sthd   = sum(n[str_detect(coalesce(species, ""),
                                           regex("steelhead", ignore_case = TRUE))]),
+                any_catch = sum(n),
                 .groups = "drop")
+    # Every interview with its catch, for the catch-conditional targeting
+    # proportions in section 2b (guide logbook steelhead-only / no-catch trips).
+    ci_catch <- ci |>
+      mutate(date  = suppressWarnings(as.Date(event_date)),
+             month = as.integer(lubridate::month(date)),
+             fishery_name = as.character(fishery_name),
+             cls = classify_target(target_species),
+             guided = if ("trip_guided" %in% names(ci)) trip_guided == "Guided" else NA,
+             w = if ("angler_count" %in% names(ci)) {
+               a <- suppressWarnings(as.numeric(angler_count))
+               if_else(is.na(a) | a <= 0, 1, a)
+             } else 1) |>
+      filter(!is.na(month)) |>
+      distinct(across(all_of(c(key, "fishery_name", "month", "cls", "guided", "w")))) |>
+      left_join(fish, by = key) |>
+      mutate(across(c(salmon, sthd, any_catch), ~ coalesce(.x, 0)),
+             caught = case_when(salmon > 0 ~ "salmon",
+                                sthd > 0 ~ "steelhead_only",
+                                any_catch > 0 ~ "other_only",
+                                TRUE ~ "no_catch"))
     mixed_catch <- ci |>
       mutate(date  = suppressWarnings(as.Date(event_date)),
              year  = as.integer(lubridate::year(date)),
@@ -160,6 +187,113 @@ fmix_tier <- function(keys, tier) {
 fm_ym <- fmix_tier(c("fishery_name", "year", "month"), "fishery-year-month")
 fm_m  <- fmix_tier(c("fishery_name", "month"), "fishery-month (years pooled)")
 fm_f  <- fmix_tier("fishery_name", "fishery (all months)")
+
+# ---- 2b. Catch-conditional targeting proportions (for the guide logbook) -----
+# The logbook records catch, never target. A guided trip that caught only
+# steelhead, or nothing, inside a salmon-open month may or may not have been
+# after salmon. The creel answers that directly: among interviews with the SAME
+# catch outcome, what share named a salmon target? parse_guide_logbook.R
+# weights those logbook trips by it, replacing the old name-based
+# "steelhead-inclusive rivers" rule.
+#   p = (salmon + f * salmon_or_steelhead) / answered_specific, angler-weighted,
+#   f = the cell's mixed-target salmon:steelhead encounter ratio (as above; 1 if
+#       too few fish - flagged in the tier label).
+# Keyed on CRC code x month (logbook grain), years pooled (conditional samples
+# are thin). Tiers, first with >= MIN_ANSWERED answered interviews:
+#   guided crc-month -> guided crc -> all-mode crc-month -> all-mode crc
+#   -> guided pooled month -> guided pooled -> all-mode pooled.
+cond_prop <- NULL
+if (!is.null(ci_catch) && file.exists(CW_PATH)) {
+  cw_codes0 <- read_csv(CW_PATH, show_col_types = FALSE) |>
+    filter(!is.na(fishery_name), !is.na(crc_areas), crc_areas != "") |>
+    distinct(fishery_name, crc_areas) |>
+    mutate(crc_code = strsplit(as.character(crc_areas), "\\|")) |>
+    unnest(crc_code) |> distinct(fishery_name, crc_code)
+
+  cc_int <- ci_catch |>
+    filter(caught %in% c("steelhead_only", "no_catch")) |>
+    rename(condition = caught) |>
+    left_join(cw_codes0, by = "fishery_name", relationship = "many-to-many")
+  mixed_all <- ci_catch |>
+    filter(cls == "salmon_or_steelhead") |>
+    left_join(cw_codes0, by = "fishery_name", relationship = "many-to-many")
+
+  cprop <- function(keys, guided_only, tier) {
+    d <- if (guided_only) filter(cc_int, guided %in% TRUE) else cc_int
+    m <- if (guided_only) filter(mixed_all, guided %in% TRUE) else mixed_all
+    fk <- setdiff(keys, "condition")
+    # Pooled tiers: a fishery spanning several CRC codes was fanned out by the
+    # crosswalk join - collapse back to one row per interview.
+    if (!"crc_code" %in% keys) {
+      d <- d |> select(-crc_code) |> distinct()
+      m <- m |> select(-crc_code) |> distinct()
+    }
+    fm <- m |> group_by(across(all_of(fk))) |>
+      summarise(ms = sum(salmon), mt = sum(sthd), .groups = "drop") |>
+      mutate(f = if_else(ms + mt >= MIN_MIXED_FISH, ms / (ms + mt), NA_real_))
+    d |>
+      group_by(across(all_of(keys))) |>
+      summarise(
+        n_answered = sum(cls %in% c("salmon", "salmon_or_steelhead", "steelhead", "other_species")),
+        w_salmon = sum(w[cls == "salmon"]), w_mixed = sum(w[cls == "salmon_or_steelhead"]),
+        w_denom  = sum(w[cls %in% c("salmon", "salmon_or_steelhead", "steelhead",
+                                    "other_species", "unmapped")]),
+        .groups = "drop") |>
+      filter(n_answered >= MIN_ANSWERED) |>
+      (\(x) if (length(fk) == 0) cross_join(x, fm |> select(f))
+             else left_join(x, fm |> select(all_of(fk), f), by = fk))() |>
+      mutate(p_salmon_target = (w_salmon + coalesce(f, 1) * w_mixed) / w_denom,
+             prop_tier = paste0(tier, if_else(w_mixed > 0 & is.na(f),
+                                              "; mixed counted as salmon", "")))
+  }
+  grid <- bind_rows(
+    cc_int |> filter(!is.na(crc_code)) |> distinct(crc_code),
+    tibble(crc_code = "*")) |>
+    crossing(month = 1:12, condition = c("steelhead_only", "no_catch"))
+  tiers <- list(
+    list(c("crc_code", "month", "condition"), TRUE,  "guided, crc-month"),
+    list(c("crc_code", "condition"),          TRUE,  "guided, crc"),
+    list(c("crc_code", "month", "condition"), FALSE, "all modes, crc-month"),
+    list(c("crc_code", "condition"),          FALSE, "all modes, crc"),
+    list(c("month", "condition"),             TRUE,  "guided, pooled month"),
+    list(c("condition"),                      TRUE,  "guided, pooled"),
+    list(c("condition"),                      FALSE, "all modes, pooled"))
+  cond_prop <- grid
+  for (t in tiers) {
+    v <- cprop(t[[1]], t[[2]], t[[3]]) |>
+      select(all_of(t[[1]]), p_new = p_salmon_target, n_new = n_answered, t_new = prop_tier)
+    cond_prop <- cond_prop |> left_join(v, by = t[[1]])
+    if (!"p_salmon_target" %in% names(cond_prop)) {
+      cond_prop <- cond_prop |> mutate(p_salmon_target = p_new, n_answered = n_new, prop_tier = t_new)
+    } else {
+      fill <- is.na(cond_prop$p_salmon_target)
+      cond_prop$p_salmon_target[fill] <- cond_prop$p_new[fill]
+      cond_prop$n_answered[fill]      <- cond_prop$n_new[fill]
+      cond_prop$prop_tier[fill]       <- cond_prop$t_new[fill]
+    }
+    cond_prop <- cond_prop |> select(-p_new, -n_new, -t_new)
+  }
+  cond_prop <- cond_prop |>
+    mutate(p_salmon_target = round(p_salmon_target, 4)) |>
+    arrange(condition, crc_code, month)
+  write_csv(cond_prop, file.path(OUT_DIR, "logbook_catch_conditional_salmon_target_prop.csv"))
+
+  cat("=== P(salmon-directed | catch outcome), creel interviews, pooled ===\n")
+  cond_prop |> filter(crc_code == "*") |>
+    group_by(condition, prop_tier) |>
+    summarise(months = n(), p = round(mean(p_salmon_target), 3), .groups = "drop") |>
+    as.data.frame() |> print(row.names = FALSE)
+  cat("\n=== by CRC code (crc-specific tiers only) ===\n")
+  cond_prop |> filter(crc_code != "*", str_detect(prop_tier, "crc")) |>
+    group_by(condition, crc_code) |>
+    summarise(p_mean = round(mean(p_salmon_target), 3), tiers = paste(unique(prop_tier), collapse = " / "),
+              .groups = "drop") |>
+    as.data.frame() |> print(row.names = FALSE)
+  cat("\n")
+} else {
+  cat("No catch cache - logbook catch-conditional proportions NOT written; ",
+      "parse_guide_logbook.R will fall back to its unweighted rules.\n\n")
+}
 
 # ---- 3. Target shares by tier ------------------------------------------------
 
@@ -263,10 +397,9 @@ if (file.exists(log_csv) && file.exists(CW_PATH)) {
   col_or0 <- function(d, nm) if (nm %in% names(d)) coalesce(d[[nm]], 0) else 0
   lg <- lg |>
     mutate(log_salmon_trips = col_or0(lg, "salmon_caught") +
-                              col_or0(lg, "salmon_and_steelhead_in_window") +
-                              col_or0(lg, "DROP_salmon_and_steelhead_off_window"),
-           log_sthd_only_trips = col_or0(lg, "steelhead_on_combined_creel") +
-                                 col_or0(lg, "DROP_steelhead")) |>
+                              col_or0(lg, "salmon_and_steelhead_in_window"),
+           log_sthd_only_trips = col_or0(lg, "steelhead_only_in_window_raw") +
+                                 col_or0(lg, "steelhead_only_off_window_raw")) |>
     select(crc_code, year = trip_year, month = trip_month,
            log_salmon_trips, log_sthd_only_trips)
 

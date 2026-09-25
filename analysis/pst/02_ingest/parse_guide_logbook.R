@@ -201,10 +201,19 @@ if (n_crc_unmatched > 0L) {
 #          counts only inside the salmon window - outside it the steelhead is
 #          taken as the target.
 #   COUNT  nothing caught, inside the salmon window.
-#   COUNT  steelhead caught (no salmon), inside the salmon window, ONLY on
-#          rivers whose creel denominator itself includes steelhead effort.
+#   WEIGHT steelhead caught (no salmon), inside the salmon window: counted at
+#          p = P(salmon-directed | caught only steelhead), from creel interviews
+#          with the same catch outcome (guided, CRC area x month where the
+#          sample allows, else pooled) - salmon_directed_share.R writes it.
+#          Replaces the earlier rule that counted these only on four rivers
+#          picked by creel NAME, which was an artifact: every creel records all
+#          catch. If that file is absent the old name rule is used and warned.
 #   DROP   everything else: trout / warmwater / sturgeon / other catch; nothing
-#          caught outside the window; steelhead elsewhere.
+#          caught outside the window; steelhead outside the window.
+#
+# WEIGHT_NO_CATCH = TRUE would weight the no-catch-in-window trips the same way
+# (P(salmon-directed | caught nothing)); off by default - counting them in full
+# was the agreed rule. The proportion is written either way for sensitivity.
 #
 # Salmon window = months with CRC salmon harvest for that area (same year, or
 # pooled years when CRC has not compiled that year yet), EXCEPT where creel
@@ -214,7 +223,11 @@ if (n_crc_unmatched > 0L) {
 # - guided_target_mix_by_river.R).
 
 SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
+# Legacy fallback only (used when the conditional-proportion file is missing).
 STEELHEAD_INCLUSIVE_RIVERS <- c("Drano Lake", "Skykomish", "Stillaguamish", "Wallace")
+WEIGHT_NO_CATCH <- FALSE
+COND_PROP_CSV <- here("analysis", "pst", "outputs", "04_interview_proportions",
+                      "logbook_catch_conditional_salmon_target_prop.csv")
 SALMON_WINDOW_OVERRIDE <- tibble(crc_code = "561", trip_month = 9:11)
 
 CRC_HARVEST_FILES <- here("analysis", "pst", "outputs", "01_crc_harvest",
@@ -282,29 +295,91 @@ guided_trips <- guided_trips |>
       n_salmon > 0 & n_steelhead == 0                       ~ "salmon_caught",
       n_salmon > 0 & salmon_window                          ~ "salmon_and_steelhead_in_window",
       n_salmon > 0                                          ~ "DROP_salmon_and_steelhead_off_window",
-      n_steelhead > 0 & salmon_window & crc_code %in% sthd_codes ~ "steelhead_on_combined_creel",
-      n_steelhead > 0                                       ~ "DROP_steelhead",
+      n_steelhead > 0 & salmon_window                       ~ "steelhead_only_in_window",
+      n_steelhead > 0                                       ~ "DROP_steelhead_off_window",
       n_other > 0                                           ~ "DROP_other_species",
       salmon_window                                         ~ "no_catch_in_window",
       TRUE                                                  ~ "DROP_no_catch_off_window"
     )
   )
 
+# Per-trip weight: 1 for counted rules, 0 for DROP, the creel conditional
+# proportion for steelhead-only-in-window (and no-catch, if WEIGHT_NO_CATCH).
+if (file.exists(COND_PROP_CSV)) {
+  cond <- read_csv(COND_PROP_CSV, show_col_types = FALSE,
+                   col_types = cols(crc_code = "c")) |>
+    select(crc_code, month, condition, p_salmon_target, prop_tier)
+  cond_look <- function(code, mo, cond_name) {
+    k <- tibble(crc_code = code, month = as.integer(mo), condition = cond_name)
+    own <- k |> left_join(cond, by = c("crc_code", "month", "condition"))
+    pooled <- k |> mutate(crc_code = "*") |>
+      left_join(cond, by = c("crc_code", "month", "condition"))
+    list(p    = coalesce(own$p_salmon_target, pooled$p_salmon_target),
+         tier = coalesce(own$prop_tier, pooled$prop_tier))
+  }
+  sh <- cond_look(guided_trips$crc_code, guided_trips$trip_month, "steelhead_only")
+  nc <- cond_look(guided_trips$crc_code, guided_trips$trip_month, "no_catch")
+  guided_trips <- guided_trips |>
+    mutate(p_sthd = sh$p, p_sthd_tier = sh$tier, p_nocatch = nc$p)
+  n_miss <- sum(guided_trips$salmon_rule == "steelhead_only_in_window" &
+                  is.na(guided_trips$p_sthd))
+  if (n_miss > 0) cli::cli_alert_warning(
+    "{n_miss} steelhead-only in-window trips have no conditional proportion (not even pooled) - weighted 0.")
+} else {
+  cli::cli_alert_warning(paste(
+    "{COND_PROP_CSV} not found - steelhead-only in-window trips fall back to the",
+    "legacy name-based rule (counted only on {toString(STEELHEAD_INCLUSIVE_RIVERS)}).",
+    "Run analysis/pst/03_analysis/salmon_directed_share.R first."))
+  guided_trips <- guided_trips |>
+    mutate(p_sthd = if_else(crc_code %in% sthd_codes, 1, 0),
+           p_sthd_tier = "legacy name-based rule", p_nocatch = NA_real_)
+}
+
+guided_trips <- guided_trips |>
+  mutate(weight = case_when(
+    str_starts(salmon_rule, "DROP") ~ 0,
+    salmon_rule == "steelhead_only_in_window" ~ coalesce(p_sthd, 0),
+    salmon_rule == "no_catch_in_window" & WEIGHT_NO_CATCH ~ coalesce(p_nocatch, 1),
+    TRUE ~ 1))
+
+cli::cli_h2("Steelhead-only in-window guided trips: creel targeting weight")
+print(as.data.frame(guided_trips |>
+  filter(salmon_rule == "steelhead_only_in_window") |>
+  group_by(p_sthd_tier) |>
+  summarise(trips = n(), mean_weight = round(mean(weight), 3), .groups = "drop")),
+  row.names = FALSE)
+
 salmon_anglers <- trip_angler_clean |>
   filter(trip_type_name == "Guided") |>
   mutate(crc_code = as.character(crc_code)) |>
-  inner_join(guided_trips |> select(id, salmon_rule), by = c("trip_id" = "id"))
+  inner_join(guided_trips |> select(id, salmon_rule, weight), by = c("trip_id" = "id"))
 
 cli::cli_h2("Guided angler-trips by salmon rule")
-print(as.data.frame(salmon_anglers |> count(salmon_rule, name = "angler_trips") |>
+print(as.data.frame(salmon_anglers |>
+                      group_by(salmon_rule) |>
+                      summarise(angler_trips = n(), counted = round(sum(weight), 1),
+                                .groups = "drop") |>
                       mutate(pct = round(100 * angler_trips / sum(angler_trips), 1))),
       row.names = FALSE)
 
-salmon_by_crc_year_month <- salmon_anglers |>
+# Counted (weighted) angler-trips per rule, plus raw steelhead-only counts in
+# and out of the window so downstream checks can see what was weighted away.
+counted_wide <- salmon_anglers |>
   filter(!str_starts(salmon_rule, "DROP")) |>
+  group_by(crc_code, trip_year, trip_month, salmon_rule) |>
+  summarise(n = sum(weight), .groups = "drop") |>
+  pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0)
+raw_sthd <- salmon_anglers |>
+  filter(salmon_rule %in% c("steelhead_only_in_window", "DROP_steelhead_off_window")) |>
+  mutate(salmon_rule = if_else(salmon_rule == "steelhead_only_in_window",
+                               "steelhead_only_in_window_raw",
+                               "steelhead_only_off_window_raw")) |>
   count(crc_code, trip_year, trip_month, salmon_rule, name = "n") |>
-  pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0) |>
+  pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0)
+salmon_by_crc_year_month <- counted_wide |>
   mutate(angler_trips = rowSums(across(-c(crc_code, trip_year, trip_month)))) |>
+  full_join(raw_sthd, by = c("crc_code", "trip_year", "trip_month")) |>
+  mutate(across(-c(crc_code, trip_year, trip_month), ~ coalesce(.x, 0))) |>
   left_join(crc_lut, by = c("crc_code" = "catch_area_code")) |>
   arrange(crc_code, trip_year, trip_month)
 

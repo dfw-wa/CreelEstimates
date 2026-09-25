@@ -398,6 +398,8 @@ location_basis_label <- function(x) {
   x <- coalesce(x, "")
   design <- str_detect(x, "design_stratum")
   est <- case_when(
+    str_detect(x, "assumed: bank only")  ~ "Assumed — bank only (not known to be boatable)",
+    str_detect(x, "assumed:")            ~ "Set by professional judgement",
     str_detect(x, "all-creel")           ~ "Estimated — statewide creel ratio",
     str_detect(x, "interview")           ~ "Estimated — same-river creel interviews",
     str_detect(x, "block")               ~ "Estimated — regional creel ratio",
@@ -577,12 +579,13 @@ if (!is.null(deliverable_trips)) {
     "",
     "## Bank and boat",
     "",
-    "Where a creel survey measured bank and boat effort separately, that split is used as measured. Elsewhere, including all estimates expanded from catch record cards, the split is borrowed: from a creel survey on the same river (same year if available, else other years); else from creel interviews on the same river, where at least 100 interviews recorded bank or boat (the months weighted by that river's reported salmon harvest, so salmon-season fishing sets the split); else from the region's creel surveys; else from all creel surveys statewide. Guided trips are placed in boats at the rate creel interviews show for guided salmon anglers (about 96% overall; river-specific where at least 20 guided interviews exist). Unguided trips make up the rest of each bank and boat total.",
+    "Where a creel survey measured bank and boat effort separately, that split is used as measured. Elsewhere, including all estimates expanded from catch record cards, the split is borrowed: from a creel survey on the same river (same year if available, else other years); else from creel interviews on the same river, where at least 100 interviews recorded bank or boat (the months weighted by that river's reported salmon harvest, so salmon-season fishing sets the split); else from the region's creel surveys; else from all creel surveys statewide. Rivers that have no creel survey or interviews and are not known to be boatable are instead assumed bank only, until professional judgement says otherwise. Guided trips are placed in boats at the rate creel interviews show for guided salmon anglers (about 96% overall; river-specific where at least 20 guided interviews exist). Unguided trips make up the rest of each bank and boat total.",
     "",
     glue("- Location measured by the creel survey: {share(str_starts(dt$`Location Basis`, 'Measured'))}% of all trips."),
     glue("- Location estimated from a creel ratio: {share(str_starts(dt$`Location Basis`, 'Estimated'))}% of all trips."),
     glue("- Mixed within a river-year: {share(str_starts(dt$`Location Basis`, 'Mixed'))}% of all trips."),
     glue("- Location from same-river creel interviews: {share(dt$`Location Basis` == 'Estimated — same-river creel interviews')}% of all trips."),
+    glue("- Location assumed bank only (river not known to be boatable; pending professional judgement): {share(dt$`Location Basis` == 'Assumed — bank only (not known to be boatable)')}% of all trips."),
     "",
     "### Check of interview-based bank and boat",
     "",

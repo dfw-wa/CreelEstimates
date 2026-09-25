@@ -66,6 +66,28 @@ USE_INTERVIEW_RIVER_SHARE <- TRUE
 INTERVIEW_SHARE_PATH <- here("analysis", "pst", "outputs", "04_interview_proportions",
                              "interview_boat_share_river_year.csv")
 
+# Rivers whose bank/boat split is SET, not borrowed (Evan, 2026-09-25): a
+# regional or statewide creel ratio assumes a river is boatable at all, which
+# for many uncreeled systems nobody here can vouch for. Listed rivers take
+# p_boat from the file - 0 = bank only - until outside professional judgement
+# says otherwise. Applies only to rows whose location would otherwise be
+# imputed; a creel-measured split is never overridden. Outranks every
+# imputation tier, including same-river interviews (conflicts are logged).
+LOCATION_OVERRIDE_PATH <- here("input_files", "pst", "lookup_tables", "pst_location_override.csv")
+
+read_location_override <- function() {
+  if (!file.exists(LOCATION_OVERRIDE_PATH)) return(tibble(river_label = character(), p_ov = double(), ov_basis = character()))
+  read_csv(LOCATION_OVERRIDE_PATH, show_col_types = FALSE, col_types = cols(.default = "c")) |>
+    filter(!is.na(river_label), river_label != "") |>
+    transmute(river_label, p_ov = as.numeric(p_boat),
+              ov_basis = coalesce(na_if(basis, ""),
+                                  if_else(as.numeric(p_boat) == 0,
+                                          "bank only - not known to be boatable, pending professional judgement",
+                                          "set by professional judgement"))) |>
+    filter(!is.na(p_ov), p_ov >= 0, p_ov <= 1) |>
+    distinct(river_label, .keep_all = TRUE)
+}
+
 read_interview_share <- function(usable_only = TRUE) {
   if (!USE_INTERVIEW_RIVER_SHARE || !file.exists(INTERVIEW_SHARE_PATH)) return(NULL)
   d <- read_csv(INTERVIEW_SHARE_PATH, show_col_types = FALSE)
@@ -73,7 +95,7 @@ read_interview_share <- function(usable_only = TRUE) {
   if (nrow(d) == 0) NULL else d
 }
 
-split_location <- function(el, use_month) {
+split_location <- function(el, use_month, apply_override = TRUE) {
   known <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0)
   ratio_at <- function(...) {
     known |> group_by(...) |>
@@ -105,10 +127,14 @@ split_location <- function(el, use_month) {
     left_join(r_i,   by = "river_label") |>
     left_join(r_by,  by = c("block", "year")) |>
     left_join(r_b,   by = "block") |>
+    left_join(if (apply_override) read_location_override() else
+                tibble(river_label = character(), p_ov = double(), ov_basis = character()),
+              by = "river_label") |>
     mutate(
       p_rym = if (use_month) p_rym else NA_real_,
-      .p = coalesce(p_rym, p_ry, p_r, p_iy, p_i, p_by, p_b, p_all),
+      .p = coalesce(p_ov, p_rym, p_ry, p_r, p_iy, p_i, p_by, p_b, p_all),
       location_basis = case_when(
+        !is.na(p_ov)  ~ paste0("assumed: ", ov_basis),
         !is.na(p_rym) ~ "imputed: river-year-month creel ratio",
         !is.na(p_ry)  ~ "imputed: river-year creel ratio",
         !is.na(p_r)   ~ "imputed: river creel ratio (all years)",
@@ -121,7 +147,7 @@ split_location <- function(el, use_month) {
       location_basis = paste0(location_basis,
                               if_else(location == "combined", " [source combined bank/boat]", ""))
     ) |>
-    select(-p_rym, -p_ry, -p_r, -p_iy, -p_i, -p_by, -p_b)
+    select(-p_rym, -p_ry, -p_r, -p_iy, -p_i, -p_by, -p_b, -p_ov, -ov_basis)
   split_rows <- bind_rows(
     to_split |> mutate(location = "boat",
                        angler_trips = angler_trips * .p,
@@ -131,6 +157,44 @@ split_location <- function(el, use_month) {
                        total_salmon_harvest = total_salmon_harvest * (1 - .p))
   ) |> select(-.p)
   bind_rows(kept, split_rows)
+}
+
+# Every river whose bank/boat is not creel-measured, with the tier it would
+# get WITHOUT the override - the working list for deciding which uncreeled
+# rivers to force to bank (pst_location_override.csv). Logs any override
+# that replaces a same-river interview share.
+write_location_imputation_by_river <- function(el) {
+  ov <- read_location_override()
+  base <- split_location(el, use_month = LOCATION_USE_MONTH_TIER,
+                         apply_override = FALSE)
+  imp <- base |> filter(grepl("^imputed", coalesce(location_basis, "")))
+  by_r <- imp |>
+    mutate(level = case_when(
+      grepl("interview", location_basis) ~ "same-river interviews",
+      grepl("river", location_basis)     ~ "same-river creel",
+      grepl("block", location_basis)     ~ "regional creel",
+      TRUE                               ~ "statewide creel")) |>
+    group_by(block, river_label, level) |>
+    summarise(trips = sum(angler_trips),
+              p_boat_used = sum(angler_trips[location == "boat"]) / sum(angler_trips),
+              .groups = "drop") |>
+    mutate(override_p_boat = ov$p_ov[match(river_label, ov$river_label)],
+           trips = round(trips), p_boat_used = round(p_boat_used, 3)) |>
+    arrange(level, desc(trips))
+  write_csv(by_r, file.path(OUT_DIR, "pst_fw_location_imputed_rivers.csv"))
+  conflict <- by_r |> filter(level == "same-river interviews", !is.na(override_p_boat))
+  if (nrow(conflict) > 0) {
+    log_gap("categorize", NA, "note", glue(
+      "location override replaces a same-river INTERVIEW boat share for: ",
+      "{paste(glue('{conflict$river_label} (interviews {conflict$p_boat_used}, override {conflict$override_p_boat})'), collapse = '; ')}."))
+  }
+  n_reg <- by_r |> filter(level %in% c("regional creel", "statewide creel"))
+  log_gap("categorize", NA, "note", glue(
+    "{n_distinct(n_reg$river_label)} rivers ({format(sum(n_reg$trips), big.mark = ',')} trips) ",
+    "would take a regional/statewide bank/boat ratio; ",
+    "{sum(!is.na(n_reg$override_p_boat))} of them are overridden in pst_location_override.csv. ",
+    "List: pst_fw_location_imputed_rivers.csv."))
+  invisible(by_r)
 }
 
 # Interview share vs creel design split, for rivers that have both - the
@@ -239,6 +303,7 @@ categorize_mode_location <- function(effort_long, crosswalk) {
   # Run both ways - with and without the river x year x month level - and keep
   # the comparison, so the month sensitivity is on file whichever is applied.
   write_interview_vs_design(el)
+  write_location_imputation_by_river(el)
   el_nomonth <- split_location(el, use_month = FALSE)
   el_month   <- split_location(el, use_month = TRUE)
   write_location_month_sensitivity(el_nomonth, el_month)

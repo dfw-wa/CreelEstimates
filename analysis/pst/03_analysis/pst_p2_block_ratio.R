@@ -1074,32 +1074,34 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
   # actual CRC harvest is taken as evidence the month was fished and is not
   # filtered. (Chehalis 315, 2025: closed until 8/1 - the 2022-24 profile
   # projected June-July harvest into a closed season, 2026-09-25.)
-  if (nrow(projected) > 0) {
-    lk_path <- here::here("input_files", "pst", "lookup_tables", "pst_season_status_lookup.csv")
-    lk <- if (file.exists(lk_path)) {
-      readr::read_csv(lk_path, show_col_types = FALSE, col_types = readr::cols(.default = "c")) |>
-        transmute(catch_area_code, month = as.integer(month), status)
-    } else tibble(catch_area_code = character(), month = integer(), status = character())
-    n_before <- nrow(projected)
-    projected <- projected |>
-      left_join(lk, by = c("catch_area_code", "month")) |>
-      filter(!status %in% "closed")
-    unverified <- projected |> filter(is.na(status) | status == "UNVERIFIED")
-    message(glue(
-      "[note] p3_month_gap: {n_before - nrow(projected)} projected area-month(s) dropped as ",
-      "verified closed in pst_season_status_lookup.csv",
-      if (nrow(unverified) > 0) glue("; {nrow(unverified)} kept WITHOUT a verified season status (",
-        "{paste(head(unique(unverified$catch_area_code), 20), collapse = ', ')}) - verify ",
-        "these areas' 2025 seasons") else "", "."))
-    projected <- projected |> select(-status)
-  }
-
   gap_months <- bind_rows(actual, projected) |>
     filter(crc_harvest_m > 0) |>
     semi_join(covered_years, by = c("catch_area_code", "year")) |>
     anti_join(p1_months, by = c("catch_area_code", "year", "month")) |>
     anti_join(unpartitioned, by = "catch_area_code")
   if (!"profile_years" %in% names(gap_months)) gap_months$profile_years <- NA_character_
+
+  # Season check on projected months, applied AFTER the gap selection so the
+  # counts describe area-months that would actually become trips.
+  if (any(gap_months$projected)) {
+    lk_path <- here::here("input_files", "pst", "lookup_tables", "pst_season_status_lookup.csv")
+    lk <- if (file.exists(lk_path)) {
+      readr::read_csv(lk_path, show_col_types = FALSE, col_types = readr::cols(.default = "c")) |>
+        transmute(catch_area_code, month = as.integer(month), status)
+    } else tibble(catch_area_code = character(), month = integer(), status = character())
+    gm <- gap_months |> left_join(lk, by = c("catch_area_code", "month"))
+    closed <- gm |> filter(projected, status %in% "closed")
+    unver  <- gm |> filter(projected, is.na(status) | status == "UNVERIFIED")
+    gap_months <- gm |> filter(!(projected & status %in% "closed")) |> select(-status)
+    fmt <- function(d) d |> group_by(catch_area_code) |>
+      summarise(m = paste(sort(month), collapse = ","), .groups = "drop") |>
+      glue_data("{catch_area_code} [{m}]") |> paste(collapse = "; ")
+    message(glue(
+      "[note] p3_month_gap: {nrow(closed)} projected area-month(s) dropped as verified ",
+      "closed{if (nrow(closed) > 0) paste0(' (', fmt(closed), ')') else ''}; ",
+      "{nrow(unver)} kept WITHOUT a verified 2025 season status",
+      "{if (nrow(unver) > 0) paste0(' (', fmt(unver), ') - verify in pst_season_status_lookup.csv') else ''}."))
+  }
 
   empty <- list(trips = tibble(), gaps = tibble(), summary = tibble())
   if (nrow(gap_months) == 0) return(empty)

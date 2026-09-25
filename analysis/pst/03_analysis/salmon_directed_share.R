@@ -87,6 +87,10 @@ CACHE    <- here(".cache")
 
 SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
 fishery_stem <- function(x) str_squish(str_remove_all(x, "\\b\\d{4}(-\\d{2})?\\b"))
+# Every proportion is built from delivery-year interviews only (decided
+# 2026-09-25): a thin cell pools other months/years WITHIN 2022-2025 or stays
+# unscaled - it never borrows 2020-21 or 2026 behaviour.
+YEARS_SCOPE    <- 2022:2025
 MIN_ANSWERED   <- 20   # interviews answering a specific target, per tier cell
 MIN_MIXED_FISH <- 10   # salmon + steelhead encounters behind an f_mixed value
 
@@ -119,7 +123,7 @@ ints <- int |>
       if_else(is.na(a) | a <= 0, 1, a)
     } else 1
   ) |>
-  filter(!is.na(month))
+  filter(!is.na(month), year %in% YEARS_SCOPE, !is.na(fishery_name))
 
 # ---- 2. f_mixed from the catch of "salmon or steelhead" anglers ---------------
 
@@ -129,6 +133,9 @@ ci_catch <- NULL
 if (length(caches) > 0) {
   pulls <- map(caches, readRDS)
   ci <- map(pulls, "interview") |> compact() |> bind_rows() |> distinct()
+  if ("event_date" %in% names(ci)) {
+    ci <- ci |> filter(lubridate::year(suppressWarnings(as.Date(event_date))) %in% YEARS_SCOPE)
+  }
   cc <- map(pulls, "catch")     |> compact() |> bind_rows() |> distinct()
   key <- "interview_id"
   if (nrow(ci) > 0 && nrow(cc) > 0 && key %in% names(ci) && key %in% names(cc) &&

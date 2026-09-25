@@ -71,7 +71,11 @@ ints <- int |>
   mutate(across(everything(), as.character)) |>
   left_join(cw, by = "fishery_name") |>
   mutate(
-    river  = coalesce(river_label, fishery_name),
+    # The unfiltered interview pull carries rows with no fishery_name; fall
+    # back to the water body so they still land on a river.
+    river  = coalesce(river_label, fishery_name,
+                      if ("water_body" %in% names(int)) water_body else NA_character_,
+                      "(unknown)"),
     block  = coalesce(block, "(not in crosswalk)"),
     date   = suppressWarnings(as.Date(event_date)),
     month  = lubridate::month(date),
@@ -79,7 +83,10 @@ ints <- int |>
                        trip_guided == "Non-guided" ~ "Unguided",
                        TRUE                        ~ NA_character_),
     target_class = classify_target(target_species)
-  )
+  ) |>
+  # Delivery years only (2026-09-25): the guided boat share and target mix
+  # applied to 2022-2025 trips come from 2022-2025 interviews.
+  filter(lubridate::year(date) %in% 2022:2025)
 
 # ---- 1. Per-river summary -----------------------------------------------------
 

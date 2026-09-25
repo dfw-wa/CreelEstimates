@@ -42,6 +42,11 @@
 # Output (analysis/pst/outputs/04_interview_proportions/):
 #   interview_boat_share_river_year.csv   - read by pst_categorize_mode_location.R
 #   interview_boat_share_river_month.csv  - the monthly shares behind it
+#   interview_guided_boat_share_river.csv - guided anglers' boat share by river
+#                                           (fills rivers the analysis-view
+#                                           guided file lacks - CRM - Tribs)
+#   interview_guided_share_river_year.csv - guided share of anglers, for the
+#                                           logbook comparison (not applied)
 #
 # Usage:
 #   Rscript analysis/pst/03_analysis/interview_river_boat_share.R
@@ -89,6 +94,8 @@ vw_int <- tibble(
   fish_from_boat = getcol(vw, "fish_from_boat"),
   boat_used    = NA_character_,
   angler_count = getcol(vw, "angler_count"),
+  trip_guided  = getcol(vw, "trip_guided"),
+  target       = getcol(vw, "target_species"),
   source       = "vw_interview")
 
 ana_path <- file.path(CACHE, "vw_analysis_interview.rds")
@@ -98,7 +105,8 @@ ana_int <- if (file.exists(ana_path)) {
   tibble(interview_id = getcol(a, "interview_id"), event_date = getcol(a, "event_date"),
          water_body = getcol(a, "water_body"), angler_type = getcol(a, "angler_type"),
          fish_from_boat = getcol(a, "fish_from_boat"), boat_used = getcol(a, "boat_used"),
-         angler_count = getcol(a, "angler_count"), source = "vw_analysis_interview")
+         angler_count = getcol(a, "angler_count"), trip_guided = getcol(a, "trip_guided"),
+         target = getcol(a, "target_species"), source = "vw_analysis_interview")
 } else NULL
 # An interview in both views keeps its ANALYSIS-view record: vw_interview has
 # no boat_used column, and newer creels (Nisqually, most Puget Sound) record
@@ -123,9 +131,13 @@ ints <- bind_rows(vw_int, ana_int) |>
       boat_used == "Yes" & coalesce(fish_from_boat, "") %in% c("BK", "Bank") ~ "Bank",
       boat_used == "Yes" ~ "Boat"),
     anglers = suppressWarnings(as.numeric(angler_count)),
-    anglers = if_else(is.na(anglers) | anglers <= 0, 1, anglers)
+    anglers = if_else(is.na(anglers) | anglers <= 0, 1, anglers),
+    guided = case_when(trip_guided == "Guided" ~ TRUE, trip_guided == "Non-guided" ~ FALSE)
   ) |>
-  filter(year %in% YEARS, !is.na(month), !is.na(location))
+  filter(year %in% YEARS, !is.na(month))
+# Kept whole for the guided share (a guided flag needs no bank/boat answer).
+ints_all <- ints
+ints <- ints |> filter(!is.na(location))
 cat(glue("{nrow(ints)} located interviews 2022-2025 ",
          "({sum(ints$source != 'vw_interview')} analysis view, ",
          "{sum(ints$source == 'vw_interview')} vw_interview only)\n\n"))
@@ -156,6 +168,7 @@ print(as.data.frame(auto), row.names = FALSE)
 wb_map <- bind_rows(wb_map, auto) |> distinct()
 
 mapped <- ints |> inner_join(wb_map, by = "water_body", relationship = "many-to-many")
+mapped_all <- ints_all |> inner_join(wb_map, by = "water_body", relationship = "many-to-many")
 cat("=== interviews mapped to PST rivers ===\n")
 mapped |> count(river_label, name = "located") |> arrange(desc(located)) |>
   as.data.frame() |> print(row.names = FALSE)
@@ -238,3 +251,55 @@ cat(" ", paste(setdiff(unique(mapped$river_label), unique(crc_prof$river_label))
 cat("=== interview boat share, CRC-salmon-weighted (usable rows are applied) ===\n")
 out |> select(-months_own_year) |> as.data.frame() |> print(row.names = FALSE)
 cat(glue("\nWrote {file.path(OUT_DIR, 'interview_boat_share_river_year.csv')}\n"))
+
+# ---- 6. Guided: boat share of guided anglers, and guided share of anglers -----
+# Salmon season only: months with CRC salmon harvest on that river (2022-2024
+# profile). Where the target question was answered, steelhead / other-species
+# targets are dropped (shared taxonomy with the rest of the pipeline).
+step("guided shares")
+source(here("analysis", "pst", "03_analysis", "_target_species_classes.R"))
+salmon_months <- crc_prof |> distinct(river_label, month)
+g_base <- mapped_all |>
+  semi_join(salmon_months, by = c("river_label", "month")) |>
+  mutate(t_cls = classify_target(target)) |>
+  filter(!t_cls %in% c("steelhead", "other_species"))
+
+# (a) Guided boat share per river - replaces the pooled 95.8% where the
+#     analysis-view file (guided_target_mix_by_river.R) has no river row.
+gb <- g_base |> filter(guided %in% TRUE, !is.na(location)) |>
+  group_by(river_label) |>
+  summarise(located_n = n(),
+            pct_boat_angler = round(100 * sum(anglers[location == "Boat"]) / sum(anglers), 1),
+            .groups = "drop") |>
+  mutate(set = "guided, salmon season (CRC months)")
+write_csv(gb, file.path(OUT_DIR, "interview_guided_boat_share_river.csv"))
+
+# (b) Guided share of anglers per river-year, CRC-salmon-weighted months -
+#     set against the logbook minimum in the categorize stage (NOT applied).
+gm_ym <- g_base |> filter(!is.na(guided)) |>
+  group_by(river_label, year, month) |>
+  summarise(n = n(), p = sum(anglers[guided]) / sum(anglers), .groups = "drop") |>
+  filter(n >= MIN_MONTH)
+gm_m <- g_base |> filter(!is.na(guided)) |>
+  group_by(river_label, month) |>
+  summarise(n_m = n(), p_m = sum(anglers[guided]) / sum(anglers), .groups = "drop") |>
+  filter(n_m >= MIN_MONTH)
+gs <- crc_prof |> filter(river_label %in% unique(g_base$river_label)) |>
+  crossing(year = YEARS) |>
+  left_join(gm_ym, by = c("river_label", "year", "month")) |>
+  left_join(gm_m,  by = c("river_label", "month")) |>
+  mutate(pp = coalesce(p, p_m), nn = if_else(!is.na(p), n, n_m)) |>
+  group_by(river_label, year) |>
+  summarise(p_guided = sum(w[!is.na(pp)] * pp[!is.na(pp)]) / sum(w[!is.na(pp)]),
+            weight_coverage = sum(w[!is.na(pp)]) / sum(w),
+            n_flagged = sum(nn, na.rm = TRUE), .groups = "drop") |>
+  mutate(usable = weight_coverage >= MIN_WEIGHT_COVERAGE & n_flagged >= MIN_LOCATED &
+           !is.nan(p_guided),
+         across(c(p_guided, weight_coverage), ~ round(.x, 4)))
+write_csv(gs, file.path(OUT_DIR, "interview_guided_share_river_year.csv"))
+
+cat("\n=== guided boat share by river (salmon-season guided interviews) ===\n")
+print(as.data.frame(gb |> arrange(desc(located_n))), row.names = FALSE)
+cat("\n=== interview guided share of anglers, CRC-weighted (usable rows) ===\n")
+print(as.data.frame(gs |> filter(usable) |> arrange(river_label, year)), row.names = FALSE)
+

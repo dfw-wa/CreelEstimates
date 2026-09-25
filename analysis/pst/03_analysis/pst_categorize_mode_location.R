@@ -40,6 +40,10 @@ GUIDED_BOAT_MIN_N        <- 20      # interviews needed for a river-specific sha
 
 LOGBOOK_SALMON_PATH <- here("analysis", "pst", "outputs", "07_guide_logbook",
                             "guide_logbook_salmon_angler_trips_by_crc_year_month.csv")
+INTERVIEW_GUIDED_BOAT_PATH <- here("analysis", "pst", "outputs", "04_interview_proportions",
+                                   "interview_guided_boat_share_river.csv")
+INTERVIEW_GUIDED_SHARE_PATH <- here("analysis", "pst", "outputs", "04_interview_proportions",
+                                    "interview_guided_share_river_year.csv")
 GUIDED_BOAT_PATH    <- here("analysis", "pst", "outputs", "08_guide_logbook_diagnostic",
                             "guided_bank_boat_by_river.csv")
 
@@ -331,12 +335,23 @@ categorize_mode_location <- function(effort_long, crosswalk) {
                  "guided_target_mix_by_river.R for river-specific shares."))
     tibble(river_label = character(), p_g = double())
   }
+  # Rivers the analysis-view file lacks (CRM - Tribs: Lewis, Wind, Kalama,
+  # Klickitat, Cowlitz) - guided boat share from the vw_interview pull.
+  if (file.exists(INTERVIEW_GUIDED_BOAT_PATH)) {
+    pg_iv <- read_csv(INTERVIEW_GUIDED_BOAT_PATH, show_col_types = FALSE) |>
+      filter(located_n >= GUIDED_BOAT_MIN_N, !is.na(pct_boat_angler)) |>
+      transmute(river_label, p_g = pct_boat_angler / 100) |>
+      anti_join(pg, by = "river_label")
+    pg <- bind_rows(pg |> mutate(.src = "river"), pg_iv |> mutate(.src = "river (interviews)"))
+  } else {
+    pg <- pg |> mutate(.src = "river")
+  }
 
   units <- units |>
     left_join(alloc, by = ".unit") |>
     left_join(pg, by = "river_label") |>
     mutate(
-      p_g_basis = if_else(is.na(p_g), "pooled", "river"),
+      p_g_basis = if_else(is.na(p_g), "pooled", .src),
       p_g   = coalesce(p_g, GUIDED_BOAT_SHARE_POOLED),
       G_raw = coalesce(G_raw, 0),
       capped = G_raw > Tt + 1e-9,
@@ -419,6 +434,41 @@ categorize_mode_location <- function(effort_long, crosswalk) {
               guided_boat_share_used = p_g, guided_boat_share_basis = p_g_basis,
               capped, spill, mode_basis)
   write_csv(audit, file.path(OUT_DIR, "pst_fw_categorization_audit.csv"))
+  write_guided_logbook_vs_interview(units)
 
   out
+}
+
+# Guided trips: logbook minimum (applied) vs what same-river creel interviews
+# imply (interview guided share x river-year trips). NOT applied - the
+# logbook stays the floor (decided with Jim). This is the evidence on how far
+# the floor sits below creel-observed guiding, river by river.
+write_guided_logbook_vs_interview <- function(units) {
+  if (!file.exists(INTERVIEW_GUIDED_SHARE_PATH)) return(invisible(NULL))
+  gs <- read_csv(INTERVIEW_GUIDED_SHARE_PATH, show_col_types = FALSE) |>
+    filter(usable) |> transmute(river_label, year = as.integer(year), p_guided, n_flagged)
+  cmp <- units |>
+    group_by(block, river_label, year = as.integer(year)) |>
+    summarise(trips = sum(Tt), logbook_guided = sum(G), .groups = "drop") |>
+    inner_join(gs, by = c("river_label", "year")) |>
+    mutate(interview_implied_guided = p_guided * trips,
+           implied_over_logbook = if_else(logbook_guided > 0,
+                                          interview_implied_guided / logbook_guided, NA_real_),
+           across(c(trips, logbook_guided, interview_implied_guided), round),
+           across(c(p_guided, implied_over_logbook), ~ round(.x, 3))) |>
+    arrange(desc(interview_implied_guided - logbook_guided))
+  write_csv(cmp, file.path(OUT_DIR, "pst_fw_guided_logbook_vs_interview.csv"))
+  if (nrow(cmp) == 0) return(invisible(cmp))
+  big <- cmp |> filter(interview_implied_guided > 1.5 * logbook_guided,
+                       interview_implied_guided - logbook_guided > 200)
+  log_gap("categorize", NA, "note", glue(
+    "guided logbook vs interview on {nrow(cmp)} river-years: logbook ",
+    "{format(sum(cmp$logbook_guided), big.mark = ',')} vs interview-implied ",
+    "{format(sum(cmp$interview_implied_guided), big.mark = ',')} guided trips. ",
+    "Interviews imply >1.5x the logbook on {nrow(big)}: ",
+    "{paste(head(glue('{big$river_label} {big$year} ({big$logbook_guided} vs {big$interview_implied_guided})'), 8), collapse = '; ')}. ",
+    "Not applied - see pst_fw_guided_logbook_vs_interview.csv."))
+  cat("\n=== guided: logbook minimum vs interview-implied (river-years with a usable interview share) ===\n")
+  print(as.data.frame(cmp), row.names = FALSE)
+  invisible(cmp)
 }

@@ -517,6 +517,26 @@ if (!is.null(deliverable_trips)) {
   # shares filled in from this run. A separate file rather than a workbook tab.
   # Interview vs creel design boat share, for rivers with both
   # (pst_fw_location_interview_vs_design.csv, written by the categorize stage).
+  # Logbook minimum vs creel-interview-implied guided trips (not applied).
+  guided_check_text <- function() {
+    f <- file.path(IN_DIR, "pst_fw_guided_logbook_vs_interview.csv")
+    if (!file.exists(f)) return("")
+    g <- suppressMessages(read_csv(f, show_col_types = FALSE))
+    if (nrow(g) == 0) return("")
+    by_r <- g |> group_by(river_label) |>
+      summarise(lb = sum(logbook_guided), iv = sum(interview_implied_guided), .groups = "drop") |>
+      arrange(desc(iv - lb))
+    paste0("As a check on the minimum, creel interviews on ", nrow(by_r), " rivers record whether ",
+           "the angler was guided. Applying those guided shares to the same trip estimates implies ",
+           format(round(sum(g$interview_implied_guided)), big.mark = ","), " guided trips across ",
+           nrow(g), " river-years, against ", format(round(sum(g$logbook_guided)), big.mark = ","),
+           " from the logbook (",
+           paste(head(glue("{by_r$river_label}: {format(round(by_r$lb), big.mark = ',')} logbook vs ",
+                           "{format(round(by_r$iv), big.mark = ',')} interview-implied"), 6), collapse = "; "),
+           "). The logbook figure is what the deliverable uses; the interview figure indicates how much ",
+           "guided fishing the logbook may not capture.")
+  }
+
   interview_check_text <- function() {
     f <- file.path(IN_DIR, "pst_fw_location_interview_vs_design.csv")
     tail_txt <- paste("Rivers where fewer than 100 interviews recorded bank or boat were not used",
@@ -552,6 +572,8 @@ if (!is.null(deliverable_trips)) {
     "",
     glue("- Guided trips: {share(dt$Mode == 'Guided')}% of all trips."),
     glue("- Trips on rivers with no guide logbook record (guided = 0): {share(str_starts(dt$`Mode Basis`, 'No guide logbook'))}% of all trips."),
+    "",
+    guided_check_text(),
     "",
     "## Bank and boat",
     "",

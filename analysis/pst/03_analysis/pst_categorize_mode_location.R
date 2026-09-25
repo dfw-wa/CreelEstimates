@@ -132,7 +132,12 @@ split_location <- function(el, use_month) {
 # (interviews over- or under-sample boat anglers depending on access).
 write_interview_vs_design <- function(el) {
   ish <- read_interview_share()
-  if (is.null(ish)) return(invisible(NULL))
+  if (is.null(ish)) {
+    log_gap("categorize", NA, "note", glue(
+      "interview river boat shares not applied - {INTERVIEW_SHARE_PATH} ",
+      "{if (file.exists(INTERVIEW_SHARE_PATH)) 'has no usable rows' else 'not found'}."))
+    return(invisible(NULL))
+  }
   design <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0) |>
     group_by(river_label, year) |>
     summarise(design_trips = sum(angler_trips),
@@ -144,6 +149,15 @@ write_interview_vs_design <- function(el) {
     mutate(diff_pts = round(100 * (p_interview - p_design), 1),
            across(c(p_interview, p_design), ~ round(.x, 3)))
   write_csv(cmp, file.path(OUT_DIR, "pst_fw_location_interview_vs_design.csv"))
+  iv_rivers <- sort(unique(ish$river_label))
+  log_gap("categorize", NA, "note", glue(
+    "interview river boat shares usable for {length(iv_rivers)} rivers: ",
+    "{paste(iv_rivers, collapse = '; ')}. Rivers with a P1 design split: ",
+    "{paste(sort(unique(design$river_label)), collapse = '; ')}."))
+  if (nrow(cmp) == 0) {
+    log_gap("categorize", NA, "note",
+            "interview vs design: no river-year has both - validation not possible this run.")
+  }
   if (nrow(cmp) > 0) {
     log_gap("categorize", NA, "note", glue(
       "interview vs design boat share on {nrow(cmp)} river-years with both: ",
@@ -163,7 +177,8 @@ write_location_month_sensitivity <- function(a, b) {
       group_by(block, river_label, tier, year) |>
       summarise(imputed_trips = sum(angler_trips),
                 "boat_{tag}" := sum(angler_trips[location == "boat"]),
-                "month_level_trips_{tag}" := sum(angler_trips[grepl("month", location_basis)]),
+                # Exact label: the interview labels also contain "months".
+                "month_level_trips_{tag}" := sum(angler_trips[grepl("river-year-month creel", location_basis, fixed = TRUE)]),
                 .groups = "drop")
   }
   sens <- full_join(roll(a, "annual"), roll(b, "month") |> select(-imputed_trips),

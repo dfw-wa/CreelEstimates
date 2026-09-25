@@ -155,10 +155,98 @@ cat("Rivers with fewer than 20 guided interviews overall are omitted here (still
 keep <- by_river$river[by_river$guided_n >= 20]
 by_month |> filter(river %in% keep) |> as.data.frame() |> print(row.names = FALSE)
 
-# ---- 3. Write -----------------------------------------------------------------
+# ---- 3. Bank vs boat for guided trips ----------------------------------------
+# The logbook has no boat/bank field, so assigning guided trips "boat first" is
+# an assumption. The creel records location, so it can be checked: what share of
+# guided parties - and guided ANGLERS, the logbook's unit - fished from a boat?
+#
+# Location is derived exactly as in interview_proportions.qmd (angler_type where
+# recorded, else boat_used / fish_from_boat), so the two cannot disagree.
+
+has <- function(x) x %in% names(ints)
+ints <- ints |>
+  mutate(
+    .atype = if (has("angler_type"))    angler_type    else NA_character_,
+    .bused = if (has("boat_used"))      boat_used      else NA_character_,
+    .ffb   = if (has("fish_from_boat")) fish_from_boat else NA_character_,
+    location = case_when(
+      .atype == "Bank"                    ~ "Bank",
+      .atype == "Boat"                    ~ "Boat",
+      .bused == "No"                      ~ "Bank",
+      .bused == "Yes" & .ffb == "Bank"    ~ "Bank",
+      .bused == "Yes"                     ~ "Boat",
+      TRUE                                ~ NA_character_
+    ),
+    anglers = suppressWarnings(as.numeric(if (has("angler_count")) angler_count else NA)),
+    anglers = if_else(!is.na(anglers) & anglers > 0, anglers, NA_real_)
+  ) |>
+  select(-.atype, -.bused, -.ffb)
+
+# Boat share for a subset, by parties and by anglers. Angler weighting uses only
+# interviews that recorded a party size.
+boat_shares <- function(df) {
+  df |>
+    filter(!is.na(location)) |>
+    summarise(
+      located_n      = n(),
+      pct_boat_party = round(100 * mean(location == "Boat"), 1),
+      pct_boat_angler = if (any(!is.na(anglers)))
+        round(100 * sum(anglers[location == "Boat"], na.rm = TRUE) /
+                sum(anglers, na.rm = TRUE), 1) else NA_real_,
+      .groups = "drop"
+    )
+}
+
+loc_by_river <- bind_rows(
+  ints |> filter(guided %in% "Guided") |>
+    group_by(block, river) |> boat_shares() |> mutate(set = "guided, all targets"),
+  ints |> filter(guided %in% "Guided", target_class == "salmon") |>
+    group_by(block, river) |> boat_shares() |> mutate(set = "guided, salmon target"),
+  ints |> filter(guided %in% "Unguided") |>
+    group_by(block, river) |> boat_shares() |> mutate(set = "unguided, all targets")
+) |>
+  select(block, river, set, located_n, pct_boat_party, pct_boat_angler) |>
+  arrange(block, river, set)
+
+cat("\n================ GUIDED TRIPS: BANK VS BOAT ================\n")
+cat("pct_boat_angler weights by party size (the logbook counts client anglers).\n",
+    "Shown only where the set has >= 10 located interviews; all rows are in the CSV.\n\n",
+    sep = "")
+loc_wide <- loc_by_river |>
+  filter(located_n >= 10) |>
+  pivot_wider(names_from = set,
+              values_from = c(located_n, pct_boat_party, pct_boat_angler),
+              names_glue = "{set} | {.value}")
+loc_wide |>
+  select(block, river,
+         any_of(c("guided, all targets | located_n",
+                  "guided, all targets | pct_boat_angler",
+                  "guided, salmon target | located_n",
+                  "guided, salmon target | pct_boat_angler",
+                  "unguided, all targets | pct_boat_angler"))) |>
+  # "unguided" first - otherwise the "guided" pattern matches inside it.
+  rename_with(~ str_replace_all(.x, c("^unguided, all targets \\| " = "u_",
+                                       "^guided, all targets \\| " = "g_",
+                                       "^guided, salmon target \\| " = "gsalm_"))) |>
+  filter(!is.na(g_located_n)) |>
+  arrange(desc(g_located_n)) |>
+  as.data.frame() |> print(row.names = FALSE)
+
+# The single number the "guided -> boat first" decision rests on.
+pooled <- ints |> filter(guided %in% "Guided") |> boat_shares()
+pooled_s <- ints |> filter(guided %in% "Guided", target_class == "salmon") |> boat_shares()
+cat(glue(
+  "\nAll rivers pooled - guided anglers fishing from a boat: {pooled$pct_boat_angler}% ",
+  "(n = {pooled$located_n} located guided interviews);\n",
+  "salmon-targeted guided only: {pooled_s$pct_boat_angler}% (n = {pooled_s$located_n}).\n"
+), "\n")
+
+# ---- 4. Write -----------------------------------------------------------------
 
 p1 <- file.path(OUT_DIR, "guided_target_mix_by_river.csv")
 p2 <- file.path(OUT_DIR, "guided_target_mix_by_river_month.csv")
+p3 <- file.path(OUT_DIR, "guided_bank_boat_by_river.csv")
 write_csv(by_river, p1)
 write_csv(by_month, p2)
-cat(glue("\nWrote {p1}\nWrote {p2}\n"), "\n")
+write_csv(loc_by_river, p3)
+cat(glue("\nWrote {p1}\nWrote {p2}\nWrote {p3}\n"), "\n")

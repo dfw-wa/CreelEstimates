@@ -119,10 +119,27 @@ split_location <- function(el, use_month, apply_override = TRUE) {
   kept     <- el |> filter(location %in% c("bank", "boat"))
   if (nrow(to_split) == 0) return(el)
 
+  # Combined rows ("Skykomish + Snohomish", "Cascade + Skagit") are CRC areas
+  # shared by creel-surveyed rivers; their label matches no creel split, so
+  # they fell to the regional ratio. Use the member rivers' pooled creel split
+  # instead (same year, else all years). Evan, 2026-09-25.
+  comp_map <- tibble(composite = unique(to_split$river_label)) |>
+    filter(grepl(" + ", composite, fixed = TRUE)) |>
+    mutate(member = strsplit(composite, " + ", fixed = TRUE)) |>
+    tidyr::unnest(member)
+  comp_known <- known |> inner_join(comp_map, by = c("river_label" = "member"),
+                                    relationship = "many-to-many")
+  r_cy <- comp_known |> group_by(river_label = composite, year) |>
+    summarise(p_cy = sum(angler_trips[location == "boat"]) / sum(angler_trips), .groups = "drop")
+  r_c  <- comp_known |> group_by(river_label = composite) |>
+    summarise(p_c = sum(angler_trips[location == "boat"]) / sum(angler_trips), .groups = "drop")
+
   to_split <- to_split |>
     left_join(r_rym, by = c("river_label", "year", "month")) |>
     left_join(r_ry,  by = c("river_label", "year")) |>
     left_join(r_r,   by = "river_label") |>
+    left_join(r_cy,  by = c("river_label", "year")) |>
+    left_join(r_c,   by = "river_label") |>
     left_join(r_iy,  by = c("river_label", "year")) |>
     left_join(r_i,   by = "river_label") |>
     left_join(r_by,  by = c("block", "year")) |>
@@ -132,12 +149,14 @@ split_location <- function(el, use_month, apply_override = TRUE) {
               by = "river_label") |>
     mutate(
       p_rym = if (use_month) p_rym else NA_real_,
-      .p = coalesce(p_ov, p_rym, p_ry, p_r, p_iy, p_i, p_by, p_b, p_all),
+      .p = coalesce(p_ov, p_rym, p_ry, p_r, p_cy, p_c, p_iy, p_i, p_by, p_b, p_all),
       location_basis = case_when(
         !is.na(p_ov)  ~ paste0("assumed: ", ov_basis),
         !is.na(p_rym) ~ "imputed: river-year-month creel ratio",
         !is.na(p_ry)  ~ "imputed: river-year creel ratio",
         !is.na(p_r)   ~ "imputed: river creel ratio (all years)",
+        !is.na(p_cy)  ~ "imputed: member rivers' creel ratio (same year)",
+        !is.na(p_c)   ~ "imputed: member rivers' creel ratio (all years)",
         !is.na(p_iy)  ~ "imputed: river-year interview boat share (CRC-weighted months)",
         !is.na(p_i)   ~ "imputed: river interview boat share (CRC-weighted months, all years)",
         !is.na(p_by)  ~ "imputed: block-year creel ratio",
@@ -147,7 +166,7 @@ split_location <- function(el, use_month, apply_override = TRUE) {
       location_basis = paste0(location_basis,
                               if_else(location == "combined", " [source combined bank/boat]", ""))
     ) |>
-    select(-p_rym, -p_ry, -p_r, -p_iy, -p_i, -p_by, -p_b, -p_ov, -ov_basis)
+    select(-p_rym, -p_ry, -p_r, -p_cy, -p_c, -p_iy, -p_i, -p_by, -p_b, -p_ov, -ov_basis)
   split_rows <- bind_rows(
     to_split |> mutate(location = "boat",
                        angler_trips = angler_trips * .p,
@@ -171,6 +190,7 @@ write_location_imputation_by_river <- function(el) {
   by_r <- imp |>
     mutate(level = case_when(
       grepl("interview", location_basis) ~ "same-river interviews",
+      grepl("member rivers", location_basis) ~ "member rivers' creel",
       grepl("river", location_basis)     ~ "same-river creel",
       grepl("block", location_basis)     ~ "regional creel",
       TRUE                               ~ "statewide creel")) |>

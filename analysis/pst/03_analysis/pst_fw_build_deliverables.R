@@ -402,6 +402,7 @@ location_basis_label <- function(x) {
     str_detect(x, "assumed:")            ~ "Set by professional judgement",
     str_detect(x, "all-creel")           ~ "Estimated — statewide creel ratio",
     str_detect(x, "interview")           ~ "Estimated — same-river creel interviews",
+    str_detect(x, "member rivers")       ~ "Estimated — creel ratio of the rivers sharing this catch area",
     str_detect(x, "block")               ~ "Estimated — regional creel ratio",
     str_detect(x, "river")               ~ "Estimated — same-river creel ratio",
     TRUE                                 ~ NA_character_

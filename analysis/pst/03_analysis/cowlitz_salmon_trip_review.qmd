@@ -1,0 +1,106 @@
+---
+title: "Cowlitz: which guided trips count as salmon trips?"
+subtitle: "Guide logbook vs. creel interviews, Cowlitz below Mayfield Dam (CRC 561)"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    fig-width: 10
+    fig-height: 6
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: false
+QUIET <- TRUE
+source(here::here("analysis", "pst", "03_analysis", "cowlitz_salmon_trip_review.R"))
+tab <- function(pattern) {
+  hit <- names(tables)[grepl(pattern, names(tables), fixed = TRUE)]
+  if (length(hit) == 0) return(cat("*Not available - source data missing.*"))
+  knitr::kable(tables[[hit[1]]], format.args = list(big.mark = ","))
+}
+pl <- function(name) if (!is.null(plots[[name]])) print(plots[[name]]) else
+  cat("*Not available - source data missing.*")
+```
+
+The guide logbook records what each guided trip **caught**, not what it was
+**targeting**. The Cowlitz creel records both, for the parties it interviews.
+This puts the two side by side to decide which logbook trips should count as
+salmon trips.
+
+## When salmon are kept (CRC harvest)
+
+```{r}
+pl("crc")
+```
+
+## Guide logbook: what guided trips caught
+
+```{r}
+pl("lb")
+```
+
+```{r}
+pl("lb_pct")
+```
+
+```{r}
+tab("LOGBOOK: guided angler-trips by month x catch")
+```
+
+By year:
+
+```{r}
+tab("LOGBOOK: guided angler-trips by year x catch")
+```
+
+## Creel: what guided anglers said they were targeting
+
+```{r}
+#| fig-height: 8
+pl("cr_target")
+```
+
+```{r}
+tab("CREEL: row % stated target by month")
+```
+
+## Creel: what guided parties caught
+
+Same catch classes as the logbook, for comparison.
+
+```{r}
+pl("cr_caught")
+```
+
+## The key question: given what was caught, what was targeted?
+
+Each row is what a guided party caught; the cells are the share that named
+each target. The **steelhead only** and **nothing** rows are the logbook trips
+we can't classify from catch alone.
+
+```{r}
+pl("calib")
+```
+
+```{r}
+tab("CREEL (guided): row % stated target, given what was caught")
+```
+
+By month, for the two ambiguous groups:
+
+```{r}
+tab("CREEL (guided): steelhead-only and no-catch parties")
+```
+
+## What each counting rule would give
+
+Guided salmon angler-trips on the Cowlitz under alternative rules. The current
+pipeline uses **C**; **D** adds steelhead-only trips in September–November.
+
+```{r}
+tab("RULE OPTIONS")
+```

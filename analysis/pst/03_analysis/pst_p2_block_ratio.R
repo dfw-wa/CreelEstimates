@@ -998,7 +998,14 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
 #' that month only). Skipped, not guessed:
 #'   - area-years whose P1 rows carry no month (annual district totals - no
 #'     way to tell which months they cover);
-#'   - covered_unpartitioned areas, unmapped areas, partial CRC years.
+#'   - covered_unpartitioned areas, unmapped areas.
+#' Partial CRC years (compilation not yet at month 12 - 2025): months already
+#' compiled use their actual CRC harvest (tier P2); months beyond compilation
+#' use a PROJECTED harvest - that month's mean CRC harvest over the full years
+#' in scope before it (missing years count as 0) - and are labelled tier P3,
+#' source_id p3_month_gap. Without this, a P1-covered partial year (Drano
+#' 2025: creel Jul-Oct) got its spring months from neither P2 (partial year)
+#' nor P3 (area-year already covered). Added 2026-09-25.
 #' Caveat: the ratio was calibrated on the creel's own months; a spring
 #' fishery's trips-per-fish may differ from summer/fall's.
 apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
@@ -1019,16 +1026,41 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
   unpartitioned <- xw_area |> filter(area_coverage == "covered_unpartitioned") |>
     distinct(catch_area_code)
 
-  gap_months <- crc_month |>
+  crc_am <- crc_month |>
     transmute(catch_area_code = as.character(stream_code),
               year = as.integer(calendar_year), month = as.integer(calendar_month),
               harvest) |>
     group_by(catch_area_code, year, month) |>
-    summarise(crc_harvest_m = sum(harvest, na.rm = TRUE), .groups = "drop") |>
-    filter(year %in% years_scope, !year %in% partial_years, crc_harvest_m > 0) |>
+    summarise(crc_harvest_m = sum(harvest, na.rm = TRUE), .groups = "drop")
+
+  # Actual CRC harvest: full years, plus the already-compiled months of a
+  # partial year.
+  compiled_to <- crc_am |> group_by(year) |> summarise(max_m = max(month), .groups = "drop")
+  actual <- crc_am |>
+    filter(year %in% years_scope, crc_harvest_m > 0) |>
+    mutate(projected = FALSE)
+
+  # Projected CRC harvest for a partial year's not-yet-compiled months.
+  full_years <- setdiff(years_scope, partial_years)
+  projected <- map_dfr(intersect(partial_years, years_scope), \(py) {
+    prof_years <- full_years[full_years < py]
+    if (length(prof_years) == 0) return(NULL)
+    last_m <- compiled_to$max_m[compiled_to$year == py]
+    if (length(last_m) == 0) last_m <- 0
+    crc_am |>
+      filter(year %in% prof_years, month > last_m) |>
+      group_by(catch_area_code, month) |>
+      summarise(crc_harvest_m = sum(crc_harvest_m) / length(prof_years), .groups = "drop") |>
+      mutate(year = as.integer(py), projected = TRUE,
+             profile_years = paste(range(prof_years), collapse = "-"))
+  })
+
+  gap_months <- bind_rows(actual, projected) |>
+    filter(crc_harvest_m > 0) |>
     semi_join(covered_years, by = c("catch_area_code", "year")) |>
     anti_join(p1_months, by = c("catch_area_code", "year", "month")) |>
     anti_join(unpartitioned, by = "catch_area_code")
+  if (!"profile_years" %in% names(gap_months)) gap_months$profile_years <- NA_character_
 
   empty <- list(trips = tibble(), gaps = tibble(), summary = tibble())
   if (nrow(gap_months) == 0) return(empty)
@@ -1053,13 +1085,18 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
       crc_harvest          = crc_harvest_m,
       angler_trips         = crc_harvest_m * ratio,
       total_salmon_harvest = crc_harvest_m,
-      tier                 = "P2",
-      source_id            = "p2_month_gap",
-      method = glue(
-        "P2 month gap: CRC harvest {round(crc_harvest_m)} in a month the P1 ",
-        "creel did not run (creel-gap months {gap_months}) x block ratio ",
-        "{round(ratio, 3)} ({ratio_basis}, {n_donor_areas} donor area(s) ",
-        "[{donor_areas}]). Ratio calibrated on creel-season months."),
+      tier                 = if_else(projected, "P3", "P2"),
+      source_id            = if_else(projected, "p3_month_gap", "p2_month_gap"),
+      method = if_else(projected,
+        glue("P3 month gap: PROJECTED CRC harvest {round(crc_harvest_m)} (mean of ",
+             "this month over {profile_years}; CRC not yet compiled for this month) ",
+             "in a month the P1 creel did not run (creel-gap months {gap_months}) x ",
+             "block ratio {round(ratio, 3)} ({ratio_basis}, {n_donor_areas} donor ",
+             "area(s) [{donor_areas}]). Ratio calibrated on creel-season months."),
+        glue("P2 month gap: CRC harvest {round(crc_harvest_m)} in a month the P1 ",
+             "creel did not run (creel-gap months {gap_months}) x block ratio ",
+             "{round(ratio, 3)} ({ratio_basis}, {n_donor_areas} donor area(s) ",
+             "[{donor_areas}]). Ratio calibrated on creel-season months.")),
       mode = "unknown", location = "unknown",
       location_basis = "crc_no_split", mode_basis = "not_collected",
       fishery_name = NA_character_
@@ -1075,7 +1112,8 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
 
   summary <- trips |>
     group_by(block, river_label, catch_area_code, year) |>
-    summarise(gap_months = first(gap_months), crc_harvest = sum(crc_harvest),
+    summarise(gap_months = first(gap_months), projected = any(projected),
+              crc_harvest = sum(crc_harvest),
               angler_trips = sum(angler_trips), ratio = first(ratio), .groups = "drop") |>
     arrange(desc(angler_trips))
 
@@ -1224,7 +1262,11 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
         "{format(round(sum(mg$trips$angler_trips)), big.mark = ',')} trips added ",
         "from {format(round(sum(mg$trips$crc_harvest)), big.mark = ',')} CRC salmon. ",
         "Largest: {paste(head(glue('{mg$summary$catch_area_code} {mg$summary$year} ",
-        "[{mg$summary$gap_months}] {round(mg$summary$angler_trips)}'), 5), collapse = '; ')}."))
+        "[{mg$summary$gap_months}] {round(mg$summary$angler_trips)}'), 5), collapse = '; ')}. ",
+        "Of these, {format(round(sum(mg$trips$angler_trips[mg$trips$tier == 'P3'])), big.mark = ',')} ",
+        "trips are P3 (projected CRC harvest for not-yet-compiled months of a ",
+        "partial year): {paste(unique(glue('{mg$summary$catch_area_code[mg$summary$projected]} ",
+        "{mg$summary$year[mg$summary$projected]}')), collapse = ', ')}."))
     }
     applied$trips   <- bind_rows(applied$trips, mg$trips)
     applied$gaps    <- bind_rows(applied$gaps, mg$gaps)

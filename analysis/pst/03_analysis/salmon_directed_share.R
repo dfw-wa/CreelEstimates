@@ -32,9 +32,18 @@
 #       into .cache/creel_int_catch_*.rds ("drano", or "." for everything).
 #       Without it f_mixed = 1 (mixed counted as salmon - no reduction) and the
 #       basis says so. [R3]
-#   Tiers (first with >= MIN_ANSWERED answered anglers-weighted interviews):
-#     fishery-year-month -> fishery-month (years pooled) -> fishery (all months)
-#     -> none (share = 1, no adjustment, logged).
+#   Tiers (first with >= MIN_ANSWERED answered interviews):
+#     fishery-year-month -> fishery-month, years pooled -> none (share = 1,
+#     no adjustment, logged).
+#     fishery_name carries its year ("Drano Lake salmon and steelhead 2022"),
+#     so "years pooled" pools on the name with year tokens stripped
+#     (fishery_stem) - same creel programme, same month, other years.
+#     There is deliberately NO all-months tier: salmon vs steelhead targeting
+#     is seasonal, and an all-months fallback smeared December steelhead
+#     answers onto Sep-Nov (Humptulips salmon 2024: Sep-Nov had no target
+#     answers, all 99 answers were December, share came out 0.13 for the
+#     whole fall). Same for f_mixed (Drano 2022 July took the all-months
+#     0.90 while July in other years is 0.3-0.6).
 #
 # Guide logbook cross-check (NOT applied): guided trips that caught salmon vs
 # steelhead-only, by CRC area x month, from parse_guide_logbook.R's salmon-rule
@@ -77,6 +86,7 @@ CW_PATH  <- here("input_files", "pst", "lookup_tables", "pst_river_block_crosswa
 CACHE    <- here(".cache")
 
 SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
+fishery_stem <- function(x) str_squish(str_remove_all(x, "\\b\\d{4}(-\\d{2})?\\b"))
 MIN_ANSWERED   <- 20   # interviews answering a specific target, per tier cell
 MIN_MIXED_FISH <- 10   # salmon + steelhead encounters behind an f_mixed value
 
@@ -101,6 +111,7 @@ ints <- int |>
     year  = as.integer(lubridate::year(date)),
     month = as.integer(lubridate::month(date)),
     cls   = classify_target(target_species),
+    fishery_stem = fishery_stem(fishery_name),
     # Angler-weighted, same convention as interview_proportions.qmd; a party
     # with no usable angler_count counts once.
     w = if ("angler_count" %in% names(int)) {
@@ -162,7 +173,8 @@ if (length(caches) > 0) {
       filter(classify_target(target_species) == "salmon_or_steelhead", !is.na(month)) |>
       distinct(across(all_of(c(key, "fishery_name", "year", "month")))) |>
       left_join(fish, by = key) |>
-      mutate(across(c(salmon, sthd), ~ coalesce(.x, 0)))
+      mutate(across(c(salmon, sthd), ~ coalesce(.x, 0)),
+             fishery_stem = fishery_stem(fishery_name))
     cat(glue("Catch cache: {length(caches)} file(s), ",
              "{n_distinct(mixed_catch$fishery_name)} fisheries with 'salmon or ",
              "steelhead' interviews, {nrow(mixed_catch)} such interviews.\n\n"))
@@ -185,8 +197,8 @@ fmix_tier <- function(keys, tier) {
     mutate(f_mixed = mix_salmon / (mix_salmon + mix_sthd), f_mixed_tier = tier)
 }
 fm_ym <- fmix_tier(c("fishery_name", "year", "month"), "fishery-year-month")
-fm_m  <- fmix_tier(c("fishery_name", "month"), "fishery-month (years pooled)")
-fm_f  <- fmix_tier("fishery_name", "fishery (all months)")
+fm_m  <- fmix_tier(c("fishery_stem", "month"), "fishery-month (years pooled)")
+fm_f  <- NULL   # no all-months tier - see header
 
 # ---- 2b. Catch-conditional targeting proportions (for the guide logbook) -----
 # The logbook records catch, never target. A guided trip that caught only
@@ -317,12 +329,12 @@ tally <- function(keys, tier) {
     mutate(target_tier = tier)
 }
 t_ym <- tally(c("fishery_name", "year", "month"), "fishery-year-month")
-t_m  <- tally(c("fishery_name", "month"), "fishery-month (years pooled)")
-t_f  <- tally("fishery_name", "fishery (all months)")
+t_m  <- tally(c("fishery_stem", "month"), "fishery-month (years pooled)")
+t_f  <- NULL   # no all-months tier - see header
 
 # Every fishery x year x month the interviews cover. The assembly falls back to
 # share = 1 for creel strata with no row here.
-cells <- ints |> distinct(fishery_name, year, month)
+cells <- ints |> distinct(fishery_name, fishery_stem, year, month)
 
 pick <- function(cells, a, b, c, keys_a, keys_b, keys_c, cols) {
   pa <- if (is.null(a)) NULL else a |> select(all_of(c(keys_a, cols)))
@@ -345,7 +357,7 @@ pick <- function(cells, a, b, c, keys_a, keys_b, keys_c, cols) {
 
 tcols <- c("n_interviews", "n_answered", "w_salmon", "w_mixed", "w_sthd", "w_other", "target_tier")
 fcols <- c("mix_salmon", "mix_sthd", "f_mixed", "f_mixed_tier")
-K3 <- c("fishery_name", "year", "month"); K2 <- c("fishery_name", "month"); K1 <- "fishery_name"
+K3 <- c("fishery_name", "year", "month"); K2 <- c("fishery_stem", "month"); K1 <- "fishery_stem"
 
 share <- cells |>
   pick(t_ym, t_m, t_f, K3, K2, K1, tcols) |>

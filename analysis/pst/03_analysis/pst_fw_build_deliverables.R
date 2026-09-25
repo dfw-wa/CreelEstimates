@@ -532,8 +532,8 @@ if (!is.null(deliverable_trips)) {
                         "{d_lo} to {d_hi} percentage points"))
     paste0("Interview-based boat shares were compared against creel design splits where a river has both. ",
            paste(by_r$txt, collapse = "; "), ". ",
-           "Close agreement with large samples supports using interviews where no creel split exists; ",
-           "a large gap on a small sample is treated as a sampling artefact, not a general bias. ", tail_txt)
+           "Close agreement supports using interviews where no creel split exists; ",
+           "differences are reported here as found. ", tail_txt)
   }
 
   tot   <- sum(deliverable_trips$`Angler Trips`)

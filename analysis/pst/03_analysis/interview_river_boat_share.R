@@ -11,8 +11,9 @@
 #   This turns them into a per-river bank/boat share for the categorize stage.
 #
 # Method:
-#   1. Interviews = vw_interview (explorer cache) plus any vw_analysis_interview
-#      rows it lacks, 2022-2025, deduplicated on interview_id.
+#   1. Interviews = vw_analysis_interview (explorer cache) plus the
+#      vw_interview rows it lacks, 2022-2025, deduplicated on interview_id.
+#      The analysis-view record wins: vw_interview has no boat_used field.
 #   2. water body -> PST river_label via interview_water_body_river_map.csv
 #      (editable), then exact name match against the crosswalk.
 #   3. Bank/boat: angler_type_code Boat/Bank (fish_from_boat BK -> Bank); the
@@ -57,8 +58,9 @@ YEARS               <- 2022:2025
 CRC_PROFILE_YEARS   <- 2022:2024
 MIN_MONTH           <- 10     # located interviews for a river-year-month share
 MIN_LOCATED         <- 100    # located interviews behind a river(-year) share.
-                              # Raised from 20 (2026-09-25): a 41-interview
-                              # Nisqually share sat 39 pts off its creel design split.
+                              # Raised from 20 (2026-09-25). (The 41-interview
+                              # Nisqually share that prompted it was a bug - see
+                              # section 1 - not a real thin sample.)
 MIN_WEIGHT_COVERAGE <- 0.5    # share of CRC salmon weight with a monthly share
 
 CACHE   <- here(".cache", "creel_db_2022_2025")
@@ -96,9 +98,15 @@ ana_int <- if (file.exists(ana_path)) {
   tibble(interview_id = getcol(a, "interview_id"), event_date = getcol(a, "event_date"),
          water_body = getcol(a, "water_body"), angler_type = getcol(a, "angler_type"),
          fish_from_boat = getcol(a, "fish_from_boat"), boat_used = getcol(a, "boat_used"),
-         angler_count = getcol(a, "angler_count"), source = "vw_analysis_interview") |>
-    filter(!interview_id %in% vw_int$interview_id)
+         angler_count = getcol(a, "angler_count"), source = "vw_analysis_interview")
 } else NULL
+# An interview in both views keeps its ANALYSIS-view record: vw_interview has
+# no boat_used column, and newer creels (Nisqually, most Puget Sound) record
+# bank/boat only there - taking the vw_interview copy dropped them (Nisqually
+# fell from 1k+ interviews to the 41 carrying angler_type_code, 2026-09-25).
+# vw_interview contributes only the interviews the analysis view lacks
+# (CRM - Tribs, Lewis, Kalama, Wind, Klickitat...).
+if (!is.null(ana_int)) vw_int <- vw_int |> filter(!interview_id %in% ana_int$interview_id)
 
 rm(vw); if (exists("a")) rm(a); invisible(gc())
 step("deriving bank/boat")
@@ -119,8 +127,8 @@ ints <- bind_rows(vw_int, ana_int) |>
   ) |>
   filter(year %in% YEARS, !is.na(month), !is.na(location))
 cat(glue("{nrow(ints)} located interviews 2022-2025 ",
-         "({sum(ints$source == 'vw_interview')} vw_interview, ",
-         "{sum(ints$source != 'vw_interview')} analysis-view only)\n\n"))
+         "({sum(ints$source != 'vw_interview')} analysis view, ",
+         "{sum(ints$source == 'vw_interview')} vw_interview only)\n\n"))
 
 # ---- 2. Water body -> river_label --------------------------------------------
 step("mapping water bodies to rivers")

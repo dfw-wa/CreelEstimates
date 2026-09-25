@@ -1062,6 +1062,89 @@ apply_track_b <- function(trips) {
 trips_p1 <- bind_rows(ingest_creel_pe(), ingest_district_creel())
 invisible(ingest_published_fallback())
 
+# ---- 5a. Salmon-directed scaling of creel_pe trips ---------------------------
+# P1 creel trips are effort / trip length and count every angler on the water,
+# steelhead anglers included. Scale them to the salmon-directed share from the
+# interview target_species (with the "salmon or steelhead" answers split by
+# those anglers' own salmon:steelhead catch - Drano), built by
+# salmon_directed_share.R. Runs BEFORE build_block_ratios() so the P2 donor
+# numerator, and every P2/P3 area expanded from it, carries the correction.
+# Harvest is untouched (it is already salmon-only). district_creel is not
+# scaled: those are district salmon-fishery totals with no interview linkage.
+USE_SALMON_DIRECTED_SHARE <- TRUE
+
+apply_salmon_directed_share <- function(df) {
+  f <- file.path(INTERVIEW_PROPS_DIR, "salmon_directed_share_month.csv")
+  if (!file.exists(f)) {
+    log_gap("salmon_share", NA, "gap",
+            glue("{f} not found - creel_pe trips NOT scaled to salmon-directed ",
+                 "effort; steelhead/other anglers remain in P1 and inflate P2/P3. ",
+                 "Run analysis/pst/03_analysis/salmon_directed_share.R."))
+    return(df)
+  }
+  sh <- read_csv(f, show_col_types = FALSE) |>
+    transmute(fishery_name, year = as.integer(year), month = as.integer(month),
+              salmon_directed_share, share_basis)
+
+  before <- df |> group_by(block) |>
+    summarise(before = sum(angler_trips, na.rm = TRUE), .groups = "drop")
+
+  out <- df |>
+    left_join(sh, by = c("fishery_name", "year", "month")) |>
+    mutate(
+      scale = if_else(source_id == "creel_pe",
+                      coalesce(salmon_directed_share, 1), 1),
+      angler_trips = angler_trips * scale,
+      method = if_else(
+        source_id == "creel_pe",
+        paste0(method, "; salmon-directed share ",
+               if_else(is.na(salmon_directed_share), "1 (no interview row)",
+                       paste0(round(salmon_directed_share, 3), " [", share_basis, "]"))),
+        method)
+    )
+
+  unmatched <- out |> filter(source_id == "creel_pe", is.na(salmon_directed_share)) |>
+    distinct(fishery_name)
+  if (nrow(unmatched) > 0) {
+    log_gap("salmon_share", NA, "gap",
+            glue("{nrow(unmatched)} creel fisheries have strata with no interview ",
+                 "target row - left unscaled (share = 1): ",
+                 "{paste(head(unmatched$fishery_name, 15), collapse = '; ')}"))
+  }
+  unadj <- out |> filter(source_id == "creel_pe", str_starts(coalesce(share_basis, ""), "none")) |>
+    distinct(fishery_name)
+  if (nrow(unadj) > 0) {
+    log_gap("salmon_share", NA, "note",
+            glue("target_species not answered for {nrow(unadj)} fisheries - ",
+                 "unscaled: {paste(head(unadj$fishery_name, 15), collapse = '; ')}"))
+  }
+  nosplit <- out |>
+    filter(source_id == "creel_pe",
+           str_detect(coalesce(share_basis, ""), "mixed counted as salmon")) |>
+    distinct(fishery_name)
+  if (nrow(nosplit) > 0) {
+    log_gap("salmon_share", NA, "gap",
+            glue("'salmon or steelhead' target counted wholly as salmon (no catch ",
+                 "cache to split it) for: {paste(nosplit$fishery_name, collapse = '; ')}. ",
+                 "Run creel_guided_species_seasonality.R for these, then ",
+                 "salmon_directed_share.R."))
+  }
+
+  chg <- out |> group_by(block) |>
+    summarise(after = sum(angler_trips, na.rm = TRUE), .groups = "drop") |>
+    left_join(before, by = "block")
+  pwalk(chg, function(block, after, before)
+    log_gap("salmon_share", block, "note",
+            glue("P1 trips scaled to salmon-directed: ",
+                 "{format(round(before), big.mark = ',')} -> ",
+                 "{format(round(after), big.mark = ',')} ",
+                 "({round(100 * (after / before - 1), 1)}%)")))
+
+  out |> select(-scale, -salmon_directed_share, -share_basis)
+}
+
+if (USE_SALMON_DIRECTED_SHARE) trips_p1 <- apply_salmon_directed_share(trips_p1)
+
 p2 <- build_block_ratios(trips_p1)
 
 # Guided/unguided now comes from the guide logbook floor, assigned in the

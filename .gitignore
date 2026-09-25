@@ -75,3 +75,10 @@ analysis/columbia_basin_trip_summary/outputs/
 # Rendered output of the PST parent doc; regenerable via
 # `quarto render analysis/pst/pst_fw_angler_trips.qmd`
 analysis/pst/pst_fw_angler_trips.html
+
+# PST pipeline: local run logs, rendered reports, and raw guide logbook data
+# (never commit the logbook extract)
+run_log.txt
+analysis/pst/**/*.html
+analysis/pst/**/*_files/
+input_files/pst/guide_logbook/

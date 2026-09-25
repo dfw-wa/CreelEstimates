@@ -72,6 +72,8 @@ P2_CONTROL <- list(
                                  # (0.52-1.93) shows real area-level scatter is
                                  # wide, and 1.0 rejected coherent blocks.
   allow_pooled_fallback = TRUE,
+  month_gap_expansion   = TRUE,  # expand CRC harvest in months a P1 creel
+                                 # did not run (apply_p2_month_gaps)
   max_target_harvest_multiple = 15,  # a target area's CRC harvest can be at
                                  # most this many times the largest single
                                  # DONOR area's harvest before the ratio is
@@ -786,6 +788,37 @@ validate_ratios <- function(x, control = P2_CONTROL) {
 }
 
 
+# Ratio cascade shared by apply_p2() and apply_p2_month_gaps(): finest tier
+# first, the out-of-scale guard after every tier (see comments inside).
+cascade_p2_ratios <- function(targets, ratios, control) {
+  resolved <- targets |>
+    mutate(ratio = NA_real_, ratio_basis = NA_character_,
+           n_donor_areas = NA_integer_, donor_areas = NA_character_,
+           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_,
+           ever_out_of_scale = NA, last_rejected_max_donor = NA_real_)
+
+  resolved <- resolved |> fill_ratio_tier(ratios$system_year, c("block", "system", "year")) |>
+    apply_out_of_scale_guard(control, "crc_harvest")
+  resolved <- resolved |> fill_ratio_tier(ratios$block_year,  c("block", "year")) |>
+    apply_out_of_scale_guard(control, "crc_harvest")
+  if (control$allow_pooled_fallback) {
+    resolved <- resolved |> fill_ratio_tier(ratios$system_pooled, c("block", "system")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
+    resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,  c("block")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
+    resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block")) |>
+      apply_out_of_scale_guard(control, "crc_harvest")
+  }
+
+  resolved <- resolved |>
+    mutate(
+      out_of_scale           = coalesce(ever_out_of_scale, FALSE),
+      max_donor_area_harvest = coalesce(max_donor_area_harvest, last_rejected_max_donor)
+    )
+
+  resolved
+}
+
 # --- 4. Apply to uncovered areas ----------------------------------------------
 #' Returns list(trips, gaps). Both always returned; an empty gap tibble is a
 #' real result and should be written as one.
@@ -891,30 +924,7 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
   # tier must be able to fall through and try the next, coarser tier, rather
   # than being locked out the moment the finest tier that filled it turns
   # out to be thinly calibrated.
-  resolved <- targets |>
-    mutate(ratio = NA_real_, ratio_basis = NA_character_,
-           n_donor_areas = NA_integer_, donor_areas = NA_character_,
-           donor_ratio_cv = NA_real_, max_donor_area_harvest = NA_real_,
-           ever_out_of_scale = NA, last_rejected_max_donor = NA_real_)
-
-  resolved <- resolved |> fill_ratio_tier(ratios$system_year, c("block", "system", "year")) |>
-    apply_out_of_scale_guard(control, "crc_harvest")
-  resolved <- resolved |> fill_ratio_tier(ratios$block_year,  c("block", "year")) |>
-    apply_out_of_scale_guard(control, "crc_harvest")
-  if (control$allow_pooled_fallback) {
-    resolved <- resolved |> fill_ratio_tier(ratios$system_pooled, c("block", "system")) |>
-      apply_out_of_scale_guard(control, "crc_harvest")
-    resolved <- resolved |> fill_ratio_tier(ratios$block_pooled,  c("block")) |>
-      apply_out_of_scale_guard(control, "crc_harvest")
-    resolved <- resolved |> fill_ratio_tier(ratios$columbia_pooled, c("block")) |>
-      apply_out_of_scale_guard(control, "crc_harvest")
-  }
-
-  resolved <- resolved |>
-    mutate(
-      out_of_scale           = coalesce(ever_out_of_scale, FALSE),
-      max_donor_area_harvest = coalesce(max_donor_area_harvest, last_rejected_max_donor)
-    )
+  resolved <- cascade_p2_ratios(targets, ratios, control)
 
   p2_trips <- resolved |>
     filter(!is.na(ratio)) |>
@@ -973,6 +983,104 @@ apply_p2 <- function(crc_yr, donors, ratios, xw_area, area_system,
   list(trips = p2_trips, gaps = p2_gaps)
 }
 
+
+# --- 4b. Months a P1 creel did not cover -------------------------------------
+#' apply_p2() treats an area-year as covered if ANY P1 row exists for it, so a
+#' creel that ran only part of an area's salmon season silently drops the rest
+#' of the year. Confirmed (2026-09-25): Drano Lake (618) has P1 creel Jul-Oct
+#' 2022-2025 only; its spring Chinook fishery (Mar-Jun, 88-97% boat per the
+#' unlinked interviews) had no creel until 2026, so those trips were in NO
+#' tier. Same gap for any partial-season creel in any block.
+#'
+#' For each P1-covered area-year: CRC salmon harvest in months with no P1 row
+#' for that area is expanded at the same ratio cascade apply_p2() uses, one
+#' row per month (month set, so the categorize stage matches the logbook to
+#' that month only). Skipped, not guessed:
+#'   - area-years whose P1 rows carry no month (annual district totals - no
+#'     way to tell which months they cover);
+#'   - covered_unpartitioned areas, unmapped areas, partial CRC years.
+#' Caveat: the ratio was calibrated on the creel's own months; a spring
+#' fishery's trips-per-fish may differ from summer/fall's.
+apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
+                                deliver_blocks, years_scope, effort_long,
+                                control = P2_CONTROL, partial_years = integer(0)) {
+
+  p1 <- effort_long |>
+    filter(tier == "P1", !is.na(catch_area_code)) |>
+    mutate(catch_area_code = as.character(catch_area_code))
+  annual_only <- p1 |>
+    group_by(catch_area_code, year) |>
+    filter(any(is.na(month))) |> ungroup() |> distinct(catch_area_code, year)
+  p1_months <- p1 |> filter(!is.na(month)) |>
+    distinct(catch_area_code, year, month = as.integer(month))
+  covered_years <- p1_months |> distinct(catch_area_code, year) |>
+    anti_join(annual_only, by = c("catch_area_code", "year"))
+
+  unpartitioned <- xw_area |> filter(area_coverage == "covered_unpartitioned") |>
+    distinct(catch_area_code)
+
+  gap_months <- crc_month |>
+    transmute(catch_area_code = as.character(stream_code),
+              year = as.integer(calendar_year), month = as.integer(calendar_month),
+              harvest) |>
+    group_by(catch_area_code, year, month) |>
+    summarise(crc_harvest_m = sum(harvest, na.rm = TRUE), .groups = "drop") |>
+    filter(year %in% years_scope, !year %in% partial_years, crc_harvest_m > 0) |>
+    semi_join(covered_years, by = c("catch_area_code", "year")) |>
+    anti_join(p1_months, by = c("catch_area_code", "year", "month")) |>
+    anti_join(unpartitioned, by = "catch_area_code")
+
+  empty <- list(trips = tibble(), gaps = tibble(), summary = tibble())
+  if (nrow(gap_months) == 0) return(empty)
+
+  targets <- gap_months |>
+    group_by(catch_area_code, year) |>
+    summarise(crc_harvest = sum(crc_harvest_m),
+              gap_months = paste(sort(month), collapse = ","), .groups = "drop") |>
+    left_join(xw_area, by = "catch_area_code") |>
+    left_join(area_system, by = "catch_area_code") |>
+    filter(block %in% deliver_blocks)
+  if (nrow(targets) == 0) return(empty)
+
+  resolved <- cascade_p2_ratios(targets, ratios, control) |>
+    mutate(out_of_scale = coalesce(ever_out_of_scale, FALSE))
+
+  trips <- resolved |>
+    filter(!is.na(ratio)) |>
+    select(-crc_harvest) |>
+    inner_join(gap_months, by = c("catch_area_code", "year")) |>
+    mutate(
+      crc_harvest          = crc_harvest_m,
+      angler_trips         = crc_harvest_m * ratio,
+      total_salmon_harvest = crc_harvest_m,
+      tier                 = "P2",
+      source_id            = "p2_month_gap",
+      method = glue(
+        "P2 month gap: CRC harvest {round(crc_harvest_m)} in a month the P1 ",
+        "creel did not run (creel-gap months {gap_months}) x block ratio ",
+        "{round(ratio, 3)} ({ratio_basis}, {n_donor_areas} donor area(s) ",
+        "[{donor_areas}]). Ratio calibrated on creel-season months."),
+      mode = "unknown", location = "unknown",
+      location_basis = "crc_no_split", mode_basis = "not_collected",
+      fishery_name = NA_character_
+    )
+
+  gaps <- resolved |>
+    filter(is.na(ratio)) |>
+    transmute(block, catch_area_code, year, crc_harvest,
+              reason = paste0("P1-covered area-year: CRC harvest in creel-gap months (",
+                              gap_months, ") not expanded - no usable ratio",
+                              if_else(out_of_scale, " (out of scale)", ""))) |>
+    mutate(tier_attempted = "P2_month_gap")
+
+  summary <- trips |>
+    group_by(block, river_label, catch_area_code, year) |>
+    summarise(gap_months = first(gap_months), crc_harvest = sum(crc_harvest),
+              angler_trips = sum(angler_trips), ratio = first(ratio), .groups = "drop") |>
+    arrange(desc(angler_trips))
+
+  list(trips = trips, gaps = gaps, summary = summary)
+}
 
 # --- 5. Leave-one-out check ---------------------------------------------------
 #' Hold out each donor area, rebuild the block ratio without it, predict its
@@ -1105,6 +1213,23 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
   applied <- apply_p2(crc_yr, donors, ratios, xw_area, area_system,
                       deliver_blocks, years_scope, effort_long, control,
                       partial_years)
+  if (isTRUE(control$month_gap_expansion)) {
+    mg <- apply_p2_month_gaps(crc_month, ratios, xw_area, area_system,
+                              deliver_blocks, years_scope, effort_long,
+                              control, partial_years)
+    if (nrow(mg$trips) > 0) {
+      message(glue(
+        "[note] p2_month_gap: {nrow(mg$summary)} P1-covered area-year(s) had CRC ",
+        "salmon harvest in months their creel did not run - ",
+        "{format(round(sum(mg$trips$angler_trips)), big.mark = ',')} trips added ",
+        "from {format(round(sum(mg$trips$crc_harvest)), big.mark = ',')} CRC salmon. ",
+        "Largest: {paste(head(glue('{mg$summary$catch_area_code} {mg$summary$year} ",
+        "[{mg$summary$gap_months}] {round(mg$summary$angler_trips)}'), 5), collapse = '; ')}."))
+    }
+    applied$trips   <- bind_rows(applied$trips, mg$trips)
+    applied$gaps    <- bind_rows(applied$gaps, mg$gaps)
+    applied$month_gap_summary <- mg$summary
+  }
   loo     <- p2_loo_check(donors, control)
 
   message(glue(
@@ -1120,7 +1245,8 @@ run_p2_extrapolation <- function(effort_long, crc_yr, crc_month, crosswalk,
                             ratios$columbia_pooled),
     donors      = donors,
     loo         = loo,
-    loo_summary = if (nrow(loo) > 0) p2_loo_summary(loo) else tibble()
+    loo_summary = if (nrow(loo) > 0) p2_loo_summary(loo) else tibble(),
+    month_gap_summary = if (is.null(applied$month_gap_summary)) tibble() else applied$month_gap_summary
   )
 }
 

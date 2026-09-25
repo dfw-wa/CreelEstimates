@@ -1280,6 +1280,9 @@ if (!is.null(p2x)) {
 
   write_csv(p2x$ratios, file.path(OUT_DIR, "pst_fw_p2_area_ratios.csv"))
   write_csv(p2x$donors, file.path(OUT_DIR, "pst_fw_p2_donors.csv"))
+  # CRC harvest in months a P1 creel did not run, expanded at P2 ratios
+  # (apply_p2_month_gaps) - e.g. Drano spring Chinook before the 2026 creel.
+  write_csv(p2x$month_gap_summary, file.path(OUT_DIR, "pst_fw_p2_month_gap_summary.csv"))
   if (nrow(p2x$loo) > 0) {
     write_csv(p2x$loo,         file.path(OUT_DIR, "pst_fw_p2_loo_detail.csv"))
     write_csv(p2x$loo_summary, file.path(OUT_DIR, "pst_fw_p2_loo_summary.csv"))

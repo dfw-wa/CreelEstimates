@@ -175,6 +175,7 @@ trip_catch <- enc |>
   summarise(
     n_salmon      = sum(fish_count[species %in% SALMON_SPECIES], na.rm = TRUE),
     n_other       = sum(fish_count[!species %in% SALMON_SPECIES], na.rm = TRUE),
+    n_steelhead   = sum(fish_count[species %in% "Steelhead"], na.rm = TRUE),
     species_seen  = paste(sort(unique(species)), collapse = "; "),
     .groups = "drop"
   ) |>
@@ -183,12 +184,18 @@ trip_catch <- enc |>
 trips <- trips |>
   left_join(trip_catch, by = "trip_id") |>
   mutate(
-    across(c(n_salmon, n_other), ~ coalesce(.x, 0)),
+    across(c(n_salmon, n_other, n_steelhead), ~ coalesce(.x, 0)),
     catch_class = case_when(
       n_salmon > 0 ~ "salmon_catch",
       n_other  > 0 ~ "other_catch_only",
       TRUE         ~ "no_catch"
-    )
+    ),
+    # A trip that caught salmon AND steelhead counts as a salmon trip (decided
+    # 2026-09-25): it contributed to the CRC salmon harvest the P2 denominator
+    # is expanded from. But the creel calibration on the Cowlitz found 10 of 12
+    # such guided trips stated steelhead as their target, so the rule is
+    # flagged here and sized in the report rather than folded in silently.
+    caught_both = n_salmon > 0 & n_steelhead > 0
   )
 
 # ---- 3. Month class, from CRC salmon harvest --------------------------------
@@ -284,6 +291,33 @@ cat(glue(
   "The ambiguous share is the size of the assumption. Everything in it gets a\n",
   "guided salmon trip only because we decide it does.\n"
 ), "\n")
+
+# How much of VERIFIED rests on the salmon-and-steelhead rule. On steelhead-
+# dominated rivers these trips were mostly steelhead-targeted (Cowlitz creel:
+# 10 of 12), so this is the part of VERIFIED that is a definition, not evidence.
+cat("\n================ VERIFIED: salmon only vs. salmon AND steelhead ================\n")
+trips |>
+  filter(str_starts(final_class, "[12]")) |>
+  mutate(season = if_else(str_starts(final_class, "1"),
+                          "in CRC salmon months", "outside CRC salmon months"),
+         catch = if_else(caught_both, "salmon + steelhead", "salmon, no steelhead")) |>
+  group_by(season, catch) |>
+  summarise(trips = n(), angler_trips = sum(angler_trips), .groups = "drop") |>
+  mutate(pct_of_all = pct(angler_trips, tot_ang)) |>
+  as.data.frame() |> print(row.names = FALSE)
+
+cat("\n-- salmon + steelhead trips by region --\n")
+trips |>
+  filter(str_starts(final_class, "[12]"), caught_both) |>
+  left_join(suppressMessages(read_csv(CRC_LUT, show_col_types = FALSE)) |>
+              mutate(catch_area_code = as.character(catch_area_code)) |>
+              distinct(catch_area_code, .keep_all = TRUE) |>
+              select(catch_area_code, region = catch_area_region),
+            by = c("crc_code" = "catch_area_code")) |>
+  group_by(region) |>
+  summarise(angler_trips = sum(angler_trips), .groups = "drop") |>
+  arrange(desc(angler_trips)) |>
+  as.data.frame() |> print(row.names = FALSE)
 
 # ---- 5b. What the ambiguous cell is actually made of -------------------------
 # Cell 4 is the bulk of the ambiguity, and most of it is not ambiguous once the

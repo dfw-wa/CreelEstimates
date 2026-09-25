@@ -132,38 +132,8 @@ cat(" ", if (is.null(cat_tbl)) "(none returned)" else paste(names(cat_tbl), coll
 
 TARGET_PAT <- "target|fishing_for|sought|directed|intent|pursu|fishery_type|trip_type"
 
-# The creel asks `target_species` directly (22 values, answered on 86.7% of all
-# interviews and ~100% of Cowlitz ones). It is far better than inferring target
-# from catch, but it is NOT a clean binary - several values are themselves
-# ambiguous about salmon vs steelhead, and one literally records that the
-# question was not asked. Classify explicitly rather than pretending otherwise.
-TARGET_CLASS <- c(
-  Chinook = "salmon", Chum = "salmon", Coho = "salmon",
-  Pink = "salmon", Sockeye = "salmon",
-  # Both of these include salmon AND steelhead - the exact distinction that
-  # decides whether a trip belongs in a salmon-only denominator.
-  `Multiple salmon and/or steelhead targeted` = "salmon_or_steelhead",
-  Salmonid = "salmon_or_steelhead",
-  Steelhead = "steelhead",
-  `Bull Trout` = "other_species", Cutthroat = "other_species",
-  `Rainbow Trout` = "other_species", Trout = "other_species",
-  Whitefish = "other_species", Sturgeon = "other_species",
-  Bass = "other_species", Carp = "other_species", Crappie = "other_species",
-  `Yellow Perch` = "other_species",
-  # Answered, but uninformative about species.
-  `Any species` = "nonspecific", Other = "nonspecific", Unknown = "nonspecific",
-  # A recorded value meaning the question was NOT put - counts as unanswered,
-  # not as an answer, or coverage is overstated.
-  `Target species not asked` = "not_asked"
-)
-
-classify_target <- function(x) {
-  x <- str_squish(x)
-  out <- unname(TARGET_CLASS[x])
-  out[is.na(out) & !is.na(x) & nzchar(x)] <- "unmapped"
-  out[is.na(x) | !nzchar(coalesce(x, ""))] <- "blank"
-  out
-}
+# Target-species taxonomy is shared with guided_target_mix_by_river.R.
+source(here("analysis", "pst", "03_analysis", "_target_species_classes.R"))
 
 target_col <- NULL
 tcands <- names(int)[str_detect(names(int), regex(TARGET_PAT, ignore_case = TRUE))]

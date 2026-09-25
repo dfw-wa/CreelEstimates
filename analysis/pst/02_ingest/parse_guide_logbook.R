@@ -192,6 +192,122 @@ if (n_crc_unmatched > 0L) {
   )
 }
 
+# 5b. Salmon-directed guided angler trips -------------------------------------
+# The table the assembly consumes as the guided-trip floor. The logbook has no
+# target-species field, so a trip counts as salmon-directed by these rules
+# (agreed 2026-09-25; sizes of each in guide_logbook_species_classification.R):
+#
+#   COUNT  salmon caught, with or without steelhead. A salmon+steelhead trip
+#          counts only inside the salmon window - outside it the steelhead is
+#          taken as the target.
+#   COUNT  nothing caught, inside the salmon window.
+#   COUNT  steelhead caught (no salmon), inside the salmon window, ONLY on
+#          rivers whose creel denominator itself includes steelhead effort.
+#   DROP   everything else: trout / warmwater / sturgeon / other catch; nothing
+#          caught outside the window; steelhead elsewhere.
+#
+# Salmon window = months with CRC salmon harvest for that area (same year, or
+# pooled years when CRC has not compiled that year yet), EXCEPT where creel
+# interviews show guided effort is not salmon-directed across the open season:
+# the Cowlitz below Mayfield (561) is open year-round, but guided interviews
+# there name salmon only in Sep-Nov (93% of guided Cowlitz effort is steelhead
+# - guided_target_mix_by_river.R).
+
+SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
+STEELHEAD_INCLUSIVE_RIVERS <- c("Drano Lake", "Skykomish", "Stillaguamish", "Wallace")
+SALMON_WINDOW_OVERRIDE <- tibble(crc_code = "561", trip_month = 9:11)
+
+CRC_HARVEST_FILES <- here("analysis", "pst", "outputs", "01_crc_harvest",
+                          c("crc_freshwater_harvest_2010_2024_tidy.csv",
+                            "crc_freshwater_harvest_final_creel_subs_tidy.csv"))
+CROSSWALK_PATH <- here("input_files", "pst", "lookup_tables",
+                       "pst_river_block_crosswalk.csv")
+OUT_SALMON_CSV <- file.path(out_dir,
+                            "guide_logbook_salmon_angler_trips_by_crc_year_month.csv")
+
+if (!any(file.exists(CRC_HARVEST_FILES))) {
+  stop("No CRC freshwater harvest file in analysis/pst/outputs/01_crc_harvest/ - ",
+       "run parse_crc_freshwater_harvest.R first; the salmon window comes from it.",
+       call. = FALSE)
+}
+
+crc_months <- purrr::map_dfr(CRC_HARVEST_FILES[file.exists(CRC_HARVEST_FILES)],
+                             ~ suppressMessages(read_csv(.x, show_col_types = FALSE))) |>
+  filter(!is.na(calendar_month), harvest_count > 0) |>
+  transmute(crc_code = as.character(stream_code),
+            trip_year = as.integer(calendar_year),
+            trip_month = as.integer(calendar_month)) |>
+  distinct()
+crc_years <- crc_months |> distinct(crc_code, trip_year)
+crc_months_pooled <- crc_months |> distinct(crc_code, trip_month)
+
+sthd_codes <- read_csv(CROSSWALK_PATH, show_col_types = FALSE) |>
+  filter(river_label %in% STEELHEAD_INCLUSIVE_RIVERS, !is.na(crc_areas)) |>
+  pull(crc_areas) |> strsplit("\\|") |> unlist() |> unique()
+
+species_name <- gl$species_lut$name[match(gl$encounter$species_id, gl$species_lut$id)]
+trip_catch <- gl$encounter |>
+  mutate(species = species_name, fish_count = as.numeric(fish_count)) |>
+  filter(fish_count > 0) |>
+  group_by(trip_id) |>
+  summarise(n_salmon    = sum(fish_count[species %in% SALMON_SPECIES]),
+            n_steelhead = sum(fish_count[species %in% "Steelhead"]),
+            n_other     = sum(fish_count[!species %in% c(SALMON_SPECIES, "Steelhead")]),
+            .groups = "drop")
+
+guided_trips <- trip_clean |>
+  filter(!is_void, trip_type_name == "Guided", trip_year %in% YEARS_SCOPE,
+         !is.na(crc_code)) |>
+  mutate(crc_code = as.character(crc_code)) |>
+  left_join(trip_catch, by = c("id" = "trip_id")) |>
+  mutate(across(c(n_salmon, n_steelhead, n_other), ~ coalesce(.x, 0)))
+
+in_window <- function(code, yr, mo) {
+  k      <- paste(code, yr, mo)
+  has_yr <- paste(code, yr) %in% paste(crc_years$crc_code, crc_years$trip_year)
+  win <- if_else(has_yr,
+                 k %in% paste(crc_months$crc_code, crc_months$trip_year, crc_months$trip_month),
+                 paste(code, mo) %in% paste(crc_months_pooled$crc_code, crc_months_pooled$trip_month))
+  override <- code %in% SALMON_WINDOW_OVERRIDE$crc_code
+  if_else(override,
+          paste(code, mo) %in% paste(SALMON_WINDOW_OVERRIDE$crc_code,
+                                     SALMON_WINDOW_OVERRIDE$trip_month),
+          win)
+}
+
+guided_trips <- guided_trips |>
+  mutate(
+    salmon_window = in_window(crc_code, trip_year, trip_month),
+    salmon_rule = case_when(
+      n_salmon > 0 & n_steelhead == 0                       ~ "salmon_caught",
+      n_salmon > 0 & salmon_window                          ~ "salmon_and_steelhead_in_window",
+      n_salmon > 0                                          ~ "DROP_salmon_and_steelhead_off_window",
+      n_steelhead > 0 & salmon_window & crc_code %in% sthd_codes ~ "steelhead_on_combined_creel",
+      n_steelhead > 0                                       ~ "DROP_steelhead",
+      n_other > 0                                           ~ "DROP_other_species",
+      salmon_window                                         ~ "no_catch_in_window",
+      TRUE                                                  ~ "DROP_no_catch_off_window"
+    )
+  )
+
+salmon_anglers <- trip_angler_clean |>
+  filter(trip_type_name == "Guided") |>
+  mutate(crc_code = as.character(crc_code)) |>
+  inner_join(guided_trips |> select(id, salmon_rule), by = c("trip_id" = "id"))
+
+cli::cli_h2("Guided angler-trips by salmon rule")
+print(as.data.frame(salmon_anglers |> count(salmon_rule, name = "angler_trips") |>
+                      mutate(pct = round(100 * angler_trips / sum(angler_trips), 1))),
+      row.names = FALSE)
+
+salmon_by_crc_year_month <- salmon_anglers |>
+  filter(!str_starts(salmon_rule, "DROP")) |>
+  count(crc_code, trip_year, trip_month, salmon_rule, name = "n") |>
+  pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0) |>
+  mutate(angler_trips = rowSums(across(-c(crc_code, trip_year, trip_month)))) |>
+  left_join(crc_lut, by = c("crc_code" = "catch_area_code")) |>
+  arrange(crc_code, trip_year, trip_month)
+
 # 6. Write output --------------------------------------------------------------
 
 cli::cli_h1("Writing output")
@@ -199,7 +315,9 @@ cli::cli_h1("Writing output")
 readr::write_csv(angler_trips_by_crc_year, OUT_SUMMARY_CSV)
 readr::write_csv(angler_trips_by_crc_year_month, OUT_MONTH_CSV)
 readr::write_csv(coverage, OUT_COVERAGE_CSV)
+readr::write_csv(salmon_by_crc_year_month, OUT_SALMON_CSV)
 
 cli::cli_alert_success("Wrote {nrow(angler_trips_by_crc_year)} rows to {OUT_SUMMARY_CSV}")
 cli::cli_alert_success("Wrote {nrow(angler_trips_by_crc_year_month)} rows to {OUT_MONTH_CSV}")
 cli::cli_alert_success("Wrote {nrow(coverage)} rows to {OUT_COVERAGE_CSV}")
+cli::cli_alert_success("Wrote {nrow(salmon_by_crc_year_month)} rows to {OUT_SALMON_CSV}")

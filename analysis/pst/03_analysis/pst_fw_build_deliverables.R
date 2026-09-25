@@ -95,6 +95,19 @@ if (!is.null(effort_by_mode_location) &&
                  "pst_fw_angler_trips_assembly.R."))
   effort_by_mode_location$mode_basis <- NA_character_
 }
+# Read back as numeric when every river is a single CRC area; always text here.
+if (!is.null(effort_by_mode_location) &&
+    "catch_area_codes" %in% names(effort_by_mode_location)) {
+  effort_by_mode_location$catch_area_codes <-
+    as.character(effort_by_mode_location$catch_area_codes)
+}
+if (!is.null(effort_by_mode_location) &&
+    !"location_basis" %in% names(effort_by_mode_location)) {
+  log_note("effort_by_mode_location",
+           paste("no location_basis column - this CSV predates the terminal",
+                 "categorization stage. Re-run pst_fw_angler_trips_assembly.R."))
+  effort_by_mode_location$location_basis <- NA_character_
+}
 effort_by_area <- read_if(
   file.path(IN_DIR, "pst_fw_trips_by_crc_area.csv"),
   "effort_by_area"
@@ -362,26 +375,39 @@ if (!cli_ok) message(glue("Wrote status workbook: {xlsx_path}"))
 
 deliverable_path <- file.path(DELIVERABLES_DIR, "WDFW_Freshwater_Salmon_Angler_Trip_Estimates.xlsx")
 
-# A Mode value is not self-describing. "Guided" derived from that month's own
-# creel interviews and "Guided" derived from a share pooled across other
-# fisheries in the same region are very different claims, and about 41% of the
-# splittable trips resolve at the pooled tier. Without this column the
-# consultant cannot tell the two apart, so the guided/unguided split would read
-# as uniformly measured when much of it is inferred. Labels are plain language
-# and kept short enough not to stretch the column.
+# Mode and Location are not self-describing, so each carries a basis column.
+# Guided/unguided comes from the WDFW guide logbook as a MINIMUM - guides'
+# own reports of salmon-directed client trips, with reporting bias
+# acknowledged - and bank/boat either from the creel survey design or from a
+# creel bank/boat ratio borrowed from the same river or region. Labels are
+# plain language and short enough not to stretch the column.
 mode_basis_label <- function(x) {
   x <- coalesce(x, "")
-  measured <- str_detect(x, "interviews")
-  pooled   <- str_detect(x, "block_pooled")
-  notcoll  <- str_detect(x, "not_collected")
-  none     <- str_detect(x, "no_proportion_available")
   case_when(
-    measured & !pooled & !notcoll & !none ~ "Measured — creel interviews",
-    pooled   & !measured & !notcoll       ~ "Estimated — pooled from region",
-    notcoll  & !measured & !pooled        ~ "Not collected by survey",
-    none     & !measured & !pooled        ~ "Not available",
-    x == ""                               ~ "Not available",
-    TRUE                                  ~ "Mixed"
+    str_detect(x, "guide logbook \\(minimum\\)")        ~ "Guide logbook (minimum)",
+    str_detect(x, "no logbook record|no CRC link")          ~ "No guide logbook record (guided = 0)",
+    str_detect(x, "unavailable")                            ~ "Not available",
+    # Values from the earlier interview-based split, if an old CSV is read.
+    str_detect(x, "interviews")                             ~ "Creel interviews",
+    x == ""                                                 ~ "Not available",
+    TRUE                                                    ~ "Mixed"
+  )
+}
+
+location_basis_label <- function(x) {
+  x <- coalesce(x, "")
+  design <- str_detect(x, "design_stratum")
+  est <- case_when(
+    str_detect(x, "all-creel")           ~ "Estimated — statewide creel ratio",
+    str_detect(x, "block")               ~ "Estimated — regional creel ratio",
+    str_detect(x, "river")               ~ "Estimated — same-river creel ratio",
+    TRUE                                 ~ NA_character_
+  )
+  case_when(
+    x == ""               ~ "Not available",
+    design & is.na(est)   ~ "Measured — creel survey",
+    design & !is.na(est)  ~ "Mixed — measured and estimated",
+    TRUE                  ~ est
   )
 }
 
@@ -396,6 +422,7 @@ if (!is.null(effort_by_mode_location)) {
       Mode               = str_to_title(mode),
       `Mode Basis`       = mode_basis_label(mode_basis),
       Location           = str_to_title(location),
+      `Location Basis`   = location_basis_label(location_basis),
       `Angler Trips`     = angler_trips,
       catch_area_codes,
       `Composite Estimate` = if_else(
@@ -484,6 +511,38 @@ if (!is.null(deliverable_trips)) {
   }
 
   saveWorkbook(wb_deliverable, deliverable_path, overwrite = TRUE)
+
+  # Plain-language note on how Mode and Location were assigned, with the
+  # shares filled in from this run. A separate file rather than a workbook tab.
+  tot   <- sum(deliverable_trips$`Angler Trips`)
+  share <- function(rows) round(100 * sum(deliverable_trips$`Angler Trips`[rows]) / tot, 1)
+  dt <- deliverable_trips
+  note <- c(
+    "# How Mode and Location were assigned",
+    "",
+    glue("Every angler trip in the deliverable ({format(round(tot), big.mark = ',')} trips, 2022-2025) is assigned a Mode (guided or unguided) and a Location (bank or boat). The Mode Basis and Location Basis columns say how."),
+    "",
+    "## Guided and unguided",
+    "",
+    "Guided trips come from the WDFW guide logbook, where licensed guides report each client trip. We count a logged trip as salmon-directed if it caught salmon (a trip that caught both salmon and steelhead counts only within the salmon season); if it caught nothing during the salmon season; or, only on rivers whose creel survey also covers steelhead (Drano Lake, Skykomish, Stillaguamish, Wallace), if it caught steelhead during the salmon season. Trips that caught only trout, warmwater species or sturgeon are not counted. The salmon season for each area is the months with reported salmon harvest, except on the Cowlitz below Mayfield Dam, where creel interviews show guides target salmon only September to November.",
+    "",
+    "Logbook trips are matched to estimates by catch area, year and month. The guided number is a minimum: the logbook depends on guides reporting every trip, and the logbook records what was caught, not what was targeted. Where a river has no logbook record, guided trips are set to zero. Unguided trips are the remainder of the estimate.",
+    "",
+    glue("- Guided trips: {share(dt$Mode == 'Guided')}% of all trips."),
+    glue("- Trips on rivers with no guide logbook record (guided = 0): {share(str_starts(dt$`Mode Basis`, 'No guide logbook'))}% of all trips."),
+    "",
+    "## Bank and boat",
+    "",
+    "Where a creel survey measured bank and boat effort separately, that split is used as measured. Elsewhere, including all estimates expanded from catch record cards, the split is borrowed from creel surveys: the same river and year if available, then the same river in other years, then the region. Guided trips are placed in boats at the rate creel interviews show for guided salmon anglers (about 96% overall; river-specific where at least 20 guided interviews exist). Unguided trips make up the rest of each bank and boat total.",
+    "",
+    glue("- Location measured by the creel survey: {share(str_starts(dt$`Location Basis`, 'Measured'))}% of all trips."),
+    glue("- Location estimated from a creel ratio: {share(str_starts(dt$`Location Basis`, 'Estimated'))}% of all trips."),
+    glue("- Mixed within a river-year: {share(str_starts(dt$`Location Basis`, 'Mixed'))}% of all trips.")
+  )
+  note_path <- file.path(DELIVERABLES_DIR,
+                         "WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Mode_Location_Notes.md")
+  writeLines(note, note_path)
+  message(glue("Wrote {note_path}"))
 
   cli_ok2 <- tryCatch({
     cli::cli_alert_success(glue("Wrote deliverable workbook: {deliverable_path}"))

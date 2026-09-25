@@ -73,6 +73,9 @@ source(here("analysis", "pst", "03_analysis", "pst_p2_block_ratio.R"))
 # (not real) CRC harvest, for blocks NEPA's own 2014+ projection doesn't
 # cover. See that file's header for why block-pooled only, never block-year.
 source(here("analysis", "pst", "03_analysis", "pst_crc_harvest_projection.R"))
+# Terminal stage giving every row a location and a mode (guide logbook floor +
+# creel bank/boat ratios). See its header; replaces Track B below.
+source(here("analysis", "pst", "03_analysis", "pst_categorize_mode_location.R"))
 
 # ---- 0. Config --------------------------------------------------------------
 
@@ -1061,7 +1064,12 @@ invisible(ingest_published_fallback())
 
 p2 <- build_block_ratios(trips_p1)
 
-effort_long <- apply_track_b(trips_p1)
+# Guided/unguided now comes from the guide logbook floor, assigned in the
+# terminal categorize_mode_location() stage below (decided 2026-09-25 with Jim:
+# the logbook is a consistent minimum; the interview proportion is not used as
+# the applied split). Track B stays available for comparison runs.
+USE_INTERVIEW_TRACK_B <- FALSE
+effort_long <- if (USE_INTERVIEW_TRACK_B) apply_track_b(trips_p1) else trips_p1
 
 # ---- 5b. P2 expansion -------------------------------------------------------
 # Runs AFTER Track B on purpose: P2 rows carry no fishery_name and no location,
@@ -1561,6 +1569,15 @@ if (!is.null(closed_areas)) {
     select(-.catch_area_code_chr, -.is_closed, -.zero_this)
 }
 
+# ---- 5g. Categorize every row: location and mode ----------------------------
+# Runs after every tier exists and every zeroing correction has run, so P2 and
+# P3 rows - which have no bank/boat or guided field of their own - are
+# categorized by the same rules as P1. Skipped only when the interview-based
+# Track B comparison path is switched on.
+if (!USE_INTERVIEW_TRACK_B) {
+  effort_long <- categorize_mode_location(effort_long, crosswalk)
+}
+
 # ---- 6. Detail roll-ups (river and CRC-area grain) --------------------------
 # Year x River x Mode x Location x Angler Trips, rolled up from month grain.
 # These are detail/audit tables, not the deliverable itself - they carry
@@ -1647,6 +1664,7 @@ effort_by_mode_location <- effort_long |>
     # pooled tier. Collapsed like tier/source_id since a river-year-mode-
     # location can aggregate months served by different tiers.
     mode_basis = paste(sort(unique(mode_basis)), collapse = "; "),
+    location_basis = paste(sort(unique(na.omit(location_basis))), collapse = "; "),
     .groups = "drop"
   ) |>
   left_join(river_crc_areas_fallback, by = c("river_label", "block")) |>

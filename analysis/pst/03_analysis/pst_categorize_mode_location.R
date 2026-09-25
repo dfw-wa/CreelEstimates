@@ -51,10 +51,21 @@ UNIT_KEYS <- c("block", "river_label", "fishery_name", "catch_area_code",
 # rest are split by the first available creel boat share (trip-weighted, from
 # the kept rows):
 #   [river x year x month, if use_month] -> river x year -> river
+#   -> [river x year, river: creel INTERVIEW boat share, CRC-salmon-weighted
+#       months - interview_river_boat_share.R; rivers with no P1 design split
+#       of their own, e.g. Lewis, Kalama, Wind, Klickitat]
 #   -> block x year -> block -> all creels.
 # Month only matches rows that carry one (P1 creel strata); P2/P3 rows are
 # annual and start at river x year either way.
 LOCATION_USE_MONTH_TIER <- TRUE
+USE_INTERVIEW_RIVER_SHARE <- TRUE
+INTERVIEW_SHARE_PATH <- here("analysis", "pst", "outputs", "04_interview_proportions",
+                             "interview_boat_share_river_year.csv")
+
+read_interview_share <- function() {
+  if (!USE_INTERVIEW_RIVER_SHARE || !file.exists(INTERVIEW_SHARE_PATH)) return(NULL)
+  read_csv(INTERVIEW_SHARE_PATH, show_col_types = FALSE) |> filter(usable)
+}
 
 split_location <- function(el, use_month) {
   known <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0)
@@ -70,6 +81,11 @@ split_location <- function(el, use_month) {
   r_b   <- ratio_at(block)             |> rename(p_b  = .boat)
   p_all <- if (nrow(known) > 0)
     sum(known$angler_trips[known$location == "boat"]) / sum(known$angler_trips) else 0.5
+  ish <- read_interview_share()
+  r_iy <- if (is.null(ish)) tibble(river_label = character(), year = integer(), p_iy = double()) else
+    ish |> filter(level == "river-year") |> transmute(river_label, year = as.integer(year), p_iy = p_boat)
+  r_i  <- if (is.null(ish)) tibble(river_label = character(), p_i = double()) else
+    ish |> filter(level == "river") |> transmute(river_label, p_i = p_boat)
 
   to_split <- el |> filter(!location %in% c("bank", "boat"))
   kept     <- el |> filter(location %in% c("bank", "boat"))
@@ -79,15 +95,19 @@ split_location <- function(el, use_month) {
     left_join(r_rym, by = c("river_label", "year", "month")) |>
     left_join(r_ry,  by = c("river_label", "year")) |>
     left_join(r_r,   by = "river_label") |>
+    left_join(r_iy,  by = c("river_label", "year")) |>
+    left_join(r_i,   by = "river_label") |>
     left_join(r_by,  by = c("block", "year")) |>
     left_join(r_b,   by = "block") |>
     mutate(
       p_rym = if (use_month) p_rym else NA_real_,
-      .p = coalesce(p_rym, p_ry, p_r, p_by, p_b, p_all),
+      .p = coalesce(p_rym, p_ry, p_r, p_iy, p_i, p_by, p_b, p_all),
       location_basis = case_when(
         !is.na(p_rym) ~ "imputed: river-year-month creel ratio",
         !is.na(p_ry)  ~ "imputed: river-year creel ratio",
         !is.na(p_r)   ~ "imputed: river creel ratio (all years)",
+        !is.na(p_iy)  ~ "imputed: river-year interview boat share (CRC-weighted months)",
+        !is.na(p_i)   ~ "imputed: river interview boat share (CRC-weighted months, all years)",
         !is.na(p_by)  ~ "imputed: block-year creel ratio",
         !is.na(p_b)   ~ "imputed: block creel ratio (all years)",
         TRUE          ~ "imputed: all-creel ratio"
@@ -95,7 +115,7 @@ split_location <- function(el, use_month) {
       location_basis = paste0(location_basis,
                               if_else(location == "combined", " [source combined bank/boat]", ""))
     ) |>
-    select(-p_rym, -p_ry, -p_r, -p_by, -p_b)
+    select(-p_rym, -p_ry, -p_r, -p_iy, -p_i, -p_by, -p_b)
   split_rows <- bind_rows(
     to_split |> mutate(location = "boat",
                        angler_trips = angler_trips * .p,
@@ -105,6 +125,34 @@ split_location <- function(el, use_month) {
                        total_salmon_harvest = total_salmon_harvest * (1 - .p))
   ) |> select(-.p)
   bind_rows(kept, split_rows)
+}
+
+# Interview share vs creel design split, for rivers that have both - the
+# check on whether interviews can stand in for a design split at all
+# (interviews over- or under-sample boat anglers depending on access).
+write_interview_vs_design <- function(el) {
+  ish <- read_interview_share()
+  if (is.null(ish)) return(invisible(NULL))
+  design <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0) |>
+    group_by(river_label, year) |>
+    summarise(design_trips = sum(angler_trips),
+              p_design = sum(angler_trips[location == "boat"]) / sum(angler_trips),
+              .groups = "drop")
+  cmp <- ish |> filter(level == "river-year") |>
+    transmute(river_label, year = as.integer(year), p_interview = p_boat, n_located) |>
+    inner_join(design, by = c("river_label", "year")) |>
+    mutate(diff_pts = round(100 * (p_interview - p_design), 1),
+           across(c(p_interview, p_design), ~ round(.x, 3)))
+  write_csv(cmp, file.path(OUT_DIR, "pst_fw_location_interview_vs_design.csv"))
+  if (nrow(cmp) > 0) {
+    log_gap("categorize", NA, "note", glue(
+      "interview vs design boat share on {nrow(cmp)} river-years with both: ",
+      "median difference {median(cmp$diff_pts)} pts (interview - design), range ",
+      "{min(cmp$diff_pts)} to {max(cmp$diff_pts)}. See pst_fw_location_interview_vs_design.csv."))
+    cat("\n=== interview vs design boat share (river-years with both) ===\n")
+    print(as.data.frame(cmp), row.names = FALSE)
+  }
+  invisible(cmp)
 }
 
 # Boat trips with vs without the month level, by block x river x tier x year,
@@ -166,6 +214,7 @@ categorize_mode_location <- function(effort_long, crosswalk) {
   # ---- 1. Location ----------------------------------------------------------
   # Run both ways - with and without the river x year x month level - and keep
   # the comparison, so the month sensitivity is on file whichever is applied.
+  write_interview_vs_design(el)
   el_nomonth <- split_location(el, use_month = FALSE)
   el_month   <- split_location(el, use_month = TRUE)
   write_location_month_sensitivity(el_nomonth, el_month)

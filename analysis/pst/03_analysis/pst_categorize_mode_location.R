@@ -14,7 +14,9 @@
 #
 #   1. LOCATION. Rows already split by the creel design keep that split. Rows
 #      with location unknown/combined are split by a creel bank/boat ratio,
-#      first available of: river x year, river, block x year, block, all.
+#      first available of: river x year x month (LOCATION_USE_MONTH_TIER),
+#      river x year, river, block x year, block, all. The month-vs-annual
+#      comparison is written to pst_fw_location_month_sensitivity.csv.
 #   2. GUIDED TOTAL. Guide logbook salmon-directed angler-trips
 #      (parse_guide_logbook.R) are matched to each unit by CRC code x year x
 #      month - a P1 row's own month, all months for P2/P3 rows (which are
@@ -44,6 +46,111 @@ GUIDED_BOAT_PATH    <- here("analysis", "pst", "outputs", "08_guide_logbook_diag
 UNIT_KEYS <- c("block", "river_label", "fishery_name", "catch_area_code",
                "year", "month", "tier", "source_id")
 
+# Location split, as a standalone step so it can be run with and without the
+# month level for the sensitivity check. Rows already bank/boat are kept; the
+# rest are split by the first available creel boat share (trip-weighted, from
+# the kept rows):
+#   [river x year x month, if use_month] -> river x year -> river
+#   -> block x year -> block -> all creels.
+# Month only matches rows that carry one (P1 creel strata); P2/P3 rows are
+# annual and start at river x year either way.
+LOCATION_USE_MONTH_TIER <- TRUE
+
+split_location <- function(el, use_month) {
+  known <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0)
+  ratio_at <- function(...) {
+    known |> group_by(...) |>
+      summarise(.boat = sum(angler_trips[location == "boat"]) / sum(angler_trips),
+                .groups = "drop")
+  }
+  r_rym <- ratio_at(river_label, year, month) |> filter(!is.na(month)) |> rename(p_rym = .boat)
+  r_ry  <- ratio_at(river_label, year) |> rename(p_ry = .boat)
+  r_r   <- ratio_at(river_label)       |> rename(p_r  = .boat)
+  r_by  <- ratio_at(block, year)       |> rename(p_by = .boat)
+  r_b   <- ratio_at(block)             |> rename(p_b  = .boat)
+  p_all <- if (nrow(known) > 0)
+    sum(known$angler_trips[known$location == "boat"]) / sum(known$angler_trips) else 0.5
+
+  to_split <- el |> filter(!location %in% c("bank", "boat"))
+  kept     <- el |> filter(location %in% c("bank", "boat"))
+  if (nrow(to_split) == 0) return(el)
+
+  to_split <- to_split |>
+    left_join(r_rym, by = c("river_label", "year", "month")) |>
+    left_join(r_ry,  by = c("river_label", "year")) |>
+    left_join(r_r,   by = "river_label") |>
+    left_join(r_by,  by = c("block", "year")) |>
+    left_join(r_b,   by = "block") |>
+    mutate(
+      p_rym = if (use_month) p_rym else NA_real_,
+      .p = coalesce(p_rym, p_ry, p_r, p_by, p_b, p_all),
+      location_basis = case_when(
+        !is.na(p_rym) ~ "imputed: river-year-month creel ratio",
+        !is.na(p_ry)  ~ "imputed: river-year creel ratio",
+        !is.na(p_r)   ~ "imputed: river creel ratio (all years)",
+        !is.na(p_by)  ~ "imputed: block-year creel ratio",
+        !is.na(p_b)   ~ "imputed: block creel ratio (all years)",
+        TRUE          ~ "imputed: all-creel ratio"
+      ),
+      location_basis = paste0(location_basis,
+                              if_else(location == "combined", " [source combined bank/boat]", ""))
+    ) |>
+    select(-p_rym, -p_ry, -p_r, -p_by, -p_b)
+  split_rows <- bind_rows(
+    to_split |> mutate(location = "boat",
+                       angler_trips = angler_trips * .p,
+                       total_salmon_harvest = total_salmon_harvest * .p),
+    to_split |> mutate(location = "bank",
+                       angler_trips = angler_trips * (1 - .p),
+                       total_salmon_harvest = total_salmon_harvest * (1 - .p))
+  ) |> select(-.p)
+  bind_rows(kept, split_rows)
+}
+
+# Boat trips with vs without the month level, by block x river x tier x year,
+# over the IMPUTED rows only (measured rows are identical by construction).
+write_location_month_sensitivity <- function(a, b) {
+  roll <- function(d, tag) {
+    d |> filter(grepl("^imputed", coalesce(location_basis, ""))) |>
+      group_by(block, river_label, tier, year) |>
+      summarise(imputed_trips = sum(angler_trips),
+                "boat_{tag}" := sum(angler_trips[location == "boat"]),
+                "month_level_trips_{tag}" := sum(angler_trips[grepl("month", location_basis)]),
+                .groups = "drop")
+  }
+  sens <- full_join(roll(a, "annual"), roll(b, "month") |> select(-imputed_trips),
+                    by = c("block", "river_label", "tier", "year")) |>
+    mutate(across(where(is.numeric) & !year, ~ coalesce(.x, 0)),
+           boat_share_annual = if_else(imputed_trips > 0, boat_annual / imputed_trips, NA_real_),
+           boat_share_month  = if_else(imputed_trips > 0, boat_month / imputed_trips, NA_real_),
+           boat_trips_shift  = boat_month - boat_annual,
+           pct_imputed_on_month_level = if_else(imputed_trips > 0,
+                                                100 * month_level_trips_month / imputed_trips, NA_real_)) |>
+    select(-month_level_trips_annual) |>
+    mutate(across(c(boat_share_annual, boat_share_month), ~ round(.x, 4)),
+           across(c(imputed_trips, boat_annual, boat_month, boat_trips_shift,
+                    month_level_trips_month, pct_imputed_on_month_level), ~ round(.x, 1))) |>
+    arrange(desc(abs(boat_trips_shift)))
+  write_csv(sens, file.path(OUT_DIR, "pst_fw_location_month_sensitivity.csv"))
+
+  tot_imp <- sum(sens$imputed_trips)
+  shift   <- sum(sens$boat_trips_shift)
+  gross   <- sum(abs(sens$boat_trips_shift))
+  on_m    <- sum(sens$month_level_trips_month)
+  log_gap("categorize", NA, "note", glue(
+    "location month sensitivity: {round(on_m)} of {round(tot_imp)} imputed trips ",
+    "reach the river-year-month level; boat trips shift by {round(shift)} net ",
+    "({round(gross)} gross) vs annual ratios; applied = ",
+    "{if (LOCATION_USE_MONTH_TIER) 'month' else 'annual'}. ",
+    "Detail: pst_fw_location_month_sensitivity.csv"))
+  cat("\n=== Location: river-year-month level vs annual (imputed rows) ===\n")
+  cat(glue("  imputed trips {format(round(tot_imp), big.mark = ',')}; on month level ",
+           "{format(round(on_m), big.mark = ',')}; boat shift net {round(shift)}, ",
+           "gross {round(gross)}\n\n"))
+  print(as.data.frame(head(sens |> filter(boat_trips_shift != 0), 15)), row.names = FALSE)
+  invisible(sens)
+}
+
 categorize_mode_location <- function(effort_long, crosswalk) {
 
   el <- effort_long |>
@@ -57,51 +164,12 @@ categorize_mode_location <- function(effort_long, crosswalk) {
   harvest_in <- sum(el$total_salmon_harvest)
 
   # ---- 1. Location ----------------------------------------------------------
-  known <- el |> filter(location %in% c("bank", "boat"), angler_trips > 0)
-  ratio_at <- function(...) {
-    known |> group_by(...) |>
-      summarise(.boat = sum(angler_trips[location == "boat"]) / sum(angler_trips),
-                .groups = "drop")
-  }
-  r_ry <- ratio_at(river_label, year) |> rename(p_ry = .boat)
-  r_r  <- ratio_at(river_label)       |> rename(p_r  = .boat)
-  r_by <- ratio_at(block, year)       |> rename(p_by = .boat)
-  r_b  <- ratio_at(block)             |> rename(p_b  = .boat)
-  p_all <- if (nrow(known) > 0)
-    sum(known$angler_trips[known$location == "boat"]) / sum(known$angler_trips) else 0.5
-
-  to_split <- el |> filter(!location %in% c("bank", "boat"))
-  kept     <- el |> filter(location %in% c("bank", "boat"))
-
-  if (nrow(to_split) > 0) {
-    to_split <- to_split |>
-      left_join(r_ry, by = c("river_label", "year")) |>
-      left_join(r_r,  by = "river_label") |>
-      left_join(r_by, by = c("block", "year")) |>
-      left_join(r_b,  by = "block") |>
-      mutate(
-        .p = coalesce(p_ry, p_r, p_by, p_b, p_all),
-        location_basis = case_when(
-          !is.na(p_ry) ~ "imputed: river-year creel ratio",
-          !is.na(p_r)  ~ "imputed: river creel ratio (all years)",
-          !is.na(p_by) ~ "imputed: block-year creel ratio",
-          !is.na(p_b)  ~ "imputed: block creel ratio (all years)",
-          TRUE         ~ "imputed: all-creel ratio"
-        ),
-        location_basis = paste0(location_basis,
-                                if_else(location == "combined", " [source combined bank/boat]", ""))
-      ) |>
-      select(-p_ry, -p_r, -p_by, -p_b)
-    split_rows <- bind_rows(
-      to_split |> mutate(location = "boat",
-                         angler_trips = angler_trips * .p,
-                         total_salmon_harvest = total_salmon_harvest * .p),
-      to_split |> mutate(location = "bank",
-                         angler_trips = angler_trips * (1 - .p),
-                         total_salmon_harvest = total_salmon_harvest * (1 - .p))
-    ) |> select(-.p)
-    el <- bind_rows(kept, split_rows)
-  }
+  # Run both ways - with and without the river x year x month level - and keep
+  # the comparison, so the month sensitivity is on file whichever is applied.
+  el_nomonth <- split_location(el, use_month = FALSE)
+  el_month   <- split_location(el, use_month = TRUE)
+  write_location_month_sensitivity(el_nomonth, el_month)
+  el <- if (LOCATION_USE_MONTH_TIER) el_month else el_nomonth
 
   # One row per unit, bank and boat side by side.
   units <- el |>

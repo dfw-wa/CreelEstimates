@@ -200,7 +200,7 @@ if (n_crc_unmatched > 0L) {
 #   COUNT  salmon caught, with or without steelhead. A salmon+steelhead trip
 #          counts only inside the salmon window - outside it the steelhead is
 #          taken as the target.
-#   COUNT  nothing caught, inside the salmon window.
+#   WEIGHT nothing caught, inside the salmon window (see WEIGHT_NO_CATCH).
 #   WEIGHT steelhead caught (no salmon), inside the salmon window: counted at
 #          p = P(salmon-directed | caught only steelhead), from creel interviews
 #          with the same catch outcome (guided, CRC area x month where the
@@ -211,9 +211,11 @@ if (n_crc_unmatched > 0L) {
 #   DROP   everything else: trout / warmwater / sturgeon / other catch; nothing
 #          caught outside the window; steelhead outside the window.
 #
-# WEIGHT_NO_CATCH = TRUE would weight the no-catch-in-window trips the same way
-# (P(salmon-directed | caught nothing)); off by default - counting them in full
-# was the agreed rule. The proportion is written either way for sensitivity.
+# WEIGHT_NO_CATCH = TRUE (on, 2026-09-25) weights the no-catch-in-window trips
+# the same way, by P(salmon-directed | caught nothing). Guided creel catch by
+# month shows why: Dec-Mar, 27-42% of guided interviews catch nothing and ~all
+# that catch anything catch steelhead, so counting winter no-catch trips in full
+# wherever CRC shows any salmon harvest overstates the guided salmon floor.
 #
 # Salmon window = months with CRC salmon harvest for that area (same year, or
 # pooled years when CRC has not compiled that year yet), EXCEPT where creel
@@ -225,7 +227,7 @@ if (n_crc_unmatched > 0L) {
 SALMON_SPECIES <- c("Chinook", "Coho", "Chum", "Pink", "Sockeye")
 # Legacy fallback only (used when the conditional-proportion file is missing).
 STEELHEAD_INCLUSIVE_RIVERS <- c("Drano Lake", "Skykomish", "Stillaguamish", "Wallace")
-WEIGHT_NO_CATCH <- FALSE
+WEIGHT_NO_CATCH <- TRUE
 COND_PROP_CSV <- here("analysis", "pst", "outputs", "04_interview_proportions",
                       "logbook_catch_conditional_salmon_target_prop.csv")
 SALMON_WINDOW_OVERRIDE <- tibble(crc_code = "561", trip_month = 9:11)
@@ -362,18 +364,21 @@ print(as.data.frame(salmon_anglers |>
                       mutate(pct = round(100 * angler_trips / sum(angler_trips), 1))),
       row.names = FALSE)
 
-# Counted (weighted) angler-trips per rule, plus raw steelhead-only counts in
-# and out of the window so downstream checks can see what was weighted away.
+# Counted (weighted) angler-trips per rule, plus raw steelhead-only (in and out
+# of the window) and no-catch counts so downstream checks can see what was
+# weighted away. The *_raw columns are NOT part of angler_trips.
 counted_wide <- salmon_anglers |>
   filter(!str_starts(salmon_rule, "DROP")) |>
   group_by(crc_code, trip_year, trip_month, salmon_rule) |>
   summarise(n = sum(weight), .groups = "drop") |>
   pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0)
 raw_sthd <- salmon_anglers |>
-  filter(salmon_rule %in% c("steelhead_only_in_window", "DROP_steelhead_off_window")) |>
-  mutate(salmon_rule = if_else(salmon_rule == "steelhead_only_in_window",
-                               "steelhead_only_in_window_raw",
-                               "steelhead_only_off_window_raw")) |>
+  filter(salmon_rule %in% c("steelhead_only_in_window", "DROP_steelhead_off_window",
+                            "no_catch_in_window")) |>
+  mutate(salmon_rule = recode(salmon_rule,
+                              steelhead_only_in_window  = "steelhead_only_in_window_raw",
+                              DROP_steelhead_off_window = "steelhead_only_off_window_raw",
+                              no_catch_in_window        = "no_catch_in_window_raw")) |>
   count(crc_code, trip_year, trip_month, salmon_rule, name = "n") |>
   pivot_wider(names_from = salmon_rule, values_from = n, values_fill = 0)
 salmon_by_crc_year_month <- counted_wide |>

@@ -57,7 +57,10 @@ included by the parent document.
 # whole (the same view fetch_data() filters) and every row is kept; the old
 # per-fishery loop is the fallback if the unfiltered read fails. Cache file is
 # renamed so an old filtered cache is not silently reused.
-cache_file <- file.path(cache_dir, "all_interviews_unfiltered.rds")
+# Scoped to the PST delivery years by event_date (not by fishery), so a
+# 2021-22 winter fishery still contributes its Jan-Mar 2022 interviews.
+INTERVIEW_YEARS <- 2022:2025
+cache_file <- file.path(cache_dir, glue("all_interviews_unfiltered_{min(INTERVIEW_YEARS)}_{max(INTERVIEW_YEARS)}.rds"))
 
 if (file.exists(cache_file)) {
   cat("Loading cached interview data from", cache_file, "\n")
@@ -86,7 +89,10 @@ if (file.exists(cache_file)) {
   }
 
   all_interviews <- tryCatch(
-    fetch_db_table(conn, "creel", "vw_analysis_interview") |>
+    fetch_db_table(conn, "creel", "vw_analysis_interview",
+                   filter = as.character(c(
+                     glue("event_date >= '{min(INTERVIEW_YEARS)}-01-01'"),
+                     glue("event_date <= '{max(INTERVIEW_YEARS)}-12-31'")))) |>
       select(-any_of(c("created_datetime", "modified_datetime"))) |>
       mutate(across(everything(), as.character)),
     error = function(e) {
@@ -107,7 +113,8 @@ if (file.exists(cache_file)) {
         })
     ) |>
       purrr::compact() |>
-      bind_rows()
+      bind_rows() |>
+      filter(lubridate::year(as.Date(event_date)) %in% INTERVIEW_YEARS)
   }
 
   DBI::dbDisconnect(conn)
@@ -115,7 +122,7 @@ if (file.exists(cache_file)) {
   # What the old per-fishery pull would have dropped.
   n_na   <- sum(is.na(all_interviews$fishery_name) | all_interviews$fishery_name %in% c("", "NA"))
   n_nolut <- sum(!is.na(all_interviews$fishery_name) & !all_interviews$fishery_name %in% fishery_names)
-  cat(glue("{nrow(all_interviews)} interview rows; {n_na} with no fishery_name, ",
+  cat(glue("{nrow(all_interviews)} interview rows ({min(INTERVIEW_YEARS)}-{max(INTERVIEW_YEARS)}); {n_na} with no fishery_name, ",
            "{n_nolut} with a fishery_name not in fishery_lut - both were ",
            "invisible to the old per-fishery pull.\n"))
 
@@ -142,7 +149,7 @@ cat(glue("Persisted {nrow(all_interviews)} rows to ",
 ```
 
 ::: {.callout-tip}
-To force a fresh pull from the database, delete `.cache/all_interviews_unfiltered.rds`
+To force a fresh pull from the database, delete `.cache/all_interviews_unfiltered_2022_2025.rds`
 and re-render.
 :::
 

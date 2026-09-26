@@ -81,6 +81,8 @@ LOCATION_OVERRIDE_PATH <- here("input_files", "pst", "lookup_tables", "pst_locat
 #   "boatable"       -> no override: the river takes its regional/statewide
 #                       creel ratio like any other uncreeled river
 #   a number 0-1, or a percent ("0.3", "30%") -> that boat share
+#   "use updated boat_share_if_boatable" (any decision mentioning
+#   boat_share_if_boatable) -> the value in that column (0 = bank only)
 # Legacy files with a p_boat column and no decision column still work.
 read_location_override <- function() {
   empty <- tibble(river_label = character(), p_ov = double(), ov_basis = character())
@@ -93,7 +95,12 @@ read_location_override <- function() {
     filter(!is.na(river_label), river_label != "") |>
     mutate(dec = str_to_lower(str_squish(coalesce(decision, ""))),
            num = suppressWarnings(as.numeric(str_remove(dec, "%"))),
-           num = if_else(str_detect(dec, "%"), num / 100, num)) |>
+           num = if_else(str_detect(dec, "%"), num / 100, num),
+           col_val = if ("boat_share_if_boatable" %in% names(d))
+                       suppressWarnings(as.numeric(boat_share_if_boatable)) else NA_real_,
+           use_col = str_detect(dec, "boat_share_if_boatable"),
+           num = if_else(use_col, col_val, num),
+           dec = if_else(use_col & num %in% 0, "bank", dec)) |>
     filter(dec != "boatable") |>
     transmute(
       river_label,

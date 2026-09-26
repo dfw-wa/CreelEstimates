@@ -75,15 +75,33 @@ INTERVIEW_SHARE_PATH <- here("analysis", "pst", "outputs", "04_interview_proport
 # imputation tier, including same-river interviews (conflicts are logged).
 LOCATION_OVERRIDE_PATH <- here("input_files", "pst", "lookup_tables", "pst_location_override.csv")
 
+# The file is a review checklist (one row per river). `decision`:
+#   blank or "bank"  -> bank only (blank = not yet reviewed; bank is the
+#                       default until outside professional judgement)
+#   "boatable"       -> no override: the river takes its regional/statewide
+#                       creel ratio like any other uncreeled river
+#   a number 0-1, or a percent ("0.3", "30%") -> that boat share
+# Legacy files with a p_boat column and no decision column still work.
 read_location_override <- function() {
-  if (!file.exists(LOCATION_OVERRIDE_PATH)) return(tibble(river_label = character(), p_ov = double(), ov_basis = character()))
-  read_csv(LOCATION_OVERRIDE_PATH, show_col_types = FALSE, col_types = cols(.default = "c")) |>
+  empty <- tibble(river_label = character(), p_ov = double(), ov_basis = character())
+  if (!file.exists(LOCATION_OVERRIDE_PATH)) return(empty)
+  d <- read_csv(LOCATION_OVERRIDE_PATH, show_col_types = FALSE, col_types = cols(.default = "c"))
+  if (!"decision" %in% names(d)) {
+    d$decision <- if ("p_boat" %in% names(d)) d$p_boat else NA_character_
+  }
+  d |>
     filter(!is.na(river_label), river_label != "") |>
-    transmute(river_label, p_ov = as.numeric(p_boat),
-              ov_basis = coalesce(na_if(basis, ""),
-                                  if_else(as.numeric(p_boat) == 0,
-                                          "bank only - not known to be boatable, pending professional judgement",
-                                          "set by professional judgement"))) |>
+    mutate(dec = str_to_lower(str_squish(coalesce(decision, ""))),
+           num = suppressWarnings(as.numeric(str_remove(dec, "%"))),
+           num = if_else(str_detect(dec, "%"), num / 100, num)) |>
+    filter(dec != "boatable") |>
+    transmute(
+      river_label,
+      p_ov = case_when(dec %in% c("", "bank") ~ 0, TRUE ~ num),
+      ov_basis = case_when(
+        dec == "bank" ~ "bank only - no data available to assign trips to boat location (reviewed)",
+        dec == ""     ~ "bank only - no data available to assign trips to boat location (not yet reviewed)",
+        TRUE          ~ glue("boat share {round(p_ov, 2)} set by professional judgement"))) |>
     filter(!is.na(p_ov), p_ov >= 0, p_ov <= 1) |>
     distinct(river_label, .keep_all = TRUE)
 }

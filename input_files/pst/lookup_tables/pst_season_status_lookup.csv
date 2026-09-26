@@ -23,6 +23,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 311,Cedar Creek (Jefferson Co),10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 311,Cedar Creek (Jefferson Co),11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 311,Cedar Creek (Jefferson Co),12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+315,Chehalis,1,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,2,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,3,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,4,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,5,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,6,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,7,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,8,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,9,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,10,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,11,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
+315,Chehalis,12,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection (Chehalis R. above Black R.)
 321,Cloquallum Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 321,Cloquallum Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 321,Cloquallum Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -59,6 +71,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 325,Newaukum River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 325,Newaukum River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 325,Newaukum River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+329,Satsop,1,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,2,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,3,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,4,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,5,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,6,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,7,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,8,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,9,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,10,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,11,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
+329,Satsop,12,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
 333,Skookumchuck River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 333,Skookumchuck River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 333,Skookumchuck River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -131,6 +155,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 345,Goodman Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 345,Goodman Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 345,Goodman Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+350,Hoh,1,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,2,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,3,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,4,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,5,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,6,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,7,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,8,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,9,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,10,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,11,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+350,Hoh,12,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
 352,Hoh South Fork,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 352,Hoh South Fork,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 352,Hoh South Fork,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -155,6 +191,18 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 355,Hoquiam River,10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 355,Hoquiam River,11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 355,Hoquiam River,12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+358,Humptulips,1,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,2,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,3,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,4,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,5,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,6,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,7,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,8,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,9,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,10,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,11,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+358,Humptulips,12,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
 367,Johns River,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 367,Johns River,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 367,Johns River,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -275,6 +323,42 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 396,Salmon River (Jefferson Co),10,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 396,Salmon River (Jefferson Co),11,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 396,Salmon River (Jefferson Co),12,2025-26,open,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
+402,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,2,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,3,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,4,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,5,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,6,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,9,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,10,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,11,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+402,Quillayute,12,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,2,2024-25,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,3,2024-25,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,4,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,5,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,6,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,9,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,10,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,11,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+404,Quillayute,12,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,2,2024-25,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,3,2024-25,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,4,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,5,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,6,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,9,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,10,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,11,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
+406,Quillayute,12,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
 408,Cook Creek,1,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 408,Cook Creek,2,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 408,Cook Creek,3,2024-25,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
@@ -1379,87 +1463,3 @@ catch_area_code,river_label,month,license_year,status,verified_source,verified_b
 884,Whatcom Creek,10,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 884,Whatcom Creek,11,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
 884,Whatcom Creek,12,2025-26,closed,Washington Sport Fishing Rules 7/1/2025 - 6/30/2026,Evan Booher,8/28/2026,NA
-315,Chehalis,1,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,2,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,3,2024-25,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,4,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,5,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,6,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,7,2025-26,closed,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,8,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,9,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,10,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,11,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-315,Chehalis,12,2025-26,open,"Evan Booher, 2026-09-25: Chehalis did not open for salmon until 8/1 in 2025",Evan Booher,9/25/2026,"added for the P3 month-gap projection (Chehalis R. above Black R.)"
-329,Satsop,1,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,2,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,3,2024-25,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,4,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,5,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,6,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,7,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,8,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,9,2025-26,closed,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,10,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,11,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-329,Satsop,12,2025-26,open,"Evan Booher, 2026-09-25: Satsop open 10/1-12/31 2025",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,2,2024-25,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,3,2024-25,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,4,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,5,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,6,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,9,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,10,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,11,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-404,Quillayute,12,2025-26,restricted,"Evan Booher, 2026-09-25: Quillayute open 2/1-8/31 2025; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,1,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,2,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,3,2024-25,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,4,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,5,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,6,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,7,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,8,2025-26,closed,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,9,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,10,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,11,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-350,Hoh,12,2025-26,open,"Evan Booher, 2026-09-25: Hoh open 9/16-12/15 2025 (Sep and Dec partial months)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,1,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,2,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,3,2024-25,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,4,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,5,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,6,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,7,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,8,2025-26,closed,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,9,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,10,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,11,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-358,Humptulips,12,2025-26,open,"Evan Booher, 2026-09-25: Humptulips open 9/1-12/31 2025 (confirmed by Evan)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,2,2024-25,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,3,2024-25,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,4,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,5,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,6,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,9,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,10,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,11,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-406,Quillayute,12,2025-26,restricted,"Evan Booher, 2026-09-25: Sol Duc same as Quillayute 2025: open 2/1-8/31; 9/1-12/15 open with adjusted bag limits/rules (restricted); Dec open only to 12/15",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,1,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,2,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,3,2024-25,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,4,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,5,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,6,2025-26,closed,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,7,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,8,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,9,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,10,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,11,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection
-402,Quillayute,12,2025-26,open,"Evan Booher, 2026-09-25: Dickey open 7/1-12/15 2025 (Dec partial)",Evan Booher,9/25/2026,added for the P3 month-gap projection

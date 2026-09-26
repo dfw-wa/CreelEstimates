@@ -1,61 +1,61 @@
 decision,priority,river_label,region,trips_2022_2025,guided_salmon_trips_2022_2025,boat_share_if_boatable,reviewed_by,review_date,notes
-bank,decided,Samish,PugetSound,193834,0,0.2,Evan Booher,2026-09-25,small terminal hatchery system fishery
-bank,decided,Minter Creek,PugetSound,112012,0,0.21,Evan Booher,2026-09-25,small terminal hatchery system fishery
-bank,decided,Big Quilcene River,PugetSound,61600,0,0.2,Evan Booher,2026-09-25,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Tilton River,ColumbiaLower,30249,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Naselle (Lower),WACoast,28021,29,0.5,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Dungeness,PugetSound,23733,0,0.21,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Willapa,WACoast,21941,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),"Nooksack River, South Fork",PugetSound,19915,0,0.2,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Cowlitz R. above Cowlitz Falls Dam,ColumbiaLower,18042,175,0.337,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Nemah,WACoast,10515,6,0.5,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),Toutle River,ColumbiaLower,9860,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,1 (>5k trips),"Nooksack River, Middle Fork",PugetSound,7844,0,0.17,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Washougal River,ColumbiaLower,4801,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Green River (Cowlitz Co),ColumbiaLower,4597,1,0.337,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Wishkah River,WACoast,3904,0,0.49,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Cispus River,ColumbiaLower,3269,2,0.337,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),North River,WACoast,2528,12,0.5,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Hoquiam River,WACoast,2399,0,0.49,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Wynoochee River,WACoast,2011,78,0.5,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Grays River,ColumbiaLower,1885,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Copalis River,WACoast,1740,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Johns River,WACoast,1684,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Chambers Creek,PugetSound,1340,0,0.22,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Big White Salmon River,ColumbiaMiddle,1220,0,0.84,,,uncreeled; assume bank until outside professional judgement
-,2 (1k-5k),Coal Creek (Cowlitz Co),ColumbiaLower,1083,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Elk River,WACoast,943,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Whatcom Creek,PugetSound,812,0,0.19,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Salmon River (Jefferson Co),WACoast,660,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Methow River,ColumbiaUpper,655,2,0.85,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Little Quilcene River,PugetSound,640,0,0.23,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Queets River,WACoast,621,19,0.49,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Deschutes River,PugetSound,547,0,0.19,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Joe Creek,WACoast,496,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Duckabush River,PugetSound,487,0,0.18,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Elochoman River (Foster Rd. Bridge to West Fork),ColumbiaLower,462,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Quinault River,WACoast,429,1,0.49,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Clearwater River,WACoast,424,11,0.49,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Smith Creek (Pacific Co),WACoast,421,0,0.49,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Quigg Lake,WACoast,353,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Cook Creek,WACoast,352,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),McAllister Creek,PugetSound,347,0,0.21,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Salmon Creek (Clark Co),ColumbiaLower,346,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Chinook River,ColumbiaLower,309,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Newaukum River,WACoast,253,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Cloquallum Creek,WACoast,206,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Abernathy Creek,ColumbiaLower,199,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Little Washougal River,ColumbiaLower,175,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Cedar Creek (Clark Co),ColumbiaLower,174,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Blue Creek,ColumbiaLower,134,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Suiattle River,PugetSound,117,0,0.17,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Elochoman River (mouth to Foster Rd. Bridge),ColumbiaLower,113,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Deep River (Wahkiakum Co),ColumbiaLower,93,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Coweeman River,ColumbiaLower,73,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Moclips River,WACoast,70,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Mill Creek (Lewis Co),ColumbiaLower,67,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Olequa Creek,ColumbiaLower,58,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Skamokawa Creek,ColumbiaLower,45,0,0.337,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Hoh South Fork,WACoast,44,0,0.5,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Bear River (Pacific Co),WACoast,37,0,0.48,,,uncreeled; assume bank until outside professional judgement
-,3 (<1k),Germany Creek,ColumbiaLower,36,0,0.337,,,uncreeled; assume bank until outside professional judgement
+bank,decided,Samish,PugetSound,193834,0,0.2,Evan Booher,9/25/2026,small terminal hatchery system fishery
+bank,decided,Minter Creek,PugetSound,112012,0,0.21,Evan Booher,9/25/2026,small terminal hatchery system fishery
+bank,decided,Big Quilcene River,PugetSound,61600,0,0.2,Evan Booher,9/25/2026,uncreeled; assume bank until outside professional judgement
+use updated boat_share_if_boatable,1 (>5k trips),Tilton River,ColumbiaLower,30249,0,0,EB and LJ,,"likely bank fishery, double check but maybe small trib to Cowlitz"
+use updated boat_share_if_boatable,1 (>5k trips),Naselle (Lower),WACoast,28021,29,0.2,EB and LJ,,best estimate 0.20 - 0.25
+use updated boat_share_if_boatable,1 (>5k trips),Dungeness,PugetSound,23733,0,0,EB and LJ,,assume bank
+use updated boat_share_if_boatable,1 (>5k trips),Willapa,WACoast,21941,0,0.1,EB and LJ,,best estimate .10
+use updated boat_share_if_boatable,1 (>5k trips),"Nooksack River, South Fork",PugetSound,19915,0,0,EB and LJ,,"boats not allowed, bank only "
+use updated boat_share_if_boatable,1 (>5k trips),Cowlitz R. above Cowlitz Falls Dam,ColumbiaLower,18042,175,0,EB and LJ,,uncreeled; assume bank until outside professional judgement
+use updated boat_share_if_boatable,1 (>5k trips),Nemah,WACoast,10515,6,0,EB and LJ,,assume bank
+use updated boat_share_if_boatable,1 (>5k trips),Toutle River,ColumbiaLower,9860,0,0.1,EB and LJ,,.05-.10
+use updated boat_share_if_boatable,1 (>5k trips),"Nooksack River, Middle Fork",PugetSound,7844,0,0.17,EB and LJ,,not open for salmon
+use updated boat_share_if_boatable,2 (1k-5k),Washougal River,ColumbiaLower,4801,0,0.337,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,2 (1k-5k),Green River (Cowlitz Co),ColumbiaLower,4597,1,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,2 (1k-5k),Wishkah River,WACoast,3904,0,0.25,EB and LJ,,assume 0.25
+use updated boat_share_if_boatable,2 (1k-5k),Cispus River,ColumbiaLower,3269,2,0.337,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,2 (1k-5k),North River,WACoast,2528,12,0.5,EB and LJ,,.5 is plausible
+use updated boat_share_if_boatable,2 (1k-5k),Hoquiam River,WACoast,2399,0,0.15,EB and LJ,,assume 0.15
+use updated boat_share_if_boatable,2 (1k-5k),Wynoochee River,WACoast,2011,78,0.75,EB and LJ,,assume 0.75
+use updated boat_share_if_boatable,2 (1k-5k),Grays River,ColumbiaLower,1885,0,0.337,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,2 (1k-5k),Copalis River,WACoast,1740,0,0.05,EB and LJ,,assume 0.05
+use updated boat_share_if_boatable,2 (1k-5k),Johns River,WACoast,1684,0,0.2,EB and LJ,,assume 0.20
+use updated boat_share_if_boatable,2 (1k-5k),Chambers Creek,PugetSound,1340,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,2 (1k-5k),Big White Salmon River,ColumbiaMiddle,1220,0,0.84,EB and LJ,,keep
+use updated boat_share_if_boatable,2 (1k-5k),Coal Creek (Cowlitz Co),ColumbiaLower,1083,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Elk River,WACoast,943,0,0.75,EB and LJ,,assume 0.75
+use updated boat_share_if_boatable,3 (<1k),Whatcom Creek,PugetSound,812,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Salmon River (Jefferson Co),WACoast,660,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Methow River,ColumbiaUpper,655,2,0.85,EB and LJ,,uncreeled; assume bank until outside professional judgement
+use updated boat_share_if_boatable,3 (<1k),Little Quilcene River,PugetSound,640,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Queets River,WACoast,621,19,0.49,EB and LJ,,keep as is
+use updated boat_share_if_boatable,3 (<1k),Deschutes River,PugetSound,547,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Joe Creek,WACoast,496,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Duckabush River,PugetSound,487,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Elochoman River (Foster Rd. Bridge to West Fork),ColumbiaLower,462,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Quinault River,WACoast,429,1,0.75,EB and LJ,,assume 0.75
+use updated boat_share_if_boatable,3 (<1k),Clearwater River,WACoast,424,11,0.9,EB and LJ,,assume 0.90 - 0.95
+use updated boat_share_if_boatable,3 (<1k),Smith Creek (Pacific Co),WACoast,421,0,0.49,EB and LJ,,keep as is
+use updated boat_share_if_boatable,3 (<1k),Quigg Lake,WACoast,353,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Cook Creek,WACoast,352,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),McAllister Creek,PugetSound,347,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Salmon Creek (Clark Co),ColumbiaLower,346,0,0.337,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Chinook River,ColumbiaLower,309,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Newaukum River,WACoast,253,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Cloquallum Creek,WACoast,206,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Abernathy Creek,ColumbiaLower,199,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Little Washougal River,ColumbiaLower,175,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Cedar Creek (Clark Co),ColumbiaLower,174,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Blue Creek,ColumbiaLower,134,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Suiattle River,PugetSound,117,0,0.17,EB and LJ,,never open
+use updated boat_share_if_boatable,3 (<1k),Elochoman River (mouth to Foster Rd. Bridge),ColumbiaLower,113,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Deep River (Wahkiakum Co),ColumbiaLower,93,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Coweeman River,ColumbiaLower,73,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Moclips River,WACoast,70,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Mill Creek (Lewis Co),ColumbiaLower,67,0,0,EB and LJ,,check w/ R5 team
+use updated boat_share_if_boatable,3 (<1k),Olequa Creek,ColumbiaLower,58,0,0,EB and LJ,,open??
+use updated boat_share_if_boatable,3 (<1k),Skamokawa Creek,ColumbiaLower,45,0,0,EB and LJ,,open??
+use updated boat_share_if_boatable,3 (<1k),Hoh South Fork,WACoast,44,0,0.5,EB and LJ,,not open for salmon
+use updated boat_share_if_boatable,3 (<1k),Bear River (Pacific Co),WACoast,37,0,0,EB and LJ,,assume all bank
+use updated boat_share_if_boatable,3 (<1k),Germany Creek,ColumbiaLower,36,0,0,EB and LJ,,check w/ R5 team

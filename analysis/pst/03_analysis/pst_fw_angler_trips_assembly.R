@@ -512,9 +512,38 @@ ingest_creel_pe <- function() {
 
   # trip_expansion and trip_length_source distinguish own-month estimates from
   # donor-borrowed trip lengths, which [R5] requires be labelled not absorbed.
+  # Single-area creels carrying rows coded to another CRC area: recode to the
+  # creel's own area. Confirmed case (Evan, 2026-09-26): "Skagit spring
+  # Chinook 2024 upper" is Skagit mainstem (830) but some sections were coded
+  # 826 - the Cascade River, which had its own 2024 creel in the same months,
+  # so the 826 rows read as a second creel on Cascade water. Multi-area creels
+  # (crc_areas with "|") are left alone. Every recode is logged.
+  d <- d |> filter(!is.na(total_trips_est)) |> mutate(source_id = "creel_pe")
+  if (!is.null(crosswalk) && "crc_areas" %in% names(crosswalk)) {
+    own_area <- crosswalk |>
+      filter(source_id == "creel_pe", !is.na(crc_areas),
+             !str_detect(crc_areas, fixed("|"))) |>
+      distinct(fishery_name, own_code = as.character(crc_areas))
+    d <- d |> mutate(catch_area_code = as.character(catch_area_code)) |>
+      left_join(own_area, by = "fishery_name")
+    recode <- d |> filter(!is.na(own_code), !is.na(catch_area_code), catch_area_code != own_code)
+    if (nrow(recode) > 0) {
+      recode |> group_by(fishery_name, from = catch_area_code, to = own_code) |>
+        summarise(trips = sum(total_trips_est, na.rm = TRUE),
+                  months = paste(sort(unique(month)), collapse = ","), .groups = "drop") |>
+        pwalk(\(fishery_name, from, to, trips, months)
+          log_gap("creel_pe", NA, "defect", glue(
+            "{fishery_name}: {format(round(trips), big.mark = ',')} trips in months {months} ",
+            "coded to CRC {from}, outside the creel's single crosswalk area {to} - ",
+            "recoded to {to}. Fix the section-to-CRC mapping upstream.")))
+      d <- d |> mutate(catch_area_code = if_else(!is.na(own_code) & !is.na(catch_area_code) &
+                                                   catch_area_code != own_code,
+                                                 own_code, catch_area_code))
+    }
+    d <- d |> select(-own_code)
+  }
+
   d |>
-    filter(!is.na(total_trips_est)) |>
-    mutate(source_id = "creel_pe") |>
     attach_crosswalk_block() |>
     mutate(
       location       = coalesce(angler_final, "unknown"),

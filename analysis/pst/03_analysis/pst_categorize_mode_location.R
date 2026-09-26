@@ -441,6 +441,19 @@ categorize_mode_location <- function(effort_long, crosswalk) {
       G_raw = coalesce(G_raw, 0),
       capped = G_raw > Tt + 1e-9,
       G  = pmin(G_raw, Tt),
+      # Rivers assumed bank only (pst_location_override.csv) have no boat
+      # stratum, but a guide logbook trip is reasonably a boat trip (Evan,
+      # 2026-09-26). Move the guided boat share of guided trips from bank to
+      # boat - with a proportional share of harvest - so guided trips sit in
+      # boat as everywhere else; unguided trips stay bank. Totals unchanged.
+      assumed_bank = grepl("assumed: bank only", location_basis, fixed = TRUE),
+      .shift  = if_else(assumed_bank & G > 0, pmin(G * p_g, K), 0),
+      .hshift = if_else(K > 0, HK * .shift / K, 0),
+      HB = HB + .hshift, HK = HK - .hshift,
+      B  = B + .shift,   K  = K - .shift,
+      location_basis = if_else(.shift > 0,
+                               paste0(location_basis, "; guided logbook trips placed in boat"),
+                               location_basis),
       gb = pmin(G * p_g, B),
       gk = G - gb,
       gb = if_else(gk > K, G - K, gb),

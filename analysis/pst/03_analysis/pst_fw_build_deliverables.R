@@ -398,7 +398,7 @@ location_basis_label <- function(x) {
   x <- coalesce(x, "")
   design <- str_detect(x, "design_stratum")
   est <- case_when(
-    str_detect(x, "assumed: bank only")  ~ "Assumed — bank only (not known to be boatable)",
+    str_detect(x, "assumed: bank only")  ~ "Assumed bank only (no data available to assign trips to boat location)",
     str_detect(x, "assumed:")            ~ "Set by professional judgement",
     str_detect(x, "all-creel")           ~ "Estimated — statewide creel ratio",
     str_detect(x, "interview")           ~ "Estimated — same-river creel interviews",
@@ -578,7 +578,7 @@ if (!is.null(deliverable_trips)) {
     glue("- Location estimated from a creel ratio: {share(str_starts(dt$`Location Basis`, 'Estimated'))}% of all trips."),
     glue("- Mixed within a river-year: {share(str_starts(dt$`Location Basis`, 'Mixed'))}% of all trips."),
     glue("- Location from same-river creel interviews: {share(dt$`Location Basis` == 'Estimated — same-river creel interviews')}% of all trips."),
-    glue("- Location assumed bank only (river not known to be boatable; pending professional judgement): {share(dt$`Location Basis` == 'Assumed — bank only (not known to be boatable)')}% of all trips."),
+    glue("- Location assumed bank only (river not known to be boatable; pending professional judgement): {share(dt$`Location Basis` == 'Assumed bank only (no data available to assign trips to boat location)')}% of all trips."),
     "",
     "### Check of interview-based bank and boat",
     "",

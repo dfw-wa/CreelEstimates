@@ -499,24 +499,35 @@ if (!is.null(deliverable_trips)) {
 }
 
 if (!is.null(deliverable_trips)) {
-  wb_deliverable <- createWorkbook()
-  add_sheet(wb_deliverable, "Angler Trips", deliverable_trips,
-           title = paste(
-             "PST Freshwater Recreational Angler Trips",
-             "— Year x River x Mode x Location, 2022–2025",
-             "(total salmon)"
-           ))
-  addStyle(wb_deliverable, "Angler Trips", num_style,
-          rows = 4:(3 + nrow(deliverable_trips)),
-          cols = which(names(deliverable_trips) == "Angler Trips"),
-          gridExpand = TRUE, stack = TRUE)
-
-  if (!is.null(river_crc_lookup) && nrow(river_crc_lookup) > 0) {
-    add_sheet(wb_deliverable, "River CRC Area Lookup", river_crc_lookup,
-             title = "Member CRC catch area(s) behind each River row")
+  # Two versions of the trips table (Evan, 2026-09-26):
+  #   - the simple deliverable: no Mode Basis / Location Basis columns;
+  #   - the Mode/Location notes workbook (same name as the notes .md): the
+  #     full table WITH both basis columns, for readers of the notes.
+  write_trips_workbook <- function(trips, path, extra_title = "") {
+    wb <- createWorkbook()
+    add_sheet(wb, "Angler Trips", trips,
+             title = paste(
+               "PST Freshwater Recreational Angler Trips",
+               "— Year x River x Mode x Location, 2022–2025",
+               "(total salmon)", extra_title
+             ))
+    addStyle(wb, "Angler Trips", num_style,
+            rows = 4:(3 + nrow(trips)),
+            cols = which(names(trips) == "Angler Trips"),
+            gridExpand = TRUE, stack = TRUE)
+    if (!is.null(river_crc_lookup) && nrow(river_crc_lookup) > 0) {
+      add_sheet(wb, "River CRC Area Lookup", river_crc_lookup,
+               title = "Member CRC catch area(s) behind each River row")
+    }
+    saveWorkbook(wb, path, overwrite = TRUE)
   }
-
-  saveWorkbook(wb_deliverable, deliverable_path, overwrite = TRUE)
+  write_trips_workbook(deliverable_trips |> select(-`Mode Basis`, -`Location Basis`),
+                       deliverable_path)
+  notes_workbook_path <- file.path(DELIVERABLES_DIR,
+    "WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Mode_Location_Notes.xlsx")
+  write_trips_workbook(deliverable_trips, notes_workbook_path,
+                       "- with Mode Basis and Location Basis (see the Mode/Location notes)")
+  message(glue("Wrote {notes_workbook_path}"))
 
   # Plain-language note on how Mode and Location were assigned, with the
   # shares filled in from this run. A separate file rather than a workbook tab.
@@ -559,7 +570,7 @@ if (!is.null(deliverable_trips)) {
   note <- c(
     "# How Mode and Location were assigned",
     "",
-    glue("Every angler trip in the deliverable ({format(round(tot), big.mark = ',')} trips, 2022-2025) is assigned a Mode (guided or unguided) and a Location (bank or boat). The Mode Basis and Location Basis columns say how."),
+    glue("Every angler trip in the deliverable ({format(round(tot), big.mark = ',')} trips, 2022-2025) is assigned a Mode (guided or unguided) and a Location (bank or boat). The Mode Basis and Location Basis for every row are in the companion workbook WDFW_Freshwater_Salmon_Angler_Trip_Estimates_Mode_Location_Notes.xlsx (the main deliverable workbook omits them)."),
     "",
     "## Guided and unguided",
     "",

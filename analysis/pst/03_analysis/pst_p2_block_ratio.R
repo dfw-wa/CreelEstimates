@@ -197,6 +197,14 @@ exclude_truncated_months <- function(df, control = SEASON_TRUNCATED_MONTHS) {
 #' expanded once under a name that says it's shared, and the ambiguity is
 #' printed so it can be resolved in the crosswalk rather than papered over
 #' here every run.
+# Join river labels into one combined label, splitting any label that is
+# already combined ("Cascade + Skagit") into its rivers first - so an area
+# listed under both "Skagit" and "Cascade + Skagit" (the 2025 Skagit creel
+# covered 826|830) is named "Cascade + Skagit", not "Cascade + Skagit + Skagit".
+combine_river_labels <- function(x) {
+  paste(sort(unique(unlist(strsplit(x, " + ", fixed = TRUE)))), collapse = " + ")
+}
+
 expand_crosswalk_areas <- function(crosswalk) {
 
   raw <- crosswalk |>
@@ -220,7 +228,7 @@ expand_crosswalk_areas <- function(crosswalk) {
   if (nrow(dupe_areas) > 0) {
     affected <- dupe_areas |>
       group_by(catch_area_code) |>
-      summarise(rivers = paste(sort(unique(river_label)), collapse = " + "),
+      summarise(rivers = combine_river_labels(river_label),
                 blocks = paste(sort(unique(block)), collapse = "|"),
                 .groups = "drop")
 
@@ -247,7 +255,7 @@ expand_crosswalk_areas <- function(crosswalk) {
   raw |>
     group_by(catch_area_code) |>
     summarise(
-      river_label   = paste(sort(unique(river_label)), collapse = " + "),
+      river_label   = combine_river_labels(river_label),
       block         = if (n_distinct(block) == 1) block[1] else NA_character_,
       # "standard" wins ties only when every colliding row agrees.
       # "covered_unpartitioned" wins ANY collision, unanimous or not: it

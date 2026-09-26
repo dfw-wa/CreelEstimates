@@ -37,7 +37,7 @@ creel_pe,Satsop salmon 2025,Satsop,WACoast,329,P1,interview_prop,design_stratum,
 creel_pe,Skagit fall salmon 2022,Skagit,PugetSound,830,P1,interview_prop,design_stratum,NA,standard
 creel_pe,Skagit fall salmon 2023,Skagit,PugetSound,830,P1,interview_prop,design_stratum,NA,standard
 creel_pe,Skagit fall salmon 2024,Skagit,PugetSound,830,P1,interview_prop,design_stratum,NA,standard
-creel_pe,Skagit fall salmon 2025,Skagit,PugetSound,826|830,P1,interview_prop,design_stratum,NA,standard
+creel_pe,Skagit fall salmon 2025,Cascade + Skagit,PugetSound,826|830,P1,interview_prop,design_stratum,NA,standard
 creel_pe,Snohomish fall salmon 2022,Snohomish,PugetSound,850|852,P1,interview_prop,design_stratum,NA,standard
 creel_pe,Snohomish fall salmon 2023,Snohomish,PugetSound,844|850,P1,interview_prop,design_stratum,NA,standard
 creel_pe,Snohomish fall salmon 2024,Snohomish,PugetSound,844|850|852,P1,interview_prop,design_stratum,NA,standard
@@ -193,7 +193,7 @@ creel_pe,Skagit spring Chinook 2023 lower,Skagit,PugetSound,830,P1,interview_pro
 creel_pe,Skagit spring Chinook 2023 upper,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): upper Skagit spring Chinook is CRC area 830; Cascade spring Chinook 2023 has its own distinct crosswalk row (826), so not combined here",standard
 creel_pe,Skagit spring Chinook 2024 lower,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): lower Skagit spring Chinook is CRC area 830, same as the existing Skagit fall salmon rows",standard
 creel_pe,Skagit spring Chinook 2024 upper,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): upper Skagit spring Chinook is CRC area 830; Cascade spring Chinook 2024 has its own distinct crosswalk row (826), so not combined here",standard
-creel_pe,Skagit spring Chinook 2025 upper,Skagit,PugetSound,826|830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): upper Skagit spring Chinook is CRC area 830 combined with Cascade's CRC area (826) -- 2025 has no distinct Cascade spring Chinook fishery, so Cascade's harvest/effort for that year is folded into this row instead",standard
+creel_pe,Skagit spring Chinook 2025 upper,Cascade + Skagit,PugetSound,826|830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): upper Skagit spring Chinook is CRC area 830 combined with Cascade's CRC area (826) -- 2025 has no distinct Cascade spring Chinook fishery, so Cascade's harvest/effort for that year is folded into this row instead",standard
 creel_pe,Skagit summer sockeye 2022,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): CRC area 830, same as the existing Skagit fall salmon rows",standard
 creel_pe,Skagit summer sockeye 2023,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): CRC area 830, same as the existing Skagit fall salmon rows",standard
 creel_pe,Skagit summer sockeye 2024,Skagit,PugetSound,830,P1,interview_prop,design_stratum,"per Evan (2026-08-21): CRC area 830, same as the existing Skagit fall salmon rows",standard

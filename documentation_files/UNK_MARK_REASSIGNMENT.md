@@ -10,6 +10,7 @@ Optional pre-processing step in `template_scripts/fw_creel.Rmd` that assigns sam
 | `R_functions/summarise_unk_reassignment.R` | Reconciliation and bounds table |
 | `R_functions/plot_unk_mark_reassignment.R` | Mark rate and sample size figures by time and section |
 | `tests/test-reassign_unk_marks.R` | Tests (synthetic data only) |
+| `documentation_files/unk_beta_binomial_example.R` | Regenerates the worked-example figure in this README |
 
 ## Usage
 
@@ -50,7 +51,7 @@ Some sampled fish are recorded with an unknown fin mark (UNK) because the adipos
 
    UNK fish that still do not have enough data stay UNK and are reported.
 5. **Estimate the mark rate (beta step).** See [The beta-binomial approach](#the-beta-binomial-approach).
-6. **Split the UNK fish (binomial step).** Each UNK record is split into UM and AD fish by a random draw using the group's mark rate. For example, a record of 5 UNK fish with a UM rate of 0.7 might become 4 UM and 1 AD.
+6. **Split the UNK fish (binomial step).** Each UNK record is split into UM and AD fish by a random draw using the group's mark rate. For example, a record of 6 UNK fish with a UM rate of 0.75 might become 4 UM and 2 AD.
 7. **Optional rule for kept fish.** In mark-selective fisheries, kept UNK fish can be assigned to AD by regulation instead of by a mark rate.
 8. **Check and report.**
    - **Totals:** the number of fish within each species, life stage, and fate must be unchanged; the code stops if it is not.
@@ -76,8 +77,8 @@ $$
 
 | Known-mark fish | Distribution | Average UM rate | Plausible range |
 |---|---|---|---|
-| 30 UM, 10 AD | Beta(30.5, 10.5) | about 0.74 | about 0.61–0.87 |
-| 7 UM, 3 AD | Beta(7.5, 3.5) | about 0.68 | about 0.4–0.9 |
+| 30 UM, 10 AD | Beta(30.5, 10.5) | about 0.74 | about 0.60–0.86 |
+| 7 UM, 3 AD | Beta(7.5, 3.5) | about 0.68 | about 0.39–0.91 |
 
 - One rate is drawn at random from this distribution for each group. Every UNK record in the group uses that same draw.
 
@@ -92,6 +93,40 @@ $$
 Counts stay whole numbers, so the reassigned data go straight into the existing PE and BSS estimation.
 
 **Why this approach:** the beta distribution is the standard model for an uncertain proportion. It gives wider uncertainty to groups with less data, and it is simple to calculate. The random seed is fixed, so results can be reproduced.
+
+**In one sentence:** we use the known-mark fish to decide how likely an UNK fish is to be UM, allow for some uncertainty in that rate, then flip a weighted coin for each UNK fish.
+
+### Worked example
+
+![How an UNK fin mark is reassigned: known fish, beta step, binomial step](unk_beta_binomial_example.png)
+
+**Situation:** in one group (Coho, released, adult, Section 2, week of Sept 14), anglers reported 40 fish with a known mark: 30 UM and 10 AD. One angler group also reported 6 fish with an unknown mark (UNK).
+
+**Panel 1 – Known fish.** The observed UM rate is 30 of 40, or 75%. That is the best guess for the UNK fish too, but it comes from only 40 fish, so the true rate could be somewhat higher or lower.
+
+**Panel 2 – Beta step: how sure are we of that 75%?**
+
+- **The curve:** the solid curve, Beta(30.5, 10.5), shows which UM rates are plausible given 30 UM and 10 AD. It peaks near 74%, and the true rate is very likely between about 60% and 86%.
+- **Less data, wider curve:** the dashed curve is a sparse group with 7 UM and 3 AD, the same share of UM. It is much wider, about 39% to 91%, because 10 fish tell us much less than 40.
+- **The draw:** the code picks one rate at random from the curve. The grey ticks are 20 possible picks. This run picked **75%** (orange line).
+
+Drawing a rate, instead of always using exactly 75%, lets the reassignment reflect that the rate itself is uncertain. Picks near the peak are the most common.
+
+**Panel 3 – Binomial step: split the 6 UNK fish.**
+
+- **Coin flips:** each of the 6 fish is treated like a weighted coin flip that lands UM 75% of the time.
+- **Possible outcomes:** the bars show how likely each result is. 5 UM is most likely (36%), then 4 UM (29%) and 6 UM (18%), while 0–2 UM is rare.
+- **This run:** the flips gave **4 UM and 2 AD**, so the record of 6 UNK fish becomes one record of 4 UM and one of 2 AD.
+- **Totals:** the fish total never changes (6 in, 6 out), and counts stay whole numbers.
+
+The figure's seed was chosen to show a typical outcome. Regenerate it with `source("documentation_files/unk_beta_binomial_example.R")`.
+
+### Common questions
+
+- **Why not round 75% of 6 = 4.5?** Fish have to be whole numbers, and always rounding the same way would add a small bias. Random draws average out correctly over many records.
+- **Will I get the same answer if I run it again?** Yes. The seed (`unk_mark_seed`) is fixed, so a report reproduces exactly. Changing the seed gives a different but equally valid split.
+- **What does one draw represent?** It is one plausible version of the truth, not the only one. That is why the report states that intervals do not include mark-rate uncertainty.
+- **Is this a logistic regression?** No. Both treat known-mark fish as binomial data, but this method estimates a separate rate for each group, with no predictors. A logistic regression would model the rate from effects such as week and section, which lets sparse groups borrow strength from the rest of the data. That is a possible future improvement.
 
 ### Assumptions
 

@@ -202,7 +202,14 @@ exclude_truncated_months <- function(df, control = SEASON_TRUNCATED_MONTHS) {
 # listed under both "Skagit" and "Cascade + Skagit" (the 2025 Skagit creel
 # covered 826|830) is named "Cascade + Skagit", not "Cascade + Skagit + Skagit".
 combine_river_labels <- function(x) {
-  paste(sort(unique(unlist(strsplit(x, " + ", fixed = TRUE)))), collapse = " + ")
+  members <- sort(unique(unlist(strsplit(x, " + ", fixed = TRUE))))
+  # A composite label already in the crosswalk that covers every member keeps
+  # its own wording and order ("Skagit + Cascade": the Skagit is the dominant
+  # system, Evan 2026-09-28) instead of an alphabetical rebuild.
+  given <- unique(x[grepl(" + ", x, fixed = TRUE)])
+  given <- given[vapply(given, \(g) setequal(strsplit(g, " + ", fixed = TRUE)[[1]], members), logical(1))]
+  if (length(given) > 0) return(given[1])
+  paste(members, collapse = " + ")
 }
 
 expand_crosswalk_areas <- function(crosswalk) {

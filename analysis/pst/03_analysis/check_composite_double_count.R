@@ -2,7 +2,7 @@
 # check_composite_double_count.R
 #
 # Purpose:
-#   Verify the composite creel rows ("Cascade + Skagit", "Skykomish +
+#   Verify the composite creel rows ("Skagit + Cascade", "Skykomish +
 #   Snohomish") do not double count against their single-river rows. The
 #   labels themselves cannot (every creel fishery's trips are counted once,
 #   under one river_label); what can is AREA COVERAGE: P2/P3 decide whether to
@@ -37,7 +37,7 @@ options(width = 220)
 ASM  <- here("analysis", "pst", "outputs", "05_assembly")
 CW   <- here("input_files", "pst", "lookup_tables", "pst_river_block_crosswalk.csv")
 FOCUS_AREAS  <- c("826", "830", "844", "850", "852")
-FOCUS_RIVERS <- c("Cascade", "Skagit", "Cascade + Skagit",
+FOCUS_RIVERS <- c("Cascade", "Skagit", "Skagit + Cascade",
                   "Skykomish", "Snohomish", "Skykomish + Snohomish")
 
 a <- read_csv(file.path(ASM, "pst_fw_categorization_audit.csv"), show_col_types = FALSE,

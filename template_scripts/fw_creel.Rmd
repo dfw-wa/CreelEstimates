@@ -3,10 +3,14 @@ title: "Freshwater Creel Report <br>`r params$fishery_name`"
 date: "`r Sys.Date()`"
 params:
   project_name: "District 14"
-  fishery_name: "Skagit spring Chinook 2025 upper"
+  fishery_name: "Skagit fall salmon 2025"
   est_date_start: ""
   est_date_end: ""
-  est_catch_groups: ""
+  est_catch_groups: !r data.frame(rbind(
+    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'UM', fate = 'Kept'),
+    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'AD', fate = 'Kept'),
+    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'UM', fate = 'Released'),
+    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'AD', fate = 'Released')))
   study_design: "Standard"   
   boat_type_collapse: "Yes"
   fish_location_determines_type: "No"
@@ -17,9 +21,11 @@ params:
   days_wkend: !r c('Saturday', 'Sunday')
   day_length_expansion: "night closure"
   min_fishing_time: 0.5
-  unk_mark_reassign: "none"   # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
-  unk_mark_species: ""        # "" = all species; e.g. "Chinook"
-  unk_mark_min_known: 10      # known-mark fish a stratum needs before its mark rate is used
+  unk_mark_reassign: "binomial"   # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
+  unk_mark_species: "Coho"        # "" = all species; e.g. "Chinook"
+  unk_mark_min_known: 5      # interviews with known-mark fish a stratum needs before its mark rate is used
+  unk_mark_window_weeks: 1    # sparse weeks pool +/- this many adjacent weeks before using the season rate
+  unk_mark_kept_as_ad: FALSE  # TRUE for mark-selective fisheries: kept UNK fish are AD by regulation
   unk_mark_seed: 1            # change to create alternate imputations
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
   model_used: "Both models"
@@ -530,6 +536,8 @@ tab_style(
 
 ## Unknown fin mark reassignment (optional)
 
+When enabled, sampled fish with an unknown fin mark (UNK) are assigned to AD or UM once, using mark rates of known-mark fish in the same stratum (single imputation). Reassigned fish are then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate. The table below shows the range of AD shares if all UNK fish were UM or all were AD.
+
 ```{r reassign_unk_marks, eval=TRUE}
 # Off by default (params$unk_mark_reassign = "none"). When "binomial", catch rows
 # with fin_mark UNK are split into AD/UM by binomial draws, using mark rates of
@@ -548,13 +556,46 @@ if (unk_method == "binomial") {
     interview = dwg$interview,
     species   = if (is_blank(resolved_params$unk_mark_species)) NULL else resolved_params$unk_mark_species,
     min_known = resolved_params$unk_mark_min_known %||% 10,
+    window_weeks = resolved_params$unk_mark_window_weeks %||% 1,
+    kept_unk_as_ad = isTRUE(resolved_params$unk_mark_kept_as_ad),
     rate_draw = "posterior",
     seed      = resolved_params$unk_mark_seed %||% 1
   )
   dwg$catch <- unk_marks$catch
+  unk_summary <- summarise_unk_reassignment(unk_marks$catch, species = unk_marks$settings$species)
+  unk_plots <- plot_unk_mark_reassignment(unk_marks$catch, dwg$interview,
+                                          species = unk_marks$settings$species)
+  unk_plot_height <- 3 + 3 * (attr(unk_plots, "n_sections") %||% 1)
 } else {
+  unk_summary <- NULL
+  unk_plots <- NULL
+  unk_plot_height <- 6
   cli::cli_alert_info("UNK fin marks not reassigned (params$unk_mark_reassign = 'none').")
 }
+```
+
+```{r table_unk_mark_reassignment, eval=!is.null(unk_summary)}
+unk_summary |>
+  gt() |>
+  tab_header(
+    title = "UNK fin-mark reassignment in the interview sample",
+    subtitle = "AD share if all UNK were UM (low), as reassigned, and if all UNK were AD (high)"
+  ) |>
+  tab_spanner(label = "Observed", columns = c(obs_AD, obs_UM, unk_raw)) |>
+  tab_spanner(label = "UNK fish", columns = c(unk_to_AD, unk_to_UM, unk_left)) |>
+  tab_spanner(label = "AD share of sample", columns = c(ad_share_low, ad_share_imp, ad_share_high)) |>
+  fmt_percent(columns = starts_with("ad_share"), decimals = 1) |>
+  cols_label(
+    species = "Species", life_stage = "Life stage", fate = "Fate",
+    obs_AD = "AD", obs_UM = "UM", unk_raw = "UNK",
+    unk_to_AD = "to AD", unk_to_UM = "to UM", unk_left = "left UNK",
+    n_total = "Total",
+    ad_share_low = "Low", ad_share_imp = "Reassigned", ad_share_high = "High"
+  )
+```
+
+```{r plot_unk_mark_reassignment, eval=!is.null(unk_plots), fig.height=min(unk_plot_height, 20), fig.cap="Observed mark rates (AD share of known-mark fish; point size = sample size), mark rates after reassignment (dashed), and counts of fish by status, including UNK fish reassigned to AD or UM. One figure per species and fate; rows are sections and columns are life stages where more than one exists."}
+purrr::walk(unk_plots, print)
 ```
 
 ## Shared data aggregation

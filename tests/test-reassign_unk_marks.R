@@ -123,4 +123,125 @@ test_that("input validation", {
   expect_error(reassign_unk_marks(fx$catch, fx$interview, strata = list(c("species", "week"))), "species")
   bad <- fx$catch; bad$fish_count[bad$fin_mark == "UNK"][1] <- 1.5
   expect_error(reassign_unk_marks(bad, fx$interview), "whole numbers")
+  once <- reassign_unk_marks(fx$catch, fx$interview, seed = 1)
+  expect_error(reassign_unk_marks(once$catch, fx$interview), "already been through")
+})
+
+
+# Coho = data rich (2 sections x 3 weeks x 2 life stages, many fish); Chinook = data poor (1 section, sparse)
+make_rich_poor_fixture <- function() {
+  dates <- seq(as.Date("2026-09-07"), by = "day", length.out = 21)
+  interview <- tidyr::expand_grid(section_num = 1:2, event_date = dates) |>
+    mutate(interview_id = row_number())
+  set.seed(5)
+  coho <- interview |>
+    slice_sample(n = 600, replace = TRUE) |>
+    mutate(species = "Coho", life_stage = sample(c("Adult", "Jack"), n(), TRUE, c(0.8, 0.2)),
+           fate = "Released", fin_mark = sample(c("UM", "AD", "UNK"), n(), TRUE, c(0.55, 0.3, 0.15)),
+           fish_count = sample(1:3, n(), TRUE))
+  chin <- interview |>
+    filter(section_num == 1, event_date < as.Date("2026-09-21")) |>
+    slice_sample(n = 30) |>
+    mutate(species = "Chinook", life_stage = "Adult", fate = "Released",
+           fin_mark = sample(c("UM", "AD", "UNK"), n(), TRUE, c(0.3, 0.1, 0.6)), fish_count = 1)
+  catch <- bind_rows(coho, chin) |>
+    select(interview_id, species, life_stage, fin_mark, fate, fish_count) |>
+    mutate(catch_id = row_number(), catch_group = paste(species, life_stage, fin_mark, fate, sep = "_"))
+  list(catch = catch, interview = interview)
+}
+
+test_that("plot_unk_mark_reassignment adapts to data-rich (Coho) and data-poor (Chinook) species", {
+  source(here::here("R_functions", "plot_unk_mark_reassignment.R"))
+  library(patchwork)
+  fx <- make_rich_poor_fixture()
+  out <- reassign_unk_marks(fx$catch, fx$interview, seed = 1)
+  plots <- plot_unk_mark_reassignment(out$catch, fx$interview)
+  expect_setequal(names(plots), c("Coho_Released", "Chinook_Released"))
+  expect_equal(attr(plots, "n_sections"), 2)
+  only <- plot_unk_mark_reassignment(out$catch, fx$interview, species = "Coho")
+  expect_equal(names(only), "Coho_Released")
+  for (nm in names(plots)) {
+    expect_no_error(ggplot2::ggsave(tempfile(fileext = ".png"), plots[[nm]], width = 10, height = 9))
+  }
+  # Chinook has one section and one life stage: no facet rows
+  expect_equal(dplyr::n_distinct(plots[["Chinook_Released"]][[1]]$data$section), 1)
+  expect_null(plot_unk_mark_reassignment(dplyr::filter(out$catch, FALSE), fx$interview))
+})
+
+# Small hand-built data: one section, weeks of 2026-09-07 / 14 / 21
+tiny <- function(known_rows, unk_rows) {
+  rows <- bind_rows(known_rows, unk_rows)
+  interview <- distinct(rows, interview_id, event_date) |> mutate(section_num = 1L)
+  catch <- rows |> mutate(species = "Coho", life_stage = "Adult") |> select(-event_date)
+  list(catch = catch, interview = interview)
+}
+known_in_week <- function(start, n_int, fish_each, id0, mark = "UM", fate = "Released") {
+  tibble(interview_id = id0 + seq_len(n_int), event_date = as.Date(start),
+         fin_mark = mark, fate = fate, fish_count = fish_each)
+}
+
+test_that("min_known counts interviews by default, fish on request", {
+  fx <- tiny(known_in_week("2026-09-07", 1, 12, 0),
+             tibble(interview_id = 100L, event_date = as.Date("2026-09-08"), fin_mark = "UNK", fate = "Released", fish_count = 2))
+  by_int  <- reassign_unk_marks(fx$catch, fx$interview, seed = 1)
+  by_fish <- reassign_unk_marks(fx$catch, fx$interview, seed = 1, min_known_unit = "fish")
+  expect_false(any(by_int$catch$mark_imputed))          # 1 interview < 10
+  expect_true(all(by_fish$catch$unk_rate_level[by_fish$catch$mark_imputed] == 1))
+})
+
+test_that("sparse weeks borrow from adjacent weeks before the season rate", {
+  known <- bind_rows(
+    known_in_week("2026-09-07", 6, 1, 0,  "UM"),
+    known_in_week("2026-09-14", 2, 1, 10, "AD"),
+    known_in_week("2026-09-21", 6, 1, 20, "UM"),
+    known_in_week("2026-10-26", 20, 1, 40, "AD")        # far-away weeks: season fallback would pull toward AD
+  )
+  fx <- tiny(known, tibble(interview_id = 100L, event_date = as.Date("2026-09-15"),
+                           fin_mark = "UNK", fate = "Released", fish_count = 3))
+  out <- reassign_unk_marks(fx$catch, fx$interview, seed = 1, rate_draw = "point")
+  imp <- filter(out$catch, mark_imputed)
+  expect_true(all(imp$unk_rate_level == 3))
+  expect_match(imp$unk_stratum[1], "2026-09-14 \\+/-1wk")
+  expect_equal(unique(imp$unk_p_um), 12 / 14)           # 12 UM, 2 AD across the 3-week window
+  none <- reassign_unk_marks(fx$catch, fx$interview, seed = 1, rate_draw = "point", window_weeks = 0)
+  expect_true(all(filter(none$catch, mark_imputed)$unk_rate_level == 4))
+})
+
+test_that("Jeffreys prior is the default and prior is validated", {
+  fx <- tiny(known_in_week("2026-09-07", 10, 1, 0, "AD"),
+             tibble(interview_id = 100L, event_date = as.Date("2026-09-08"), fin_mark = "UNK", fate = "Released", fish_count = 1))
+  draw_p <- function(prior) purrr::map_dbl(1:300, \(s) {
+    suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = s, prior = prior))$catch |>
+      filter(mark_imputed) |> pull(unk_p_um)
+  })
+  expect_equal(mean(draw_p(c(0.5, 0.5))), 0.5 / 11, tolerance = 0.25)
+  expect_equal(mean(draw_p(c(1, 1))), 1 / 12, tolerance = 0.25)
+  expect_error(reassign_unk_marks(fx$catch, fx$interview, prior = c(0, 1)), "positive")
+})
+
+test_that("kept UNK fish go to AD by rule only when requested", {
+  known <- bind_rows(known_in_week("2026-09-07", 10, 1, 0, "UM", "Kept"),
+                     known_in_week("2026-09-07", 10, 1, 20, "UM", "Released"))
+  unk <- tibble(interview_id = 100:101, event_date = as.Date("2026-09-08"), fin_mark = "UNK",
+                fate = c("Kept", "Released"), fish_count = 5)
+  fx <- tiny(known, unk)
+  out <- reassign_unk_marks(fx$catch, fx$interview, seed = 1, kept_unk_as_ad = TRUE)
+  kept <- filter(out$catch, mark_imputed, fate == "Kept")
+  expect_equal(unique(kept$fin_mark), "AD")
+  expect_equal(unique(kept$unk_rate_level), 0L)
+  expect_equal(sum(kept$fish_count), 5)
+  expect_true(all(filter(out$catch, mark_imputed, fate == "Released")$unk_rate_level > 0))
+  off <- reassign_unk_marks(fx$catch, fx$interview, seed = 1)
+  expect_true(all(filter(off$catch, mark_imputed)$unk_rate_level > 0))
+})
+
+test_that("summarise_unk_reassignment reconciles fish and orders the bounds", {
+  source(here::here("R_functions", "summarise_unk_reassignment.R"))
+  fx <- make_rich_poor_fixture()
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1))
+  s <- summarise_unk_reassignment(out$catch)
+  expect_equal(s$unk_raw, s$unk_to_AD + s$unk_to_UM + s$unk_left)
+  expect_equal(sum(s$n_total), sum(fx$catch$fish_count))
+  expect_true(all(s$ad_share_low <= s$ad_share_imp & s$ad_share_imp <= s$ad_share_high))
+  expect_equal(unique(summarise_unk_reassignment(out$catch, species = "Coho")$species), "Coho")
 })

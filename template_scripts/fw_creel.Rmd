@@ -17,6 +17,10 @@ params:
   days_wkend: !r c('Saturday', 'Sunday')
   day_length_expansion: "night closure"
   min_fishing_time: 0.5
+  unk_mark_reassign: "none"   # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
+  unk_mark_species: ""        # "" = all species; e.g. "Chinook"
+  unk_mark_min_known: 10      # known-mark fish a stratum needs before its mark rate is used
+  unk_mark_seed: 1            # change to create alternate imputations
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
   model_used: "Both models"
   data_grade: "provisional"
@@ -522,6 +526,35 @@ tab_style(
 # If needed, manually edit/filter the creel data imported from dwg; be sure to include an explanation of each edit
 
 
+```
+
+## Unknown fin mark reassignment (optional)
+
+```{r reassign_unk_marks, eval=TRUE}
+# Off by default (params$unk_mark_reassign = "none"). When "binomial", catch rows
+# with fin_mark UNK are split into AD/UM by binomial draws, using mark rates of
+# known-mark fish within species x fate (with finer strata where sample size
+# allows). The original data remain in inputs/dwg_raw.rds; reassigned rows carry
+# fin_mark_raw and mark_imputed. Mark-rate uncertainty is not carried into the
+# estimates by a single run; see ?reassign_unk_marks (roxygen in R_functions).
+unk_method <- resolved_params$unk_mark_reassign %||% "none"
+if (!unk_method %in% c("none", "binomial")) {
+  cli::cli_abort("params$unk_mark_reassign must be {.val none} or {.val binomial}, not {.val {unk_method}}.")
+}
+
+if (unk_method == "binomial") {
+  unk_marks <- reassign_unk_marks(
+    catch     = dwg$catch,
+    interview = dwg$interview,
+    species   = if (is_blank(resolved_params$unk_mark_species)) NULL else resolved_params$unk_mark_species,
+    min_known = resolved_params$unk_mark_min_known %||% 10,
+    rate_draw = "posterior",
+    seed      = resolved_params$unk_mark_seed %||% 1
+  )
+  dwg$catch <- unk_marks$catch
+} else {
+  cli::cli_alert_info("UNK fin marks not reassigned (params$unk_mark_reassign = 'none').")
+}
 ```
 
 ## Shared data aggregation

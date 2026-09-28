@@ -437,6 +437,21 @@ if (!is.null(effort_by_mode_location)) {
       `CRC Areas`        = catch_area_codes
     ) |>
     select(-catch_area_codes) |>
+    # A composite river-year ("Cascade + Skagit") reports the full set of CRC
+    # areas behind it on every mode/location row, and is always flagged
+    # composite - not just the rows whose own areas happened to include both.
+    group_by(River, Year) |>
+    mutate(
+      .all_codes = paste(sort(unique(unlist(strsplit(na.omit(`CRC Areas`), "|", fixed = TRUE)))),
+                         collapse = "|"),
+      `CRC Areas` = if_else(grepl(" + ", River, fixed = TRUE) & .all_codes != "",
+                            .all_codes, `CRC Areas`),
+      `Composite Estimate` = if_else(grepl(" + ", River, fixed = TRUE) |
+                                       str_detect(coalesce(`CRC Areas`, ""), fixed("|")),
+                                     "Yes", "No")
+    ) |>
+    ungroup() |>
+    select(-.all_codes) |>
     arrange(`CRC Region`, River, Year, Location, Mode)
 }
 

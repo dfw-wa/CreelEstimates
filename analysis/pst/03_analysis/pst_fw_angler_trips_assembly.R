@@ -1686,6 +1686,61 @@ if (!is.null(closed_areas)) {
     select(-.catch_area_code_chr, -.is_closed, -.zero_this)
 }
 
+# ---- 5f2. River labels for composite creel systems, by year -----------------
+# Some creels lump neighbouring rivers' CRC areas in some years and not others
+# (Skagit fall salmon 2025 covered 826|830 - Cascade + Skagit - while 2022-24
+# had separate Cascade (826) and Skagit (830) creels; Snohomish fall salmon
+# 2023-25 covered 844 with 850/852, 2022 did not). Rule (Evan, 2026-09-28):
+#   - composite YEAR (any creel that year carries the composite label): EVERY
+#     row on the composite's CRC areas that year - single-area creels and
+#     P2/P3 additions included - reports under the composite label, since the
+#     lumped creel cannot be split;
+#   - other years: each area reports under its own river (the crosswalk's
+#     single-river label for that code), P2/P3 additions included.
+# Both come from pst_river_block_crosswalk.csv; nothing hardcoded. Trips are
+# only relabelled, never moved between areas - totals unchanged.
+relabel_composite_years <- function(el, crosswalk) {
+  if (is.null(crosswalk)) return(el)
+  cw <- crosswalk |> filter(!is.na(crc_areas), crc_areas != "", !is.na(river_label))
+  comp <- cw |> filter(source_id == "creel_pe", grepl(" + ", river_label, fixed = TRUE)) |>
+    transmute(composite = river_label,
+              year = as.integer(str_extract(fishery_name, "\\b20\\d{2}\\b")),
+              code = strsplit(as.character(crc_areas), "|", fixed = TRUE)) |>
+    tidyr::unnest(code) |> distinct()
+  if (nrow(comp) == 0) return(el)
+  comp_codes <- comp |> distinct(composite, code)
+  comp_years <- comp |> distinct(composite, year)
+  single <- cw |> filter(!grepl(" + ", river_label, fixed = TRUE)) |>
+    transmute(river_label, code = strsplit(as.character(crc_areas), "|", fixed = TRUE)) |>
+    tidyr::unnest(code) |> distinct() |>
+    semi_join(comp_codes, by = "code") |>
+    group_by(code) |> filter(n_distinct(river_label) == 1) |> ungroup() |>
+    rename(own_river = river_label)
+
+  out <- el |>
+    mutate(.code = as.character(catch_area_code)) |>
+    left_join(comp_codes, by = c(".code" = "code")) |>
+    left_join(comp_years |> mutate(.comp_year = TRUE), by = c("composite", "year")) |>
+    left_join(single, by = c(".code" = "code")) |>
+    mutate(new_label = case_when(
+      is.na(composite)              ~ river_label,
+      coalesce(.comp_year, FALSE)   ~ composite,
+      !is.na(own_river)             ~ own_river,
+      TRUE                          ~ river_label))
+  moved <- out |> filter(new_label != river_label) |>
+    group_by(year, from = river_label, to = new_label) |>
+    summarise(trips = round(sum(angler_trips, na.rm = TRUE)), .groups = "drop")
+  if (nrow(moved) > 0) {
+    log_gap("composite_labels", NA, "note", glue(
+      "river labels set by composite-year rule: ",
+      "{paste(glue('{moved$year} {moved$from} -> {moved$to} ({moved$trips})'), collapse = '; ')}."))
+  }
+  stopifnot(abs(sum(out$angler_trips, na.rm = TRUE) - sum(el$angler_trips, na.rm = TRUE)) < 1e-6)
+  out |> mutate(river_label = new_label) |>
+    select(-.code, -composite, -.comp_year, -own_river, -new_label)
+}
+effort_long <- relabel_composite_years(effort_long, crosswalk)
+
 # ---- 5g. Categorize every row: location and mode ----------------------------
 # Runs after every tier exists and every zeroing correction has run, so P2 and
 # P3 rows - which have no bank/boat or guided field of their own - are

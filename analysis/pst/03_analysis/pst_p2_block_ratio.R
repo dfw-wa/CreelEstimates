@@ -1170,6 +1170,72 @@ apply_p2_month_gaps <- function(crc_month, ratios, xw_area, area_system,
                               if_else(out_of_scale, " (out of scale)", ""))) |>
     mutate(tier_attempted = "P2_month_gap")
 
+  # Review of every infilled month against the regulations (Evan,
+  # 2026-09-28). pst_month_gap_review.csv lists each area x year x month the
+  # gap step fills, with its trips, the CRC harvest behind it, and what the
+  # creel(s) covered that year. `decision`: blank or "keep" -> kept;
+  # "closed" (not open for salmon that month) or "full coverage" (the creel
+  # covered all fishable months) -> dropped. Refreshed every run; decisions
+  # already entered are kept (matched on area, year, month). A row with a
+  # blank month applies its decision to every month of that area-year.
+  review_path <- here::here("input_files", "pst", "lookup_tables", "pst_month_gap_review.csv")
+  prior <- if (file.exists(review_path)) {
+    readr::read_csv(review_path, show_col_types = FALSE, col_types = readr::cols(.default = "c")) |>
+      transmute(catch_area_code, year = as.integer(year), month = as.integer(month),
+                decision = str_remove(coalesce(decision, ""), " \\(area-year row\\)$"),
+                reviewed_by = coalesce(reviewed_by, ""),
+                notes = coalesce(notes, ""))
+  } else tibble(catch_area_code = character(), year = integer(), month = integer(),
+                decision = character(), reviewed_by = character(), notes = character())
+  creel_cov <- p1 |> filter(!is.na(month)) |>
+    group_by(catch_area_code, year) |>
+    summarise(creel_months = paste(sort(unique(as.integer(month))), collapse = ","),
+              creel_fisheries = paste(sort(unique(na.omit(fishery_name))), collapse = " ; "),
+              .groups = "drop")
+  review_now <- trips |>
+    transmute(catch_area_code, river_label, year = as.integer(year), month = as.integer(month),
+              infill = if_else(projected, "P3 projected CRC harvest", "P2 actual CRC harvest"),
+              crc_harvest = round(crc_harvest_m, 1), trips = round(angler_trips, 1)) |>
+    left_join(creel_cov, by = c("catch_area_code", "year"))
+  review <- review_now |>
+    full_join(prior, by = c("catch_area_code", "year", "month")) |>
+    mutate(across(c(decision, reviewed_by, notes), ~ coalesce(.x, "")),
+           in_current_run = !is.na(infill)) |>
+    # Month rows inherit a blank-month (whole area-year) decision.
+    left_join(prior |> filter(is.na(month), decision != "") |>
+                transmute(catch_area_code, year, .yr_dec = decision),
+              by = c("catch_area_code", "year")) |>
+    mutate(decision = if_else(decision == "" & !is.na(month) & !is.na(.yr_dec),
+                              paste0(.yr_dec, " (area-year row)"), decision)) |>
+    select(-.yr_dec) |>
+    select(decision, catch_area_code, river_label, year, month, infill, trips, crc_harvest,
+           creel_months, creel_fisheries, in_current_run, reviewed_by, notes) |>
+    arrange(desc(in_current_run), desc(trips))
+  tryCatch(readr::write_csv(review, review_path, na = ""),
+           error = function(e) message(glue("[gap] p2_month_gap: could not write {review_path} ",
+                                            "({conditionMessage(e)}) - is it open in Excel?")))
+  drop_keys <- prior |>
+    filter(str_to_lower(str_squish(decision)) %in% c("closed", "full coverage", "drop"))
+  if (nrow(drop_keys) > 0) {
+    drop_month <- drop_keys |> filter(!is.na(month))
+    drop_year  <- drop_keys |> filter(is.na(month)) |> distinct(catch_area_code, year)
+    is_drop <- function(t) {
+      t |> semi_join(drop_month, by = c("catch_area_code", "year", "month")) |>
+        bind_rows(t |> semi_join(drop_year, by = c("catch_area_code", "year"))) |>
+        distinct(catch_area_code, year, month, .keep_all = TRUE)
+    }
+    dropped <- is_drop(trips)
+    trips <- trips |> anti_join(dropped |> select(catch_area_code, year, month),
+                                by = c("catch_area_code", "year", "month"))
+    message(glue(
+      "[note] p2_month_gap: {nrow(dropped)} infilled area-month(s) dropped per ",
+      "pst_month_gap_review.csv ({format(round(sum(dropped$angler_trips)), big.mark = ',')} trips): ",
+      "{paste(unique(glue('{dropped$catch_area_code} {dropped$year}-{dropped$month}')), collapse = ', ')}."))
+  }
+  n_open <- sum(review$in_current_run & review$decision == "")
+  message(glue("[note] p2_month_gap: {sum(review$in_current_run)} infilled area-month(s) listed in ",
+               "pst_month_gap_review.csv; {n_open} not yet reviewed."))
+
   summary <- trips |>
     group_by(block, river_label, catch_area_code, year) |>
     summarise(gap_months = first(gap_months), projected = any(projected),

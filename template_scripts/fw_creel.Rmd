@@ -878,7 +878,6 @@ inputs_bss <-
       census_expan = dwg_summ$census_expan, 
       study_design = resolved_params$study_design, 
       priors = c(
-# Half-Student-t regularizing priors. Degrees of freedom (df) controls tail geometry and adjust scale to set the range of variance expected. Larger scale settings are less informative and mostly affect data-poor strata. Larger DF settings shrink tails:
   # Catch process error (sigma_eps_C) - CPUE daily fluctuations
         value_student_t_df_sigma_eps_C = 4,       
         value_student_t_scale_sigma_eps_C = 0.5,  
@@ -1255,6 +1254,14 @@ overview_combined |>
 ```
 
 #### Prior-Posterior Plots for Variance Priors
+##### How to interpret the plots
+
+- If **Posterior sits inside the prior, narrower**: data are informative, prior has mild influence
+- If **Posterior peak shifts away from prior peak**: data are pulling the posterior away from the prior
+- If **Likelihood is very wide/flat**: data are sparse for this parameter; the prior is doing most of the work. Likelihood may not be identifiable
+- If **Prior and Posterior match**: prior dominates. If there is a clear and separate Likelihood distribution, raise scale. If likelihood is flat and data are sparse, ensure that variance is in range of domain experience.
+
+-Likelihood is approximated as the posterior density divided by the prior density (posterior ∝ prior × likelihood). It is rescaled to the posterior's peak height, so only its shape is meaningful, not its height. A flat curve means the data carried little information about that parameter
 
 ```{r priorposteriorplots, eval=TRUE, echo=FALSE, fig.keep='all', dependson=c("estimates_bss")}
 for (ecg in names(estimates_bss)) {
@@ -1265,8 +1272,7 @@ for (ecg in names(estimates_bss)) {
   combined_figure <-
     wrap_plots(pp$plots_list, ncol = 2) +
     plot_annotation(
-      title    = "Prior vs Posterior vs Likelihood — Variance Parameters",
-      subtitle = glue::glue("Catch group: {ecg}"),
+      title    = glue::glue("{ecg}"),
       theme    = theme(
         plot.title    = element_text(size = 13, face = "bold"),
         plot.subtitle = element_text(size = 10)
@@ -1285,13 +1291,6 @@ for (ecg in names(estimates_bss)) {
   )
 }
 ```
-
-##### How to read the plots
-
-- **Posterior sits inside the prior, narrower** → data are informative, prior has mild influence
-- **Posterior peak shifts away from prior peak** → data are pulling the posterior away from the prior
-- **Likelihood is very wide/flat** → data are sparse for this parameter; the prior is doing most of the work. Likelihood may not be identifiable
-- **Prior and Posterior match** →prior dominates. If there is a clear and separate Likelihood distribution, raise scale. If likelihood is flat and data are sparse, ensure that variance is in range of domain experience.
 
 #### Posterior Probability Density Plots
 ```{r plot_prob_density, eval=TRUE, fig.keep='all', dependson=c("establish_file_structure", "estimates_bss"), fig.width = 10, fig.height = max(8, 3 * length(estimates_bss)), out.width = "100%", fig.cap= "Posterior probability density plots showing the distribution of estimated catch (number of fish) and effort (angler-hours) for estimated catch groups. Each panel displays a kernel density curve representing the relative likelihood of different parameter values from the Bayesian creel model's posterior distribution. The x-axis shows the estimated quantity (either number of fish caught or angler-hours expended). The y-axis shows the probability density for parameter estimates— higher values indicate parameter values that are more supported by the data and model. The shaded area under each curve represents the full range of plausible values. Vertical dashed lines mark the 2.5th percentile (lower credible limit), 50th percentile (median), and 97.5th percentile (upper credible limit), which together define the 95% credible interval—the range within which the true parameter value lies with 95% probability given the data and model assumptions. Effort was estimated for each individual catch group model run."}

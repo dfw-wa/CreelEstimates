@@ -39,8 +39,17 @@
 #' known-mark fish (missing at random). Review this for released fish, which
 #' may go unexamined for reasons related to mark status.
 #'
-#' **RNG.** When `seed` is supplied, the global RNG state is restored on exit,
-#' so the seed does not change later random draws (e.g., Stan seeds).
+#' **RNG and record-level seeding.** Each random draw gets its own seed, built
+#' from `seed` plus a stable key: the stratum for a mark-rate draw, and the
+#' catch record (`record_id`, `catch_id` by default) for a binomial split. A
+#' UNK record's split therefore depends only on its own record and its
+#' stratum's known-mark counts, not on row order or on other records. Adding,
+#' deleting or editing one record changes only that record's split, plus the
+#' splits in any stratum whose known-mark counts changed; every other
+#' assignment is unchanged. Changing `seed` gives a new, independent
+#' imputation. The global RNG state is restored on exit, so the function does
+#' not change later random draws (e.g., Stan seeds). If `seed` is `NULL`, a
+#' seed is drawn at random and reported in `settings$seed`.
 #'
 #' **Run once.** Calling this on catch data that were already reassigned is an
 #' error, because the audit columns would be overwritten. Start from the raw
@@ -65,7 +74,14 @@
 #' @param prior Beta prior shapes `c(UM, AD)` for `rate_draw = "posterior"`.
 #' @param kept_unk_as_ad Assign kept UNK fish to AD by rule; see Details.
 #' @param kept_code Value of `fate` for retained fish.
-#' @param seed Optional integer seed for reproducible reassignment.
+#' @param record_id Column in `catch` that uniquely identifies each catch
+#'   record (`catch_id` from `creelutils::fetch_data()`). Used to key each
+#'   record's random split. If the column is missing, a composite key
+#'   (interview, species, life stage, fate, mark and order within the
+#'   interview) is used instead, which is stable unless rows within an
+#'   interview are reordered.
+#' @param seed Integer seed for reproducible reassignment; see Details.
+#'   `NULL` draws one at random.
 #'
 #' @return A list with
 #'   * `catch`: `catch` with UNK rows split into AD/UM rows. Adds `fin_mark_raw`,
@@ -99,6 +115,7 @@ reassign_unk_marks <- function(
     prior = c(0.5, 0.5),
     kept_unk_as_ad = FALSE,
     kept_code = "Kept",
+    record_id = "catch_id",
     seed = NULL
 ) {
   rate_draw <- match.arg(rate_draw)
@@ -133,14 +150,30 @@ reassign_unk_marks <- function(
     cli::cli_abort("{.arg prior} must be two positive numbers, c(UM, AD).")
   }
 
-  # ---- 2. Seed locally; the global RNG state is restored on exit ----
-  if (!is.null(seed)) {
-    old_seed <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
-    on.exit({
-      if (is.null(old_seed)) rm(".Random.seed", envir = globalenv())
-      else assign(".Random.seed", old_seed, envir = globalenv())
-    }, add = TRUE)
-    set.seed(seed)
+  if (!is.null(seed) && (!is.numeric(seed) || length(seed) != 1 || is.na(seed))) {
+    cli::cli_abort("{.arg seed} must be a single number or NULL.")
+  }
+
+  # ---- 2. Record-level seeding; the global RNG state is restored on exit ----
+  # Each draw is seeded from `seed` plus a stable key (stratum or catch record),
+  # so one record's split does not depend on row order or on other records.
+  if (is.null(seed)) seed <- sample.int(.Machine$integer.max, 1L)
+  old_seed <- get0(".Random.seed", envir = globalenv(), inherits = FALSE)
+  on.exit({
+    if (!is.null(old_seed)) {
+      assign(".Random.seed", old_seed, envir = globalenv())
+    } else if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) {
+      rm(".Random.seed", envir = globalenv())
+    }
+  }, add = TRUE)
+  # Deterministic string -> integer seed (polynomial hash mod 2^31 - 1, base R only)
+  key_seed <- function(...) {
+    keys <- paste(seed, ..., sep = "|")
+    vapply(keys, function(k) {
+      h <- 0
+      for (b in utf8ToInt(k)) h <- (h * 31 + b) %% 2147483647
+      as.integer(h)
+    }, integer(1), USE.NAMES = FALSE)
   }
 
   # ---- 3. Attach section, date and week from the interview table ----
@@ -166,6 +199,26 @@ reassign_unk_marks <- function(
       week        = lubridate::floor_date(as.Date(event_date), "week", week_start = 1)  # Monday start; NA-safe
     ) |>
     dplyr::select(-".section_num", -".event_date")
+
+  # Stable key for each catch record, used to seed its binomial split
+  if (!is.null(record_id) && record_id %in% orig_cols) {
+    if (anyNA(catch[[record_id]]) || anyDuplicated(catch[[record_id]])) {
+      cli::cli_abort("{.field {record_id}} must be unique and non-missing to key the random draws.")
+    }
+    cj$.key <- as.character(catch[[record_id]])
+  } else {
+    cli::cli_alert_warning(paste0(
+      "No ", if (is.null(record_id)) "record_id" else record_id,
+      " column in catch; keying draws on interview, species, ",
+      "life stage, fate, mark and row order within the interview."
+    ))
+    cj <- cj |>
+      dplyr::mutate(
+        .key = paste(interview_id, species, life_stage, fate, fin_mark,
+                     dplyr::row_number(), sep = "_"),
+        .by = c(interview_id, species, life_stage, fate, fin_mark)
+      )
+  }
 
   strata_cols <- setdiff(unique(unlist(strata)), "week_window")
   bad_strata <- setdiff(strata_cols, names(cj))
@@ -254,10 +307,16 @@ reassign_unk_marks <- function(
 
   # ---- 7. Draw one mark rate per stratum, then split each UNK row binomially ----
   # All rows in a stratum share one rate draw, so they are imputed consistently.
+  # Each stratum's draw is seeded from its own label, so it does not depend on
+  # which other strata are in use.
   strata_used <- unk[!unresolved & unk$unk_rate_level > 0, , drop = FALSE] |>
     dplyr::distinct(unk_rate_level, unk_stratum, n_AD, n_UM)
   strata_used$unk_p_um <- if (rate_draw == "posterior") {
-    stats::rbeta(nrow(strata_used), strata_used$n_UM + prior[1], strata_used$n_AD + prior[2])
+    rate_seeds <- key_seed("rate", strata_used$unk_rate_level, strata_used$unk_stratum)
+    vapply(seq_len(nrow(strata_used)), function(i) {
+      set.seed(rate_seeds[i])
+      stats::rbeta(1, strata_used$n_UM[i] + prior[1], strata_used$n_AD[i] + prior[2])
+    }, numeric(1))
   } else {
     strata_used$n_UM / (strata_used$n_AD + strata_used$n_UM)
   }
@@ -268,7 +327,12 @@ reassign_unk_marks <- function(
 
   res <- unk[!unresolved, , drop = FALSE] |>
     dplyr::left_join(rates, by = c("unk_rate_level", "unk_stratum"))
-  res$n_to_um <- stats::rbinom(nrow(res), size = res$fish_count, prob = res$unk_p_um)
+  # Each record's split is seeded from its own key (record_id), not its row position
+  split_seeds <- key_seed("split", res$.key)
+  res$n_to_um <- vapply(seq_len(nrow(res)), function(i) {
+    set.seed(split_seeds[i])
+    as.numeric(stats::rbinom(1, size = res$fish_count[i], prob = res$unk_p_um[i]))
+  }, numeric(1))
   res$n_to_ad <- res$fish_count - res$n_to_um
 
   # ---- 8. Rebuild the catch table: each UNK row becomes up to two rows (UM, AD) ----
@@ -324,7 +388,8 @@ reassign_unk_marks <- function(
       species = species, unk_codes = unk_codes, ad_code = ad_code, um_code = um_code,
       strata = strata, window_weeks = window_weeks, min_known = min_known,
       min_known_unit = min_known_unit, rate_draw = rate_draw, prior = prior,
-      kept_unk_as_ad = kept_unk_as_ad, kept_code = kept_code, seed = seed
+      kept_unk_as_ad = kept_unk_as_ad, kept_code = kept_code,
+      record_id = record_id, seed = seed
     )
   )
 }

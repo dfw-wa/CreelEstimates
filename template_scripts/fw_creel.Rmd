@@ -26,7 +26,7 @@ params:
   unk_mark_min_known: 5      # interviews with known-mark fish a stratum needs before its mark rate is used
   unk_mark_window_weeks: 1    # sparse weeks pool +/- this many adjacent weeks before using the season rate
   unk_mark_kept_as_ad: FALSE  # TRUE for mark-selective fisheries: kept UNK fish are AD by regulation
-  unk_mark_seed: 1            # change to create alternate imputations
+  unk_mark_seed: 1            # change to create alternate imputations; draws are keyed to catch_id, so data edits don't reshuffle other records
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
   model_used: "Both models"
   data_grade: "provisional"

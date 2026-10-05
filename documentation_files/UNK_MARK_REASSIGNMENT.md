@@ -23,7 +23,7 @@ Set the report parameters in the YAML header of `fw_creel.Rmd`:
 | `unk_mark_min_known` | `10` | Interviews with known-mark fish a group needs before its mark rate is used |
 | `unk_mark_window_weeks` | `1` | Weeks on either side pooled when a single week is too sparse |
 | `unk_mark_kept_as_ad` | `FALSE` | `TRUE` for mark-selective fisheries: kept UNK fish are AD by regulation |
-| `unk_mark_seed` | `1` | Random seed; change to produce an alternate reassignment |
+| `unk_mark_seed` | `1` | Random seed; change to produce an alternate reassignment. Draws are keyed to each record, so editing one record does not reshuffle the others |
 
 Run the tests from the project root:
 
@@ -125,6 +125,7 @@ The figure's seed was chosen to show a typical outcome. Regenerate it with `sour
 
 - **Why not round 75% of 6 = 4.5?** Fish have to be whole numbers, and always rounding the same way would add a small bias. Random draws average out correctly over many records.
 - **Will I get the same answer if I run it again?** Yes. The seed (`unk_mark_seed`) is fixed, so a report reproduces exactly. Changing the seed gives a different but equally valid split.
+- **What if the data change between runs (new interviews, corrected records)?** Each random draw is seeded from `unk_mark_seed` plus a stable key: the group for a mark-rate draw, and the catch record (`catch_id`) for a split. A UNK record's split therefore depends only on that record and its group's known-mark counts, not on row order or other records. Adding or correcting one record changes only that record's split, plus splits in any group whose known-mark counts changed; all other assignments stay the same. This keeps in-season re-runs comparable.
 - **What does one draw represent?** It is one plausible version of the truth, not the only one. That is why the report states that intervals do not include mark-rate uncertainty.
 - **Is this a logistic regression?** No. Both treat known-mark fish as binomial data, but this method estimates a separate rate for each group, with no predictors. A logistic regression would model the rate from effects such as week and section, which lets sparse groups borrow strength from the rest of the data. That is a possible future improvement.
 
@@ -145,4 +146,5 @@ The figure's seed was chosen to show a typical outcome. Regenerate it with `sour
 - **Catch group definitions change meaning.** A catch group defined with `fin_mark = "UM|UNK"` previously included all UNK fish; after reassignment it includes only the UNK fish assigned to UM, and AD groups gain fish.
 - **Knitr cache.** Downstream chunks depend on `dwg_fetch` and the parameter hash only. After changing the reassignment code or manual edits with `enable_cache: TRUE`, clear the `.cache` folder.
 - **Weeks start on Monday** and may not match the PE or BSS time strata.
+- **Record-level seeding.** Draws are keyed on `catch_id` (argument `record_id`). If the catch table has no `catch_id`, a composite key (interview, species, life stage, fate, mark and row order within the interview) is used and a warning is shown. `catch_id` must be unique; the function stops if it is not. The global random-number state is restored on exit, so later random draws (e.g., Stan seeds) are unaffected.
 - **Check fallback use** with `count(filter(unk_marks$catch, mark_imputed), unk_rate_level, wt = fish_count)`.

@@ -80,6 +80,35 @@ test_that("seed gives reproducible results and does not change the global RNG", 
   expect_identical(a$catch, b$catch)
 })
 
+test_that("draws are keyed to records: removing or reordering records leaves other splits unchanged", {
+  fx <- make_fixture()
+  full <- reassign_unk_marks(fx$catch, fx$interview, species = "Chinook", seed = 7)$catch
+  # Remove one UNK record; known-mark counts (and so every rate) are unchanged
+  drop_id <- fx$catch |> filter(fin_mark == "UNK", species == "Chinook") |> slice(1) |> pull(catch_id)
+  edited <- reassign_unk_marks(filter(fx$catch, catch_id != drop_id), fx$interview,
+                               species = "Chinook", seed = 7)$catch
+  # Reverse the row order
+  shuffled <- reassign_unk_marks(arrange(fx$catch, desc(catch_id)), fx$interview,
+                                 species = "Chinook", seed = 7)$catch
+  key_cols <- function(x) x |> select(catch_id, fin_mark, fish_count, unk_p_um) |> arrange(catch_id, fin_mark)
+  expect_equal(key_cols(filter(full, catch_id != drop_id)), key_cols(edited))
+  expect_equal(key_cols(full), key_cols(shuffled))
+  # A different seed still gives a different imputation
+  other <- reassign_unk_marks(fx$catch, fx$interview, species = "Chinook", seed = 8)$catch
+  expect_false(identical(key_cols(full), key_cols(other)))
+})
+
+test_that("a composite key is used when catch_id is missing, and record_id must be unique", {
+  fx <- make_fixture()
+  expect_message(
+    out <- reassign_unk_marks(select(fx$catch, -catch_id), fx$interview, species = "Chinook", seed = 7),
+    "catch_id"
+  )
+  expect_equal(sum(out$catch$fish_count), sum(fx$catch$fish_count))
+  dup <- fx$catch |> mutate(catch_id = 1L)
+  expect_error(reassign_unk_marks(dup, fx$interview, species = "Chinook", seed = 7), "unique")
+})
+
 test_that("falls back to coarser strata when fine strata are sparse", {
   fx <- make_fixture()
   out_fine   <- reassign_unk_marks(fx$catch, fx$interview, species = "Chinook", min_known = 1, seed = 1)

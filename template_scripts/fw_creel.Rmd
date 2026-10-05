@@ -3,14 +3,10 @@ title: "Freshwater Creel Report <br>`r params$fishery_name`"
 date: "`r Sys.Date()`"
 params:
   project_name: "District 14"
-  fishery_name: "Skagit fall salmon 2025"
+  fishery_name: "Skagit spring Chinook 2025 upper"
   est_date_start: ""
   est_date_end: ""
-  est_catch_groups: !r data.frame(rbind(
-    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'UM', fate = 'Kept'),
-    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'AD', fate = 'Kept'),
-    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'UM', fate = 'Released'),
-    c(species = 'Coho', life_stage = 'Adult', fin_mark = 'AD', fate = 'Released')))
+  est_catch_groups: ""
   study_design: "Standard"   
   boat_type_collapse: "Yes"
   fish_location_determines_type: "No"
@@ -21,9 +17,9 @@ params:
   days_wkend: !r c('Saturday', 'Sunday')
   day_length_expansion: "night closure"
   min_fishing_time: 0.5
-  unk_mark_reassign: "binomial"   # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
-  unk_mark_species: "Coho"        # "" = all species; e.g. "Chinook"
-  unk_mark_min_known: 5      # interviews with known-mark fish a stratum needs before its mark rate is used
+  unk_mark_reassign: "none"       # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
+  unk_mark_species: ""            # "" = all species; e.g. "Chinook"
+  unk_mark_min_known: 10     # interviews with known-mark fish a stratum needs before its mark rate is used
   unk_mark_window_weeks: 1    # sparse weeks pool +/- this many adjacent weeks before using the season rate
   unk_mark_kept_as_ad: FALSE  # TRUE for mark-selective fisheries: kept UNK fish are AD by regulation
   unk_mark_seed: 1            # change to create alternate imputations; draws are keyed to catch_id, so data edits don't reshuffle other records

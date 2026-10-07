@@ -144,6 +144,7 @@ The figure's seed was chosen to show a typical outcome. Regenerate it with `sour
 
 - **Run once.** Reassigning data that were already reassigned is an error. When working interactively, re-run the `dwg_fetch` and `manual_edits` chunks before re-running the reassignment chunk.
 - **Catch group definitions change meaning.** A catch group defined with `fin_mark = "UM|UNK"` previously included all UNK fish; after reassignment it includes only the UNK fish assigned to UM, and AD groups gain fish.
+- **Empty UNK catch groups (open issue).** UNK catch groups stay in the estimation pool after reassignment and get estimates of 0. When every UNK fish in a group is reassigned (`unk_left == 0`), that group should be dropped before estimation. TODO: verify the group is dropped for both PE and BSS.
 - **Knitr cache.** Downstream chunks depend on `dwg_fetch` and the parameter hash only. After changing the reassignment code or manual edits with `enable_cache: TRUE`, clear the `.cache` folder.
 - **Weeks start on Monday** and may not match the PE or BSS time strata.
 - **Record-level seeding.** Draws are keyed on `catch_id` (argument `record_id`). If the catch table has no `catch_id`, a composite key (interview, species, life stage, fate, mark and row order within the interview) is used and a warning is shown. `catch_id` must be unique; the function stops if it is not. The global random-number state is restored on exit, so later random draws (e.g., Stan seeds) are unaffected.

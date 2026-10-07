@@ -7,6 +7,7 @@ Optional pre-processing step in `template_scripts/fw_creel.Rmd` that assigns sam
 | File | Purpose |
 |---|---|
 | `R_functions/reassign_unk_marks.R` | Reassigns UNK fish to AD/UM |
+| `R_functions/drop_emptied_catch_groups.R` | Finds catch groups emptied by reassignment so they are not estimated |
 | `R_functions/summarise_unk_reassignment.R` | Reconciliation and bounds table |
 | `R_functions/plot_unk_mark_reassignment.R` | Mark rate and sample size figures by time and section |
 | `tests/test-reassign_unk_marks.R` | Tests (synthetic data only) |
@@ -144,7 +145,11 @@ The figure's seed was chosen to show a typical outcome. Regenerate it with `sour
 
 - **Run once.** Reassigning data that were already reassigned is an error. When working interactively, re-run the `dwg_fetch` and `manual_edits` chunks before re-running the reassignment chunk.
 - **Catch group definitions change meaning.** A catch group defined with `fin_mark = "UM|UNK"` previously included all UNK fish; after reassignment it includes only the UNK fish assigned to UM, and AD groups gain fish.
-- **Empty UNK catch groups (open issue).** UNK catch groups stay in the estimation pool after reassignment and get estimates of 0. When every UNK fish in a group is reassigned (`unk_left == 0`), that group should be dropped before estimation. TODO: verify the group is dropped for both PE and BSS.
+- **Emptied catch groups are dropped from estimation.** A catch group that matched fish in the estimation window before reassignment and matches none after (typically a `fin_mark = "UNK"` group whose fish were all reassigned) is removed from `est_catch_groups` and `resolved_params$est_catch_groups` before the shared aggregation step, so neither PE nor BSS estimates it. The report lists the removed groups. Groups that were already empty before reassignment (e.g., a manually entered group with no catch) are kept and estimate as 0. If reassignment empties every group, the report stops.
+  - **Export:** `creelutils::prep_export()` only requires that every estimated catch group exists in the catch group crosswalk, so a group with no estimates does not cause an error. The exported crosswalk and `params_json` use the pruned list.
+  - **BSS effort:** `process_estimates_bss()` takes the fishery's effort estimate from the first catch group's model fit. If the dropped group would have been first, effort now comes from the next group's fit, so effort estimates can shift slightly compared with a run that kept the group.
+  - **Not verified:** whether the Creel App or other downstream tools expect an estimate for every catch group defined for a fishery. Check with a test upload.
+- **Saved outputs.** `inputs/dwg_raw.rds` holds the catch as fetched, with UNK fish intact (saved before manual edits and reassignment). `inputs/dwg_catch_unk_reassigned.rds` holds the reassigned catch with its audit columns (`fin_mark_raw`, `mark_imputed`, `unk_p_um`, `unk_rate_level`, `unk_stratum`), the settings used (including the seed), and any catch groups dropped from estimation (`dropped_catch_groups`). It is rewritten on every render and is not saved when reassignment is `"none"`.
 - **Knitr cache.** Downstream chunks depend on `dwg_fetch` and the parameter hash only. After changing the reassignment code or manual edits with `enable_cache: TRUE`, clear the `.cache` folder.
 - **Weeks start on Monday** and may not match the PE or BSS time strata.
 - **Record-level seeding.** Draws are keyed on `catch_id` (argument `record_id`). If the catch table has no `catch_id`, a composite key (interview, species, life stage, fate, mark and row order within the interview) is used and a warning is shown. `catch_id` must be unique; the function stops if it is not. The global random-number state is restored on exit, so later random draws (e.g., Stan seeds) are unaffected.

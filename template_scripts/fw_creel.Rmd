@@ -538,7 +538,8 @@ When enabled, sampled fish with an unknown fin mark (UNK) are assigned to AD or 
 # Off by default (params$unk_mark_reassign = "none"). When "binomial", catch rows
 # with fin_mark UNK are split into AD/UM by binomial draws, using mark rates of
 # known-mark fish within species x fate (with finer strata where sample size
-# allows). The original data remain in inputs/dwg_raw.rds; reassigned rows carry
+# allows). The original data remain in inputs/dwg_raw.rds; the reassigned catch
+# and settings are saved to inputs/dwg_catch_unk_reassigned.rds; reassigned rows carry
 # fin_mark_raw and mark_imputed. Mark-rate uncertainty is not carried into the
 # estimates by a single run; see ?reassign_unk_marks (roxygen in R_functions).
 unk_method <- resolved_params$unk_mark_reassign %||% "none"
@@ -557,13 +558,37 @@ if (unk_method == "binomial") {
     rate_draw = "posterior",
     seed      = resolved_params$unk_mark_seed %||% 1
   )
+  # Remove catch groups that reassignment emptied (e.g., UNK groups) so neither PE nor BSS estimates them
+  cg_pruned <- drop_emptied_catch_groups(
+    catch_before = dwg$catch,
+    catch_after = unk_marks$catch,
+    interview = dwg$interview,
+    est_catch_groups = est_catch_groups,
+    date_start = resolved_params$est_date_start,
+    date_end = resolved_params$est_date_end
+  )
+  if (nrow(cg_pruned$kept) == 0) {
+    cli::cli_abort("UNK reassignment emptied every selected catch group; nothing left to estimate.")
+  }
+  unk_dropped_groups <- if (nrow(cg_pruned$dropped)) cg_pruned$dropped else NULL
+  if (!is.null(unk_dropped_groups)) {
+    est_catch_groups <- cg_pruned$kept
+    resolved_params$est_catch_groups <- est_catch_groups[c("combined_catch_group", "model_catch_group_id")]
+    cli::cli_alert_info("Dropped {nrow(unk_dropped_groups)} catch group{?s} emptied by UNK reassignment: {.val {unk_dropped_groups$combined_catch_group}}")
+  }
   dwg$catch <- unk_marks$catch
+  # Audit copy: reassigned catch (fin_mark_raw, mark_imputed, unk_p_um, ...), settings and dropped catch groups
+  saveRDS(
+    c(unk_marks, list(dropped_catch_groups = cg_pruned$dropped)),
+    file.path(outputs_folders$inputs, "dwg_catch_unk_reassigned.rds")
+  )
   unk_summary <- summarise_unk_reassignment(unk_marks$catch, species = unk_marks$settings$species)
   unk_plots <- plot_unk_mark_reassignment(unk_marks$catch, dwg$interview,
                                           species = unk_marks$settings$species)
   unk_plot_height <- 3 + 3 * (attr(unk_plots, "n_sections") %||% 1)
 } else {
   unk_summary <- NULL
+  unk_dropped_groups <- NULL
   unk_plots <- NULL
   unk_plot_height <- 6
   cli::cli_alert_info("UNK fin marks not reassigned (params$unk_mark_reassign = 'none').")
@@ -588,6 +613,16 @@ unk_summary |>
     n_total = "Total",
     ad_share_low = "Low", ad_share_imp = "Reassigned", ad_share_high = "High"
   )
+```
+
+```{r table_unk_dropped_groups, eval=!is.null(unk_dropped_groups)}
+# These groups matched fish before reassignment and none after, so they are not estimated (PE or BSS)
+unk_dropped_groups |>
+  select(species, life_stage, fin_mark, fate) |>
+  gt() |>
+  tab_header(title = "Catch groups removed from estimation",
+             subtitle = "All UNK fish in these groups were reassigned, leaving no fish to estimate") |>
+  cols_label(species = "Species", life_stage = "Life stage", fin_mark = "Mark status", fate = "Fate")
 ```
 
 ```{r plot_unk_mark_reassignment, eval=!is.null(unk_plots), fig.height=min(unk_plot_height, 20), fig.cap="Observed mark rates (AD share of known-mark fish; point size = sample size), mark rates after reassignment (dashed), and counts of fish by status, including UNK fish reassigned to AD or UM. One figure per species and fate; rows are sections and columns are life stages where more than one exists."}

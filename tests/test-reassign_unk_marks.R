@@ -274,3 +274,28 @@ test_that("summarise_unk_reassignment reconciles fish and orders the bounds", {
   expect_true(all(s$ad_share_low <= s$ad_share_imp & s$ad_share_imp <= s$ad_share_high))
   expect_equal(unique(summarise_unk_reassignment(out$catch, species = "Coho")$species), "Coho")
 })
+
+test_that("drop_emptied_catch_groups removes only groups that reassignment emptied", {
+  source(here::here("R_functions", "drop_emptied_catch_groups.R"))
+  fx <- make_fixture()
+  out <- reassign_unk_marks(fx$catch, fx$interview, species = "Chinook", seed = 1)
+  grp <- function(...) data.frame(species = c(...)[1], life_stage = c(...)[2], fin_mark = c(...)[3], fate = c(...)[4])
+  cg <- rbind(
+    grp("Chinook", "Adult", "UNK", "Released"),     # emptied
+    grp("Chinook", "Adult", "UM", "Released"),      # gains fish
+    grp("Chinook", "Adult", "UM|UNK", "Released"),  # regex still matches fish
+    grp("Coho", "Adult", "UNK", "Released"),        # UNK left (species not reassigned)
+    grp("Steelhead", "Adult", "UM", "Kept")         # empty before and after
+  )
+  win <- c(min(fx$interview$event_date), max(fx$interview$event_date))
+  res <- drop_emptied_catch_groups(fx$catch, out$catch, fx$interview, cg, win[1], win[2])
+  expect_equal(res$dropped$fin_mark, "UNK")
+  expect_equal(res$dropped$species, "Chinook")
+  expect_equal(nrow(res$kept), 4)
+  # UNK fish only outside the window do not count as emptied
+  early <- drop_emptied_catch_groups(fx$catch, out$catch, fx$interview, cg, win[1] - 30, win[1] - 20)
+  expect_equal(nrow(early$dropped), 0)
+  # reassignment off: catch unchanged, nothing dropped
+  none <- drop_emptied_catch_groups(fx$catch, fx$catch, fx$interview, cg, win[1], win[2])
+  expect_equal(nrow(none$dropped), 0)
+})

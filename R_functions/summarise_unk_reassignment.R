@@ -8,17 +8,23 @@
 #'
 #' @param catch Output of `reassign_unk_marks()$catch`.
 #' @param species Species to include; `NULL` includes every species with UNK fish.
+#' @param catch_groups Optional data frame of selected catch groups; when given,
+#'   only catch rows inside these groups are summarised (see [unk_in_catch_groups()]).
 #' @param unk_codes,ad_code,um_code Same as in [reassign_unk_marks()].
 #'
 #' @return A tibble, or `NULL` if there are no UNK fish.
 summarise_unk_reassignment <- function(
     catch,
     species = NULL,
+    catch_groups = NULL,
     unk_codes = "UNK",
     ad_code = "AD",
     um_code = "UM"
 ) {
   keep_species <- species %||% unique(catch$species)
+  if (!is.null(catch_groups)) {
+    catch <- catch[unk_in_catch_groups(catch, catch_groups, unk_codes, ad_code, um_code), , drop = FALSE]
+  }
 
   out <- catch |>
     dplyr::filter(species %in% keep_species, !is.na(fish_count)) |>

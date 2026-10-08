@@ -17,6 +17,8 @@
 #' @param interview Interview table with `interview_id`, `section_num`, `event_date`.
 #' @param species Species to plot; `NULL` plots every species with UNK fish.
 #'   Use the same value passed to [reassign_unk_marks()].
+#' @param catch_groups Optional data frame of selected catch groups; when given,
+#'   only catch rows inside these groups are plotted (see [unk_in_catch_groups()]).
 #' @param unk_codes,ad_code,um_code Same as in [reassign_unk_marks()].
 #'
 #' @return A named list of patchwork objects (one per species x fate), with
@@ -26,6 +28,7 @@ plot_unk_mark_reassignment <- function(
     catch,
     interview,
     species = NULL,
+    catch_groups = NULL,
     unk_codes = "UNK",
     ad_code = "AD",
     um_code = "UM"
@@ -66,6 +69,10 @@ plot_unk_mark_reassignment <- function(
       section = paste("Section", .section_num)
     ) |>
     dplyr::filter(!is.na(status))
+
+  if (!is.null(catch_groups)) {
+    d <- d[unk_in_catch_groups(d, catch_groups, unk_codes, ad_code, um_code), , drop = FALSE]
+  }
 
   # Rows without a matching interview date can't be placed in time; report them so totals reconcile
   no_date <- is.na(d$.event_date)

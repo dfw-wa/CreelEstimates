@@ -1,3 +1,35 @@
+#' Flag catch rows that fall inside the selected catch groups
+#'
+#' A row is in scope if its species, life stage and fate match a catch group
+#' and that group's `fin_mark` pattern matches AD, UM or UNK (so a group such as
+#' `"UM|UNK"` or `"UNK"` counts). Matching mirrors `prep_dwg_interview_catch()`:
+#' each field is a regex applied with `str_detect()`, with NA treated as "NA".
+#' Used to limit reporting, not the reassignment itself.
+#'
+#' @param catch Data frame with `species`, `life_stage`, `fate`.
+#' @param catch_groups Data frame with `species`, `life_stage`, `fin_mark`, `fate`.
+#' @param unk_codes,ad_code,um_code Same as in [reassign_unk_marks()].
+#'
+#' @return Logical vector, one per row of `catch`.
+unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code = "AD", um_code = "UM") {
+  comps <- c("species", "life_stage", "fin_mark", "fate")
+  as_text <- function(x) tidyr::replace_na(as.character(x), "NA")
+  groups <- as.data.frame(catch_groups)[comps]
+  groups[] <- lapply(groups, as_text)
+  mark_codes <- c(ad_code, um_code, unk_codes)
+  sp <- as_text(catch$species)
+  ls <- as_text(catch$life_stage)
+  fa <- as_text(catch$fate)
+  hit <- rep(FALSE, nrow(catch))
+  for (i in seq_len(nrow(groups))) {
+    if (!any(stringr::str_detect(mark_codes, groups$fin_mark[i]))) next
+    hit <- hit | (stringr::str_detect(sp, groups$species[i]) &
+                    stringr::str_detect(ls, groups$life_stage[i]) &
+                    stringr::str_detect(fa, groups$fate[i]))
+  }
+  hit
+}
+
 #' Reassign unknown fin marks (UNK) to AD or UM before estimation
 #'
 #' Pre-processing step for interview catch data. Each catch row with an unknown
@@ -82,6 +114,10 @@
 #'   interview are reordered.
 #' @param seed Integer seed for reproducible reassignment; see Details.
 #'   `NULL` draws one at random.
+#' @param catch_groups Optional data frame of selected catch groups (`species`,
+#'   `life_stage`, `fin_mark`, `fate`). Does not change which fish are
+#'   reassigned or their splits; it only limits the warning about fish left
+#'   as UNK to fish inside these groups (see [unk_in_catch_groups()]).
 #'
 #' @return A list with
 #'   * `catch`: `catch` with UNK rows split into AD/UM rows. Adds `fin_mark_raw`,
@@ -116,7 +152,8 @@ reassign_unk_marks <- function(
     kept_unk_as_ad = FALSE,
     kept_code = "Kept",
     record_id = "catch_id",
-    seed = NULL
+    seed = NULL,
+    catch_groups = NULL
 ) {
   rate_draw <- match.arg(rate_draw)
   min_known_unit <- match.arg(min_known_unit)
@@ -297,9 +334,12 @@ reassign_unk_marks <- function(
   }
 
   unresolved <- is.na(unk$unk_rate_level)
-  if (any(unresolved)) {
+  # With catch_groups, only warn about fish that could affect the selected groups
+  warn_rows <- unresolved &
+    if (is.null(catch_groups)) TRUE else unk_in_catch_groups(unk, catch_groups, unk_codes, ad_code, um_code)
+  if (any(warn_rows)) {
     cli::cli_alert_warning(paste0(
-      sum(unk$fish_count[unresolved]), " UNK fish in ", sum(unresolved),
+      sum(unk$fish_count[warn_rows]), " UNK fish in ", sum(warn_rows),
       " row(s) had no stratum with >= ", min_known, " ", min_known_unit,
       " with known-mark fish and were left as UNK."
     ))
@@ -389,7 +429,7 @@ reassign_unk_marks <- function(
       strata = strata, window_weeks = window_weeks, min_known = min_known,
       min_known_unit = min_known_unit, rate_draw = rate_draw, prior = prior,
       kept_unk_as_ad = kept_unk_as_ad, kept_code = kept_code,
-      record_id = record_id, seed = seed
+      record_id = record_id, seed = seed, catch_groups = catch_groups
     )
   )
 }

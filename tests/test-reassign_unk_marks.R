@@ -299,3 +299,46 @@ test_that("drop_emptied_catch_groups removes only groups that reassignment empti
   none <- drop_emptied_catch_groups(fx$catch, fx$catch, fx$interview, cg, win[1], win[2])
   expect_equal(nrow(none$dropped), 0)
 })
+
+test_that("catch_groups limits reporting only: scope helper, summary, plots and warning", {
+  source(here::here("R_functions", "summarise_unk_reassignment.R"))
+  source(here::here("R_functions", "plot_unk_mark_reassignment.R"))
+  library(patchwork)
+  fx <- make_fixture()
+  grp <- function(sp, ls, fm, fa) data.frame(species = sp, life_stage = ls, fin_mark = fm, fate = fa)
+  cg <- grp("Chinook", "Adult", "UM", "Released")
+
+  # helper: species/life stage/fate must match; mark pattern must match AD, UM or UNK
+  hit <- unk_in_catch_groups(fx$catch, cg)
+  expect_true(all(fx$catch$species[hit] == "Chinook" & fx$catch$life_stage[hit] == "Adult" & fx$catch$fate[hit] == "Released"))
+  expect_equal(sum(hit), sum(fx$catch$species == "Chinook" & fx$catch$life_stage == "Adult" & fx$catch$fate == "Released"))
+  expect_false(any(unk_in_catch_groups(fx$catch, grp("Chinook", "Adult", "XX", "Released"))))
+  expect_true(all(unk_in_catch_groups(fx$catch, grp("Chinook|Coho", "Adult", "UM|UNK", "Released"))[fx$catch$species == "Coho"]))
+
+  # reassignment itself is unchanged by catch_groups
+  a <- reassign_unk_marks(fx$catch, fx$interview, seed = 7)
+  b <- reassign_unk_marks(fx$catch, fx$interview, seed = 7, catch_groups = cg)
+  expect_identical(a$catch, b$catch)
+
+  # summary and plots only show the selected catch groups
+  s_all <- summarise_unk_reassignment(a$catch)
+  s_cg  <- summarise_unk_reassignment(a$catch, catch_groups = cg)
+  expect_true(nrow(s_all) > nrow(s_cg))
+  expect_equal(s_cg$species, "Chinook")
+  expect_equal(s_cg$life_stage, "Adult")
+  expect_equal(s_cg$fate, "Released")
+  p_cg <- plot_unk_mark_reassignment(a$catch, fx$interview, catch_groups = cg)
+  expect_equal(names(p_cg), "Chinook_Released")
+
+  # the left-as-UNK warning only counts fish inside the selected groups
+  msgs_for <- function(groups) {
+    msgs <- character()
+    withCallingHandlers(
+      reassign_unk_marks(fx$catch, fx$interview, min_known = 1000, seed = 7, catch_groups = groups),
+      message = function(m) { msgs <<- c(msgs, conditionMessage(m)); invokeRestart("muffleMessage") }
+    )
+    msgs
+  }
+  expect_true(any(grepl("left as UNK", msgs_for(cg))))
+  expect_false(any(grepl("left as UNK", msgs_for(grp("Steelhead", "Adult", "UM", "Released")))))
+})

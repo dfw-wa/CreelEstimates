@@ -19,6 +19,8 @@
 #'   Use the same value passed to [reassign_unk_marks()].
 #' @param catch_groups Optional data frame of selected catch groups; when given,
 #'   only catch rows inside these groups are plotted (see [unk_in_catch_groups()]).
+#' @param date_start,date_end Optional inclusive estimation window; only catch from
+#'   interviews inside it is plotted. Supply both or neither.
 #' @param unk_codes,ad_code,um_code Same as in [reassign_unk_marks()].
 #'
 #' @return A named list of patchwork objects (one per species x fate), with
@@ -29,6 +31,8 @@ plot_unk_mark_reassignment <- function(
     interview,
     species = NULL,
     catch_groups = NULL,
+    date_start = NULL,
+    date_end = NULL,
     unk_codes = "UNK",
     ad_code = "AD",
     um_code = "UM"
@@ -80,6 +84,7 @@ plot_unk_mark_reassignment <- function(
     cli::cli_alert_warning("{sum(d$fish_count[no_date])} fish in {sum(no_date)} catch row{?s} have no interview date and are not plotted.")
     d <- d[!no_date, , drop = FALSE]
   }
+  d <- d[date_in_window(d$.event_date, date_start, date_end), , drop = FALSE]
 
   # ---- 4. Keep only species x fate groups that had UNK fish ----
   groups <- d |>
@@ -111,7 +116,7 @@ plot_unk_mark_reassignment <- function(
       dplyr::summarise(n = sum(fish_count), .groups = "drop") |>
       dplyr::mutate(status = factor(status, levels = status_levels))
 
-    # AD share per cell (top panel). "Observed" uses known-mark fish only;
+    # AD mark rate per cell (top panel). "Observed" uses known-mark fish only;
     # "Reassigned" adds imputed fish, whose rate may come from a coarser stratum.
     rates <- counts |>
       tidyr::pivot_wider(names_from = status, values_from = n, values_fill = 0,
@@ -162,7 +167,7 @@ plot_unk_mark_reassignment <- function(
       ggplot2::scale_colour_manual(values = c(Observed = "black", Reassigned = "#d95f02")) +
       ggplot2::scale_linetype_manual(values = c(Observed = "solid", Reassigned = "dashed")) +
       ggplot2::scale_size_area(max_size = 4, name = "Known-mark\nsample size") +
-      ggplot2::labs(x = NULL, y = "Mark rate (AD share)", colour = NULL, linetype = NULL) +
+      ggplot2::labs(x = NULL, y = "AD mark rate", colour = NULL, linetype = NULL) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "right")
 

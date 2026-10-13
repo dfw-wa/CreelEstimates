@@ -30,6 +30,34 @@ unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code 
   hit
 }
 
+#' Flag dates inside the estimation window
+#'
+#' @param x Date-like vector.
+#' @param date_start,date_end Inclusive window; if either is `NULL`, every element is in the window.
+#'
+#' @return Logical vector; `NA` dates are outside a supplied window.
+date_in_window <- function(x, date_start = NULL, date_end = NULL) {
+  if (is.null(date_start) || is.null(date_end)) return(rep(TRUE, length(x)))
+  d <- as.Date(x)
+  !is.na(d) & d >= as.Date(date_start) & d <= as.Date(date_end)
+}
+
+#' Flag catch rows whose interview falls inside the estimation window
+#'
+#' Mirrors the `creel_catch` table in the report: rows are matched to
+#' `interview$event_date` by `interview_id`; rows without a matching interview
+#' or date are outside a supplied window.
+#'
+#' @param catch Data frame with `interview_id`.
+#' @param interview Data frame with `interview_id`, `event_date`.
+#' @param date_start,date_end Inclusive window; if either is `NULL`, every row is in the window.
+#'
+#' @return Logical vector, one per row of `catch`.
+catch_in_window <- function(catch, interview, date_start = NULL, date_end = NULL) {
+  date_in_window(interview$event_date[match(catch$interview_id, interview$interview_id)],
+                 date_start, date_end)
+}
+
 #' Reassign unknown fin marks (UNK) to AD or UM before estimation
 #'
 #' Pre-processing step for interview catch data. Each catch row with an unknown
@@ -49,8 +77,10 @@ unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code 
 #' `min_known` interviews (or fish, see `min_known_unit`) with known-mark fish.
 #' The pseudo-column `week_window` pools the row's week with `window_weeks`
 #' weeks on either side, so sparse weeks borrow from neighbours before falling
-#' back to the whole season. Rows that no set can resolve are left as UNK and
-#' reported.
+#' back to the whole season. Giving several widths (e.g., `c(1, 2, 3)`) makes
+#' one tier per width, narrowest first, so a row uses the narrowest window that
+#' reaches `min_known`; `unk_rate_level` counts these tiers. Rows that no set can
+#' resolve are left as UNK and reported.
 #'
 #' **Sampling unit.** Fish caught by one angler group are not independent, so by
 #' default `min_known` counts interviews, not fish.
@@ -83,6 +113,11 @@ unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code 
 #' not change later random draws (e.g., Stan seeds). If `seed` is `NULL`, a
 #' seed is drawn at random and reported in `settings$seed`.
 #'
+#' **Estimation window.** With `date_start` and `date_end`, only interviews in
+#' the window supply known-mark counts and only UNK fish in the window are
+#' reassigned. Rows outside the window (or without an interview date) are left
+#' unchanged, because estimation does not use them.
+#'
 #' **Run once.** Calling this on catch data that were already reassigned is an
 #' error, because the audit columns would be overwritten. Start from the raw
 #' catch (e.g., `inputs/dwg_raw.rds`) when re-running.
@@ -99,6 +134,7 @@ unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code 
 #'   columns: any in `catch`, plus `section_num`, `event_date`, `week`
 #'   (Monday start of the week of `event_date`), and `week_window` (see Details).
 #' @param window_weeks Weeks on either side of the row's week pooled by `week_window`.
+#'   A vector, e.g. `c(1, 2, 3)`, tries each width in turn (narrowest first).
 #' @param min_known Minimum sample a stratum needs before its rate is used.
 #' @param min_known_unit `"interviews"` (default) counts interviews with
 #'   known-mark fish; `"fish"` counts known-mark fish.
@@ -118,6 +154,8 @@ unk_in_catch_groups <- function(catch, catch_groups, unk_codes = "UNK", ad_code 
 #'   `life_stage`, `fin_mark`, `fate`). Does not change which fish are
 #'   reassigned or their splits; it only limits the warning about fish left
 #'   as UNK to fish inside these groups (see [unk_in_catch_groups()]).
+#' @param date_start,date_end Optional inclusive estimation window (see Details).
+#'   Supply both or neither.
 #'
 #' @return A list with
 #'   * `catch`: `catch` with UNK rows split into AD/UM rows. Adds `fin_mark_raw`,
@@ -153,7 +191,9 @@ reassign_unk_marks <- function(
     kept_code = "Kept",
     record_id = "catch_id",
     seed = NULL,
-    catch_groups = NULL
+    catch_groups = NULL,
+    date_start = NULL,
+    date_end = NULL
 ) {
   rate_draw <- match.arg(rate_draw)
   min_known_unit <- match.arg(min_known_unit)
@@ -180,8 +220,9 @@ reassign_unk_marks <- function(
   if (!is.numeric(min_known) || length(min_known) != 1 || min_known < 1) {
     cli::cli_abort("{.arg min_known} must be a single number >= 1.")
   }
-  if (!is.numeric(window_weeks) || length(window_weeks) != 1 || window_weeks < 0 || window_weeks %% 1 != 0) {
-    cli::cli_abort("{.arg window_weeks} must be a single whole number >= 0.")
+  if (!is.numeric(window_weeks) || !length(window_weeks) || anyNA(window_weeks) ||
+      any(window_weeks < 0) || any(window_weeks %% 1 != 0)) {
+    cli::cli_abort("{.arg window_weeks} must be one or more whole numbers >= 0.")
   }
   if (!is.numeric(prior) || length(prior) != 2 || any(prior <= 0)) {
     cli::cli_abort("{.arg prior} must be two positive numbers, c(UM, AD).")
@@ -189,6 +230,9 @@ reassign_unk_marks <- function(
 
   if (!is.null(seed) && (!is.numeric(seed) || length(seed) != 1 || is.na(seed))) {
     cli::cli_abort("{.arg seed} must be a single number or NULL.")
+  }
+  if (is.null(date_start) != is.null(date_end)) {
+    cli::cli_abort("Supply both {.arg date_start} and {.arg date_end}, or neither.")
   }
 
   # ---- 2. Record-level seeding; the global RNG state is restored on exit ----
@@ -264,8 +308,13 @@ reassign_unk_marks <- function(
   # ---- 4. Flag the rows to reassign (UNK) and the rows that inform the rate ----
   # fin_mark NA is neither UNK nor known, so those rows are left untouched.
   in_species <- if (is.null(species)) rep(TRUE, nrow(cj)) else cj$species %in% species
-  is_unk   <- cj$fin_mark %in% unk_codes & in_species
-  is_known <- cj$fin_mark %in% c(ad_code, um_code) & in_species
+  in_window  <- date_in_window(cj$event_date, date_start, date_end)
+  is_unk   <- cj$fin_mark %in% unk_codes & in_species & in_window
+  is_known <- cj$fin_mark %in% c(ad_code, um_code) & in_species & in_window
+  n_unk_outside <- sum(cj$fish_count[cj$fin_mark %in% unk_codes & in_species & !in_window], na.rm = TRUE)
+  if (n_unk_outside > 0) {
+    cli::cli_alert_info("{n_unk_outside} UNK fish outside the estimation window (or without an interview date) were left unchanged.")
+  }
 
   if (any(is_unk & is.na(cj$fish_count))) {
     cli::cli_alert_warning("UNK rows with missing fish_count are left unchanged.")
@@ -287,12 +336,20 @@ reassign_unk_marks <- function(
         .groups = "drop"
       )
   }
-  # week_window is matched on week; each week's counts are added to every week within +/- window_weeks
-  join_keys <- purrr::map(strata, \(s) replace(s, s == "week_window", "week"))
-  rate_tables <- purrr::map2(strata, join_keys, function(s, keys) {
-    if (!"week_window" %in% s) return(count_known(known, keys))
+  # week_window is matched on week; each week's counts are added to every week within +/- the window
+  # Each week_window set becomes one tier per window width (narrowest first), so a row widens gradually
+  tiers <- unlist(purrr::map(strata, function(s) {
+    if ("week_window" %in% s) {
+      purrr::map(sort(unique(window_weeks)), \(w) list(cols = s, window = w))
+    } else {
+      list(list(cols = s, window = NA_real_))
+    }
+  }), recursive = FALSE)
+  join_keys <- purrr::map(tiers, \(t) replace(t$cols, t$cols == "week_window", "week"))
+  rate_tables <- purrr::map2(tiers, join_keys, function(t, keys) {
+    if (is.na(t$window)) return(count_known(known, keys))
     count_known(dplyr::filter(known, !is.na(week)), keys) |>
-      tidyr::expand_grid(.offset = -window_weeks:window_weeks) |>
+      tidyr::expand_grid(.offset = -t$window:t$window) |>
       dplyr::mutate(week = week + 7 * .offset) |>
       dplyr::group_by(dplyr::across(dplyr::all_of(keys))) |>
       dplyr::summarise(dplyr::across(c(n_AD, n_UM, n_int), sum), .groups = "drop")
@@ -312,7 +369,7 @@ reassign_unk_marks <- function(
     unk$unk_stratum[is_kept] <- kept_rule_label
   }
 
-  for (k in seq_along(strata)) {
+  for (k in seq_along(tiers)) {
     todo <- which(is.na(unk$unk_rate_level))
     if (!length(todo)) break
     keys <- join_keys[[k]]
@@ -328,8 +385,8 @@ reassign_unk_marks <- function(
     unk$unk_stratum[idx] <- do.call(
       paste, c(lapply(unk[idx, keys, drop = FALSE], as.character), sep = " | ")
     )
-    if ("week_window" %in% strata[[k]]) {
-      unk$unk_stratum[idx] <- paste0(unk$unk_stratum[idx], " +/-", window_weeks, "wk")
+    if (!is.na(tiers[[k]]$window)) {
+      unk$unk_stratum[idx] <- paste0(unk$unk_stratum[idx], " +/-", tiers[[k]]$window, "wk")
     }
   }
 
@@ -429,7 +486,8 @@ reassign_unk_marks <- function(
       strata = strata, window_weeks = window_weeks, min_known = min_known,
       min_known_unit = min_known_unit, rate_draw = rate_draw, prior = prior,
       kept_unk_as_ad = kept_unk_as_ad, kept_code = kept_code,
-      record_id = record_id, seed = seed, catch_groups = catch_groups
+      record_id = record_id, seed = seed, catch_groups = catch_groups,
+      date_start = date_start, date_end = date_end
     )
   )
 }

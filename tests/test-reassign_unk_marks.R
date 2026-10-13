@@ -236,6 +236,34 @@ test_that("sparse weeks borrow from adjacent weeks before the season rate", {
   expect_true(all(filter(none$catch, mark_imputed)$unk_rate_level == 4))
 })
 
+test_that("several window widths are tried narrowest first before the season rate", {
+  known <- bind_rows(
+    known_in_week("2026-09-07", 6, 1, 0,  "UM"),
+    known_in_week("2026-09-14", 4, 1, 10, "AD"),
+    known_in_week("2026-09-21", 3, 1, 20, "UM")
+  )
+  unk <- bind_rows(
+    tibble(interview_id = 100L, event_date = as.Date("2026-09-15"), fin_mark = "UNK", fate = "Released", fish_count = 3),
+    tibble(interview_id = 101L, event_date = as.Date("2026-09-29"), fin_mark = "UNK", fate = "Released", fish_count = 3))
+  fx <- tiny(known, unk)
+  run <- function(w) reassign_unk_marks(fx$catch, fx$interview, seed = 1, rate_draw = "point", window_weeks = w)$catch |>
+    filter(mark_imputed) |> distinct(interview_id, unk_rate_level, unk_stratum, unk_p_um)
+  out <- run(c(1, 2, 3))
+  # tiers: 1-2 week, 3-5 = +/-1, +/-2, +/-3 weeks, 6-7 season
+  expect_equal(out$unk_rate_level[out$interview_id == 100L], 3)             # +/-1 already has 13 interviews
+  expect_equal(out$unk_rate_level[out$interview_id == 101L], 5)             # needs +/-3 (3 + 4 + 6 interviews)
+  expect_match(out$unk_stratum[out$interview_id == 101L], "\\+/-3wk")
+  expect_equal(out$unk_p_um[out$interview_id == 101L], 9 / 13)
+  # width order does not matter; widths too narrow fall through to the season rate
+  expect_equal(run(c(3, 1, 2)), out)
+  expect_equal(run(c(1, 2))$unk_rate_level[run(c(1, 2))$interview_id == 101L], 5)   # tier 5 = season x life stage
+  # one width behaves as before
+  expect_equal(run(1)$unk_rate_level[run(1)$interview_id == 101L], 4)
+  expect_error(reassign_unk_marks(fx$catch, fx$interview, window_weeks = c(1, NA)), "whole numbers")
+  expect_error(reassign_unk_marks(fx$catch, fx$interview, window_weeks = -1), "whole numbers")
+  expect_error(reassign_unk_marks(fx$catch, fx$interview, window_weeks = numeric()), "whole numbers")
+})
+
 test_that("Jeffreys prior is the default and prior is validated", {
   fx <- tiny(known_in_week("2026-09-07", 10, 1, 0, "AD"),
              tibble(interview_id = 100L, event_date = as.Date("2026-09-08"), fin_mark = "UNK", fate = "Released", fish_count = 1))
@@ -271,8 +299,20 @@ test_that("summarise_unk_reassignment reconciles fish and orders the bounds", {
   s <- summarise_unk_reassignment(out$catch)
   expect_equal(s$unk_raw, s$unk_to_AD + s$unk_to_UM + s$unk_left)
   expect_equal(sum(s$n_total), sum(fx$catch$fish_count))
-  expect_true(all(s$ad_share_low <= s$ad_share_imp & s$ad_share_imp <= s$ad_share_high))
+  expect_true(all(s$ad_rate_low <= s$ad_rate_imp & s$ad_rate_imp <= s$ad_rate_high))
   expect_equal(unique(summarise_unk_reassignment(out$catch, species = "Coho")$species), "Coho")
+})
+
+test_that("UNK fish left unassigned do not deflate the reassigned AD mark rate", {
+  fx <- make_rich_poor_fixture()
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1, min_known = 100000))
+  s <- summarise_unk_reassignment(out$catch)
+  expect_true(all(s$unk_left == s$unk_raw))            # nothing could be reassigned
+  expect_equal(s$ad_rate_imp[s$obs_AD + s$obs_UM > 0],
+               (s$obs_AD / (s$obs_AD + s$obs_UM))[s$obs_AD + s$obs_UM > 0])
+  expect_true(all(s$ad_rate_low <= s$ad_rate_imp & s$ad_rate_imp <= s$ad_rate_high))
+  f <- format_unk_summary(s)
+  expect_true(all(f$UNK[f$row != "Known mark (observed)"] == rep(s$unk_left, each = 2)))
 })
 
 test_that("drop_emptied_catch_groups removes only groups that reassignment emptied", {
@@ -341,4 +381,129 @@ test_that("catch_groups limits reporting only: scope helper, summary, plots and 
   }
   expect_true(any(grepl("left as UNK", msgs_for(cg))))
   expect_false(any(grepl("left as UNK", msgs_for(grp("Steelhead", "Adult", "UM", "Released")))))
+})
+
+# ---- Estimation window: reassignment, reporting and reconciliation use in-window interviews only ----
+source(here::here("R_functions", "summarise_unk_reassignment.R"))
+win <- as.Date(c("2026-09-07", "2026-09-13"))   # first week of make_fixture()
+
+# What the report's creel_catch table shows: in-window catch by species x life stage x fate
+creel_catch_totals <- function(catch, interview, win) {
+  catch |>
+    left_join(distinct(interview, interview_id, event_date), by = "interview_id") |>
+    filter(between(event_date, win[1], win[2])) |>
+    summarise(n = sum(fish_count), .by = c(species, life_stage, fate))
+}
+
+test_that("window: rates use in-window known fish only; out-of-window rows are left unchanged", {
+  # AD fish sit in the week right after the window, so they fall inside the +/-1 week pool of the UNK row's week
+  known <- bind_rows(known_in_week("2026-09-07", 10, 1, 0, "UM"),
+                     known_in_week("2026-09-21", 30, 1, 100, "AD"))   # outside the window
+  unk <- bind_rows(
+    tibble(interview_id = 200L, event_date = as.Date("2026-09-15"), fin_mark = "UNK", fate = "Released", fish_count = 4),
+    tibble(interview_id = 201L, event_date = as.Date("2026-10-06"), fin_mark = "UNK", fate = "Released", fish_count = 3))
+  fx <- tiny(known, unk)
+  w <- c("2026-09-07", "2026-09-20")
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1, rate_draw = "point",
+                                             date_start = w[1], date_end = w[2]))
+  inw <- filter(out$catch, interview_id == 200L)
+  expect_true(all(inw$mark_imputed))
+  expect_equal(unique(inw$unk_p_um), 1)              # only the 10 in-window UM interviews inform the rate
+  outw <- filter(out$catch, interview_id == 201L)
+  expect_equal(outw$fin_mark, "UNK")
+  expect_false(any(outw$mark_imputed))
+  # without a window the out-of-window AD fish pull the rate down
+  all_data <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1, rate_draw = "point"))
+  expect_lt(unique(filter(all_data$catch, interview_id == 200L)$unk_p_um), 1)
+  expect_error(reassign_unk_marks(fx$catch, fx$interview, date_start = w[1]), "both")
+})
+
+test_that("window: interviews without a date are left unchanged and excluded", {
+  fx <- make_fixture()
+  iv <- fx$interview
+  undated <- iv$interview_id[iv$event_date == min(iv$event_date)][1]
+  iv$event_date[iv$interview_id == undated] <- NA
+  out <- suppressMessages(reassign_unk_marks(fx$catch, iv, species = "Chinook", seed = 1,
+                                             date_start = win[1], date_end = win[2]))
+  expect_false(any(out$catch$mark_imputed[out$catch$interview_id == undated]))
+  expect_false(any(catch_in_window(fx$catch, iv, win[1], win[2])[fx$catch$interview_id == undated]))
+  expect_warning(
+    check_unk_window_totals(fx$catch, out$catch, iv, win[1], win[2]),
+    regexp = NA   # cli alerts are messages, not warnings
+  )
+  expect_message(check_unk_window_totals(fx$catch, out$catch, iv, win[1], win[2]), "no interview date")
+})
+
+test_that("window: UNK summary reconciles to the reported-catch (creel_catch) totals", {
+  fx <- make_fixture()
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, species = "Chinook", seed = 1,
+                                             date_start = win[1], date_end = win[2]))
+  s <- summarise_unk_reassignment(out$catch, species = "Chinook", interview = fx$interview,
+                                  date_start = win[1], date_end = win[2])
+  raw <- creel_catch_totals(fx$catch, fx$interview, win)
+  cmp <- inner_join(s, raw, by = c("species", "life_stage", "fate"))
+  expect_equal(nrow(cmp), nrow(s))
+  expect_equal(cmp$n_total, cmp$n)                   # known + UNK in window = reported catch
+  expect_equal(cmp$unk_raw, cmp$unk_to_AD + cmp$unk_to_UM + cmp$unk_left)
+  # the unwindowed summary includes out-of-window fish, i.e., the original mismatch
+  s_all <- summarise_unk_reassignment(out$catch, species = "Chinook")
+  expect_gt(sum(s_all$n_total), sum(s$n_total))
+  # no window arguments: unchanged from before
+  expect_identical(summarise_unk_reassignment(out$catch, species = "Chinook"),
+                   summarise_unk_reassignment(out$catch, species = "Chinook", interview = fx$interview))
+  expect_error(summarise_unk_reassignment(out$catch, date_start = win[1], date_end = win[2]), "interview")
+})
+
+test_that("check_unk_window_totals passes on good data and aborts on a tampered total", {
+  fx <- make_fixture()
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1,
+                                             date_start = win[1], date_end = win[2]))
+  expect_no_error(check_unk_window_totals(fx$catch, out$catch, fx$interview, win[1], win[2]))
+  bad <- out$catch
+  i <- which(catch_in_window(bad, fx$interview, win[1], win[2]) & bad$fin_mark == "UM")[1]
+  bad$fish_count[i] <- bad$fish_count[i] + 1
+  expect_error(check_unk_window_totals(fx$catch, bad, fx$interview, win[1], win[2]), "totals changed")
+  # a change outside the window is not this check's concern
+  j <- which(!catch_in_window(bad, fx$interview, win[1], win[2]))[1]
+  ok <- out$catch; ok$fish_count[j] <- ok$fish_count[j] + 1
+  expect_no_error(check_unk_window_totals(fx$catch, ok, fx$interview, win[1], win[2]))
+})
+
+test_that("format_unk_summary gives Known + UNK reassigned = Final rows that match the summary", {
+  fx <- make_rich_poor_fixture()
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1))
+  s <- summarise_unk_reassignment(out$catch)
+  f <- format_unk_summary(s)
+  expect_equal(nrow(f), 3 * nrow(s))
+  expect_equal(f$row[1:3], c("Known mark (observed)", "UNK reassigned", "Final sample"))
+  for (g in unique(f$group)) {
+    d <- filter(f, group == g)
+    expect_equal(d$AD[1] + d$AD[2], d$AD[3])
+    expect_equal(d$UM[1] + d$UM[2], d$UM[3])
+    expect_equal(d$total[1] + d$total[2], d$total[3])
+    expect_equal(d$pct_sample[1] + d$pct_sample[2], 1)
+    expect_equal(d$pct_sample[3], 1)
+    expect_true(all(is.na(d$ci_low[2:3])) && all(is.na(d$ci_high[2:3])))        # CI: known row only
+    expect_true(all(is.na(d$bound_low[1:2])) && all(is.na(d$bound_high[1:2])))  # bounds: final row only
+    expect_true(d$bound_low[3] <= d$ad_rate[3] && d$ad_rate[3] <= d$bound_high[3])
+    expect_true(d$ci_low[1] <= d$ad_rate[1] && d$ad_rate[1] <= d$ci_high[1])
+  }
+  expect_equal(sum(f$total[f$row == "Final sample"]), sum(s$n_total))
+  expect_null(format_unk_summary(NULL))
+})
+
+test_that("window: plots only show in-window interviews", {
+  source(here::here("R_functions", "plot_unk_mark_reassignment.R"))
+  library(patchwork)
+  fx <- make_rich_poor_fixture()
+  w <- as.Date(c("2026-09-14", "2026-09-20"))
+  out <- suppressMessages(reassign_unk_marks(fx$catch, fx$interview, seed = 1, date_start = w[1], date_end = w[2]))
+  plots <- plot_unk_mark_reassignment(out$catch, fx$interview, date_start = w[1], date_end = w[2])
+  for (nm in names(plots)) {
+    tm <- plots[[nm]][[1]]$data$time
+    expect_true(all(tm >= lubridate::floor_date(w[1], "week", week_start = 1) & tm <= w[2]))
+  }
+  # a window with no data leaves nothing to plot
+  none <- plot_unk_mark_reassignment(out$catch, fx$interview, date_start = as.Date("2030-01-01"), date_end = as.Date("2030-01-07"))
+  expect_null(none)
 })

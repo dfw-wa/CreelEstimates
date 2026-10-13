@@ -20,7 +20,7 @@ params:
   unk_mark_reassign: "none"       # "none" or "binomial"; reassign UNK fin marks to AD/UM before estimation
   unk_mark_species: ""            # "" = all species; e.g. "Chinook"
   unk_mark_min_known: 10     # interviews with known-mark fish a stratum needs before its mark rate is used
-  unk_mark_window_weeks: 1    # sparse weeks pool +/- this many adjacent weeks before using the season rate
+  unk_mark_window_weeks: !r c(1, 2, 3)    # sparse weeks pool +/- 1, then 2, then 3 adjacent weeks (narrowest that has enough interviews) before using the season rate
   unk_mark_kept_as_ad: FALSE  # TRUE for mark-selective fisheries: kept UNK fish are AD by regulation
   unk_mark_seed: 1            # change to create alternate imputations; draws are keyed to catch_id, so data edits don't reshuffle other records
   bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
@@ -137,7 +137,13 @@ resolved_params$est_catch_groups = est_catch_groups[c("combined_catch_group", "m
 cat('<details class="params-section">\n')
 cat("<summary>Click to view report parameters</summary>\n\n")
 cat("```yaml\n")
-cat(yaml::as.yaml(resolved_params))
+# UNK reassignment settings are only shown when reassignment is on
+shown_params <- if (identical(resolved_params$unk_mark_reassign, "binomial")) {
+  resolved_params
+} else {
+  resolved_params[!startsWith(names(resolved_params), "unk_mark_")]
+}
+cat(yaml::as.yaml(shown_params))
 cat("```\n\n")
 cat("</details>\n")
 ```
@@ -530,11 +536,15 @@ tab_style(
 
 ```
 
-## Unknown fin mark reassignment (optional)
+```{r unk_reassign_intro, echo=FALSE, results='asis', eval=identical(resolved_params$unk_mark_reassign, "binomial")}
+# Heading and text are written from R so nothing appears in the report when reassignment is off
+cat(r"---(## Unknown fin mark reassignment
 
-When enabled, sampled fish with an unknown fin mark (UNK) are assigned to AD or UM once, using mark rates of known-mark fish in the same stratum (single imputation). Reassigned fish are then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate. The table below shows the range of AD shares if all UNK fish were UM or all were AD. The table and figures cover the selected catch groups only; all UNK fish in the data are reassigned.
+Sampled fish with an unknown fin mark (UNK) are assigned to AD or UM once, using the AD mark rate (AD / (AD + UM)) of known (generally, sampled for AD and angler reported for UM) mark fish in the same stratum. Reassigned fish are then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate. For each species, life stage and fate, the table below shows the known-mark fish, the UNK fish and where they were assigned, and the final sample, whose total matches the reported catch above. The 95% CI, given for known-mark fish only, is a Wilson confidence interval (a standard interval for a proportion that stays within 0-100% even with few fish). It describes how precisely the AD mark rate is known from the fish whose marks were checked or reported. The bounds, given for the final sample only, show the AD mark rate if every UNK fish had been UM (low) or AD (high). They are not a statistical interval, with width depending only on how many fish were UNK, and indicate how sensitive the result is to the assumption that UNK fish resemble known-mark fish. A "UNK left" column appears only if some UNK fish could not be reassigned because too few known-mark fish were available (see `unk_mark_min_known`); those fish are not included in the AD or UM estimates.
+)---")
+```
 
-```{r reassign_unk_marks, eval=TRUE}
+```{r reassign_unk_marks, eval=TRUE, include=identical(resolved_params$unk_mark_reassign, "binomial")}
 # Off by default (params$unk_mark_reassign = "none"). When "binomial", catch rows
 # with fin_mark UNK are split into AD/UM by binomial draws, using mark rates of
 # known-mark fish within species x fate (with finer strata where sample size
@@ -555,12 +565,17 @@ if (unk_method == "binomial") {
     interview = dwg$interview,
     species   = if (is_blank(resolved_params$unk_mark_species)) NULL else resolved_params$unk_mark_species,
     min_known = resolved_params$unk_mark_min_known %||% 10,
-    window_weeks = resolved_params$unk_mark_window_weeks %||% 1,
+    window_weeks = resolved_params$unk_mark_window_weeks %||% c(1, 2, 3),
     kept_unk_as_ad = isTRUE(resolved_params$unk_mark_kept_as_ad),
     rate_draw = "posterior",
     seed      = resolved_params$unk_mark_seed %||% 1,
-    catch_groups = unk_scope_groups
+    catch_groups = unk_scope_groups,
+    date_start = resolved_params$est_date_start,
+    date_end   = resolved_params$est_date_end
   )
+  # In-window totals must match the reported-catch table above
+  check_unk_window_totals(dwg$catch, unk_marks$catch, dwg$interview,
+                          resolved_params$est_date_start, resolved_params$est_date_end)
   # Remove catch groups that reassignment emptied (e.g., UNK groups) so neither PE nor BSS estimates them
   cg_pruned <- drop_emptied_catch_groups(
     catch_before = dwg$catch,
@@ -591,10 +606,15 @@ if (unk_method == "binomial") {
     file.path(outputs_folders$inputs, "dwg_catch_unk_reassigned.rds")
   )
   unk_summary <- summarise_unk_reassignment(unk_marks$catch, species = unk_marks$settings$species,
-                                            catch_groups = unk_scope_groups)
+                                            catch_groups = unk_scope_groups,
+                                            interview = dwg$interview,
+                                            date_start = resolved_params$est_date_start,
+                                            date_end = resolved_params$est_date_end)
   unk_plots <- plot_unk_mark_reassignment(unk_marks$catch, dwg$interview,
                                           species = unk_marks$settings$species,
-                                          catch_groups = unk_scope_groups)
+                                          catch_groups = unk_scope_groups,
+                                          date_start = resolved_params$est_date_start,
+                                          date_end = resolved_params$est_date_end)
   unk_plot_height <- 3 + 3 * (attr(unk_plots, "n_sections") %||% 1)
 } else {
   unk_summary <- NULL
@@ -605,29 +625,37 @@ if (unk_method == "binomial") {
 }
 ```
 
-```{r table_unk_mark_reassignment, eval=!is.null(unk_summary)}
+```{r table_unk_mark_reassignment, eval=!is.null(unk_summary), include=identical(resolved_params$unk_mark_reassign, "binomial")}
 if (!is.null(unk_summary)) {
-  unk_summary |>
-    gt() |>
+  unk_tbl <- format_unk_summary(unk_summary)
+  unk_gt <- unk_tbl |>
+    gt(groupname_col = "group", rowname_col = "row") |>
     tab_header(
-      title = "UNK fin-mark reassignment in the interview sample",
-      subtitle = "AD share if all UNK were UM (low), as reassigned, and if all UNK were AD (high)"
+      title = "UNK fin-mark reassignment in the interview sample"
     ) |>
-    tab_spanner(label = "Observed", columns = c(obs_AD, obs_UM, unk_raw)) |>
-    tab_spanner(label = "UNK fish", columns = c(unk_to_AD, unk_to_UM, unk_left)) |>
-    tab_spanner(label = "AD share of sample", columns = c(ad_share_low, ad_share_imp, ad_share_high)) |>
-    fmt_percent(columns = starts_with("ad_share"), decimals = 1) |>
+    fmt_percent(columns = c(pct_sample, ad_rate, ci_low, ci_high, bound_low, bound_high), decimals = 1) |>
+    cols_merge_range(ci_low, ci_high, sep = " \u2013 ") |>
+    cols_merge_range(bound_low, bound_high, sep = " \u2013 ") |>
+    sub_missing(missing_text = "") |>
     cols_label(
-      species = "Species", life_stage = "Life stage", fate = "Fate",
-      obs_AD = "AD", obs_UM = "UM", unk_raw = "UNK",
-      unk_to_AD = "to AD", unk_to_UM = "to UM", unk_left = "left UNK",
-      n_total = "Total",
-      ad_share_low = "Low", ad_share_imp = "Reassigned", ad_share_high = "High"
-    )
+      UNK = "UNK left", total = "Total", pct_sample = "% of sample",
+      ad_rate = "AD mark rate", ci_low = "95% CI", bound_low = "Bounds"
+    ) |>
+    tab_footnote("95% Wilson confidence interval for the AD mark rate among known-mark fish (sampling uncertainty only).",
+                 locations = cells_column_labels(ci_low)) |>
+    tab_footnote("AD mark rate if every UNK fish were UM (low) or AD (high); a sensitivity range, not a statistical interval.",
+                 locations = cells_column_labels(bound_low))
+  if (all(unk_tbl$UNK == 0)) {
+    unk_gt <- cols_hide(unk_gt, UNK)
+  } else {
+    unk_gt <- tab_footnote(unk_gt, "UNK fish with too few known-mark fish to reassign; they are not in the AD or UM estimates.",
+                           locations = cells_column_labels(UNK))
+  }
+  unk_gt
 }
 ```
 
-```{r table_unk_dropped_groups, eval=!is.null(unk_dropped_groups)}
+```{r table_unk_dropped_groups, eval=!is.null(unk_dropped_groups), include=identical(resolved_params$unk_mark_reassign, "binomial")}
 # These groups matched fish before reassignment and none after, so they are not estimated (PE or BSS)
 # The NULL guard keeps interactive chunk runs (which ignore eval) from erroring when nothing was dropped
 if (!is.null(unk_dropped_groups)) {
@@ -640,7 +668,7 @@ if (!is.null(unk_dropped_groups)) {
 }
 ```
 
-```{r plot_unk_mark_reassignment, eval=!is.null(unk_plots), fig.height=min(unk_plot_height, 20), fig.cap="Observed mark rates (AD share of known-mark fish; point size = sample size), mark rates after reassignment (dashed), and counts of fish by status, including UNK fish reassigned to AD or UM. One figure per species and fate; rows are sections and columns are life stages where more than one exists."}
+```{r plot_unk_mark_reassignment, eval=!is.null(unk_plots), include=identical(resolved_params$unk_mark_reassign, "binomial"), fig.height=min(unk_plot_height, 20), fig.cap="Observed AD mark rates (AD / (AD + UM) among known-mark fish; point size = sample size), mark rates after reassignment (dashed), and counts of fish by status, including UNK fish reassigned to AD or UM. One figure per species and fate; rows are sections and columns are life stages where more than one exists."}
 purrr::walk(unk_plots, print)
 ```
 

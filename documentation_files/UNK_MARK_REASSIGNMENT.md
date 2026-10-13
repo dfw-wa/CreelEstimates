@@ -22,7 +22,7 @@ Set the report parameters in the YAML header of `fw_creel.Rmd`:
 | `unk_mark_reassign` | `"none"` | `"none"` or `"binomial"` |
 | `unk_mark_species` | `""` | Species to reassign, e.g. `"Coho"`; `""` = all species |
 | `unk_mark_min_known` | `10` | Interviews with known-mark fish a group needs before its mark rate is used |
-| `unk_mark_window_weeks` | `1` | Weeks on either side pooled when a single week is too sparse |
+| `unk_mark_window_weeks` | `c(1, 2, 3)` | Weeks on either side pooled when a single week is too sparse; each width is tried in turn, narrowest first, before the season-wide rate |
 | `unk_mark_kept_as_ad` | `FALSE` | `TRUE` for mark-selective fisheries: kept UNK fish are AD by regulation |
 | `unk_mark_seed` | `1` | Random seed; change to produce an alternate reassignment. Draws are keyed to each record, so editing one record does not reshuffle the others |
 
@@ -46,7 +46,7 @@ Some sampled fish are recorded with an unknown fin mark (UNK) because the adipos
 4. **Fall back when data are sparse.** If a group does not have enough data, the next broader group is tried, in this order:
    1. Same section and week
    2. Same week, all sections
-   3. Same week plus the week before and after, all sections
+   3. Same week plus 1 week before and after, all sections; then 2 weeks, then 3 weeks (`unk_mark_window_weeks`), stopping at the first width with enough data
    4. Whole season, same life stage
    5. Whole season, all life stages
 
@@ -57,7 +57,7 @@ Some sampled fish are recorded with an unknown fin mark (UNK) because the adipos
 8. **Check and report.**
    - **Totals:** the number of fish within each species, life stage, and fate must be unchanged; the code stops if it is not.
    - **Audit trail:** every reassigned record keeps its original mark (`fin_mark_raw`), the group used (`unk_stratum`, `unk_rate_level`), and the rate drawn (`unk_p_um`).
-   - **Table:** shows how UNK fish were split, and the AD share if all UNK were UM or all were AD.
+   - **Table:** shows how UNK fish were split, and the AD mark rate if all UNK were UM or all were AD.
    - **Figures:** show observed and reassigned mark rates, with sample sizes, by week and section.
 
 ### The beta-binomial approach

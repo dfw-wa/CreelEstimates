@@ -73,7 +73,8 @@ summarise_unk_reassignment <- function(
 #' known-mark fish (sampling uncertainty), filled for the known row only.
 #' `bound_low`/`bound_high` are the AD mark rate if all UNK fish were UM / AD
 #' (a sensitivity range, not a statistical interval), filled for the final row
-#' only. All four are `NA` elsewhere.
+#' only. All four are `NA` elsewhere. The report table does not show the bounds
+#' (they are kept here for possible later use).
 #'
 #' @param summ Output of [summarise_unk_reassignment()].
 #'

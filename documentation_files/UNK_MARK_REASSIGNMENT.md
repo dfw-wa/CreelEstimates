@@ -8,7 +8,7 @@ Optional pre-processing step in `template_scripts/fw_creel.Rmd` that assigns sam
 |---|---|
 | `R_functions/reassign_unk_marks.R` | Reassigns UNK fish to AD/UM |
 | `R_functions/drop_emptied_catch_groups.R` | Finds catch groups emptied by reassignment so they are not estimated |
-| `R_functions/summarise_unk_reassignment.R` | Reconciliation and bounds table |
+| `R_functions/summarise_unk_reassignment.R` | Reconciliation table (known, reassigned, final) |
 | `R_functions/plot_unk_mark_reassignment.R` | Mark rate and sample size figures by time and section |
 | `tests/test-reassign_unk_marks.R` | Tests (synthetic data only) |
 | `documentation_files/unk_beta_binomial_example.R` | Regenerates the worked-example figure in this README |
@@ -57,7 +57,7 @@ Some sampled fish are recorded with an unknown fin mark (UNK) because the adipos
 8. **Check and report.**
    - **Totals:** the number of fish within each species, life stage, and fate must be unchanged; the code stops if it is not.
    - **Audit trail:** every reassigned record keeps its original mark (`fin_mark_raw`), the group used (`unk_stratum`, `unk_rate_level`), and the rate drawn (`unk_p_um`).
-   - **Table:** shows how UNK fish were split, and the AD mark rate if all UNK were UM or all were AD.
+   - **Table:** shows how UNK fish were split (known, reassigned, final) and the AD mark rate for each, with a 95% Wilson interval for known-mark fish.
    - **Figures:** show observed and reassigned mark rates, with sample sizes, by week and section.
 
 ### The beta-binomial approach
@@ -138,7 +138,7 @@ The figure's seed was chosen to show a typical outcome. Regenerate it with `sour
 4. **Mark rate is stable within the group used.** Where a sparse week falls back to neighbouring weeks or the whole season, the mark rate is assumed not to change much over that period.
 5. **Sampled interviews represent the fishery** within each section and time period.
 6. **Fish are treated as independent when estimating the rate.** The sample-size rule counts interviews, but the rate itself is based on fish counts, so precision may be slightly overstated when groups catch several fish.
-7. **Single imputation.** UNK fish are reassigned once and then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate. The bounds table shows how much the results could move.
+7. **Single imputation.** UNK fish are reassigned once and then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate.
 8. **Scope.** Rates use all fetched data for the fishery, not only the estimation dates. Fish with a blank mark field are not treated as UNK and are not changed.
 
 ## Implementation notes

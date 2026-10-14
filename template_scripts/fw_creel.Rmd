@@ -540,7 +540,7 @@ tab_style(
 # Heading and text are written from R so nothing appears in the report when reassignment is off
 cat(r"---(## Unknown fin mark reassignment
 
-Sampled fish with an unknown fin mark (UNK) are assigned to AD or UM once, using the AD mark rate (AD / (AD + UM)) of known (generally, sampled for AD and angler reported for UM) mark fish in the same stratum. Reassigned fish are then treated as observed, so effort and catch intervals do not include uncertainty in the mark rate. For each species, life stage and fate, the table below shows the known-mark fish, the UNK fish and where they were assigned, and the final sample, whose total matches the reported catch above. The 95% CI, given for known-mark fish only, is a Wilson confidence interval (a standard interval for a proportion that stays within 0-100% even with few fish). It describes how precisely the AD mark rate is known from the fish whose marks were checked or reported. The bounds, given for the final sample only, show the AD mark rate if every UNK fish had been UM (low) or AD (high). They are not a statistical interval, with width depending only on how many fish were UNK, and indicate how sensitive the result is to the assumption that UNK fish resemble known-mark fish. A "UNK left" column appears only if some UNK fish could not be reassigned because too few known-mark fish were available (see `unk_mark_min_known`); those fish are not included in the AD or UM estimates.
+When this tool is used, fish recorded with an unknown fin mark (UNK) are assigned to AD or UM once, using the AD mark rate (AD / (AD + UM)) of known (generally, sampled for AD and angler reported for UM) mark fish in the same stratum. Reassigned fish are then treated as observed for estimation purposes, and effort and catch intervals do not include uncertainty in the mark rate. For each species, life stage and fate, the table below shows the known-mark fish, the UNK fish and where they were assigned, and the final sample. The AD mark rate is the observed rate for known-mark fish and the estimated rate for UNK fish. The 95% CI, given for known-mark fish only, is a Wilson confidence interval (a standard interval for a proportion that stays within 0-100%). It describes how precisely the AD mark rate is known from the fish whose marks were checked or reported. A "UNK left" column appears only if some UNK fish could not be reassigned because too few known-mark fish were available, and those fish are not included in the AD or UM estimates.
 )---")
 ```
 
@@ -628,23 +628,28 @@ if (unk_method == "binomial") {
 ```{r table_unk_mark_reassignment, eval=!is.null(unk_summary), include=identical(resolved_params$unk_mark_reassign, "binomial")}
 if (!is.null(unk_summary)) {
   unk_tbl <- format_unk_summary(unk_summary)
+  # The all-UNK-as-UM / all-UNK-as-AD bounds are computed but not shown
+  # The rate and CI are built as text: gt::cols_merge() with this pattern hangs when the table is rendered
+  pct <- \(x) scales::percent(x, accuracy = 0.1)
   unk_gt <- unk_tbl |>
+    select(-bound_low, -bound_high) |>
+    mutate(ad_rate = case_when(
+      is.na(ad_rate) ~ "",
+      is.na(ci_low) ~ pct(ad_rate),
+      TRUE ~ paste0(pct(ad_rate), " (", pct(ci_low), " \u2013 ", pct(ci_high), ")")
+    )) |>
+    select(-ci_low, -ci_high) |>
     gt(groupname_col = "group", rowname_col = "row") |>
     tab_header(
       title = "UNK fin-mark reassignment in the interview sample"
     ) |>
-    fmt_percent(columns = c(pct_sample, ad_rate, ci_low, ci_high, bound_low, bound_high), decimals = 1) |>
-    cols_merge_range(ci_low, ci_high, sep = " \u2013 ") |>
-    cols_merge_range(bound_low, bound_high, sep = " \u2013 ") |>
-    sub_missing(missing_text = "") |>
+    fmt_percent(columns = pct_sample, decimals = 1) |>
     cols_label(
       UNK = "UNK left", total = "Total", pct_sample = "% of sample",
-      ad_rate = "AD mark rate", ci_low = "95% CI", bound_low = "Bounds"
+      ad_rate = "AD mark rate (95% CI)"
     ) |>
-    tab_footnote("95% Wilson confidence interval for the AD mark rate among known-mark fish (sampling uncertainty only).",
-                 locations = cells_column_labels(ci_low)) |>
-    tab_footnote("AD mark rate if every UNK fish were UM (low) or AD (high); a sensitivity range, not a statistical interval.",
-                 locations = cells_column_labels(bound_low))
+    tab_footnote("Known-mark row: observed AD mark rate and 95% confidence interval (sampling uncertainty only).",
+                 locations = cells_column_labels(ad_rate))
   if (all(unk_tbl$UNK == 0)) {
     unk_gt <- cols_hide(unk_gt, UNK)
   } else {

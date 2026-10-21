@@ -309,6 +309,8 @@ panel_tot <- (if (is.null(pe_year)) mutate(panel_tot, pe = NA_real_) else
                         if_else(measure == MEASURES[["trips"]] & coalesce(pe, 0) > 0,
                                 paste0("\n", scales::comma(pe, accuracy = 1), " angler hours (PE)"), "")))
 
+CAPTION_WIDTH <- 190
+
 fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   geom_col(width = 0.75, colour = "white", linewidth = 0.4, position = position_stack(reverse = TRUE)) +
   geom_text(data = stack_lab, aes(month, bar_top, label = label), inherit.aes = FALSE,
@@ -320,19 +322,26 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.4))) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = TRUE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
-       caption = paste0(
-         "Bars show monthly estimates of angler trips, CRC salmon harvest, and trips reported to the guide logbook app
-         for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, ",
-         "with the fall window defined as August through December.\n",
-         "Creel-based angler trips are estimated by dividing total angling effort by mean trip length from angler interviews. 
-         creels. A CRC infill month had CRC ",
-         "harvest but no creel on that catch area; its trips are CRC harvest multiplied by a regional\n",
-         "trips-per-fish ratio, and its harvest is the CRC harvest. Infill marked \"proj.\" uses projected ",
-         "2025 CRC harvest (the 2022-2024 average for that month), because 2025 CRC data are not yet complete.\n",
-         "In 2025 a single composite creel covered both rivers (Skagit, Cascade); its estimates are split ",
-         "here by catch area. Guided trips are the salmon trips guides reported in the WDFW guide logbook,\n",
-         "so they are a minimum count. PE angler hours are the fall creels' total effort estimate for the season ",
-         "(angler hours); interview data indicated nearly all of these anglers were targeting salmon."),
+       # One paragraph, wrapped by strwrap() so no source indentation or
+       # hand-placed line break leaks into the plot. Adjust CAPTION_WIDTH
+       # (characters per line) if the figure size changes.
+       caption = paste(strwrap(paste(
+         "Bars show monthly estimates of angler trips, salmon harvest, and guided trips reported in the",
+         "WDFW guide logbook for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, with the",
+         "fall window defined as August through December.",
+         "Creel-based angler trips are estimated by dividing total angling effort by mean trip length from",
+         "angler interviews.",
+         "A CRC infill month had CRC harvest but no creel on that catch area; its trips are CRC harvest",
+         "multiplied by a regional trips-per-fish ratio, and its harvest is the CRC harvest.",
+         "Infill marked \"proj.\" uses projected 2025 CRC harvest (the 2022-2024 average for that month),",
+         "because 2025 CRC data are not yet complete.",
+         "In 2025 a single composite creel covered both rivers (Skagit, Cascade); its estimates are split",
+         "here by catch area.",
+         "Guided trips are the salmon trips guides reported in the WDFW guide logbook, so they are a",
+         "minimum count.",
+         "PE angler hours are the fall creels' total effort estimate for the season (angler hours);",
+         "interview data indicated nearly all of these anglers were targeting salmon."),
+         width = CAPTION_WIDTH), collapse = "\n"),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(text = element_text(colour = "black"), legend.text = element_text(colour = "black"),

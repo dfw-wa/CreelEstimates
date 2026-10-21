@@ -243,7 +243,34 @@ infill_lab <- plot_df |>
             proj = any(projected[str_detect(as.character(segment), "CRC")]),
             .groups = "drop") |>
   filter(crc >= 0.5) |>
-  mutate(label = paste0("CRC ", scales::comma(crc, accuracy = 1), if_else(proj, "\n(projected)", "")))
+  mutate(label = paste0("CRC ", scales::comma(crc, accuracy = 1), if_else(proj, " (proj.)", "")))
+
+# Sample size per bar stack: creel interviews from the Skagit and Cascade
+# fall salmon creels that month (both rivers, as the bars stack both). A
+# month with no creel (CRC infill only) has n = 0. Guided trips are guide
+# logbook counts, not a sample, so that row gets no n.
+int_path <- here("analysis", "pst", "outputs", "04_interview_proportions", "all_interviews.rds")
+n_lab <- NULL
+if (file.exists(int_path)) {
+  ints <- readRDS(int_path)
+  ints <- ints |>
+    filter(fishery_name %in% fall_xw$fall_fishery) |>
+    mutate(date = suppressWarnings(as.Date(as.character(event_date))),
+           year = as.integer(lubridate::year(date)), month = as.integer(lubridate::month(date))) |>
+    filter(!is.na(month))
+  n_int <- if ("interview_id" %in% names(ints)) {
+    ints |> group_by(year, month) |> summarise(n = n_distinct(interview_id), .groups = "drop")
+  } else ints |> count(year, month)
+  n_lab <- plot_df |>
+    filter(measure != MEASURES[["guided_trips"]]) |>
+    group_by(year, measure, month) |>
+    summarise(bar_top = sum(value), .groups = "drop") |>
+    filter(bar_top > 0) |>
+    mutate(m = match(as.character(month), month.abb)) |>
+    left_join(n_int, by = c("year", "m" = "month")) |>
+    mutate(label = paste0("n = ", scales::comma(coalesce(n, 0L), accuracy = 1)))
+} else message(glue("[plot] {int_path} not found - no sample sizes on the figure. ",
+                    "Render analysis/pst/02_ingest/interview_proportions.qmd first."))
 panel_tot <- plot_df |>
   group_by(measure, year) |>
   summarise(total = sum(value), crc = sum(value[str_detect(as.character(segment), "CRC")]), .groups = "drop") |>
@@ -252,20 +279,23 @@ panel_tot <- plot_df |>
 
 fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   geom_col(width = 0.75, colour = "white", linewidth = 0.4, position = position_stack(reverse = TRUE)) +
+  { if (!is.null(n_lab)) geom_text(data = n_lab, aes(month, bar_top, label = label),
+                                  inherit.aes = FALSE, vjust = -0.4, size = 2.2,
+                                  fontface = "italic", colour = "grey40") } +
   geom_text(data = infill_lab, aes(month, bar_top, label = label), inherit.aes = FALSE,
-            vjust = -0.35, size = 2.5, lineheight = 0.9, colour = "grey20") +
+            vjust = if (is.null(n_lab)) -0.35 else -1.6, size = 2.5, colour = "grey20") +
   geom_text(data = panel_tot, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE,
             hjust = -0.05, vjust = 1.4, size = 2.8, colour = "grey25") +
   facet_grid(measure ~ year, scales = "free_y", switch = "y") +
   scale_x_discrete(drop = FALSE) +
-  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.25))) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.35))) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = FALSE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
        subtitle = paste0("Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that ",
                          "catch area: CRC harvest x trips-per-fish ratio (harvest shown is CRC harvest).\n",
                          "2025 is one composite creel (Skagit + Cascade), split here by catch area ",
                          "(830 Skagit, 826 Cascade). Guided trips in every month are guide logbook ",
-                         "reports (a minimum), not creel or CRC."),
+                         "reports (a minimum), not creel or CRC. n = creel interviews that month (both rivers)."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(legend.position = "top", legend.justification = "left",

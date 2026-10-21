@@ -252,7 +252,7 @@ FILL_COLS <- c("Skagit"                   = "#2a78d6",
                "Cascade"                  = "#eb6834",
                "Skagit, CRC infill month"  = "#1baf7a",
                "Cascade, CRC infill month" = "#eda100")
-MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips", salmon_harvest = "Salmon harvest")
+MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips\n(guide logbook based\nminimum count)", salmon_harvest = "Salmon harvest")
 
 no_month <- out |> filter(is.na(month), trips > 0)
 if (nrow(no_month) > 0)
@@ -321,8 +321,7 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
        subtitle = paste0(
          "Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that catch area: ",
          "CRC harvest x trips-per-fish ratio.\n",
-         "2025 is one composite creel (Skagit + Cascade), split here by catch area (830 Skagit, 826 Cascade). ",
-         "Guided trips are guide logbook reports (a minimum).\n",
+         "2025 is one composite creel (Skagit + Cascade), split here by catch area (830 Skagit, 826 Cascade).\n",
          "PE angler hours: all anglers in the fall creels; trips are scaled to salmon-directed effort."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +

@@ -185,8 +185,10 @@ out |> select(year, fall_fishery, catch_area_code, month, basis, trips, boat_tri
 # Interviews: the fall salmon creels' interview count (sample size behind the
 # creel estimates). PE hours: the same design-based PE run as the creel trips
 # (multi_fishery_creel_trips.csv, monthly PE period, NA-area shadow rows
-# dropped as in the assembly) - all anglers in the creel, whereas the trips
-# are scaled to salmon-directed effort, so hours / trips is not a trip length.
+# dropped as in the assembly) - all anglers in the creel, not scaled to
+# salmon-directed effort. For these creels the salmon-directed share the
+# trips carry is 0.94-1 (most months >= 0.98; checked 2026-10-21), so hours
+# and trips are effectively on the same basis.
 int_path <- here("analysis", "pst", "outputs", "04_interview_proportions", "all_interviews.rds")
 n_int <- NULL
 if (file.exists(int_path)) {
@@ -327,8 +329,8 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
          "2025 CRC harvest (the 2022-2024 average for that month), because 2025 CRC data are not yet complete.\n",
          "In 2025 a single composite creel covered both rivers (Skagit + Cascade); its estimates are split ",
          "here by catch area. Guided trips are the salmon trips guides reported in the WDFW guide logbook,\n",
-         "so they are a minimum count. PE angler hours are the creels' total effort for all anglers, ",
-         "while angler trips are scaled to salmon-directed effort, so the two are not directly comparable."),
+         "so they are a minimum count. PE angler hours are the fall creels' total effort estimate for the season ",
+         "(all anglers counted); nearly all of these anglers were targeting salmon."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(text = element_text(colour = "black"), legend.text = element_text(colour = "black"),

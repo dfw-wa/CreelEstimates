@@ -318,11 +318,17 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.4))) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = TRUE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
-       subtitle = paste0(
-         "Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that catch area: ",
-         "CRC harvest x trips-per-fish ratio.\n",
-         "2025 is one composite creel (Skagit + Cascade), split here by catch area (830 Skagit, 826 Cascade).\n",
-         "PE angler hours: all anglers in the fall creels; trips are scaled to salmon-directed effort."),
+       caption = paste0(
+         "Bars show monthly estimates for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, ",
+         "with the fall window defined as August through December.\n",
+         "Creel months are design-based estimates from the fall salmon creels. A CRC infill month had CRC ",
+         "harvest but no creel on that catch area; its trips are CRC harvest multiplied by a regional\n",
+         "trips-per-fish ratio, and its harvest is the CRC harvest. Infill marked \"proj.\" uses projected ",
+         "2025 CRC harvest (the 2022-2024 average for that month), because 2025 CRC data are not yet complete.\n",
+         "In 2025 a single composite creel covered both rivers (Skagit + Cascade); its estimates are split ",
+         "here by catch area. Guided trips are the salmon trips guides reported in the WDFW guide logbook,\n",
+         "so they are a minimum count. PE angler hours are the creels' total effort for all anglers, ",
+         "while angler trips are scaled to salmon-directed effort, so the two are not directly comparable."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(legend.position = "top", legend.justification = "left",
@@ -334,6 +340,8 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
         axis.ticks = element_line(colour = "grey60", linewidth = 0.3),
         panel.spacing.y = unit(0.8, "lines"),
         plot.title.position = "plot",
-        plot.subtitle = element_text(colour = "grey35", size = 8.5))
-ggsave(PNG, fig, width = 11, height = 7.5, dpi = 200, bg = "white")
+        plot.caption.position = "plot",
+        plot.caption = element_text(colour = "grey35", size = 8, hjust = 0, lineheight = 1.1,
+                                    margin = margin(t = 10)))
+ggsave(PNG, fig, width = 11, height = 8, dpi = 200, bg = "white")
 cat(glue("Wrote {PNG}\n"))

@@ -194,18 +194,20 @@ out |> group_by(year, fall_fishery) |>
 cat(glue("\nWrote {OUT}\n"))
 
 # --- Figure -------------------------------------------------------------------
-# Small multiples: columns = year; rows = river x measure (angler trips, guided
-# trips, salmon harvest), each row on its own y-scale (trips and fish never
-# share an axis). Bars by month, coloured by basis, so creel vs CRC infill reads
-# the same in every panel. Each panel is labelled with its total. The CSV above
-# is the table view. Palette: categorical slots 1-3 of the dataviz reference
-# palette, validated (CVD ΔE 9.2; aqua under 3:1 on white, so panels carry
-# totals and the bars a white outline).
+# Small multiples: columns = year; rows = angler trips, guided trips, salmon
+# harvest, each on its own y-scale (trips and fish never share an axis). One
+# bar per month, Skagit and Cascade stacked, creel at the bottom and CRC
+# infill on top. CRC infill months are small next to the creel months, so
+# each carries a value label and each panel's total shows its CRC part. The
+# CSV above is the table view. Palette: categorical slots 1-4 of the dataviz
+# reference palette, validated (CVD ΔE 9.1; aqua and yellow under 3:1 on
+# white, so the infill segments are labelled and the bars outlined).
 PNG <- file.path(ASM, "pst_fw_skagit_cascade_fall_monthly.png")
-BASIS_COLS <- c("Creel (P1)"                              = "#2a78d6",
-                "CRC infill - actual CRC harvest (P2)"    = "#eb6834",
-                "CRC infill - projected CRC harvest (P3)" = "#1baf7a")
-RIVER <- c("830" = "Skagit (CRC 830)", "826" = "Cascade (CRC 826)")
+RIVER <- c("830" = "Skagit", "826" = "Cascade")
+FILL_COLS <- c("Skagit - creel"      = "#2a78d6",
+               "Cascade - creel"     = "#eb6834",
+               "Skagit - CRC infill" = "#1baf7a",
+               "Cascade - CRC infill" = "#eda100")
 MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips", salmon_harvest = "Salmon harvest")
 
 no_month <- out |> filter(is.na(month), trips > 0)
@@ -217,27 +219,45 @@ plot_months <- sort(union(FALL_MONTHS, out$month[!is.na(out$month) & out$trips >
 plot_df <- out |>
   filter(!is.na(month), basis != "No trips", catch_area_code %in% names(RIVER)) |>
   pivot_longer(all_of(names(MEASURES)), names_to = "measure", values_to = "value") |>
-  mutate(panel = factor(paste0(RIVER[catch_area_code], "\n", MEASURES[measure]),
-                        levels = as.vector(outer(RIVER, MEASURES, \(r, m) paste0(r, "\n", m)) |> t())),
-         month = factor(month.abb[month], levels = month.abb[plot_months]),
-         basis = factor(basis, levels = names(BASIS_COLS)))
-panel_tot <- plot_df |>
-  group_by(panel, year) |>
-  summarise(total = sum(value), .groups = "drop") |>
-  mutate(label = paste("Total", scales::comma(total, accuracy = 1)))
+  mutate(infill  = str_detect(basis, "^CRC infill"),
+         projected = basis == "CRC infill - projected CRC harvest (P3)",
+         segment = factor(paste(RIVER[catch_area_code], if_else(infill, "CRC infill", "creel"),
+                                sep = " - "), levels = names(FILL_COLS)),
+         measure = factor(MEASURES[measure], levels = MEASURES),
+         month   = factor(month.abb[month], levels = month.abb[plot_months])) |>
+  group_by(year, measure, month, segment) |>
+  summarise(value = sum(value), projected = any(projected), .groups = "drop")
 
-fig <- ggplot(plot_df, aes(month, value, fill = basis)) +
-  geom_col(width = 0.75, colour = "white", linewidth = 0.4) +
+# Label above each month's bar that has CRC infill: its infill value(s).
+infill_lab <- plot_df |>
+  group_by(year, measure, month) |>
+  summarise(bar_top = sum(value),
+            crc = sum(value[str_detect(as.character(segment), "CRC")]),
+            proj = any(projected[str_detect(as.character(segment), "CRC")]),
+            .groups = "drop") |>
+  filter(crc >= 0.5) |>
+  mutate(label = paste0("CRC ", scales::comma(crc, accuracy = 1), if_else(proj, "\n(projected)", "")))
+panel_tot <- plot_df |>
+  group_by(measure, year) |>
+  summarise(total = sum(value), crc = sum(value[str_detect(as.character(segment), "CRC")]), .groups = "drop") |>
+  mutate(label = paste0("Total ", scales::comma(total, accuracy = 1),
+                        if_else(crc >= 0.5, paste0("  (CRC infill ", scales::comma(crc, accuracy = 1), ")"), "")))
+
+fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
+  geom_col(width = 0.75, colour = "white", linewidth = 0.4, position = position_stack(reverse = TRUE)) +
+  geom_text(data = infill_lab, aes(month, bar_top, label = label), inherit.aes = FALSE,
+            vjust = -0.35, size = 2.5, lineheight = 0.9, colour = "grey20") +
   geom_text(data = panel_tot, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE,
-            hjust = -0.08, vjust = 1.4, size = 2.8, colour = "grey25") +
-  facet_grid(panel ~ year, scales = "free_y", switch = "y", drop = FALSE) +
+            hjust = -0.05, vjust = 1.4, size = 2.8, colour = "grey25") +
+  facet_grid(measure ~ year, scales = "free_y", switch = "y") +
   scale_x_discrete(drop = FALSE) +
-  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.18))) +
-  scale_fill_manual(values = BASIS_COLS, name = NULL, drop = FALSE) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.25))) +
+  scale_fill_manual(values = FILL_COLS, name = NULL, drop = FALSE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
-       subtitle = paste0("Fall window Aug-Dec. CRC infill = months with CRC harvest but no creel on that ",
-                         "catch area (harvest shown is CRC harvest).\n2025 is one composite creel ",
-                         "(Skagit + Cascade), shown here by catch area."),
+       subtitle = paste0("Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that ",
+                         "catch area: CRC harvest x trips-per-fish ratio (harvest shown is CRC harvest).\n",
+                         "2025 is one composite creel (Skagit + Cascade), split here by catch area ",
+                         "(830 Skagit, 826 Cascade)."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(legend.position = "top", legend.justification = "left",
@@ -247,8 +267,8 @@ fig <- ggplot(plot_df, aes(month, value, fill = basis)) +
         axis.text = element_text(colour = "grey35"),
         axis.line = element_line(colour = "grey60", linewidth = 0.3),
         axis.ticks = element_line(colour = "grey60", linewidth = 0.3),
-        panel.spacing.y = unit(0.6, "lines"),
+        panel.spacing.y = unit(0.8, "lines"),
         plot.title.position = "plot",
         plot.subtitle = element_text(colour = "grey35", size = 8.5))
-ggsave(PNG, fig, width = 11, height = 10, dpi = 200, bg = "white")
+ggsave(PNG, fig, width = 11, height = 7, dpi = 200, bg = "white")
 cat(glue("Wrote {PNG}\n"))

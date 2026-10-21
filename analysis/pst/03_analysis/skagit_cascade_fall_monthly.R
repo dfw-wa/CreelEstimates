@@ -26,6 +26,8 @@
 #
 # Inputs:
 #   analysis/pst/outputs/05_assembly/pst_fw_effort_long.csv (assembly output)
+#   analysis/pst/outputs/02_multi_fishery_creel/multi_fishery_creel_trips.csv (figure PE hours)
+#   analysis/pst/outputs/04_interview_proportions/all_interviews.rds (figure n)
 #   input_files/pst/lookup_tables/pst_river_block_crosswalk.csv
 #   input_files/pst/lookup_tables/pst_month_gap_review.csv
 #
@@ -235,9 +237,10 @@ plot_df <- out |>
   group_by(year, measure, month, segment) |>
   summarise(value = sum(value), projected = any(projected), .groups = "drop")
 
-# Labels above each bar stack, bottom to top: the stack's total (what the
-# bar represents), its CRC infill part where there is one, and - small,
-# italic - the creel interview sample size. Positions are in data units: one
+# Labels above each bar stack, bottom to top: in the angler-trips row the
+# PE angler-hours estimate, then the stack's total (what the bar
+# represents), its CRC infill part where there is one, and - small, italic -
+# the creel interview sample size. Positions are in data units: one
 # line = 9% of the row's tallest bar (rows share a y-scale across years).
 stacks <- plot_df |>
   group_by(year, measure, month) |>
@@ -266,6 +269,23 @@ if (file.exists(int_path)) {
 } else message(glue("[plot] {int_path} not found - no sample sizes on the figure. ",
                     "Render analysis/pst/02_ingest/interview_proportions.qmd first."))
 
+# PE total effort (angler hours) of the fall salmon creels that month, from
+# the same design-based PE run as the creel trips (multi_fishery_creel_trips.csv,
+# monthly PE period, NA-area shadow rows dropped as in the assembly). These
+# are all anglers in the creel; the trips are scaled to salmon-directed
+# effort, so hours / trips is not a trip length. CRC infill months have none.
+pe_path <- here("analysis", "pst", "outputs", "02_multi_fishery_creel", "multi_fishery_creel_trips.csv")
+pe_hrs <- NULL
+if (file.exists(pe_path)) {
+  pe_hrs <- read_csv(pe_path, show_col_types = FALSE, col_types = cols(catch_area_code = "c")) |>
+    filter(pe_period == "month", fishery_name %in% fall_xw$fall_fishery, !is.na(total_trips_est)) |>
+    group_by(fishery_name, year, month, angler_final) |>
+    filter(!(is.na(catch_area_code) & any(!is.na(catch_area_code)))) |>
+    ungroup() |>
+    group_by(year = as.integer(year), m = as.integer(month)) |>
+    summarise(pe_hours = sum(total_effort_hrs, na.rm = TRUE), .groups = "drop")
+} else message(glue("[plot] {pe_path} not found - no PE angler hours on the figure."))
+
 stack_lab <- stacks |>
   mutate(m = match(as.character(month), month.abb),
          value_label = scales::comma(bar_top, accuracy = 1),
@@ -277,9 +297,18 @@ stack_lab <- if (is.null(n_int)) mutate(stack_lab, n = NA_integer_) else
 stack_lab <- stack_lab |>
   mutate(n_label = if_else(measure == MEASURES[["guided_trips"]] | is.null(n_int), NA_character_,
                            paste0("n = ", scales::comma(coalesce(n, 0L), accuracy = 1))),
-         y_value = bar_top,
-         y_crc   = bar_top + step,
-         y_n     = bar_top + step * (1 + !is.na(crc_label)))
+         y_value = bar_top)
+stack_lab <- (if (is.null(pe_hrs)) mutate(stack_lab, pe_hours = NA_real_) else
+  left_join(stack_lab, pe_hrs, by = c("year", "m"))) |>
+  mutate(hrs_label = if_else(measure == MEASURES[["trips"]] & coalesce(pe_hours, 0) > 0,
+                             paste0(scales::comma(pe_hours, accuracy = 1), " angler hrs (PE)"),
+                             NA_character_),
+         # Line positions: hours (if any), value, CRC part (if any), n.
+         k_value = as.numeric(!is.na(hrs_label)),
+         y_hrs   = bar_top,
+         y_value = bar_top + step * k_value,
+         y_crc   = bar_top + step * (k_value + 1),
+         y_n     = bar_top + step * (k_value + 1 + !is.na(crc_label)))
 panel_tot <- plot_df |>
   group_by(measure, year) |>
   summarise(total = sum(value), crc = sum(value[str_detect(as.character(segment), "CRC")]), .groups = "drop") |>
@@ -290,6 +319,8 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   geom_col(width = 0.75, colour = "white", linewidth = 0.4, position = position_stack(reverse = TRUE)) +
   geom_text(data = stack_lab, aes(month, y_value, label = value_label), inherit.aes = FALSE,
             vjust = -0.4, size = 2.5, colour = "grey15") +
+  geom_text(data = filter(stack_lab, !is.na(hrs_label)), aes(month, y_hrs, label = hrs_label),
+            inherit.aes = FALSE, vjust = -0.4, size = 2.1, colour = "grey30") +
   geom_text(data = filter(stack_lab, !is.na(crc_label)), aes(month, y_crc, label = crc_label),
             inherit.aes = FALSE, vjust = -0.4, size = 2.2, colour = "grey30") +
   geom_text(data = filter(stack_lab, !is.na(n_label)), aes(month, y_n, label = n_label),
@@ -298,14 +329,17 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
             hjust = -0.05, vjust = 1.4, size = 2.8, colour = "grey25") +
   facet_grid(measure ~ year, scales = "free_y", switch = "y") +
   scale_x_discrete(drop = FALSE) +
-  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.55))) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.65))) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = FALSE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
        subtitle = paste0("Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that ",
                          "catch area: CRC harvest x trips-per-fish ratio (harvest shown is CRC harvest).\n",
                          "2025 is one composite creel (Skagit + Cascade), split here by catch area ",
                          "(830 Skagit, 826 Cascade). Guided trips in every month are guide logbook ",
-                         "reports (a minimum), not creel or CRC. Above each bar: its total, CRC infill part, and n = creel interviews that month (both rivers)."),
+                         "reports (a minimum), not creel or CRC.\nAbove each bar: its total, CRC infill part, and ",
+                         "n = creel interviews that month (both rivers). Angler-trip bars also show the ",
+                         "creel's PE angler-hours estimate (all anglers in the creel; trips are scaled to ",
+                         "salmon-directed effort)."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(legend.position = "top", legend.justification = "left",

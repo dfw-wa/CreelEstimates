@@ -328,7 +328,7 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
        # hand-placed line break leaks into the plot. Adjust CAPTION_WIDTH
        # (characters per line) if the figure size changes.
        caption = paste(strwrap(paste(
-         "Bars show monthly estimates of angler trips, salmon harvest, and guided trips reported in the",
+         "Bars show monthly estimates of creel-based angler trips, CRC salmon harvest, and guided trips reported in the",
          "WDFW guide logbook for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, with the",
          "fall window defined as August through December.",
          "Creel-based angler trips are estimated by dividing total angling effort by mean trip length from",

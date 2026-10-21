@@ -125,7 +125,8 @@ monthly <- fall_rows |>
     basis == "Creel (P1)" & is.na(month) ~ "Creel row with no month (annual total)",
     basis == "Creel (P1)" ~ "",
     TRUE ~ as.character(glue("No creel on CRC {catch_area_code} this month; CRC harvest x ",
-                             "ratio, assigned to the fall fishery by the Aug-Dec window"))))
+                             "ratio, assigned to the fall fishery by the Aug-Dec window; guided trips ",
+                             "are guide logbook reports on this area-month, not CRC"))))
 
 # --- Fall-window months with nothing, and why ---------------------------------
 review <- {
@@ -199,15 +200,17 @@ cat(glue("\nWrote {OUT}\n"))
 # bar per month, Skagit and Cascade stacked, creel at the bottom and CRC
 # infill on top. CRC infill months are small next to the creel months, so
 # each carries a value label and each panel's total shows its CRC part. The
-# CSV above is the table view. Palette: categorical slots 1-4 of the dataviz
+# CSV above is the table view. Guided trips are guide logbook reports in
+# every month (the trip total they sit inside may be creel or CRC infill), so
+# the guided row is split by river only and carries no CRC label. Palette: categorical slots 1-4 of the dataviz
 # reference palette, validated (CVD ΔE 9.1; aqua and yellow under 3:1 on
 # white, so the infill segments are labelled and the bars outlined).
 PNG <- file.path(ASM, "pst_fw_skagit_cascade_fall_monthly.png")
 RIVER <- c("830" = "Skagit", "826" = "Cascade")
-FILL_COLS <- c("Skagit - creel"      = "#2a78d6",
-               "Cascade - creel"     = "#eb6834",
-               "Skagit - CRC infill" = "#1baf7a",
-               "Cascade - CRC infill" = "#eda100")
+FILL_COLS <- c("Skagit"                   = "#2a78d6",
+               "Cascade"                  = "#eb6834",
+               "Skagit, CRC infill month"  = "#1baf7a",
+               "Cascade, CRC infill month" = "#eda100")
 MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips", salmon_harvest = "Salmon harvest")
 
 no_month <- out |> filter(is.na(month), trips > 0)
@@ -221,8 +224,12 @@ plot_df <- out |>
   pivot_longer(all_of(names(MEASURES)), names_to = "measure", values_to = "value") |>
   mutate(infill  = str_detect(basis, "^CRC infill"),
          projected = basis == "CRC infill - projected CRC harvest (P3)",
-         segment = factor(paste(RIVER[catch_area_code], if_else(infill, "CRC infill", "creel"),
-                                sep = " - "), levels = names(FILL_COLS)),
+         # Guided trips come from the guide logbook in every month (creel and
+         # infill months alike), never from CRC, so that row is split by river only.
+         infill  = infill & measure != "guided_trips",
+         projected = projected & infill,
+         segment = factor(if_else(infill, paste0(RIVER[catch_area_code], ", CRC infill month"),
+                                  unname(RIVER[catch_area_code])), levels = names(FILL_COLS)),
          measure = factor(MEASURES[measure], levels = MEASURES),
          month   = factor(month.abb[month], levels = month.abb[plot_months])) |>
   group_by(year, measure, month, segment) |>
@@ -257,7 +264,8 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
        subtitle = paste0("Fall window Aug-Dec. CRC infill = a month with CRC harvest but no creel on that ",
                          "catch area: CRC harvest x trips-per-fish ratio (harvest shown is CRC harvest).\n",
                          "2025 is one composite creel (Skagit + Cascade), split here by catch area ",
-                         "(830 Skagit, 826 Cascade)."),
+                         "(830 Skagit, 826 Cascade). Guided trips in every month are guide logbook ",
+                         "reports (a minimum), not creel or CRC."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(legend.position = "top", legend.justification = "left",

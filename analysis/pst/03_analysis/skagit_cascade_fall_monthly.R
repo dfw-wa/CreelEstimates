@@ -310,9 +310,9 @@ panel_tot <- (if (is.null(pe_year)) mutate(panel_tot, pe = NA_real_) else
 fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   geom_col(width = 0.75, colour = "white", linewidth = 0.4, position = position_stack(reverse = TRUE)) +
   geom_text(data = stack_lab, aes(month, bar_top, label = label), inherit.aes = FALSE,
-            vjust = -0.3, size = 2.5, lineheight = 0.9, colour = "grey15") +
+            vjust = -0.3, size = 2.5, lineheight = 0.9, colour = "black") +
   geom_text(data = panel_tot, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE,
-            hjust = -0.05, vjust = 1.3, size = 2.8, lineheight = 0.95, colour = "grey25") +
+            hjust = -0.05, vjust = 1.3, size = 2.8, lineheight = 0.95, colour = "black") +
   facet_grid(measure ~ year, scales = "free_y", switch = "y") +
   scale_x_discrete(drop = FALSE) +
   scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.4))) +
@@ -331,17 +331,18 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
          "while angler trips are scaled to salmon-directed effort, so the two are not directly comparable."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
-  theme(legend.position = "top", legend.justification = "left",
+  theme(text = element_text(colour = "black"), legend.text = element_text(colour = "black"),
+        legend.position = "top", legend.justification = "left",
         strip.placement = "outside", strip.background = element_blank(),
-        strip.text.y.left = element_text(angle = 0, hjust = 1, colour = "grey20"),
-        strip.text.x = element_text(face = "bold", colour = "grey20"),
-        axis.text = element_text(colour = "grey35"),
+        strip.text.y.left = element_text(angle = 0, hjust = 1, colour = "black"),
+        strip.text.x = element_text(face = "bold", colour = "black"),
+        axis.text = element_text(colour = "black"),
         axis.line = element_line(colour = "grey60", linewidth = 0.3),
         axis.ticks = element_line(colour = "grey60", linewidth = 0.3),
         panel.spacing.y = unit(0.8, "lines"),
         plot.title.position = "plot",
         plot.caption.position = "plot",
-        plot.caption = element_text(colour = "grey35", size = 8, hjust = 0, lineheight = 1.1,
+        plot.caption = element_text(colour = "black", size = 8, hjust = 0, lineheight = 1.1,
                                     margin = margin(t = 10)))
 ggsave(PNG, fig, width = 11, height = 8, dpi = 200, bg = "white")
 cat(glue("Wrote {PNG}\n"))

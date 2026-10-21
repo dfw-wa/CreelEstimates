@@ -237,8 +237,8 @@ fishery_totals |> as.data.frame() |> print(row.names = FALSE)
 cat(glue("\nWrote {OUT}\n"))
 
 # --- Figure -------------------------------------------------------------------
-# Small multiples: columns = year; rows = angler trips, guided trips, salmon
-# harvest, each on its own y-scale (trips and fish never share an axis). One
+# Small multiples: columns = year; rows = angler trips, salmon harvest,
+# guided trips, each on its own y-scale (trips and fish never share an axis). One
 # bar per month, Skagit and Cascade stacked, creel at the bottom and CRC
 # infill on top. Each bar carries its value; a CRC-infill-only bar is labelled
 # "CRC <value>". Each panel shows its season total and CRC part; the
@@ -254,7 +254,8 @@ FILL_COLS <- c("Skagit"                   = "#2a78d6",
                "Cascade"                  = "#eb6834",
                "Skagit, CRC infill month"  = "#1baf7a",
                "Cascade, CRC infill month" = "#eda100")
-MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips\n(guide logbook based\nminimum count)", salmon_harvest = "Salmon harvest")
+MEASURES <- c(trips = "Angler trips", salmon_harvest = "Salmon harvest",
+              guided_trips = "Guided trips\n(guide logbook based\nminimum count)")
 
 no_month <- out |> filter(is.na(month), trips > 0)
 if (nrow(no_month) > 0)

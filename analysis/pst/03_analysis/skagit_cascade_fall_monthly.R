@@ -321,16 +321,18 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = TRUE) +
   labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
        caption = paste0(
-         "Bars show monthly estimates for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, ",
+         "Bars show monthly estimates of angler trips, CRC salmon harvest, and trips reported to the guide logbook app
+         for the Skagit (CRC 830) and Cascade (CRC 826) fall salmon fisheries, ",
          "with the fall window defined as August through December.\n",
-         "Creel months are design-based estimates from the fall salmon creels. A CRC infill month had CRC ",
+         "Creel-based angler trips are estimated by dividing total angling effort by mean trip length from angler interviews. 
+         creels. A CRC infill month had CRC ",
          "harvest but no creel on that catch area; its trips are CRC harvest multiplied by a regional\n",
          "trips-per-fish ratio, and its harvest is the CRC harvest. Infill marked \"proj.\" uses projected ",
          "2025 CRC harvest (the 2022-2024 average for that month), because 2025 CRC data are not yet complete.\n",
-         "In 2025 a single composite creel covered both rivers (Skagit + Cascade); its estimates are split ",
+         "In 2025 a single composite creel covered both rivers (Skagit, Cascade); its estimates are split ",
          "here by catch area. Guided trips are the salmon trips guides reported in the WDFW guide logbook,\n",
          "so they are a minimum count. PE angler hours are the fall creels' total effort estimate for the season ",
-         "(all anglers counted); nearly all of these anglers were targeting salmon."),
+         "(angler hours); interview data indicated nearly all of these anglers were targeting salmon."),
        x = NULL, y = NULL) +
   theme_classic(base_size = 10) +
   theme(text = element_text(colour = "black"), legend.text = element_text(colour = "black"),

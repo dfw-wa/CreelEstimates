@@ -33,7 +33,8 @@
 #
 # Output:
 #   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.csv
-#   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.png
+#   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.png (600 dpi)
+#   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.pdf (vector)
 #
 # Usage (after the assembly):
 #   Rscript analysis/pst/03_analysis/skagit_cascade_fall_monthly.R
@@ -358,5 +359,10 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
         plot.caption.position = "plot",
         plot.caption = element_text(colour = "black", size = 8, hjust = 0, lineheight = 1.1,
                                     margin = margin(t = 10)))
-ggsave(PNG, fig, width = 11, height = 8, dpi = 200, bg = "white")
-cat(glue("Wrote {PNG}\n"))
+# 600 dpi, drawn with ragg when installed (sharper text and edges than the
+# default png device); a vector PDF alongside for print or zooming.
+png_dev <- if (requireNamespace("ragg", quietly = TRUE)) ragg::agg_png else "png"
+ggsave(PNG, fig, width = 11, height = 8, dpi = 600, bg = "white", device = png_dev)
+PDF <- sub("\\.png$", ".pdf", PNG)
+ggsave(PDF, fig, width = 11, height = 8, bg = "white", device = grDevices::cairo_pdf)
+cat(glue("Wrote {PNG} (600 dpi) and {PDF}\n"))

@@ -31,6 +31,7 @@
 #
 # Output:
 #   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.csv
+#   analysis/pst/outputs/05_assembly/pst_fw_skagit_cascade_fall_monthly.png
 #
 # Usage (after the assembly):
 #   Rscript analysis/pst/03_analysis/skagit_cascade_fall_monthly.R
@@ -191,3 +192,63 @@ out |> group_by(year, fall_fishery) |>
   mutate(pct_infill = round(100 * infill_trips / pmax(total_trips, 1), 1)) |>
   as.data.frame() |> print(row.names = FALSE)
 cat(glue("\nWrote {OUT}\n"))
+
+# --- Figure -------------------------------------------------------------------
+# Small multiples: columns = year; rows = river x measure (angler trips, guided
+# trips, salmon harvest), each row on its own y-scale (trips and fish never
+# share an axis). Bars by month, coloured by basis, so creel vs CRC infill reads
+# the same in every panel. Each panel is labelled with its total. The CSV above
+# is the table view. Palette: categorical slots 1-3 of the dataviz reference
+# palette, validated (CVD ΔE 9.2; aqua under 3:1 on white, so panels carry
+# totals and the bars a white outline).
+PNG <- file.path(ASM, "pst_fw_skagit_cascade_fall_monthly.png")
+BASIS_COLS <- c("Creel (P1)"                              = "#2a78d6",
+                "CRC infill - actual CRC harvest (P2)"    = "#eb6834",
+                "CRC infill - projected CRC harvest (P3)" = "#1baf7a")
+RIVER <- c("830" = "Skagit (CRC 830)", "826" = "Cascade (CRC 826)")
+MEASURES <- c(trips = "Angler trips", guided_trips = "Guided trips", salmon_harvest = "Salmon harvest")
+
+no_month <- out |> filter(is.na(month), trips > 0)
+if (nrow(no_month) > 0)
+  message(glue("[plot] {nrow(no_month)} creel row(s) with no month left out of the figure ",
+               "({round(sum(no_month$trips))} trips)."))
+plot_months <- sort(union(FALL_MONTHS, out$month[!is.na(out$month) & out$trips > 0]))
+
+plot_df <- out |>
+  filter(!is.na(month), basis != "No trips", catch_area_code %in% names(RIVER)) |>
+  pivot_longer(all_of(names(MEASURES)), names_to = "measure", values_to = "value") |>
+  mutate(panel = factor(paste0(RIVER[catch_area_code], "\n", MEASURES[measure]),
+                        levels = as.vector(outer(RIVER, MEASURES, \(r, m) paste0(r, "\n", m)) |> t())),
+         month = factor(month.abb[month], levels = month.abb[plot_months]),
+         basis = factor(basis, levels = names(BASIS_COLS)))
+panel_tot <- plot_df |>
+  group_by(panel, year) |>
+  summarise(total = sum(value), .groups = "drop") |>
+  mutate(label = paste("Total", scales::comma(total, accuracy = 1)))
+
+fig <- ggplot(plot_df, aes(month, value, fill = basis)) +
+  geom_col(width = 0.75, colour = "white", linewidth = 0.4) +
+  geom_text(data = panel_tot, aes(x = -Inf, y = Inf, label = label), inherit.aes = FALSE,
+            hjust = -0.08, vjust = 1.4, size = 2.8, colour = "grey25") +
+  facet_grid(panel ~ year, scales = "free_y", switch = "y", drop = FALSE) +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.18))) +
+  scale_fill_manual(values = BASIS_COLS, name = NULL, drop = FALSE) +
+  labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
+       subtitle = paste0("Fall window Aug-Dec. CRC infill = months with CRC harvest but no creel on that ",
+                         "catch area (harvest shown is CRC harvest).\n2025 is one composite creel ",
+                         "(Skagit + Cascade), shown here by catch area."),
+       x = NULL, y = NULL) +
+  theme_classic(base_size = 10) +
+  theme(legend.position = "top", legend.justification = "left",
+        strip.placement = "outside", strip.background = element_blank(),
+        strip.text.y.left = element_text(angle = 0, hjust = 1, colour = "grey20"),
+        strip.text.x = element_text(face = "bold", colour = "grey20"),
+        axis.text = element_text(colour = "grey35"),
+        axis.line = element_line(colour = "grey60", linewidth = 0.3),
+        axis.ticks = element_line(colour = "grey60", linewidth = 0.3),
+        panel.spacing.y = unit(0.6, "lines"),
+        plot.title.position = "plot",
+        plot.subtitle = element_text(colour = "grey35", size = 8.5))
+ggsave(PNG, fig, width = 11, height = 10, dpi = 200, bg = "white")
+cat(glue("Wrote {PNG}\n"))

@@ -945,7 +945,7 @@ for(ecg in names(inputs_bss)) {
       bss_inputs_list = inputs_bss[[ecg]],
       n_chain = 4,  
       n_cores = 4,
-      n_iter = 2000,
+      n_iter = 1000,
       n_warmup = 500,
       n_thin = 1,
       adapt_delta = 0.7,
@@ -1147,8 +1147,8 @@ for(ecg in names(inputs_bss)) {
 }
 
 # Save BSS estimates and diagnostics
-saveRDS(estimates_bss, file.path(outputs_folders$outputs, "estimates_bss.rds"))
-saveRDS(diagnostics_bss, file.path(outputs_folders$outputs, "diagnostics_bss.rds"))
+# saveRDS(estimates_bss, file.path(outputs_folders$outputs, "estimates_bss.rds"))
+# saveRDS(diagnostics_bss, file.path(outputs_folders$outputs, "diagnostics_bss.rds"))
 saveRDS(convergence_tables, file.path(outputs_folders$outputs, "convergence_tables.rds"))
 
 # ---- NEW: Combine and save density plots ----

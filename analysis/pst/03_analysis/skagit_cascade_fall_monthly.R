@@ -255,7 +255,7 @@ FILL_COLS <- c("Skagit"                   = "#2a78d6",
                "Cascade"                  = "#eb6834",
                "Skagit, CRC infill month"  = "#1baf7a",
                "Cascade, CRC infill month" = "#eda100")
-MEASURES <- c(trips = "Angler trips", salmon_harvest = "Salmon harvest",
+MEASURES <- c(trips = "Angler trips (creel)", salmon_harvest = "Salmon harvest (CRC)",
               guided_trips = "Guided trips\n(guide logbook based\nminimum count)")
 
 no_month <- out |> filter(is.na(month), trips > 0)
@@ -323,7 +323,7 @@ fig <- ggplot(plot_df, aes(month, value, fill = segment)) +
   scale_x_discrete(drop = FALSE) +
   scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.4))) +
   scale_fill_manual(values = FILL_COLS, name = NULL, drop = TRUE) +
-  labs(title = "Skagit and Cascade fall salmon: monthly estimates, 2022-2025",
+  labs(title = "Skagit fall salmon monthly trip and harvest estimates, 2022-2025",
        # One paragraph, wrapped by strwrap() so no source indentation or
        # hand-placed line break leaks into the plot. Adjust CAPTION_WIDTH
        # (characters per line) if the figure size changes.

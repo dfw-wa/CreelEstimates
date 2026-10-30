@@ -187,16 +187,19 @@ if (!is.null(wa)) wa <- wa |> st_set_crs(4326) |> st_transform(2927) |> st_make_
 # Map extent: Washington, so HUC4 parts in Oregon, Idaho and B.C. are cropped.
 bb <- st_bbox(if (!is.null(wa)) wa else crc_codes)
 
-# Design: the regions are named on the map, so they need no colour of their
-# own - a neutral land fill with white region boundaries, and colour kept for
-# the one thing the map is checking: catch areas (blue) and the ones split
-# across regions (orange). Two slots of the dataviz reference palette,
-# validated (CVD and normal-vision separation pass).
+# Design: catch-area polygons are whole drainages, so on one map they merge
+# into blobs. Each catch area therefore gets a white outline, and the HUC4
+# boundaries are drawn ON TOP as dark lines, so the reader sees where region
+# lines cut through catch areas. Regions are named, not coloured; colour is
+# kept for catch areas (blue) and split ones (orange) - two validated slots of
+# the dataviz reference palette. The small multiples below show which region
+# each catch area was assigned to.
 regions_wa <- if (!is.null(wa)) {
   st_intersection(huc4, st_union(wa)) |> st_collection_extract("POLYGON")
 } else huc4
+regions_wa <- regions_wa |> group_by(huc4, region) |> summarise(.groups = "drop")
+region_lines <- st_boundary(regions_wa)
 region_lab <- regions_wa |>
-  group_by(region) |> summarise(.groups = "drop") |>
   mutate(geometry = st_point_on_surface(geometry),
          label = str_wrap(region, 14))
 areas_map <- crc_codes |>
@@ -205,27 +208,62 @@ areas_map <- crc_codes |>
                           "Catch area with trip estimates"))
 AREA_COLS <- c("Catch area with trip estimates" = "#2a78d6",
                "Split across regions (assigned to larger share)" = "#eb6834")
-
-ggplot() +
-  geom_sf(data = regions_wa, fill = "#efede8", colour = "white", linewidth = 0.9) +
-  geom_sf(data = areas_map, aes(fill = status, colour = status), linewidth = 0.25) +
-  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "grey35", linewidth = 0.4) } +
-  geom_sf_label(data = region_lab, aes(label = label), size = 3, lineheight = 0.9,
-                fontface = "bold", colour = "black", fill = alpha("white", 0.75),
-                label.size = 0, label.padding = unit(0.15, "lines")) +
-  scale_fill_manual(values = AREA_COLS, name = NULL) +
-  scale_colour_manual(values = AREA_COLS, name = NULL) +
-  coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")], expand = TRUE) +
-  labs(title = "Catch areas with salmon trip estimates, by HUC4 hydrologic region",
-       caption = paste("Regions are USGS HUC4 units clipped to Washington; white lines are region boundaries.",
-                       "Mainstem Columbia areas along region boundaries are the main split cases.")) +
-  theme_void(base_size = 10) +
+map_theme <- theme_void(base_size = 10) +
   theme(text = element_text(colour = "black"),
         plot.title = element_text(face = "bold", margin = margin(b = 6)),
         plot.title.position = "plot",
         plot.caption = element_text(hjust = 0, margin = margin(t = 6)),
         legend.position = "bottom", legend.justification = "left",
         plot.margin = margin(8, 8, 8, 8))
+map_coord <- coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")],
+                      expand = TRUE)
+
+ggplot() +
+  geom_sf(data = regions_wa, fill = "#efede8", colour = NA) +
+  geom_sf(data = areas_map, aes(fill = status), colour = "white", linewidth = 0.3, alpha = 0.85) +
+  geom_sf(data = region_lines, colour = "grey15", linewidth = 0.7) +
+  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "grey15", linewidth = 0.5) } +
+  geom_sf_label(data = region_lab, aes(label = label), size = 3, lineheight = 0.9,
+                fontface = "bold", colour = "black", fill = alpha("white", 0.85),
+                label.size = 0, label.padding = unit(0.15, "lines")) +
+  scale_fill_manual(values = AREA_COLS, name = NULL) +
+  map_coord +
+  labs(title = "Catch areas with salmon trip estimates, by HUC4 hydrologic region",
+       caption = paste("Dark lines: HUC4 region boundaries (USGS, clipped to Washington). White lines: catch-area",
+                       "boundaries. Each catch area is assigned to the region holding most of its area.")) +
+  map_theme
+```
+
+```{r map-assigned, fig.width = 10, fig.height = 6.5}
+# One small map per region: the region shaded, the catch areas assigned to it
+# in blue, every other catch area in pale grey for context.
+facets <- regions_wa |> st_drop_geometry() |> select(facet = region)
+areas_facet <- areas_map |>
+  cross_join(facets) |>
+  mutate(in_region = region == facet,
+         facet = factor(facet, REGION_LEVELS)) |>
+  st_as_sf()
+regions_facet <- regions_wa |>
+  cross_join(facets) |>
+  mutate(focus = region == facet, facet = factor(facet, REGION_LEVELS)) |>
+  st_as_sf()
+n_assigned <- lookup |> count(region) |> mutate(facet = factor(region, REGION_LEVELS))
+
+ggplot() +
+  geom_sf(data = regions_facet, aes(fill = focus), colour = NA) +
+  geom_sf(data = filter(areas_facet, !in_region), fill = "#d9d6cf", colour = "white", linewidth = 0.15) +
+  geom_sf(data = filter(areas_facet, in_region), fill = "#2a78d6", colour = "white", linewidth = 0.15) +
+  geom_sf(data = region_lines, colour = "grey35", linewidth = 0.25) +
+  geom_sf(data = regions_facet |> filter(focus) |> st_boundary(), colour = "grey10", linewidth = 0.6) +
+  geom_text(data = n_assigned, aes(x = -Inf, y = -Inf, label = glue("{n} catch areas")),
+            hjust = -0.05, vjust = -0.6, size = 2.8) +
+  facet_wrap(~ facet, ncol = 4) +
+  scale_fill_manual(values = c(`TRUE` = "#e2ddd2", `FALSE` = "#f6f5f2"), guide = "none") +
+  map_coord +
+  labs(title = "Catch areas assigned to each region",
+       caption = "Blue: catch areas assigned to the region (dark outline). Grey: catch areas assigned elsewhere.") +
+  map_theme +
+  theme(strip.text = element_text(face = "bold", margin = margin(b = 3)))
 ```
 
 ```{r split-table}

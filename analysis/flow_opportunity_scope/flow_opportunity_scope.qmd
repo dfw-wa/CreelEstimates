@@ -167,7 +167,28 @@ boundaries). `r length(not_in_layer)` are missing from the catch-area layer and
 `r length(outside)` fall outside the eight regions.
 
 ```{r map, fig.width = 9, fig.height = 6}
+# Washington outline as a base layer: from the maps package if installed,
+# else the Census TIGERweb states service (cached in local/). Skipped, with a
+# note, if neither is available.
+WA_CACHE <- file.path(LOCAL, "wa_state.geojson")
+wa <- tryCatch({
+  if (requireNamespace("maps", quietly = TRUE)) {
+    st_as_sf(maps::map("state", "washington", plot = FALSE, fill = TRUE))
+  } else {
+    if (!file.exists(WA_CACHE))
+      download.file(paste0("https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/",
+                           "State_County/MapServer/0/query?where=STUSAB%3D%27WA%27",
+                           "&outFields=NAME&f=geojson&outSR=4326"),
+                    WA_CACHE, mode = "wb", quiet = TRUE)
+    st_read(WA_CACHE, quiet = TRUE)
+  }
+}, error = function(e) { message("No Washington outline: ", conditionMessage(e)); NULL })
+if (!is.null(wa)) wa <- wa |> st_set_crs(4326) |> st_transform(2927) |> st_make_valid()
+# Map extent: Washington, so HUC4 parts in Oregon, Idaho and B.C. are cropped.
+bb <- st_bbox(if (!is.null(wa)) wa else crc_codes)
+
 ggplot() +
+  { if (!is.null(wa)) geom_sf(data = wa, fill = "grey96", colour = NA) } +
   geom_sf(data = huc4, aes(fill = factor(region, REGION_LEVELS)), alpha = 0.25, colour = "grey40") +
   geom_sf(data = crc_codes |> inner_join(lookup, by = "catch_area_code"),
           aes(fill = factor(region, REGION_LEVELS)), colour = NA) +
@@ -176,9 +197,11 @@ ggplot() +
   scale_fill_manual(values = c("#2a78d6", "#eb6834", "#1baf7a", "#eda100",
                                "#e87ba4", "#008300", "#6250d6", "#e34948"),
                     name = NULL) +
-  coord_sf(crs = 2927) +
+  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "black", linewidth = 0.5) } +
+  coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")], expand = TRUE) +
   labs(title = "Catch areas with trip estimates, by HUC4 region",
-       caption = "Pale fill: HUC4 regions. Solid fill: catch areas. Black outline: catch areas split across regions.") +
+       caption = paste("Black line: Washington state boundary. Pale fill: HUC4 regions. Solid fill: catch areas.",
+                       "Black outline: catch areas split across regions.")) +
   theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.line = element_blank())
 ```
 

@@ -219,16 +219,18 @@ map_theme <- theme_void(base_size = 10) +
 # drawn at half opacity under translucent land. Needs ggspatial and internet
 # on first render; tiles are cached in local/tiles. Skipped if unavailable.
 SAT_URL <- "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}.jpg"
+# annotation_map_tile() also needs rosm and prettymapr (ggspatial only
+# suggests them), so the layer is drawn only when all three are installed.
+SAT_PKGS <- c("ggspatial", "rosm", "prettymapr")
+sat_missing <- SAT_PKGS[!vapply(SAT_PKGS, requireNamespace, logical(1), quietly = TRUE)]
 sat_layer <- function() {
-  if (!requireNamespace("ggspatial", quietly = TRUE)) return(NULL)
+  if (length(sat_missing) > 0) return(NULL)
   ggspatial::annotation_map_tile(type = SAT_URL, zoom = 7, alpha = 0.55, progress = "none",
                                  cachedir = file.path(LOCAL, "tiles"))
 }
-if (!requireNamespace("ggspatial", quietly = TRUE))
-  message("ggspatial not installed - maps drawn without the satellite base layer")
-SAT_CREDIT <- if (requireNamespace("ggspatial", quietly = TRUE))
-  " Imagery: Esri, Maxar, Earthstar Geographics." else
-  " [Satellite base layer skipped: install.packages(\"ggspatial\") and re-render.]"
+SAT_CREDIT <- if (length(sat_missing) == 0) " Imagery: Esri, Maxar, Earthstar Geographics." else
+  glue(" [Satellite base layer skipped: install.packages(c({paste0('\"', sat_missing, '\"', collapse = ', ')})) and re-render.]")
+if (length(sat_missing) > 0) message(SAT_CREDIT)
 map_coord <- coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")],
                       expand = TRUE)
 

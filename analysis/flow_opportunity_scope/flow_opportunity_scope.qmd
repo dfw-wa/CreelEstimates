@@ -187,22 +187,45 @@ if (!is.null(wa)) wa <- wa |> st_set_crs(4326) |> st_transform(2927) |> st_make_
 # Map extent: Washington, so HUC4 parts in Oregon, Idaho and B.C. are cropped.
 bb <- st_bbox(if (!is.null(wa)) wa else crc_codes)
 
+# Design: the regions are named on the map, so they need no colour of their
+# own - a neutral land fill with white region boundaries, and colour kept for
+# the one thing the map is checking: catch areas (blue) and the ones split
+# across regions (orange). Two slots of the dataviz reference palette,
+# validated (CVD and normal-vision separation pass).
+regions_wa <- if (!is.null(wa)) {
+  st_intersection(huc4, st_union(wa)) |> st_collection_extract("POLYGON")
+} else huc4
+region_lab <- regions_wa |>
+  group_by(region) |> summarise(.groups = "drop") |>
+  mutate(geometry = st_point_on_surface(geometry),
+         label = str_wrap(region, 14))
+areas_map <- crc_codes |>
+  inner_join(lookup, by = "catch_area_code") |>
+  mutate(status = if_else(flag_split, "Split across regions (assigned to larger share)",
+                          "Catch area with trip estimates"))
+AREA_COLS <- c("Catch area with trip estimates" = "#2a78d6",
+               "Split across regions (assigned to larger share)" = "#eb6834")
+
 ggplot() +
-  { if (!is.null(wa)) geom_sf(data = wa, fill = "grey96", colour = NA) } +
-  geom_sf(data = huc4, aes(fill = factor(region, REGION_LEVELS)), alpha = 0.25, colour = "grey40") +
-  geom_sf(data = crc_codes |> inner_join(lookup, by = "catch_area_code"),
-          aes(fill = factor(region, REGION_LEVELS)), colour = NA) +
-  geom_sf(data = crc_codes |> inner_join(filter(lookup, flag_split), by = "catch_area_code"),
-          fill = NA, colour = "black", linewidth = 0.4) +
-  scale_fill_manual(values = c("#2a78d6", "#eb6834", "#1baf7a", "#eda100",
-                               "#e87ba4", "#008300", "#6250d6", "#e34948"),
-                    name = NULL) +
-  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "black", linewidth = 0.5) } +
+  geom_sf(data = regions_wa, fill = "#efede8", colour = "white", linewidth = 0.9) +
+  geom_sf(data = areas_map, aes(fill = status, colour = status), linewidth = 0.25) +
+  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "grey35", linewidth = 0.4) } +
+  geom_sf_label(data = region_lab, aes(label = label), size = 3, lineheight = 0.9,
+                fontface = "bold", colour = "black", fill = alpha("white", 0.75),
+                label.size = 0, label.padding = unit(0.15, "lines")) +
+  scale_fill_manual(values = AREA_COLS, name = NULL) +
+  scale_colour_manual(values = AREA_COLS, name = NULL) +
   coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")], expand = TRUE) +
-  labs(title = "Catch areas with trip estimates, by HUC4 region",
-       caption = paste("Black line: Washington state boundary. Pale fill: HUC4 regions. Solid fill: catch areas.",
-                       "Black outline: catch areas split across regions.")) +
-  theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.line = element_blank())
+  labs(title = "Catch areas with salmon trip estimates, by HUC4 hydrologic region",
+       caption = paste("Regions are USGS HUC4 units clipped to Washington; white lines are region boundaries.",
+                       "Mainstem Columbia areas along region boundaries are the main split cases.")) +
+  theme_void(base_size = 10) +
+  theme(text = element_text(colour = "black"),
+        plot.title = element_text(face = "bold", margin = margin(b = 6)),
+        plot.title.position = "plot",
+        plot.caption = element_text(hjust = 0, margin = margin(t = 6)),
+        legend.position = "bottom", legend.justification = "left",
+        plot.margin = margin(8, 8, 8, 8))
 ```
 
 ```{r split-table}

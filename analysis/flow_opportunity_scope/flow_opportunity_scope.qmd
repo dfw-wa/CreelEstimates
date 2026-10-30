@@ -298,7 +298,7 @@ yr <- annual |>
   summarise(all = sum(trips), creel = sum(trips[tier_group == "Creel (P1)"]), .groups = "drop") |>
   group_by(huc4) |>
   mutate(`All trips` = all / mean(all),
-         `Creel trips only` = if_else(mean(creel) > 0, creel / mean(creel), NA_real_)) |>
+         `Creel trips only` = if (mean(creel) > 0) creel / mean(creel) else NA_real_) |>
   ungroup() |>
   left_join(flow_yr |> select(huc4, year, magnitude_cfs_wy, occurrence_prob_cy, span_days_cy),
             by = c("huc4", "year")) |>

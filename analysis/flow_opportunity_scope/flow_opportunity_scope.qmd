@@ -1,0 +1,362 @@
+---
+title: "Low flows and salmon angling effort: HUC4 scoping prototype"
+subtitle: "Light prototype for scoping with Dan Auerbach's low-flow analysis - internal, WDFW only"
+author: "Evan Booher"
+date: today
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+# ==============================================================================
+# Purpose: aggregate PST freshwater salmon angler-trip estimates (2022-2025) to
+# the eight HUC4 hydrologic regions of Dan Auerbach's draft low-flow memo and
+# set them beside his regional low-flow measures, to scope whether an analysis
+# of flow effects on angling opportunity is plausible. Descriptive only.
+#
+# Inputs
+#   analysis/pst/outputs/05_assembly/pst_fw_effort_long.csv   (PST assembly)
+#   CRC area polygons: CRC.gdb.zip from evanbooher/crc_mapping, else the live
+#     WDFW CatchRecordCardArea service
+#   HUC4 polygons: USGS Watershed Boundary Dataset service (cached locally)
+#   local/low_flow_annual_ballpark.csv  - Dan's annual regional-reference
+#     values READ BY EYE from his draft figures (approximate)
+#   local/low_flow_decade_change.csv    - Dan's Table 1 decade changes
+#
+# The local/ folder is git-ignored: Dan's draft numbers stay out of the repo
+# until he shares them beyond the agency.
+#
+# Output
+#   crc_area_huc4.csv - catch area -> HUC4 lookup from the spatial join
+# ==============================================================================
+
+suppressMessages({
+  library(tidyverse)
+  library(sf)
+  library(here)
+  library(glue)
+  library(knitr)
+})
+sf_use_s2(FALSE)
+
+DIR       <- here("analysis", "flow_opportunity_scope")
+LOCAL     <- file.path(DIR, "local")
+dir.create(LOCAL, showWarnings = FALSE)
+EFFORT    <- here("analysis", "pst", "outputs", "05_assembly", "pst_fw_effort_long.csv")
+# CRC polygons: set CRC_GDB to the zip in your crc_mapping clone, or drop the
+# zip into local/. Without either, the live WDFW service is queried.
+CRC_GDB   <- Sys.getenv("CRC_GDB", file.path(LOCAL, "CRC.gdb.zip"))
+CRC_SERVICE <- paste0("https://geodataservices.wdfw.wa.gov/arcgis/rest/services/",
+                      "FP_Projects/CatchRecordCardArea/MapServer/1/query?",
+                      "where=1%3D1&outFields=*&f=geojson&outSR=2927")
+HUC4_CACHE <- file.path(LOCAL, "huc4_wa.geojson")
+
+REGIONS <- tibble(
+  huc4   = c("1701", "1702", "1703", "1706", "1707", "1708", "1710", "1711"),
+  region = c("Kootenai-Pend Oreille-Spokane", "Upper Columbia", "Yakima", "Lower Snake",
+             "Middle Columbia", "Lower Columbia", "Oregon-Washington Coastal", "Puget Sound"))
+REGION_LEVELS <- REGIONS$region
+MIN_SHARE <- 0.8     # a catch area with less of its area than this in one HUC4 is flagged
+LOW_FLOW_MONTHS <- 8:10  # Aug-Oct: late-summer low flows overlapping fall salmon openings
+
+theme_set(theme_classic(base_size = 10) +
+            theme(text = element_text(colour = "black"),
+                  strip.background = element_blank(),
+                  strip.text = element_text(face = "bold"),
+                  plot.title.position = "plot",
+                  plot.caption = element_text(hjust = 0)))
+TIER_COLS <- c("Creel (P1)" = "#2a78d6", "CRC-based (P2/P3)" = "#eb6834")
+```
+
+## Purpose and status
+
+Dan Auerbach's draft memo (internal; please don't share beyond WDFW) estimates
+lower, more frequent and longer low flows across eight HUC4 hydrologic regions,
+comparing 2016–2025 with 2006–2015. He asked whether creel data could show
+effects on angling **opportunity**. This prototype puts our 2022–2025 salmon
+angler-trip estimates into his regions and sets them beside his measures. It is
+for scoping only: it tests whether the pieces fit together and shows what a real
+analysis would need. It does not estimate a flow effect.
+
+**About the flow values.** The annual values (2022–2025) were read by eye from
+the draft memo's Figures 2–4 and are approximate: about ±0.05 for occurrence and
+±10–15% for magnitude and span. The decade changes are copied from the memo's
+Table 1. All are regional-reference estimates, meaning the modelled regional
+pattern with individual gage effects removed, not the average of the gages.
+
+## 1. Catch areas to HUC4 regions
+
+```{r spatial-join}
+crc <- if (file.exists(CRC_GDB)) {
+  st_read(CRC_GDB, quiet = TRUE)
+} else {
+  message("CRC.gdb.zip not found - querying the WDFW CatchRecordCardArea service")
+  st_read(CRC_SERVICE, quiet = TRUE)
+}
+if (is.na(st_crs(crc))) st_crs(crc) <- 2927
+crc <- crc |>
+  rename_with(\(x) sub("^CatchRecordCode$", "catch_area_code", x)) |>
+  mutate(catch_area_code = str_remove(as.character(catch_area_code), "\\.0+$")) |>
+  st_transform(2927) |>
+  st_make_valid()
+
+if (!file.exists(HUC4_CACHE)) {
+  wbd <- paste0("https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/2/query?",
+                "where=huc4+IN+(", paste0("%27", REGIONS$huc4, "%27", collapse = ","), ")",
+                "&outFields=huc4,name&f=geojson&outSR=4326&maxAllowableOffset=0.001")
+  download.file(wbd, HUC4_CACHE, mode = "wb", quiet = TRUE)
+}
+huc4 <- st_read(HUC4_CACHE, quiet = TRUE) |>
+  rename_with(tolower) |>
+  transmute(huc4 = as.character(huc4)) |>
+  inner_join(REGIONS, by = "huc4") |>
+  st_transform(2927) |>
+  st_make_valid()
+
+effort <- read_csv(EFFORT, show_col_types = FALSE,
+                   col_types = cols(catch_area_code = "c", .default = col_guess())) |>
+  mutate(catch_area_code = str_remove(catch_area_code, "\\.0+$"),
+         year = as.integer(year), month = as.integer(month),
+         tier_group = if_else(tier == "P1", "Creel (P1)", "CRC-based (P2/P3)"))
+codes <- sort(unique(na.omit(effort$catch_area_code)))
+
+# Share of each catch area's polygon area falling in each HUC4.
+crc_codes <- crc |> filter(catch_area_code %in% codes) |>
+  group_by(catch_area_code) |> summarise(.groups = "drop")
+pieces <- st_intersection(crc_codes, huc4) |>
+  mutate(a = as.numeric(st_area(geometry))) |>
+  st_drop_geometry() |>
+  group_by(catch_area_code) |>
+  mutate(share = a / sum(a)) |>
+  ungroup()
+lookup <- pieces |>
+  group_by(catch_area_code) |>
+  arrange(desc(share), .by_group = TRUE) |>
+  summarise(huc4 = first(huc4), region = first(region), share = first(share),
+            other_huc4 = paste(huc4[-1], collapse = "|"), .groups = "drop") |>
+  mutate(flag_split = share < MIN_SHARE)
+not_in_layer <- setdiff(codes, crc_codes$catch_area_code)
+outside      <- setdiff(crc_codes$catch_area_code, lookup$catch_area_code)
+write_csv(lookup, file.path(DIR, "crc_area_huc4.csv"))
+```
+
+`r length(codes)` catch areas carry trip estimates. `r nrow(lookup)` were
+assigned to a HUC4 by the largest share of their polygon area, and
+`r sum(lookup$flag_split)` of those have less than `r MIN_SHARE * 100`% of
+their area in one region (flagged; mostly mainstem Columbia reaches along region
+boundaries). `r length(not_in_layer)` are missing from the catch-area layer and
+`r length(outside)` fall outside the eight regions.
+
+```{r map, fig.width = 9, fig.height = 6}
+ggplot() +
+  geom_sf(data = huc4, aes(fill = factor(region, REGION_LEVELS)), alpha = 0.25, colour = "grey40") +
+  geom_sf(data = crc_codes |> inner_join(lookup, by = "catch_area_code"),
+          aes(fill = factor(region, REGION_LEVELS)), colour = NA) +
+  geom_sf(data = crc_codes |> inner_join(filter(lookup, flag_split), by = "catch_area_code"),
+          fill = NA, colour = "black", linewidth = 0.4) +
+  scale_fill_manual(values = c("#2a78d6", "#eb6834", "#1baf7a", "#eda100",
+                               "#e87ba4", "#008300", "#6250d6", "#e34948"),
+                    name = NULL) +
+  coord_sf(crs = 2927) +
+  labs(title = "Catch areas with trip estimates, by HUC4 region",
+       caption = "Pale fill: HUC4 regions. Solid fill: catch areas. Black outline: catch areas split across regions.") +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.line = element_blank())
+```
+
+```{r split-table}
+split_tbl <- lookup |> filter(flag_split) |>
+  left_join(effort |> group_by(catch_area_code) |>
+              summarise(trips_2022_25 = round(sum(angler_trips)), .groups = "drop"),
+            by = "catch_area_code") |>
+  arrange(desc(trips_2022_25)) |>
+  transmute(`Catch area` = catch_area_code, `Assigned region` = region,
+            `Share in it` = scales::percent(share, 1), `Other HUC4` = other_huc4,
+            `Trips 2022-25` = scales::comma(trips_2022_25))
+if (nrow(split_tbl) > 0) kable(split_tbl, caption = "Catch areas split across regions (assigned to the larger share)")
+if (length(not_in_layer) > 0)
+  cat("Catch areas with trips but no polygon in the layer:", paste(not_in_layer, collapse = ", "))
+```
+
+## 2. Salmon angler trips by region
+
+```{r trips-by-region}
+trips <- effort |>
+  inner_join(lookup |> select(catch_area_code, huc4, region, flag_split), by = "catch_area_code") |>
+  mutate(region = factor(region, REGION_LEVELS))
+unassigned <- sum(effort$angler_trips, na.rm = TRUE) - sum(trips$angler_trips, na.rm = TRUE)
+
+annual <- trips |>
+  group_by(huc4, region, year, tier_group) |>
+  summarise(trips = sum(angler_trips), .groups = "drop")
+
+annual |>
+  group_by(region, year) |>
+  summarise(creel = sum(trips[tier_group == "Creel (P1)"]), trips = sum(trips), .groups = "drop") |>
+  mutate(creel_share = creel / trips) |>
+  mutate(cell = glue("{scales::comma(trips, 1)} ({scales::percent(creel_share, 1)})")) |>
+  select(region, year, cell) |>
+  pivot_wider(names_from = year, values_from = cell) |>
+  rename(Region = region) |>
+  kable(caption = "Salmon angler trips by region and year (share from creel in brackets)")
+```
+
+`r scales::comma(unassigned, 1)` trips
+(`r scales::percent(unassigned / sum(effort$angler_trips, na.rm = TRUE), 0.1)`) sit on catch
+areas without a region (missing polygon, outside the eight regions, or no catch
+area code) and are left out below.
+
+```{r trips-fig, fig.width = 9, fig.height = 5}
+ggplot(annual, aes(factor(year), trips, fill = tier_group)) +
+  geom_col(width = 0.7, colour = "white", linewidth = 0.3) +
+  facet_wrap(~ region, ncol = 4, scales = "free_y") +
+  scale_fill_manual(values = TIER_COLS, name = NULL) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.05))) +
+  labs(x = NULL, y = "Salmon angler trips",
+       title = "Salmon angler trips by HUC4 region, 2022-2025",
+       caption = str_wrap(paste(
+         "Creel (P1) trips are design-based creel estimates or district totals. CRC-based trips are",
+         "Catch Record Card harvest multiplied by a trips-per-fish ratio from creeled rivers, so their",
+         "year-to-year change follows harvest; 2025 CRC-based trips include projected harvest."), 140)) +
+  theme(legend.position = "top", legend.justification = "left")
+```
+
+## 3. When fishing happens relative to the low-flow season
+
+```{r monthly, fig.width = 9, fig.height = 5}
+monthly <- trips |>
+  filter(!is.na(month)) |>
+  group_by(region, month) |>
+  summarise(trips = sum(angler_trips), .groups = "drop") |>
+  group_by(region) |>
+  mutate(share = trips / sum(trips)) |>
+  ungroup()
+lf_share <- monthly |> group_by(region) |>
+  summarise(lf = sum(share[month %in% LOW_FLOW_MONTHS]), .groups = "drop")
+
+ggplot(monthly, aes(factor(month.abb[month], month.abb), share)) +
+  annotate("rect", xmin = min(LOW_FLOW_MONTHS) - 0.5, xmax = max(LOW_FLOW_MONTHS) + 0.5,
+           ymin = -Inf, ymax = Inf, fill = "grey90") +
+  geom_col(width = 0.7, fill = "#2a78d6") +
+  geom_text(data = lf_share, aes(x = 1, y = Inf, label = glue("Aug-Oct: {scales::percent(lf, 1)}")),
+            inherit.aes = FALSE, hjust = 0, vjust = 1.3, size = 3) +
+  facet_wrap(~ region, ncol = 4) +
+  scale_x_discrete(labels = \(x) substr(x, 1, 1)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.15))) +
+  labs(x = NULL, y = "Share of 2022-2025 trips",
+       title = "Monthly share of salmon angler trips, 2022-2025",
+       caption = "Grey band: August-October, when late-summer low flows overlap fall salmon openings. Trips with no month are left out.")
+```
+
+## 4. Effort beside the decade change in low flows
+
+```{r decade, fig.width = 9, fig.height = 4}
+decade_path <- file.path(LOCAL, "low_flow_decade_change.csv")
+annual_path <- file.path(LOCAL, "low_flow_annual_ballpark.csv")
+if (!file.exists(decade_path) || !file.exists(annual_path))
+  stop("Save low_flow_decade_change.csv and low_flow_annual_ballpark.csv in ", LOCAL)
+decade <- read_csv(decade_path, show_col_types = FALSE, col_types = cols(huc4 = "c"))
+flow_yr <- read_csv(annual_path, show_col_types = FALSE, col_types = cols(huc4 = "c"))
+
+region_effort <- annual |>
+  group_by(huc4, region) |>
+  summarise(mean_trips = sum(trips) / n_distinct(year), .groups = "drop") |>
+  left_join(lf_share, by = "region") |>
+  left_join(decade |> select(huc4, occurrence_pp, span_days, magnitude_pct), by = "huc4")
+
+region_effort |>
+  pivot_longer(c(span_days, occurrence_pp, magnitude_pct), names_to = "measure") |>
+  mutate(measure = recode(measure,
+                          span_days = "Longest low-flow span (+ days)",
+                          occurrence_pp = "Occurrence (+ percentage points)",
+                          magnitude_pct = "Magnitude (% change)")) |>
+  ggplot(aes(value, lf, size = mean_trips)) +
+  geom_point(colour = "#2a78d6", alpha = 0.8) +
+  geom_text(aes(label = region), size = 2.6, vjust = -1.2, check_overlap = TRUE) +
+  facet_wrap(~ measure, scales = "free_x") +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = 0.2)) +
+  scale_size_area(max_size = 9, labels = scales::label_comma(), name = "Mean annual trips") +
+  labs(x = "Decade change, 2016-2025 vs 2006-2015 (Dan's Table 1)",
+       y = "Share of trips in Aug-Oct",
+       title = "Regions with more late-summer fishing beside each region's change in low flows",
+       caption = "Eight regions, no inference. Point size: mean annual salmon angler trips, 2022-2025.")
+```
+
+## 5. Year-to-year: trips against annual low-flow conditions
+
+Within each region, each year's trips are shown relative to that region's
+2022–2025 average (1 = average year), against the year's low-flow values.
+
+```{r annual-compare, fig.width = 9, fig.height = 6}
+yr <- annual |>
+  group_by(huc4, region, year) |>
+  summarise(all = sum(trips), creel = sum(trips[tier_group == "Creel (P1)"]), .groups = "drop") |>
+  group_by(huc4) |>
+  mutate(`All trips` = all / mean(all),
+         `Creel trips only` = if_else(mean(creel) > 0, creel / mean(creel), NA_real_)) |>
+  ungroup() |>
+  left_join(flow_yr |> select(huc4, year, magnitude_cfs_wy, occurrence_prob_cy, span_days_cy),
+            by = c("huc4", "year")) |>
+  group_by(huc4) |>
+  mutate(magnitude_index = magnitude_cfs_wy / mean(magnitude_cfs_wy)) |>
+  ungroup()
+
+yr |>
+  pivot_longer(c(`All trips`, `Creel trips only`), names_to = "trips_basis", values_to = "trip_index") |>
+  pivot_longer(c(span_days_cy, magnitude_index), names_to = "flow_measure", values_to = "flow_value") |>
+  mutate(flow_measure = recode(flow_measure,
+                               span_days_cy = "Longest low-flow span (days, calendar year)",
+                               magnitude_index = "Low-flow magnitude (relative to region's 2022-25 mean)")) |>
+  filter(!is.na(trip_index)) |>
+  arrange(year) |>
+  ggplot(aes(flow_value, trip_index, colour = factor(region, REGION_LEVELS))) +
+  geom_hline(yintercept = 1, colour = "grey60", linewidth = 0.3) +
+  geom_path(aes(group = region), linewidth = 0.4, alpha = 0.6) +
+  geom_point(size = 2) +
+  facet_grid(trips_basis ~ flow_measure, scales = "free_x") +
+  scale_colour_manual(values = c("#2a78d6", "#eb6834", "#1baf7a", "#eda100",
+                                 "#e87ba4", "#008300", "#6250d6", "#e34948"), name = NULL) +
+  labs(x = NULL, y = "Trips relative to region's 2022-2025 mean",
+       title = "Annual salmon angler trips against annual low-flow conditions, 2022-2025",
+       caption = str_wrap(paste(
+         "Flow values read by eye from Dan's draft figures (approximate). Lines join a region's years in order.",
+         "Four years per region, no inference. Puget Sound and Coastal trips in odd years include pink salmon runs."), 140)) +
+  theme(legend.position = "bottom")
+```
+
+## What this can and can't support
+
+- **Four years against a decade-scale change.** Our trip estimates cover
+  2022–2025, while Dan's result compares two decades. Section 4 can only set
+  current effort beside past change, and Section 5 has four points per region.
+- **Runs drive effort more than flow.** Odd-year pink salmon in Puget Sound,
+  forecasts and in-season run size, and season-setting all move trips more than
+  flow is likely to. Any flow signal would need these accounted for.
+- **CRC-based trips follow harvest.** They are CRC harvest × a trips-per-fish
+  ratio, so a flow effect on effort per fish (fish concentrated in low water, or
+  anglers staying home) cannot show in them, though year-specific donor ratios
+  carry some regional signal. Creel-only trips are shown separately for this
+  reason.
+- **Calendar mismatch.** Magnitude is by water year (Oct–Sep); occurrence and
+  span are by calendar year. A fall fishery responds to flows in the weeks
+  around its opening, which annual values blur.
+- **Opportunity is set by rules.** Emergency closures and hoot-owl restrictions
+  for low flow or warm water are the most direct link to Dan's question, and we
+  have no day-level record of them.
+
+**Next steps if worth pursuing:**
+
+1. Pull August–October flow measures at gages near creeled rivers (Dan's
+   gage-level data or `dataRetrieval`) rather than annual regional values.
+2. Use the 2010–2024 CRC harvest series by catch area and month for a
+   decade-scale comparison (2010–2015 vs 2016–2024), recognising that harvest
+   also tracks run size.
+3. Use creel rivers with long records (e.g. Skagit, Cowlitz) for effort per fish
+   against flow within a season.
+4. Compile emergency closure and hoot-owl rule dates by river as a direct
+   opportunity measure.

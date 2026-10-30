@@ -82,3 +82,9 @@ run_log.txt
 analysis/pst/**/*.html
 analysis/pst/**/*_files/
 input_files/pst/guide_logbook/
+
+# Flow/opportunity scoping: Dan Auerbach's draft low-flow values and cached
+# spatial layers stay local (internal draft, not for the repo); rendered report
+analysis/flow_opportunity_scope/local/
+analysis/flow_opportunity_scope/*.html
+analysis/flow_opportunity_scope/*_files/

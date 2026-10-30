@@ -227,7 +227,8 @@ sat_layer <- function() {
 if (!requireNamespace("ggspatial", quietly = TRUE))
   message("ggspatial not installed - maps drawn without the satellite base layer")
 SAT_CREDIT <- if (requireNamespace("ggspatial", quietly = TRUE))
-  " Imagery: Esri, Maxar, Earthstar Geographics." else ""
+  " Imagery: Esri, Maxar, Earthstar Geographics." else
+  " [Satellite base layer skipped: install.packages(\"ggspatial\") and re-render.]"
 map_coord <- coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")],
                       expand = TRUE)
 

@@ -285,6 +285,48 @@ ggplot() +
   theme(strip.text = element_text(face = "bold", margin = margin(b = 3)))
 ```
 
+```{r map-trips, fig.width = 10, fig.height = 7.5}
+# Trips per catch area and year as a sequential gradient (one hue, light to
+# dark: dataviz reference blue ramp, steps 150-700) on a log scale, since a
+# few rivers carry most trips. Catch areas with no trips that year are pale
+# grey. Same base layers as the maps above.
+area_year <- effort |>
+  filter(catch_area_code %in% lookup$catch_area_code) |>
+  group_by(catch_area_code, year) |>
+  summarise(trips = sum(angler_trips, na.rm = TRUE), .groups = "drop")
+areas_year <- crc_codes |>
+  inner_join(lookup |> select(catch_area_code), by = "catch_area_code") |>
+  cross_join(tibble(year = sort(unique(area_year$year)))) |>
+  left_join(area_year, by = c("catch_area_code", "year")) |>
+  mutate(trips = coalesce(trips, 0)) |>
+  st_as_sf()
+BLUE_RAMP <- c("#b7d3f6", "#86b6ef", "#5598e7", "#2a78d6", "#1c5cab", "#104281", "#0d366b")
+
+ggplot() +
+  sat_layer() +
+  geom_sf(data = regions_wa, fill = "#f6f5f2", colour = NA, alpha = 0.45) +
+  geom_sf(data = filter(areas_year, trips < 1), fill = "#e4e1da", colour = "white", linewidth = 0.1) +
+  geom_sf(data = filter(areas_year, trips >= 1), aes(fill = trips), colour = "white", linewidth = 0.1) +
+  geom_sf(data = region_lines, colour = "grey15", linewidth = 0.35) +
+  { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "grey15", linewidth = 0.35) } +
+  facet_wrap(~ year, ncol = 2) +
+  scale_fill_gradientn(colours = BLUE_RAMP, trans = "log10",
+                       labels = scales::label_comma(accuracy = 1),
+                       breaks = c(10, 100, 1000, 10000, 100000),
+                       name = "Salmon angler trips (log scale)") +
+  map_coord +
+  labs(title = "Salmon angler trips by catch area, 2022-2025",
+       caption = str_wrap(paste0(
+         "Each catch area shaded by its estimated salmon angler trips that year (creel and CRC-based combined); ",
+         "pale grey = no trips estimated. Catch areas are whole drainages, so large areas draw the eye ",
+         "regardless of trips. Lower Columbia excludes all mainstem Columbia River trips. ",
+         "Dark lines: HUC4 region boundaries.", SAT_CREDIT), 150)) +
+  map_theme +
+  theme(strip.text = element_text(face = "bold", size = 11, margin = margin(b = 3)),
+        legend.key.width = unit(2.5, "cm"), legend.key.height = unit(0.35, "cm"),
+        legend.title.position = "top")
+```
+
 ```{r split-table}
 split_tbl <- lookup |> filter(flag_split) |>
   left_join(effort |> group_by(catch_area_code) |>

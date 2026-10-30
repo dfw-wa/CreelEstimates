@@ -5,10 +5,15 @@ author: "Evan Booher"
 date: today
 format:
   html:
+    # One file: figures, styles and data downloads are embedded, and the code
+    # is folded under each section, so the HTML works without the repo.
     embed-resources: true
     toc: true
+    code-fold: true
+    code-summary: "Show code"
+    code-tools: true
 execute:
-  echo: false
+  echo: true
   warning: false
   message: false
 ---
@@ -83,6 +88,14 @@ effects on angling **opportunity**. This prototype puts our 2022–2025 salmon
 angler-trip estimates into his regions and sets them beside his measures. It is
 for scoping only: it tests whether the pieces fit together and shows what a real
 analysis would need. It does not estimate a flow effect.
+
+::: {.callout-important}
+## Lower Columbia is missing the mainstem Columbia
+The Lower Columbia region here holds tributary trips only. It is missing **all
+mainstem Columbia River salmon angler trips**, which are estimated outside this
+pipeline and would need to be supplied separately to complete the region.
+Lower Columbia totals below understate the region's salmon angling effort.
+:::
 
 **About the flow values.** The annual values (2022–2025) were read by eye from
 the draft memo's Figures 2–4 and are approximate: about ±0.05 for occurrence and
@@ -209,7 +222,8 @@ annual |>
 `r scales::comma(unassigned, 1)` trips
 (`r scales::percent(unassigned / sum(effort$angler_trips, na.rm = TRUE), 0.1)`) sit on catch
 areas without a region (missing polygon, outside the eight regions, or no catch
-area code) and are left out below.
+area code) and are left out below. Lower Columbia also lacks all mainstem
+Columbia River trips (see the note at the top).
 
 ```{r trips-fig, fig.width = 9, fig.height = 5}
 ggplot(annual, aes(factor(year), trips, fill = tier_group)) +
@@ -342,6 +356,10 @@ yr |>
   anglers staying home) cannot show in them, though year-specific donor ratios
   carry some regional signal. Creel-only trips are shown separately for this
   reason.
+- **Lower Columbia is incomplete.** Mainstem Columbia River salmon angler trips
+  are not in these estimates and would need to be supplied separately; until
+  then Lower Columbia effort is tributaries only and not comparable with the
+  other regions' totals.
 - **Calendar mismatch.** Magnitude is by water year (Oct–Sep); occurrence and
   span are by calendar year. A fall fishery responds to flows in the weeks
   around its opening, which annual values blur.
@@ -360,3 +378,25 @@ yr |>
    against flow within a season.
 4. Compile emergency closure and hoot-owl rule dates by river as a direct
    opportunity measure.
+
+## Data downloads
+
+The tables behind this report, embedded in the file. Dan's draft low-flow values
+are not included; they stay with his memo.
+
+```{r downloads, results = "asis"}
+csv_link <- function(df, file, label) {
+  txt <- readr::format_csv(df)
+  cat(glue('- <a href="data:text/csv;charset=utf-8,{utils::URLencode(txt, reserved = TRUE)}" ',
+           'download="{file}">{label}</a> ({nrow(df)} rows)\n\n'))
+}
+csv_link(lookup, "crc_area_huc4.csv",
+         "Catch area to HUC4 lookup (largest-share region, share, other regions, split flag)")
+csv_link(annual |> mutate(trips = round(trips, 1)), "trips_by_huc4_year_tier.csv",
+         "Salmon angler trips by HUC4 region, year and estimate source")
+csv_link(monthly |> mutate(trips = round(trips, 1), share = round(share, 4)), "trips_by_huc4_month.csv",
+         "Salmon angler trips by HUC4 region and month, 2022-2025 combined")
+csv_link(trips |> group_by(catch_area_code, huc4, region, year, tier_group) |>
+           summarise(trips = round(sum(angler_trips), 1), .groups = "drop"),
+         "trips_by_catch_area_year.csv", "Salmon angler trips by catch area and year, with region")
+```

@@ -215,11 +215,25 @@ map_theme <- theme_void(base_size = 10) +
         plot.caption = element_text(hjust = 0, margin = margin(t = 6)),
         legend.position = "bottom", legend.justification = "left",
         plot.margin = margin(8, 8, 8, 8))
+# Light satellite base (Esri World Imagery) so marine water reads as water;
+# drawn at half opacity under translucent land. Needs ggspatial and internet
+# on first render; tiles are cached in local/tiles. Skipped if unavailable.
+SAT_URL <- "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}.jpg"
+sat_layer <- function() {
+  if (!requireNamespace("ggspatial", quietly = TRUE)) return(NULL)
+  ggspatial::annotation_map_tile(type = SAT_URL, zoom = 7, alpha = 0.55, progress = "none",
+                                 cachedir = file.path(LOCAL, "tiles"))
+}
+if (!requireNamespace("ggspatial", quietly = TRUE))
+  message("ggspatial not installed - maps drawn without the satellite base layer")
+SAT_CREDIT <- if (requireNamespace("ggspatial", quietly = TRUE))
+  " Imagery: Esri, Maxar, Earthstar Geographics." else ""
 map_coord <- coord_sf(crs = 2927, xlim = bb[c("xmin", "xmax")], ylim = bb[c("ymin", "ymax")],
                       expand = TRUE)
 
 ggplot() +
-  geom_sf(data = regions_wa, fill = "#efede8", colour = NA) +
+  sat_layer() +
+  geom_sf(data = regions_wa, fill = "#f6f5f2", colour = NA, alpha = 0.45) +
   geom_sf(data = areas_map, aes(fill = status), colour = "white", linewidth = 0.3, alpha = 0.85) +
   geom_sf(data = region_lines, colour = "grey15", linewidth = 0.7) +
   { if (!is.null(wa)) geom_sf(data = wa, fill = NA, colour = "grey15", linewidth = 0.5) } +
@@ -230,7 +244,7 @@ ggplot() +
   map_coord +
   labs(title = "Catch areas with salmon trip estimates, by HUC4 hydrologic region",
        caption = paste("Dark lines: HUC4 region boundaries (USGS, clipped to Washington). White lines: catch-area",
-                       "boundaries. Each catch area is assigned to the region holding most of its area.")) +
+                       "boundaries. Each catch area is assigned to the region holding most of its area.", SAT_CREDIT)) +
   map_theme
 ```
 
@@ -250,7 +264,8 @@ regions_facet <- regions_wa |>
 n_assigned <- lookup |> count(region) |> mutate(facet = factor(region, REGION_LEVELS))
 
 ggplot() +
-  geom_sf(data = regions_facet, aes(fill = focus), colour = NA) +
+  sat_layer() +
+  geom_sf(data = regions_facet, aes(fill = focus), colour = NA, alpha = 0.55) +
   geom_sf(data = filter(areas_facet, !in_region), fill = "#d9d6cf", colour = "white", linewidth = 0.15) +
   geom_sf(data = filter(areas_facet, in_region), fill = "#2a78d6", colour = "white", linewidth = 0.15) +
   geom_sf(data = region_lines, colour = "grey35", linewidth = 0.25) +
@@ -258,10 +273,11 @@ ggplot() +
   geom_text(data = n_assigned, aes(x = -Inf, y = -Inf, label = glue("{n} catch areas")),
             hjust = -0.05, vjust = -0.6, size = 2.8) +
   facet_wrap(~ facet, ncol = 4) +
-  scale_fill_manual(values = c(`TRUE` = "#e2ddd2", `FALSE` = "#f6f5f2"), guide = "none") +
+  scale_fill_manual(values = c(`TRUE` = "#e9e4d8", `FALSE` = "#ffffff"), guide = "none") +
   map_coord +
   labs(title = "Catch areas assigned to each region",
-       caption = "Blue: catch areas assigned to the region (dark outline). Grey: catch areas assigned elsewhere.") +
+       caption = paste0("Blue: catch areas assigned to the region (dark outline). Grey: catch areas assigned elsewhere.",
+                        SAT_CREDIT)) +
   map_theme +
   theme(strip.text = element_text(face = "bold", margin = margin(b = 3)))
 ```

@@ -70,6 +70,33 @@ if(str_detect(study_design, "tandard" )){
 
 }  
 
+# Single gear/angler type (G == 1): census/index angler counts can still hold rows for other angler types
+# (e.g., boat counts recorded as 0 in a bank-only fishery), which would give gear indices > 1.
+# Drop them when they are all zero; otherwise stop, since a single-gear model would ignore real effort.
+if(n_distinct(interview_cg$angler_final) == 1){
+  gear_1g <- unique(interview_cg$angler_final)
+  drop_other_gear <- function(counts, count_col, label){
+    other <- counts |> filter(!str_detect(tolower(angler_final), fixed(gear_1g)))
+    other_total <- sum(other[[count_col]], na.rm = TRUE)
+    if(other_total > 0){
+      stop(
+        "Catch group '", est_catch_group, "': interviews contain only '", gear_1g, "' anglers, but ", label,
+        " counts include other angler types with non-zero totals:\n",
+        paste(capture.output(print(count(other, angler_final, wt = .data[[count_col]]))), collapse = "\n"),
+        "\nA single-gear BSS model would ignore this effort; review the data or use the multi-gear model."
+      )
+    }
+    if(nrow(other) > 0){
+      cli::cli_alert_info("Catch group {est_catch_group}: dropped {nrow(other)} all-zero non-'{gear_1g}' {label} count row(s) for single-gear inputs.")
+    }
+    counts |> 
+      filter(str_detect(tolower(angler_final), fixed(gear_1g))) |> 
+      mutate(angler_final_int = as.integer(1))
+  }
+  effort_census_anglers <- drop_other_gear(effort_census_anglers, "count_census", "census")
+  effort_index_angler <- drop_other_gear(effort_index_angler, "count_index", "angler index")
+}
+
 #returned list object
 stan_list <- list(
   est_cg = est_catch_group,

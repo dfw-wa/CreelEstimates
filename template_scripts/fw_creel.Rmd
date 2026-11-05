@@ -17,7 +17,7 @@ params:
   days_wkend: !r c('Saturday', 'Sunday')
   day_length_expansion: "night closure"
   min_fishing_time: 0.5
-  bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"
+  bss_model_file_name: "BSS_creel_model_02_2021-01-22_ppc.stan"  # use "BSS_creel_model_02_2021-01-22_ppc_1G.stan" for single-gear (e.g., bank-only) fisheries
   model_used: "Both models"
   data_grade: "provisional"
   export: "local"

@@ -141,6 +141,8 @@ stan_list <- list(
   #proportion spatial coverage during census (tie-in; TI) counts  
   p_TI = 
     census_expan |> 
+    # census_expan always has bank & boat rows; keep only the angler type(s) in the interviews so p_TI is G x S (matters when G == 1)
+    filter(n_distinct(interview_cg$angler_final) > 1 | angler_final %in% unique(interview_cg$angler_final)) |> 
     select(angler_final, section_num, p_census) |> 
     pivot_wider(names_from = section_num, values_from = p_census) |> 
     select(-angler_final) |> 

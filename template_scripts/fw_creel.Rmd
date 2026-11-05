@@ -940,9 +940,9 @@ for(ecg in names(inputs_bss)) {
   ## extract and summarize estimates and model fit statistics 
   ecg_keep <- list()
   ecg_keep$overview <- get_bss_overview(bss_fit = ecg_fit, ecg = ecg)
-  ecg_keep$cpue_daily <- get_bss_cpue_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg)
-  ecg_keep$catch_daily <- get_bss_catch_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg)
-  ecg_keep$effort_daily <- get_bss_effort_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg)
+  ecg_keep$cpue_daily <- get_bss_cpue_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg, gear_labels = inputs_bss[[ecg]]$gear_labels)
+  ecg_keep$catch_daily <- get_bss_catch_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg, gear_labels = inputs_bss[[ecg]]$gear_labels)
+  ecg_keep$effort_daily <- get_bss_effort_daily(bss_fit = ecg_fit, ecg = ecg, dwg = dwg, gear_labels = inputs_bss[[ecg]]$gear_labels)
   
   # Always extract draws for use in diagnostics and plots
   ecg_keep$draws <- extract(ecg_fit)

@@ -102,6 +102,7 @@ stan_list <- list(
   est_cg = est_catch_group,
   D = nrow(days), # int; number of fishing days
   G = length(unique(interview_cg$angler_final_int)),  # int; final number of unique gear/angler types 
+  gear_labels = interview_cg |> distinct(angler_final_int, angler_final) |> arrange(angler_final_int) |> pull(angler_final), # chr vec; angler type label for each gear index (not used by Stan; used to label outputs)
   S = as.integer(length(unique(dwg_summarized$effort_census$section_num))),  # int; final number of river sections  
   H = max(dwg_summarized$effort_index$count_sequence), # int; max number of index counts within a sample day
   

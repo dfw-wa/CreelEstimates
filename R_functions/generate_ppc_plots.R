@@ -181,14 +181,11 @@ generate_ppc_plots<- function(bss_fit, inputs_bss, ecg, dwg, params) {
     bind_rows(summary_data, total_row)
   }
   
-  # Helper: decode gear integer to label
+  # Helper: decode gear integer to label (gear_labels from prep_inputs_bss; defaults to bank = 1, boat = 2)
+  gear_labels <- if (is.null(ecg_inputs$gear_labels)) c("bank", "boat") else ecg_inputs$gear_labels
   decode_gear <- function(x) {
-    as.factor(case_match(
-      x,
-      1 ~ "Bank Anglers",
-      2 ~ "Boat Anglers",
-      .default = as.character(x)
-    ))
+    gear_names <- paste(str_to_title(gear_labels), "Anglers")
+    as.factor(if_else(x %in% seq_along(gear_names), gear_names[x], as.character(x)))
   }
   
   # Helper: build PPC data tibble for one parameter

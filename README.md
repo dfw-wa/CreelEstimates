@@ -37,7 +37,7 @@ The initial summary objects also form the basis for the state space method
 Each catch-group-specific list of state space inputs is then processed
 
   - `fit_bss` wraps the `rstan::stan()` function, passing in the data list and various arguments controlling the MCMC process (e.g., number of chains, iterations, etc.)
-    - the default BSS model assumes 2 gear/angler types (bank & boat); for single-gear fisheries (e.g., bank-only) set `params$bss_model_file_name` to `"BSS_creel_model_02_2021-01-22_ppc_1G.stan"` (supports 1+ sections); `fit_bss` stops with an informative error if the model and the number of gear types in the catch group don't match
+    - the default BSS model assumes 2 gear/angler types (bank & boat); for single-gear fisheries (e.g., bank-only) set `params$bss_model_file_name` to `"BSS_creel_model_02_2021-01-22_ppc_1G.stan"` (supports 1+ sections); `fit_bss` stops with an informative error if the model and the number of gear types in the catch group don't match; daily outputs and PPC plots label gears from the interview angler types (`gear_labels` in the BSS inputs), so bank-only and boat-only fisheries are labelled correctly
   - `get_bss_overview`
   - `get_bss_catch_daily`
   - `get_bss_effort_daily`

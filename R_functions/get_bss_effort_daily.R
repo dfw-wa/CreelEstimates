@@ -1,4 +1,4 @@
-get_bss_effort_daily <- function(bss_fit, ecg, dwg, ...){
+get_bss_effort_daily <- function(bss_fit, ecg, dwg, gear_labels = c("bank", "boat"), ...){
 
   bss_fit |> 
     summary(pars = c("E")) |> 
@@ -13,7 +13,7 @@ get_bss_effort_daily <- function(bss_fit, ecg, dwg, ...){
     ) |> 
     mutate(
       across(c(section_num, day_index), as.integer),
-      angler_final = if_else(angler_final == "1", "bank", "boat"),
+      angler_final = gear_labels[as.integer(angler_final)],
       est_cg = ecg,
       estimate = "E_daily"
     ) |> 
